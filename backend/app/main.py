@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.database import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.routers.auth_router import router as auth_router
 from app.routers.user_router import router as user_router
 from app.routers.animal_router import router as animal_router
 
@@ -16,6 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router)
 app.include_router(animal_router)
 app.include_router(user_router)
 @app.get("/")

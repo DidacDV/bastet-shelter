@@ -5,8 +5,11 @@ class ExampleRepository {
   ExampleRepository(this._apiClient);
 
   Future<String> fetchStatus() async {
-    final response = await _apiClient.get('/');
-    if (response.statusCode == 200) return response.body;
-    throw Exception('Failed to reach backend');
+    try {
+      final response = await _apiClient.get('/');
+      return response['status'];
+    } catch (e) {
+      rethrow;
+    }
   }
 }

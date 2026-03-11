@@ -1,8 +1,12 @@
+import 'package:bastetshelter/core/service_locator.dart';
 import 'package:flutter/material.dart';
 
-import 'features/exampleFeature/presentation/example_screen.dart';
+import 'package:bastetshelter/features/auth/presentation/login_screen.dart';
+import 'package:bastetshelter/features/auth/presentation/register_screen.dart';
+import 'package:bastetshelter/features/home/presentation/home_screen.dart';
 
 void main() {
+  configureDependencies();
   runApp(const MyApp());
 }
 
@@ -13,8 +17,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Bastet Shelter',
-      theme: ThemeData(useMaterial3: true),
-      home: const ExampleScreen(),
+      theme: ThemeData(
+        useMaterial3: true,
+        primarySwatch: Colors.brown,
+      ),
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/home': (context) => const HomeScreen(),
+      },
     );
   }
 }

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.core.security import decode_access_token
 from app.database import get_db
 from app.models.login import Login
-from app.models.user import User
+from app.models.user import User, AuthenticatedUser
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
@@ -13,7 +13,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
-) -> User:
+) -> AuthenticatedUser:
     payload = decode_access_token(token)
     if payload is None:
         raise HTTPException(
@@ -29,6 +29,7 @@ def get_current_user(
             detail="Invalid token payload",
         )
 
+    role: str = payload.get("role")
     user = db.query(User).join(Login).filter(Login.email == email).first()
     if user is None:
         raise HTTPException(
@@ -42,4 +43,15 @@ def get_current_user(
             detail="Inactive user",
         )
 
-    return user
+    return AuthenticatedUser(user = user, role =  role)
+
+def require_role(*roles: str):
+    def checker(auth: AuthenticatedUser = Depends(get_current_user)):
+        if auth.role not in roles:
+            raise HTTPException(status_code=403, detail="Insufficient permissions")
+        return auth
+    return checker
+
+require_manager = require_role("MANAGER", "ADMIN")
+require_volunteer = require_role("VOLUNTEER", "MANAGER", "ADMIN")
+require_admin = require_role("ADMIN")

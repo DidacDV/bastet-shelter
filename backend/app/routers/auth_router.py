@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.core.security import verify_password, create_access_token, hash_password
 from app.database import get_db
 from app.models.login import Login
+from app.models.shelter_member import ShelterMember
 from app.models.user import User
 from app.schemas.user_schema import LoginRequest, UserCreate
 from app.schemas.auth_schema import TokenResponse
@@ -53,5 +54,6 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     if not user or not user.active:
         raise HTTPException(status_code=403, detail="Account is inactive")
 
-    access_token = create_access_token(data={"sub": login_record.email})
+    member = db.query(ShelterMember).filter(ShelterMember.user_id == user.id).first()
+    access_token = create_access_token(data={"sub": login_record.email, "role": member.role if member else None})
     return TokenResponse(access_token=access_token)

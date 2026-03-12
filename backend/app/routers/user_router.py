@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, require_manager
 from app.database import get_db
-from app.models.user import User
+from app.models.user import User, AuthenticatedUser
 from app.repositories.user_repo import UserRepository
 from app.schemas.user_schema import UserResponse
 from app.services.user_service import UserService
@@ -14,13 +14,14 @@ def get_user_service(db: Session = Depends(get_db)) -> UserService:
     return UserService(UserRepository(), db)
 
 @router.get("/me")
-def get_current_user_profile(current_user: User = Depends(get_current_user)):
+def get_current_user_profile(auth: AuthenticatedUser = Depends(require_manager),):
+    user = auth.user
     return {
-        "id": current_user.id,
-        "name": current_user.name,
-        "last_name_1": current_user.last_name_1,
-        "last_name_2": current_user.last_name_2,
-        "email": current_user.login.email,
+        "id": user.id,
+        "name": user.name,
+        "last_name_1": user.last_name_1,
+        "last_name_2": user.last_name_2,
+        "email": user.login.email,
     }
 
 @router.get("/{email}", response_model=UserResponse)

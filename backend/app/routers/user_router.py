@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_current_user, require_manager
+from app.core.dependencies import get_current_user, require_manager, require_volunteer
 from app.database import get_db
 from app.models.user import User, AuthenticatedUser
 from app.repositories.user_repo import UserRepository
@@ -14,7 +14,7 @@ def get_user_service(db: Session = Depends(get_db)) -> UserService:
     return UserService(UserRepository(), db)
 
 @router.get("/me")
-def get_current_user_profile(auth: AuthenticatedUser = Depends(require_manager),):
+def get_current_user_profile(auth: AuthenticatedUser = Depends(require_volunteer),):
     user = auth.user
     return {
         "id": user.id,

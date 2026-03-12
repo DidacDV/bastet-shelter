@@ -1,24 +1,56 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_current_user, require_manager
+from app.core.dependencies import get_current_user, require_manager, require_volunteer
 from app.database import get_db
-from app.models.user import User, AuthenticatedUser
-from app.repositories.shelter_repo import ShelterRepository
+from app.models.user import AuthenticatedUser
+from app.schemas.shelter_member_schema import ShelterMemberResponse, ShelterMemberInfo
 from app.schemas.shelter_schema import ShelterResponse, ShelterCreate
 from app.services.shelter_service import ShelterService
 
 router = APIRouter(prefix="/shelters", tags=["shelters"])
 
-def get_shelter_service(db: Session = Depends(get_db)) -> ShelterService:
-    return ShelterService(ShelterRepository(), db)
 
-@router.post("/", response_model=ShelterResponse, status_code=201)
-def create_shelter(data: ShelterCreate, service: ShelterService = Depends(get_shelter_service), auth: AuthenticatedUser = Depends(require_manager)):
+def get_shelter_service(db: Session = Depends(get_db)) -> ShelterService:
+    return ShelterService(db)
+
+
+@router.post("/", response_model=ShelterResponse, status_code=status.HTTP_201_CREATED)
+def create_shelter(
+    data: ShelterCreate,
+    service: ShelterService = Depends(get_shelter_service),
+    auth: AuthenticatedUser = Depends(require_manager),
+):
     return service.create_shelter(data, auth.user.id)
 
+
+@router.get("/me", response_model=ShelterMemberInfo)
+def get_my_membership(
+    service: ShelterService = Depends(get_shelter_service),
+    auth: AuthenticatedUser = Depends(get_current_user),
+):
+    member = service.get_by_user(auth.user.id)
+    if not member:
+        raise HTTPException(status_code=404, detail="You are not a member of any shelter")
+    return member
+
+#Shelter Members
+@router.post("/join/{shelter_code}", response_model=ShelterMemberResponse, status_code=status.HTTP_201_CREATED)
+def join_shelter(
+    shelter_code: str,
+    service: ShelterService = Depends(get_shelter_service),
+    auth: AuthenticatedUser = Depends(require_volunteer),
+):
+    try:
+        return service.create_volunteer_member(auth.user.id, shelter_code)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
 @router.get("/{code}", response_model=ShelterResponse)
-def get_shelter_by_code(code: str, service: ShelterService = Depends(get_shelter_service)):
+def get_shelter_by_code(
+    code: str,
+    service: ShelterService = Depends(get_shelter_service),
+):
     try:
         return service.get_shelter(code)
     except ValueError as e:

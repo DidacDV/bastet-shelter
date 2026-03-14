@@ -3,6 +3,16 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:bastetshelter/core/config.dart';
 
+class ApiException implements Exception {
+  final int statusCode;
+  final String body;
+
+  ApiException(this.statusCode, this.body);
+
+  @override
+  String toString() => 'ApiException: $statusCode $body';
+}
+
 class ApiClient {
   final http.Client _client = http.Client();
   String? _accessToken;
@@ -58,7 +68,7 @@ class ApiClient {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('HTTP ${response.statusCode}: ${response.body}');
+      throw ApiException(response.statusCode, response.body);
     }
   }
 }

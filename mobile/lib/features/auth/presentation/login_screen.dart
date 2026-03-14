@@ -1,4 +1,5 @@
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
+import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
@@ -14,7 +15,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _repository = getIt<AuthRepository>();
+  final _authRepository = getIt<AuthRepository>();
+  final _shelterRepository = getIt<ShelterRepository>();
   bool _isLoading = false;
 
   @override
@@ -25,35 +27,35 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+    if (!_formKey.currentState!.validate()) return;
 
-      try {
-        await _repository.login(
-          _emailController.text,
-          _passwordController.text,
+    setState(() => _isLoading = true);
+
+    try {
+      await _authRepository.login(
+        _emailController.text,
+        _passwordController.text,
+      );
+
+      if (!mounted) return;
+
+      // if the user isn't in any shelter, go back to the role picker process
+
+      final hasMembership = await _shelterRepository.hasMembership();
+
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(
+        context,
+        hasMembership ? '/home' : '/role/picker',
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: ${e.toString()}')),
         );
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Login successful')),
-          );
-          Navigator.pushReplacementNamed(context, '/home');
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Login failed: ${e.toString()}')),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
       }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -106,9 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 12),
                   TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/register');
-                    },
+                    onPressed: () => Navigator.pushNamed(context, '/register'),
                     child: const Text("Don't have an account? Register here"),
                   ),
                 ],

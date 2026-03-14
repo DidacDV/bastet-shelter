@@ -1,5 +1,5 @@
 from datetime import date
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.models.shelter_member import RoleEnum
 
@@ -10,6 +10,8 @@ class ShelterMemberCreate(BaseModel):
     role: RoleEnum
 
 class ShelterMemberResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     user_id: int
     shelter_id: int
@@ -17,10 +19,8 @@ class ShelterMemberResponse(BaseModel):
     join_date: date
 
 class ShelterMemberInfo(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     name: str
-    shelter_code: str
     role: RoleEnum
     join_date: date
-
-    class Config:
-        from_attributes = True

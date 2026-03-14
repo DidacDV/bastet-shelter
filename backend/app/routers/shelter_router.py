@@ -35,16 +35,29 @@ def get_my_membership(
     return member
 
 #Shelter Members
-@router.post("/join/{code}", status_code=status.HTTP_201_CREATED)
-def join_shelter(
-    code: str,
-    service: ShelterService = Depends(get_shelter_service),
-    auth: AuthenticatedUser = Depends(get_current_user),
+@router.post("/join/volunteer/{code}", status_code=status.HTTP_201_CREATED)
+def join_as_volunteer(
+        code: str,
+        service: ShelterService = Depends(get_shelter_service),
+        auth: AuthenticatedUser = Depends(get_current_user),
 ):
     try:
-        return service.join_shelter(auth.user.id, code, auth.user.login.email)
+        return service.join_as_volunteer(auth.user.id, code, auth.user.login.email)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.post("/join/manager/{code}", status_code=status.HTTP_201_CREATED)
+def join_as_manager(
+        code: str,
+        service: ShelterService = Depends(get_shelter_service),
+        auth: AuthenticatedUser = Depends(get_current_user),
+):
+    try:
+        return service.join_as_manager(auth.user.id, code, auth.user.login.email)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
 
 @router.get("/{code}", response_model=ShelterResponse)
 def get_shelter_by_code(

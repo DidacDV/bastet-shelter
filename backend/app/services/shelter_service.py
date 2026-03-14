@@ -38,23 +38,22 @@ class ShelterService:
         return shelter
 
     #Shelter Members
-    def join_shelter(self, user_id: int, shelter_code: str, user_email) -> dict:
-        """Joins a shelter as manager or volunteer depending on the shelter code
-            It returns the new access token with the correct role
-        """
+    def join_as_volunteer(self, user_id: int, shelter_code: str, user_email: str) -> dict:
+        """Joins a shelter strictly as volunteer and rejects manager codes."""
         shelter = self.shelter_repo.get_by_volunteer_code(self.db, shelter_code)
-        if shelter:
-            self.create_volunteer_member(user_id, shelter_code)
-            role = RoleEnum.VOLUNTEER
+        if not shelter:
+            raise ValueError("Invalid volunteer code")
+        self.create_volunteer_member(user_id, shelter_code)
+        acc_token = create_access_token(data={"sub": user_email, "role": RoleEnum.VOLUNTEER})
+        return {"access_token": acc_token, "token_type": "bearer"}
 
-        else:
-            shelter = self.shelter_repo.get_by_manager_code(self.db, shelter_code)
-            if shelter:
-                self.create_manager_member_by_id(user_id, shelter.id)
-                role = RoleEnum.MANAGER
-            else:
-                raise ValueError(f"Shelter with code {shelter_code} not found")
-        acc_token = create_access_token(data={"sub": str(user_email), "role": role})
+    def join_as_manager(self, user_id: int, shelter_code: str, user_email: str) -> dict:
+        """Joins a shelter strictly as manager and rejects volunteer codes."""
+        shelter = self.shelter_repo.get_by_manager_code(self.db, shelter_code)
+        if not shelter:
+            raise ValueError("Invalid manager code")
+        self.create_manager_member_by_id(user_id, shelter.id)
+        acc_token = create_access_token(data={"sub": user_email, "role": RoleEnum.MANAGER})
         return {"access_token": acc_token, "token_type": "bearer"}
 
     def get_by_user(self, user_id: int) -> Optional[ShelterMemberInfo]:

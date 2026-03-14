@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_current_user, require_manager, require_volunteer
+from app.core.dependencies import get_current_user
 from app.database import get_db
 from app.models.user import AuthenticatedUser
-from app.schemas.shelter_member_schema import ShelterMemberResponse, ShelterMemberInfo
-from app.schemas.shelter_schema import ShelterResponse, ShelterCreate
+from app.schemas.shelter_member_schema import ShelterMemberInfo
+from app.schemas.shelter_schema import ShelterResponse, ShelterCreate, ShelterWithTokenResponse
 from app.services.shelter_service import ShelterService
 
 router = APIRouter(prefix="/shelters", tags=["shelters"])
@@ -15,13 +15,13 @@ def get_shelter_service(db: Session = Depends(get_db)) -> ShelterService:
     return ShelterService(db)
 
 
-@router.post("/", response_model=ShelterResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=ShelterWithTokenResponse, status_code=status.HTTP_201_CREATED)
 def create_shelter(
     data: ShelterCreate,
     service: ShelterService = Depends(get_shelter_service),
-    auth: AuthenticatedUser = Depends(require_manager),
+    auth: AuthenticatedUser = Depends(get_current_user)
 ):
-    return service.create_shelter(data, auth.user.id)
+    return service.create_shelter(data, auth.user.id, auth.user.login.email)
 
 
 @router.get("/me", response_model=ShelterMemberInfo)
@@ -35,14 +35,14 @@ def get_my_membership(
     return member
 
 #Shelter Members
-@router.post("/join/{shelter_code}", response_model=ShelterMemberResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/join/{code}", status_code=status.HTTP_201_CREATED)
 def join_shelter(
-    shelter_code: str,
+    code: str,
     service: ShelterService = Depends(get_shelter_service),
-    auth: AuthenticatedUser = Depends(require_volunteer),
+    auth: AuthenticatedUser = Depends(get_current_user),
 ):
     try:
-        return service.create_volunteer_member(auth.user.id, shelter_code)
+        return service.join_shelter(auth.user.id, code, auth.user.login.email)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 

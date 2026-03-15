@@ -71,4 +71,18 @@ class ApiClient {
       throw ApiException(response.statusCode, response.body);
     }
   }
+
+  // generic function that returns a value stored in the JWT token
+  T? getTokenClaim<T>(String key) {
+    if (_accessToken == null) return null;
+    try {
+      final parts = _accessToken!.split('.');
+      if (parts.length != 3) return null;
+      final payload = utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
+      return jsonDecode(payload)[key] as T?;
+    } catch (_) {
+      return null;
+    }
+  }
+
 }

@@ -33,4 +33,11 @@ class ShelterRepository {
     final token = data['access_token'];
     _client.setToken(token);
   }
+
+  Future<Map<String, dynamic>> getShelterInfo() async {
+    final shelterId = _client.getTokenClaim<int>('shelter_id');
+    if (shelterId == null) throw ApiException(401, 'No shelter in token');
+    return await _client.get('/shelters/?shelter_id=$shelterId');
+  }
+
 }

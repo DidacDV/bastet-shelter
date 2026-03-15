@@ -40,7 +40,6 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       // if the user isn't in any shelter, go back to the role picker process
-
       final hasMembership = await _shelterRepository.hasMembership();
 
       if (!mounted) return;

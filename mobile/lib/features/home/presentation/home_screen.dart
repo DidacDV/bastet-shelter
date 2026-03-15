@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/auth/auth_service.dart';
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/service_locator.dart';
@@ -9,10 +10,17 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final authRepository = getIt<AuthRepository>();
 
+    final authService = getIt<AuthService>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bastet Shelter Home'),
         actions: [
+          if (authService.isManager)
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () => Navigator.pushNamed(context, '/shelter/config'),
+            ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {

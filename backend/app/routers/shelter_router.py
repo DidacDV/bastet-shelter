@@ -57,14 +57,3 @@ def join_as_manager(
         return service.join_as_manager(auth.user.id, code, auth.user.login.email)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
-
-
-@router.get("/{code}", response_model=ShelterResponse)
-def get_shelter_by_code(
-    code: str,
-    service: ShelterService = Depends(get_shelter_service),
-):
-    try:
-        return service.get_shelter(code)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))

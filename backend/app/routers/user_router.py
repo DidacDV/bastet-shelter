@@ -14,7 +14,7 @@ def get_user_service(db: Session = Depends(get_db)) -> UserService:
     return UserService(UserRepository(), db)
 
 @router.get("/me")
-def get_current_user_profile(auth: AuthenticatedUser = Depends(require_volunteer),):
+def get_current_user_profile(auth: AuthenticatedUser = Depends(get_current_user),):
     user = auth.user
     return {
         "id": user.id,

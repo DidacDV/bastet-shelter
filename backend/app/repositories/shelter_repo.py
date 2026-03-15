@@ -9,9 +9,6 @@ class ShelterRepository(BaseRepository[Shelter]):
     def __init__(self):
         super().__init__(Shelter)
 
-    def get_by_code(self, db: Session, code: str) -> Shelter | None:
-        return db.query(Shelter).filter(Shelter.volunteer_code == code).first()
-
     def get_by_manager_code(self, db: Session, code: str) -> Shelter | None:
         return db.query(Shelter).filter(Shelter.manager_code == code).first()
 

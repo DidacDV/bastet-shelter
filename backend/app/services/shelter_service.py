@@ -31,12 +31,6 @@ class ShelterService:
             "token_type": "bearer"
         }
 
-    def get_shelter(self, code: str) -> Shelter:
-        shelter = self.shelter_repo.get_by_code(self.db, code)
-        if not shelter:
-            raise ValueError(f"Shelter with code {code} not found")
-        return shelter
-
     #Shelter Members
     def join_as_volunteer(self, user_id: int, shelter_code: str, user_email: str) -> dict:
         """Joins a shelter strictly as volunteer and rejects manager codes."""
@@ -44,7 +38,7 @@ class ShelterService:
         if not shelter:
             raise ValueError("Invalid volunteer code")
         self.create_volunteer_member(user_id, shelter_code)
-        acc_token = create_access_token(data={"sub": user_email, "role": RoleEnum.VOLUNTEER})
+        acc_token = create_access_token(data={"sub": user_email, "role": RoleEnum.VOLUNTEER.value})
         return {"access_token": acc_token, "token_type": "bearer"}
 
     def join_as_manager(self, user_id: int, shelter_code: str, user_email: str) -> dict:
@@ -53,7 +47,7 @@ class ShelterService:
         if not shelter:
             raise ValueError("Invalid manager code")
         self.create_manager_member_by_id(user_id, shelter.id)
-        acc_token = create_access_token(data={"sub": user_email, "role": RoleEnum.MANAGER})
+        acc_token = create_access_token(data={"sub": user_email, "role": RoleEnum.MANAGER.value})
         return {"access_token": acc_token, "token_type": "bearer"}
 
     def get_by_user(self, user_id: int) -> Optional[ShelterMemberInfo]:

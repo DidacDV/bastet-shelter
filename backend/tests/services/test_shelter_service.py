@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from datetime import date
 
 from app.services.shelter_service import ShelterService
@@ -157,4 +157,41 @@ def test_get_by_user_no_membership_returns_none(service):
     result = service.get_by_user(user_id=1)
 
     assert result is None
+#endregion
+
+# region RESET_CODES
+
+def test_reset_volunteer_code_returns_new_code(service):
+    service.shelter_repo.get_by_id.return_value = _mock_shelter()
+
+    with patch("app.services.shelter_service.generate_code", return_value="DACDAC11"):
+        result = service.reset_volunteer_code(shelter_id=1)
+
+    assert result == "DACDAC11"
+    service.shelter_repo.update_volunteer_code.assert_called_once_with(service.db, 1, "DACDAC11")
+
+
+def test_reset_manager_code_returns_new_code(service):
+    service.shelter_repo.get_by_id.return_value = _mock_shelter()
+
+    with patch("app.services.shelter_service.generate_code", return_value="DACDAC11"):
+        result = service.reset_manager_code(shelter_id=1)
+
+    assert result == "DACDAC11"
+    service.shelter_repo.update_manager_code.assert_called_once_with(service.db, 1, "DACDAC11")
+
+
+def test_reset_volunteer_code_shelter_not_found(service):
+    service.shelter_repo.get_by_id.return_value = None
+
+    with pytest.raises(ValueError, match="not found"):
+        service.reset_volunteer_code(shelter_id=999)
+
+
+def test_reset_manager_code_shelter_not_found(service):
+    service.shelter_repo.get_by_id.return_value = None
+
+    with pytest.raises(ValueError, match="not found"):
+        service.reset_manager_code(shelter_id=999)
+
 #endregion

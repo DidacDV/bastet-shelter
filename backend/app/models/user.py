@@ -23,3 +23,4 @@ class User(Base):
 class AuthenticatedUser:
     user: User
     role: Optional[str]
+    shelter_id: Optional[int] = None

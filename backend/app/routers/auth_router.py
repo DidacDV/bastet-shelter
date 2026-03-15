@@ -55,5 +55,5 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         raise HTTPException(status_code=403, detail="Account is inactive")
 
     member = db.query(ShelterMember).filter(ShelterMember.user_id == user.id).first()
-    access_token = create_access_token(data={"sub": login_record.email, "role": member.role if member else None})
+    access_token = create_access_token(data={"sub": login_record.email, "role": member.role.value if member else None, "shelter_id": member.shelter_id if member else None})
     return TokenResponse(access_token=access_token)

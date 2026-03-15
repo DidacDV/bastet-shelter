@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, require_shelter_manager, require_shelter_volunteer
 from app.database import get_db
 from app.models.user import AuthenticatedUser
 from app.schemas.shelter_member_schema import ShelterMemberInfo
@@ -57,3 +57,19 @@ def join_as_manager(
         return service.join_as_manager(auth.user.id, code, auth.user.login.email)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+#region CODE_MANAGEMENT
+@router.post("/reset/volunteer/", status_code=status.HTTP_204_NO_CONTENT)
+def reset_volunteer_code(
+        service: ShelterService = Depends(get_shelter_service),
+        auth: AuthenticatedUser = Depends(require_shelter_manager),
+):
+    service.reset_volunteer_code(auth.shelter_id)
+
+
+@router.post("/reset/manager/", status_code=status.HTTP_204_NO_CONTENT)
+def reset_manager_code(
+        service: ShelterService = Depends(get_shelter_service),
+        auth: AuthenticatedUser = Depends(require_shelter_manager),
+):
+    service.reset_manager_code(auth.shelter_id)

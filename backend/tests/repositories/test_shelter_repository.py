@@ -35,3 +35,17 @@ class TestShelterRepository:
         _create_shelter(db, volunteer_code="VOL123", manager_code="MAN456")
         assert self.repo.get_by_volunteer_code(db, "MAN456") is None
         assert self.repo.get_by_manager_code(db, "VOL123") is None
+
+    def test_update_volunteer_code(self, db):
+        shelter = _create_shelter(db)
+        self.repo.update_volunteer_code(db, shelter.id, "DACDAC11")
+        db.refresh(shelter)
+        assert shelter.volunteer_code == "DACDAC11"
+        assert shelter.manager_code == "MAN456"  # unchanged
+
+    def test_update_manager_code(self, db):
+        shelter = _create_shelter(db)
+        self.repo.update_manager_code(db, shelter.id, "DACDAC11")
+        db.refresh(shelter)
+        assert shelter.manager_code == "DACDAC11"
+        assert shelter.volunteer_code == "VOL123"  # unchanged

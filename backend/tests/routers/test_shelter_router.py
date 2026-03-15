@@ -72,3 +72,38 @@ def test_join_as_manager_invalid_code(client):
     token = _register_and_login(client)
     res = client.post("/shelters/join/manager/badcode", headers=_auth_headers(token))
     assert res.status_code == 404
+
+
+# region RESET_CODES
+
+def test_reset_volunteer_code(client):
+    token = _register_and_login(client)
+    manager_token, _, _ = _create_shelter(client, token)
+    res = client.post("/shelters/reset/volunteer/", headers=_auth_headers(manager_token))
+    assert res.status_code == 204
+
+
+def test_reset_manager_code(client):
+    token = _register_and_login(client)
+    manager_token, _, _ = _create_shelter(client, token)
+    res = client.post("/shelters/reset/manager/", headers=_auth_headers(manager_token))
+    assert res.status_code == 204
+
+
+def test_reset_codes_requires_auth(client):
+    assert client.post("/shelters/reset/volunteer/").status_code == 401
+    assert client.post("/shelters/reset/manager/").status_code == 401
+
+
+def test_volunteer_cannot_reset_codes(client):
+    owner_token = _register_and_login(client, email="owner@example.com", name="Owner")
+    _, volunteer_code, _ = _create_shelter(client, owner_token)
+
+    volunteer_token = _register_and_login(client, email="vol@example.com", name="Vol")
+    join_res = client.post(f"/shelters/join/volunteer/{volunteer_code}", headers=_auth_headers(volunteer_token))
+    vol_token = join_res.json()["access_token"]
+
+    assert client.post("/shelters/reset/volunteer/", headers=_auth_headers(vol_token)).status_code == 403
+    assert client.post("/shelters/reset/manager/", headers=_auth_headers(vol_token)).status_code == 403
+
+# endregion

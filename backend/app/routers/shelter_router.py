@@ -23,6 +23,16 @@ def create_shelter(
 ):
     return service.create_shelter(data, auth.user.id, auth.user.login.email)
 
+@router.get("/", response_model=ShelterResponse, status_code=status.HTTP_200_OK)
+def get_shelter_info(
+        shelter_id: int,
+        service: ShelterService = Depends(get_shelter_service),
+        auth: AuthenticatedUser = Depends(require_shelter_manager)
+):
+    try:
+        return service.get_shelter_by_id(shelter_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 @router.get("/me", response_model=ShelterMemberInfo)
 def get_my_membership(

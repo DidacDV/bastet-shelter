@@ -32,6 +32,13 @@ class ShelterService:
             "token_type": "bearer"
         }
 
+    def get_shelter_by_id(self, shelter_id: int) -> Optional[ShelterResponse]:
+        shelter = self.shelter_repo.get_by_id(self.db, shelter_id)
+        if shelter:
+            return ShelterResponse.model_validate(shelter)
+        else:
+            raise ValueError("Shelter not found")
+
     #Shelter Members
     def join_as_volunteer(self, user_id: int, shelter_code: str, user_email: str) -> dict:
         """Joins a shelter strictly as volunteer and rejects manager codes."""

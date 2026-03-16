@@ -69,17 +69,16 @@ def join_as_manager(
         raise HTTPException(status_code=404, detail=str(e))
 
 #region CODE_MANAGEMENT
-@router.post("/reset/volunteer/", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/reset/volunteer", status_code=status.HTTP_200_OK,)
 def reset_volunteer_code(
         service: ShelterService = Depends(get_shelter_service),
         auth: AuthenticatedUser = Depends(require_shelter_manager),
 ):
-    service.reset_volunteer_code(auth.shelter_id)
+    return {"code": service.reset_volunteer_code(auth.shelter_id)}
 
-
-@router.post("/reset/manager/", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/reset/manager", status_code=status.HTTP_200_OK)
 def reset_manager_code(
         service: ShelterService = Depends(get_shelter_service),
         auth: AuthenticatedUser = Depends(require_shelter_manager),
 ):
-    service.reset_manager_code(auth.shelter_id)
+    return {"code": service.reset_manager_code(auth.shelter_id)}

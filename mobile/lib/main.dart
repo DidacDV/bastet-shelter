@@ -8,10 +8,17 @@ import 'package:bastetshelter/features/home/presentation/home_screen.dart';
 import 'package:bastetshelter/features/shelter/presentation/code_entry_screen.dart';
 import 'package:bastetshelter/features/shelter/presentation/manager_picker_screen.dart';
 import 'package:bastetshelter/features/shelter/presentation/role_picker_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   configureDependencies();
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

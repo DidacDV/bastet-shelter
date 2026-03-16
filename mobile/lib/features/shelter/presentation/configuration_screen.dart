@@ -1,77 +1,49 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:bastetshelter/core/service_locator.dart';
-import 'package:bastetshelter/core/network/api_client.dart';
-import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:bastetshelter/features/shelter/providers/shelter_provider.dart';
 
-class ConfigScreen extends StatefulWidget {
+class ConfigScreen extends ConsumerWidget {
   const ConfigScreen({super.key});
 
   @override
-  State<ConfigScreen> createState() => _ConfigScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final shelterAsync = ref.watch(shelterProvider);
 
-class _ConfigScreenState extends State<ConfigScreen> {
-  final _repository = getIt<ShelterRepository>();
-  final _client = getIt<ApiClient>();
-  Map<String, dynamic>? _shelterInfo;
-  bool _isLoading = true;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadShelterInfo();
-  }
-
-  Future<void> _loadShelterInfo() async {
-    try {
-      final data = await _repository.getShelterInfo();
-      setState(() {
-        _shelterInfo = data;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Configuration')),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: _buildBody(),
+        child: shelterAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Center(
+            child: Text(e.toString(), style: const TextStyle(color: Colors.red)),
+          ),
+          data: (shelter) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Shelter Info', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 24),
+              _InfoRow(label: 'Name', value: shelter.name),
+              const SizedBox(height: 12),
+              _InfoRow(label: 'Location', value: shelter.location),
+              const SizedBox(height: 12),
+              _InfoRow(label: 'Volunteer Code', value: shelter.volunteerCode),
+              const SizedBox(height: 12),
+              _InfoRow(label: 'Manager Code', value: shelter.managerCode),
+              const SizedBox(height: 24),
+              FilledButton(
+                onPressed: () => ref.read(shelterProvider.notifier).resetVolunteerCode(),
+                child: const Text('Change Volunteer Code'),
+              ),
+              const SizedBox(height: 12),
+              FilledButton(
+                onPressed: () => ref.read(shelterProvider.notifier).resetManagerCode(),
+                child: const Text('Change Manager Code'),
+              ),
+            ],
+          ),
+        ),
       ),
-    );
-  }
-
-  Widget _buildBody() {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (_error != null) {
-      return Center(child: Text(_error!, style: const TextStyle(color: Colors.red)));
-    }
-
-    final info = _shelterInfo!;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Shelter Info', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 24),
-        _InfoRow(label: 'Name', value: info['name']),
-        const SizedBox(height: 12),
-        _InfoRow(label: 'Location', value: info['location']),
-        const SizedBox(height: 12),
-        _InfoRow(label: 'Volunteer Code', value: info['volunteer_code']),
-        const SizedBox(height: 12),
-        _InfoRow(label: 'Manager Code', value: info['manager_code']),
-      ],
     );
   }
 }

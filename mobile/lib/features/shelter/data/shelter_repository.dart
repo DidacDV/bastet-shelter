@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/network/api_client.dart';
+import 'package:bastetshelter/features/shelter/data/shelter_model.dart';
 
 class ShelterRepository {
   final ApiClient _client;
@@ -34,10 +35,25 @@ class ShelterRepository {
     _client.setToken(token);
   }
 
-  Future<Map<String, dynamic>> getShelterInfo() async {
+  Future<Shelter> getShelterInfo() async {
     final shelterId = _client.getTokenClaim<int>('shelter_id');
     if (shelterId == null) throw ApiException(401, 'No shelter in token');
-    return await _client.get('/shelters/?shelter_id=$shelterId');
+    final response = await _client.get('/shelters/?shelter_id=$shelterId');
+    return Shelter.fromJson(response);
   }
 
+  Future<String>  changeVolunteerCode() async {
+    final shelterId = _client.getTokenClaim<int>('shelter_id');
+    if (shelterId == null) throw ApiException(401, 'No shelter in token');
+    final response = await _client.post('/shelters/reset/volunteer');
+    return response['code'];
+  }
+
+  Future<String>  changeManagerCode() async {
+    final shelterId = _client.getTokenClaim<int>('shelter_id');
+    if (shelterId == null) throw ApiException(401, 'No shelter in token');
+    final response = await _client.post('/shelters/reset/manager');
+    return response['code'];
+  }
+  
 }

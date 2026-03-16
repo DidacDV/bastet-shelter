@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+
 
 class AnimalBase(BaseModel):
     name: str
@@ -7,7 +8,6 @@ class AnimalCreate(AnimalBase):
     pass
 
 class AnimalResponse(AnimalBase):
-    name: str
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        from_attributes = True
+    name: str

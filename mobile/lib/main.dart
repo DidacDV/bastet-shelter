@@ -1,9 +1,24 @@
+import 'package:bastetshelter/core/service_locator.dart';
+import 'package:bastetshelter/features/shelter/presentation/configuration_screen.dart';
 import 'package:flutter/material.dart';
 
-import 'features/exampleFeature/presentation/example_screen.dart';
+import 'package:bastetshelter/features/auth/presentation/login_screen.dart';
+import 'package:bastetshelter/features/auth/presentation/register_screen.dart';
+import 'package:bastetshelter/features/home/presentation/home_screen.dart';
+import 'package:bastetshelter/features/shelter/presentation/code_entry_screen.dart';
+import 'package:bastetshelter/features/shelter/presentation/manager_picker_screen.dart';
+import 'package:bastetshelter/features/shelter/presentation/role_picker_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  configureDependencies();
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,8 +28,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Bastet Shelter',
-      theme: ThemeData(useMaterial3: true),
-      home: const ExampleScreen(),
+      theme: ThemeData(
+        useMaterial3: true,
+        primarySwatch: Colors.brown,
+      ),
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/role/picker':        (_) => const RolePickerScreen(),
+        '/role/volunteer-code':  (_) => const CodeEntryScreen(mode: CodeScreenMode.volunteer),
+        '/role/manager-code': (_) => const CodeEntryScreen(mode: CodeScreenMode.manager),
+        '/role/manager-picker': (_) => const ManagerPickerScreen(),
+        '/shelter/config': (_) => const ConfigScreen(),
+      },
     );
   }
 }

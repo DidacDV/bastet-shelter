@@ -1,5 +1,8 @@
+from typing import Optional
+
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
+from dataclasses import dataclass
 
 from app.database import Base
 
@@ -14,3 +17,10 @@ class User(Base):
     login_id = Column(Integer, ForeignKey("login.id"), unique=True)
 
     login = relationship("Login")
+
+
+@dataclass
+class AuthenticatedUser:
+    user: User
+    role: Optional[str]
+    shelter_id: Optional[int] = None

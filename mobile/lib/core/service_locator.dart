@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
@@ -12,4 +13,5 @@ void configureDependencies() {
   getIt.registerSingleton<AuthRepository>(AuthRepository(getIt<ApiClient>()));
   getIt.registerSingleton<ShelterRepository>(ShelterRepository(getIt<ApiClient>()));
   getIt.registerLazySingleton<AuthService>(() => AuthService(getIt<ApiClient>()));
+  getIt.registerLazySingleton<NavigationService>(() => NavigationService());
 }

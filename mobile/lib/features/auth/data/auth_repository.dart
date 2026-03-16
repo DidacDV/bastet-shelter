@@ -10,7 +10,7 @@ class AuthRepository {
       'password': password,
     });
     final token = data['access_token'];
-    _client.setToken(token);
+    await _client.setToken(token);
     return token;
   }
 
@@ -23,11 +23,11 @@ class AuthRepository {
       'password': password,
     });
     final token = data['access_token'];
-    _client.setToken(token);
+    await _client.setToken(token);
     return token;
   }
 
   Future<void> logout() async {
-    _client.clearToken();
+    await _client.clearToken();
   }
 }

@@ -7,12 +7,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiException implements Exception {
   final int statusCode;
-  final String body;
+  final String message;
 
-  ApiException(this.statusCode, this.body);
+  ApiException(this.statusCode, this.message);
 
   @override
-  String toString() => 'ApiException: $statusCode $body';
+  String toString() => message;
 }
 
 class ApiClient {
@@ -90,11 +90,30 @@ class ApiClient {
       return jsonDecode(response.body);
     }
     if (response.statusCode == 401) {
-      NavigationService.instance.redirectToLogin();
       clearToken();
-      NavigationService.instance.showSnackBar("api expired", isError: true);
+      NavigationService.instance.redirectToLogin();
+      NavigationService.instance.showSnackBar("Session expired, please log in again", isError: true);
+      throw ApiException(401, 'Session expired');
     }
-     throw ApiException(response.statusCode, response.body);
+    String message;
+    try {
+      final body = jsonDecode(response.body);
+      message = body['detail'] ?? _defaultMessage(response.statusCode);
+    } catch (_) {
+      message = _defaultMessage(response.statusCode);
+    }
+     throw ApiException(response.statusCode, message);
+  }
+
+  String _defaultMessage(int statusCode) {
+    switch (statusCode) {
+      case 400: return 'Invalid request';
+      case 403: return 'You don\'t have permission to do this';
+      case 404: return 'Not found';
+      case 409: return 'This already exists';
+      case 500: return 'Server error, please try again later';
+      default:  return 'Something went wrong';
+    }
   }
 
   // generic function that returns a value stored in the JWT token
@@ -109,5 +128,4 @@ class ApiClient {
       return null;
     }
   }
-
 }

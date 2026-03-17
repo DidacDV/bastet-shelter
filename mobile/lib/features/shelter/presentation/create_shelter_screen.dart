@@ -1,4 +1,3 @@
-import 'package:bastetshelter/features/auth/data/auth_repository.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/service_locator.dart';

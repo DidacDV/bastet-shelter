@@ -1,3 +1,5 @@
+import 'package:bastetshelter/core/navigation_service.dart';
+import 'package:bastetshelter/core/network/api_client.dart';
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +51,8 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
         hasMembership ? '/home' : '/role/picker',
       );
+    } on ApiException catch(e) {
+      NavigationService.instance.showSnackBar(e.message, isError: true);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

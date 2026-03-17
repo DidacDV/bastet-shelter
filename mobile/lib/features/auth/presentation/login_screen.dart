@@ -1,5 +1,4 @@
-import 'package:bastetshelter/core/navigation_service.dart';
-import 'package:bastetshelter/core/network/api_client.dart';
+import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';
 import 'package:flutter/material.dart';
@@ -35,33 +34,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
 
-    try {
+    await genericApiCall(() async {
       await _authRepository.login(
-        _emailController.text,
-        _passwordController.text,
-      );
-
-      if (!mounted) return;
-
-      // if the user isn't in any shelter, go back to the role picker process
+          _emailController.text, _passwordController.text);
       final hasMembership = await _shelterRepository.hasMembership();
-
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(
-        context,
-        hasMembership ? '/home' : '/role/picker',
-      );
-    } on ApiException catch(e) {
-      NavigationService.instance.showSnackBar(e.message, isError: true);
-    } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: ${e.toString()}')),
-        );
+        Navigator.pushReplacementNamed(context,
+            hasMembership ? '/home' : '/role/picker');
       }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
+    });
+
+    if (mounted) setState(() => _isLoading = false);
   }
 
   @override

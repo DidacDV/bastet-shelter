@@ -3,7 +3,7 @@ import 'package:bastetshelter/features/auth/data/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bastetshelter/features/shelter/providers/shelter_provider.dart';
+import 'package:bastetshelter/features/shelter/providers/shelter_notifier.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});

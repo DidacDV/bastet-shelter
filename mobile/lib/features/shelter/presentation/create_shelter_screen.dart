@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/service_locator.dart';
@@ -31,22 +32,15 @@ class _LoginScreenState extends State<CreateShelterScreen> {
 
     setState(() => _isLoading = true);
 
-    try {
+    await genericApiCall(() async {
       await _shelterRepository.createShelter(
         _nameController.text,
         _locationController.text,
       );
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/home');
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Create shelter failed: ${e.toString()}')),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
+      if (mounted) Navigator.pushReplacementNamed(context, '/home');
+    });
+
+    if (mounted) setState(() => _isLoading = false);
   }
 
   @override

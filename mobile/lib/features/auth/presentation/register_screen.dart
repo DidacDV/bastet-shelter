@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
@@ -36,32 +37,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _isLoading = true;
       });
 
-      try {
-        await _repository.register(_nameController.text,
-            _lastname1Controller.text,
-            _lastname2Controller.text,
-            _emailController.text,
-            _passwordController.text);
-        
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Registration successful!')),
-          );
-          Navigator.pushReplacementNamed(context, '/role/picker');
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Registration failed: ${e.toString()}')),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+    genericApiCall(() async {
+      await _repository.register(_nameController.text,
+          _lastname1Controller.text,
+          _lastname2Controller.text,
+          _emailController.text,
+          _passwordController.text);
+
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/role/picker');
       }
+    });
+
+    if (mounted) setState(() => _isLoading = false);
     }
   }
 

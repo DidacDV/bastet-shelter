@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'shelter_provider.dart';
+part of 'shelter_notifier.dart';
 
 // **************************************************************************
 // RiverpodGenerator

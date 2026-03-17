@@ -2,19 +2,26 @@ import 'package:bastetshelter/core/auth/auth_service.dart';
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/service_locator.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:bastetshelter/features/shelter/providers/shelter_provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final authRepository = getIt<AuthRepository>();
 
     final authService = getIt<AuthService>();
+    final shelterAsync = ref.watch(shelterProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bastet Shelter Home'),
+        title: shelterAsync.when(
+          data: (shelter) => Text(shelter.name),
+          loading: () => const Text('Loading...'),
+          error: (_, _) => const Text('Bastet Shelter'),
+        ),
         actions: [
           if (authService.isManager)
             IconButton(

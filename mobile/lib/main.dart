@@ -1,5 +1,6 @@
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/features/shelter/presentation/configuration_screen.dart';
+import 'package:bastetshelter/features/shelter/presentation/create_shelter_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bastetshelter/features/auth/presentation/login_screen.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         '/role/volunteer-code':  (_) => const CodeEntryScreen(mode: CodeScreenMode.volunteer),
         '/role/manager-code': (_) => const CodeEntryScreen(mode: CodeScreenMode.manager),
         '/role/manager-picker': (_) => const ManagerPickerScreen(),
+        '/role/create-shelter': (_) => const CreateShelterScreen(),
         '/shelter/config': (_) => const ConfigScreen(),
       },
     );

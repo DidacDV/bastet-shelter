@@ -25,5 +25,4 @@ class Animal(Base):
     refuge_id: Mapped[int] = mapped_column(ForeignKey("refuge.id"), nullable=False)
 
     refuge = relationship("Refuge", back_populates="animals")
-    treatments = relationship("Treatment", back_populates="animal")
     shift_tasks = relationship("ShiftTask", back_populates="animal")

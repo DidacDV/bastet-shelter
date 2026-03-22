@@ -8,6 +8,11 @@ from app.models.login import Login
 from app.models.shelter import Shelter
 from app.models.shelter_member import ShelterMember, Volunteer, Manager
 from app.models.animal import Animal
+from app.models.refuge import Refuge
+from app.models.task.task import Task
+from app.models.task.shift_task import ShiftTask
+from app.models.shift.shift import Shift
+from app.models.shift.shift_participant import ShiftParticipant
 
 from alembic import context
 
@@ -50,6 +55,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        render_as_batch=True,
     )
 
     with context.begin_transaction():
@@ -71,7 +77,8 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection, target_metadata=target_metadata,
+            render_as_batch=True,
         )
 
         with context.begin_transaction():

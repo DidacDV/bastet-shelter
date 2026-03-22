@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:bastetshelter/features/auth/presentation/login_screen.dart';
 import 'package:bastetshelter/features/auth/presentation/register_screen.dart';
 import 'package:bastetshelter/features/home/presentation/home_screen.dart';
-import 'package:bastetshelter/features/shelter/presentation/code_entry_screen.dart';
-import 'package:bastetshelter/features/shelter/presentation/manager_picker_screen.dart';
-import 'package:bastetshelter/features/shelter/presentation/role_picker_screen.dart';
+import 'package:bastetshelter/features/first_steps/presentation/code_entry_screen.dart';
+import 'package:bastetshelter/features/first_steps/presentation/manager_picker_screen.dart';
+import 'package:bastetshelter/features/first_steps/presentation/role_picker_screen.dart';
 import 'package:bastetshelter/core/network/api_client.dart';
 import 'package:bastetshelter/core/navigation_service.dart';
 

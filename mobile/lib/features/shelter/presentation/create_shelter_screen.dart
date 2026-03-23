@@ -17,6 +17,7 @@ class _LoginScreenState extends State<CreateShelterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _locationController = TextEditingController();
+  final _refugeNameController = TextEditingController();
   final _shelterRepository = getIt<ShelterRepository>();
   bool _isLoading = false;
 
@@ -24,6 +25,7 @@ class _LoginScreenState extends State<CreateShelterScreen> {
   void dispose() {
     _nameController.dispose();
     _locationController.dispose();
+    _refugeNameController.dispose();
     super.dispose();
   }
 
@@ -36,6 +38,7 @@ class _LoginScreenState extends State<CreateShelterScreen> {
       await _shelterRepository.createShelter(
         _nameController.text,
         _locationController.text,
+        _refugeNameController.text,
       );
       if (mounted) Navigator.pushReplacementNamed(context, '/home');
     });
@@ -66,8 +69,13 @@ class _LoginScreenState extends State<CreateShelterScreen> {
                   AppTextField(
                     controller: _locationController,
                     label: 'Shelter Location',
-                    obscure: true,
                     validator: (value) => Validators.validateRequired(value, "shelter's location"),
+                  ),
+                  const SizedBox(height: 16),
+                  AppTextField(
+                    controller: _refugeNameController,
+                    label: 'Name of your first refuge',
+                    validator: (value) => Validators.validateRequired(value, "refuge name"),
                   ),
                   const SizedBox(height: 24),
                   PrimaryButton(

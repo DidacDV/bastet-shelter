@@ -26,10 +26,11 @@ class ShelterRepository {
     _client.setToken(data['access_token']);
   }
 
-  Future<void> createShelter(String name, String location) async {
+  Future<void> createShelter(String name, String location, String refugeName) async {
     final data = await _client.post('/shelters/', body: {
       'name': name,
       'location': location,
+      'refuge_name': refugeName,
     });
     final token = data['access_token'];
     _client.setToken(token);
@@ -38,7 +39,7 @@ class ShelterRepository {
   Future<Shelter> getShelterInfo() async {
     final shelterId = _client.getTokenClaim<int>('shelter_id');
     if (shelterId == null) throw ApiException(401, 'No shelter in token');
-    final response = await _client.get('/shelters/?shelter_id=$shelterId');
+    final response = await _client.get('/shelters/info');
     return Shelter.fromJson(response);
   }
 

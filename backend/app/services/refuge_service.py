@@ -6,7 +6,7 @@ from app.schemas.refuge_schema import RefugeCreate, RefugeResponse
 class RefugeService:
     def __init__(self, db: Session):
         self.db = db
-        self.refuge_repo = RefugeRepository()
+        self.refuge_repo = RefugeRepository(db)
 
     def create_refuge(self, data: RefugeCreate, shelter_id: int) -> RefugeResponse:
         """Creates refuge linked to shelter"""

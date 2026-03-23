@@ -21,12 +21,12 @@ class ShiftService:
     def __init__(self, db: Session):
         self.db = db
         self.member_repo = ShelterMemberRepository(db)
-        self.shift_repo = ShiftRepository()
-        self.participant_repo = ShiftParticipantRepository()
-        self.shift_task_repo = ShiftTaskRepository()
-        self.task_repo = TaskRepository()
-        self.animal_repo = AnimalRepository()
-        self.refuge_repo = RefugeRepository()
+        self.shift_repo = ShiftRepository(db)
+        self.participant_repo = ShiftParticipantRepository(db)
+        self.shift_task_repo = ShiftTaskRepository(db)
+        self.task_repo = TaskRepository(db)
+        self.animal_repo = AnimalRepository(db)
+        self.refuge_repo = RefugeRepository(db)
 
     def create_shift(self, data: ShiftCreate, refuge_id: int, shelter_id: int) -> ShiftResponse:
         """Creates shift for a refuge linked to a shelter"""

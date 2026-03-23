@@ -14,11 +14,11 @@ def _register_and_login(client, email="user@example.com", name="John"):
 def _auth_headers(token):
     return {"Authorization": f"Bearer {token}"}
 
-def _create_shelter(client, token, name="Rodamons", location="Barcelona"):
+def _create_shelter(client, token, name="Rodamons", location="Barcelona", refuge_name="refuge"):
     """Helper that returns (new_token, volunteer_code, manager_code)"""
     res = client.post(
         "/shelters/",
-        json={"name": name, "location": location},
+        json={"name": name, "location": location, "refuge_name": refuge_name},
         headers=_auth_headers(token)
     )
     assert res.status_code == 201, res.json()

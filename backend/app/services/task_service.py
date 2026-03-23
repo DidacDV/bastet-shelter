@@ -6,7 +6,7 @@ from app.schemas.task_schema.task_schema import TaskCreate, TaskResponse
 class TaskService:
     def __init__(self, db: Session):
         self.db = db
-        self.task_repo = TaskRepository()
+        self.task_repo = TaskRepository(db)
 
     def create_task(self, data: TaskCreate, shelter_id: int) -> TaskResponse:
         """Creates a reusable task template"""

@@ -4,8 +4,10 @@ from sqlalchemy.orm import Session
 
 from app.core.security import create_access_token
 from app.core.utils import generate_code
+from app.models.refuge import Refuge
 from app.models.shelter import Shelter
 from app.models.shelter_member import RoleEnum, Manager, Volunteer
+from app.repositories.refuge_repo import RefugeRepository
 from app.repositories.shelter_repo import ShelterRepository
 from app.repositories.shelter_member_repo import ShelterMemberRepository
 from app.schemas.shelter_schema import ShelterCreate, ShelterResponse
@@ -14,18 +16,23 @@ from app.schemas.shelter_member_schema import ShelterMemberResponse, ShelterMemb
 
 class ShelterService:
     def __init__(self, db: Session):
+        self.refuge_repo = RefugeRepository(db)
         self.db = db
         self.shelter_repo = ShelterRepository()
         self.member_repo = ShelterMemberRepository(db)
 
     #Shelter
     def create_shelter(self, data: ShelterCreate, user_id: int, user_email: str) -> dict:
-        """Creates a new shelter and adds the user as manager"""
-        new_shelter = Shelter(**data.model_dump())
+        new_shelter = Shelter(name=data.name, location=data.location)
         created_shelter = self.shelter_repo.create(self.db, new_shelter)
-        self.create_manager_member_by_id(user_id, created_shelter.id)
 
-        new_token = create_access_token(data={"sub": user_email, "role": RoleEnum.MANAGER.value, "shelter_id": created_shelter.id})
+        # TODO: Refactor with its own location
+        first_refuge = Refuge(name=data.refuge_name, location=new_shelter.location, shelter_id=created_shelter.id)
+        self.refuge_repo.create(self.db, first_refuge)
+
+        self.create_manager_member_by_id(user_id, created_shelter.id)
+        new_token = create_access_token(
+            data={"sub": user_email, "role": RoleEnum.MANAGER.value, "shelter_id": created_shelter.id})
         return {
             "shelter": ShelterResponse.model_validate(created_shelter),
             "access_token": new_token,

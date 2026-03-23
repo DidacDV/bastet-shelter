@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';
@@ -30,7 +31,7 @@ class _CodeEntryScreenState extends State<CodeEntryScreen> {
 
     setState(() => _isLoading = true);
 
-    try {
+    await genericApiCall(() async {
       switch (widget.mode) {
         case CodeScreenMode.volunteer:
           await _repository.joinAsVolunteer(code);
@@ -39,19 +40,12 @@ class _CodeEntryScreenState extends State<CodeEntryScreen> {
           await _repository.joinAsManager(code);
           break;
       }
-
       if (mounted) {
         Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
       }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed: ${e.toString()}')),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
+    });
+
+    if (mounted) setState(() => _isLoading = false);
   }
 
   @override

@@ -1,28 +1,49 @@
 import 'dart:convert';
 
+import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:bastetshelter/core/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiException implements Exception {
   final int statusCode;
-  final String body;
+  final String message;
 
-  ApiException(this.statusCode, this.body);
+  ApiException(this.statusCode, this.message);
 
   @override
-  String toString() => 'ApiException: $statusCode $body';
+  String toString() => message;
 }
 
 class ApiClient {
   final http.Client _client = http.Client();
   String? _accessToken;
+  static const String _tokenKey = 'access_token';
 
-  void setToken(String token) {
-    _accessToken = token;
+  Future<void> loadTokenFromStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    _accessToken = prefs.getString(_tokenKey);
   }
 
-  void clearToken() {
+  Future<void> setToken(String token) async {
+    _accessToken = token;
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(_tokenKey, token);
+  }
+
+  Future<void> clearToken() async {
     _accessToken = null;
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove(_tokenKey);
+  }
+
+  bool get hasValidToken {
+    if (_accessToken == null) return false;
+    final exp = getTokenClaim<int>('exp');
+    if (exp == null) return false;
+    return DateTime.now().isBefore(
+        DateTime.fromMillisecondsSinceEpoch(exp * 1000)
+    );
   }
 
   Future<Map<String, dynamic>> get(String endpoint) async {
@@ -67,8 +88,31 @@ class ApiClient {
   Map<String, dynamic> _handleResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return jsonDecode(response.body);
-    } else {
-      throw ApiException(response.statusCode, response.body);
+    }
+    if (response.statusCode == 401) {
+      clearToken();
+      NavigationService.instance.redirectToLogin();
+      NavigationService.instance.showSnackBar("Session expired, please log in again", isError: true);
+      throw ApiException(401, 'Session expired');
+    }
+    String message;
+    try {
+      final body = jsonDecode(response.body);
+      message = body['detail'] ?? _defaultMessage(response.statusCode);
+    } catch (_) {
+      message = _defaultMessage(response.statusCode);
+    }
+     throw ApiException(response.statusCode, message);
+  }
+
+  String _defaultMessage(int statusCode) {
+    switch (statusCode) {
+      case 400: return 'Invalid request';
+      case 403: return 'You don\'t have permission to do this';
+      case 404: return 'Not found';
+      case 409: return 'This already exists';
+      case 500: return 'Server error, please try again later';
+      default:  return 'Something went wrong';
     }
   }
 
@@ -84,5 +128,4 @@ class ApiClient {
       return null;
     }
   }
-
 }

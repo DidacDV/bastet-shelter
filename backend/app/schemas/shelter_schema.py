@@ -4,6 +4,7 @@ from pydantic import BaseModel, ConfigDict
 class ShelterCreate(BaseModel):
     name: str
     location: str
+    refuge_name: str
 
 
 class ShelterResponse(BaseModel):

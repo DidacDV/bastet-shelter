@@ -43,7 +43,7 @@ def test_create_shelter_returns_token_and_shelter(service):
     service.shelter_repo.create.return_value = _mock_shelter()
 
     result = service.create_shelter(
-        data=ShelterCreate(name="Rodamons", location="Barcelona"),
+        data=ShelterCreate(name="Rodamons", location="Barcelona", refuge_name="refuge"),
         user_id=1,
         user_email="owner@example.com"
     )
@@ -57,7 +57,7 @@ def test_create_shelter_adds_user_as_manager(service):
     service.shelter_repo.create.return_value = _mock_shelter()
 
     service.create_shelter(
-        data=ShelterCreate(name="Rodamons", location="Barcelona"),
+        data=ShelterCreate(name="Rodamons", location="Barcelona", refuge_name="refuge"),
         user_id=1,
         user_email="owner@example.com"
     )

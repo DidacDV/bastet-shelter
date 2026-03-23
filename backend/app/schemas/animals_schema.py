@@ -1,13 +1,28 @@
+from datetime import date
+
 from pydantic import BaseModel, ConfigDict
 
+from app.models.animal import AnimalTypeEnum
 
-class AnimalBase(BaseModel):
+
+class AnimalCreate(BaseModel):
     name: str
+    birth_date: date
+    description: str
+    breed: str
+    animal_type: AnimalTypeEnum
+    in_adoption: bool = False
+    refuge_id: int
 
-class AnimalCreate(AnimalBase):
-    pass
 
-class AnimalResponse(AnimalBase):
+class AnimalResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    id: int
     name: str
+    birth_date: date
+    description: str
+    breed: str
+    animal_type: AnimalTypeEnum
+    in_adoption: bool
+    refuge_id: int

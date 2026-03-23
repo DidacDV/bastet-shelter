@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bastetshelter/features/shelter/providers/shelter_provider.dart';
+import 'package:bastetshelter/features/shelter/providers/shelter_notifier.dart';
 
 class ConfigScreen extends ConsumerWidget {
   const ConfigScreen({super.key});

@@ -4,8 +4,9 @@ from app.models.task.task import TaskStatusEnum
 from app.repositories.generic_repo import BaseRepository
 
 class ShiftTaskRepository(BaseRepository[ShiftTask]):
-    def __init__(self):
+    def __init__(self, db: Session):
         super().__init__(ShiftTask)
+        self.db = db
 
     def get_by_shift(self, db: Session, shift_id: int) -> list[ShiftTask]:
         return db.query(ShiftTask).filter(ShiftTask.shift_id == shift_id).all()

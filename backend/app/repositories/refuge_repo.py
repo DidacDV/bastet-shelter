@@ -3,8 +3,9 @@ from app.models.refuge import Refuge
 from app.repositories.generic_repo import BaseRepository
 
 class RefugeRepository(BaseRepository[Refuge]):
-    def __init__(self):
+    def __init__(self, db: Session):
         super().__init__(Refuge)
+        self.db = db
 
     def get_by_shelter(self, db: Session, shelter_id: int) -> list[Refuge]:
         return db.query(Refuge).filter(Refuge.shelter_id == shelter_id).all()

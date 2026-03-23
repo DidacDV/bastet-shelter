@@ -3,8 +3,9 @@ from app.models.animal import Animal
 from app.repositories.generic_repo import BaseRepository
 
 class AnimalRepository(BaseRepository[Animal]):
-    def __init__(self):
+    def __init__(self, db: Session):
         super().__init__(Animal)
+        self.db = db
 
     def get_by_refuge(self, db: Session, refuge_id: int) -> list[Animal]:
         return db.query(Animal).filter(Animal.refuge_id == refuge_id).all()

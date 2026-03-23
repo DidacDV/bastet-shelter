@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bastetshelter/features/shelter/providers/shelter_notifier.dart';
+import 'package:bastetshelter/core/providers/shelter_notifier.dart';
 
 class ConfigScreen extends ConsumerWidget {
   const ConfigScreen({super.key});
@@ -27,9 +27,9 @@ class ConfigScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               _InfoRow(label: 'Location', value: shelter.location),
               const SizedBox(height: 12),
-              _InfoRow(label: 'Volunteer Code', value: shelter.volunteerCode),
+              _InfoRow(label: 'Volunteer Code', value: shelter.volunteerCode ?? 'Not available'),
               const SizedBox(height: 12),
-              _InfoRow(label: 'Manager Code', value: shelter.managerCode),
+              _InfoRow(label: 'Manager Code', value: shelter.managerCode ?? 'Not available'),
               const SizedBox(height: 24),
               FilledButton(
                 onPressed: () => ref.read(shelterProvider.notifier).resetVolunteerCode(),

@@ -4,7 +4,8 @@ from app.repositories.generic_repo import BaseRepository
 from sqlalchemy.orm import Session
 
 from app.models.shelter import Shelter
-from app.models.shelter_member import ShelterMember, RoleEnum
+from app.models.shelter_member import ShelterMember, RoleEnum, Volunteer
+
 
 class ShelterMemberRepository(BaseRepository[ShelterMember]):
     def __init__(self, db: Session):
@@ -17,3 +18,7 @@ class ShelterMemberRepository(BaseRepository[ShelterMember]):
 
     def get_by_user(self, user_id: int) -> Optional[ShelterMember]:
         return self.db.query(ShelterMember).join(Shelter).filter(ShelterMember.user_id == user_id).first()
+
+    def count_volunteers(self, db, shelter_id):
+        return (db.query(Volunteer).filter(ShelterMember.shelter_id == shelter_id, ShelterMember.role == RoleEnum.VOLUNTEER)
+            .count())

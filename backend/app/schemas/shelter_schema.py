@@ -15,6 +15,12 @@ class ShelterResponse(BaseModel):
     volunteer_code: str
     manager_code: str
 
+class ShelterBasicInfoResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str
+    location: str
+
 
 class ShelterWithTokenResponse(BaseModel):
     shelter: ShelterResponse

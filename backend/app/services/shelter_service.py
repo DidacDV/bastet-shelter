@@ -10,7 +10,7 @@ from app.models.shelter_member import RoleEnum, Manager, Volunteer
 from app.repositories.refuge_repo import RefugeRepository
 from app.repositories.shelter_repo import ShelterRepository
 from app.repositories.shelter_member_repo import ShelterMemberRepository
-from app.schemas.shelter_schema import ShelterCreate, ShelterResponse
+from app.schemas.shelter_schema import ShelterCreate, ShelterResponse, ShelterBasicInfoResponse
 from app.schemas.shelter_member_schema import ShelterMemberResponse, ShelterMemberInfo
 
 
@@ -43,6 +43,13 @@ class ShelterService:
         shelter = self.shelter_repo.get_by_id(self.db, shelter_id)
         if shelter:
             return ShelterResponse.model_validate(shelter)
+        else:
+            raise ValueError("Shelter not found")
+
+    def get_shelter_basic_info_by_id(self, shelter_id: int) -> Optional[ShelterBasicInfoResponse]:
+        shelter = self.shelter_repo.get_by_id(self.db, shelter_id)
+        if shelter:
+            return ShelterBasicInfoResponse.model_validate(shelter)
         else:
             raise ValueError("Shelter not found")
 

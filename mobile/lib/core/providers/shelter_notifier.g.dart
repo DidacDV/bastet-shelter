@@ -80,7 +80,7 @@ final class ShelterNotifierProvider
   ShelterNotifier create() => ShelterNotifier();
 }
 
-String _$shelterNotifierHash() => r'13e7d1e3b4fcc594388c662660245abf964298db';
+String _$shelterNotifierHash() => r'44f56acde96ea0feedaa74fb75f66f48e309bba7';
 
 abstract class _$ShelterNotifier extends $AsyncNotifier<Shelter> {
   FutureOr<Shelter> build();

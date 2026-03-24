@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/navigation_service.dart';
+import 'package:bastetshelter/features/geo/data/geo_repository.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
@@ -16,4 +17,5 @@ void configureDependencies() {
   getIt.registerLazySingleton<AuthService>(() => AuthService(getIt<ApiClient>()));
   getIt.registerLazySingleton<DashboardRepository>(() => DashboardRepository(getIt<ApiClient>()));
   getIt.registerLazySingleton<NavigationService>(() => NavigationService());
+  getIt.registerLazySingleton<GeoRepository>(() => GeoRepository(getIt<ApiClient>()));
 }

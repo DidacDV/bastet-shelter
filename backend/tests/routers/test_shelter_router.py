@@ -106,4 +106,16 @@ def test_volunteer_cannot_reset_codes(client):
     assert client.post("/shelters/reset/volunteer", headers=_auth_headers(vol_token)).status_code == 403
     assert client.post("/shelters/reset/manager", headers=_auth_headers(vol_token)).status_code == 403
 
+def test_get_shelter_basic_info(client):
+    token = _register_and_login(client)
+    manager_token, _, _ = _create_shelter(client, token, name="Shelter X", refuge_name="Main Refuge")
+    
+    res = client.get("/shelters/info", headers=_auth_headers(manager_token))
+    assert res.status_code == 200
+    data = res.json()
+    assert data["name"] == "Shelter X"
+    assert "refuges" in data
+    assert len(data["refuges"]) == 1
+    assert data["refuges"][0]["name"] == "Main Refuge"
+
 # endregion

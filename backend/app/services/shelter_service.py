@@ -46,6 +46,7 @@ class ShelterService:
         else:
             raise ValueError("Shelter not found")
 
+    #doesn't include manager and volunteer codes
     def get_shelter_basic_info_by_id(self, shelter_id: int) -> Optional[ShelterBasicInfoResponse]:
         shelter = self.shelter_repo.get_by_id(self.db, shelter_id)
         if shelter:

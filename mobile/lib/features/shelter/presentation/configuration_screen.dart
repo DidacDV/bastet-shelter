@@ -40,6 +40,13 @@ class ConfigScreen extends ConsumerWidget {
                 onPressed: () => ref.read(shelterProvider.notifier).resetManagerCode(),
                 child: const Text('Change Manager Code'),
               ),
+              const SizedBox(height: 12),
+              const Text('Refuges', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
+              for (final refuge in shelter.refuges) ...[
+                _InfoRow(label: refuge.name, value: refuge.location),
+                const SizedBox(height: 12),
+              ],
             ],
           ),
         ),

@@ -1,3 +1,5 @@
+import 'package:bastetshelter/core/providers/geo_provider.dart';
+import 'package:bastetshelter/features/common/components/location_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bastetshelter/core/providers/shelter_notifier.dart';
@@ -8,6 +10,7 @@ class ConfigScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final shelterAsync = ref.watch(shelterProvider);
+    final provinces = ref.watch(geoProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Configuration')),
@@ -47,6 +50,25 @@ class ConfigScreen extends ConsumerWidget {
                 _InfoRow(label: refuge.name, value: refuge.location),
                 const SizedBox(height: 12),
               ],
+              Flexible(
+                child: provinces.when(
+                  data: (provinceList) {
+                    final List<String> provinceNames = provinceList.map((province) => province.name).toList();
+                    return LocationDropdown(
+                      items: provinceNames,
+                      initialItem: 'BARCELONA',
+                      onChanged: (value) {
+                        print('Selected location: $value');
+                      },
+                    );
+                  },
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (e, stack) => Text(
+                    'Failed to load provinces: $e',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+              )
             ],
           ),
         ),

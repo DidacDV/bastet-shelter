@@ -5,7 +5,8 @@ from app.core.dependencies import get_current_user, require_shelter_manager, req
 from app.database import get_db
 from app.models.user import AuthenticatedUser
 from app.schemas.shelter_member_schema import ShelterMemberInfo
-from app.schemas.shelter_schema import ShelterResponse, ShelterCreate, ShelterWithTokenResponse
+from app.schemas.shelter_schema import ShelterResponse, ShelterCreate, ShelterWithTokenResponse, \
+    ShelterBasicInfoResponse
 from app.services.shelter_service import ShelterService
 
 router = APIRouter(prefix="/shelters", tags=["shelters"])
@@ -31,6 +32,16 @@ def get_shelter_info(
 ):
     try:
         return service.get_shelter_by_id(shelter_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@router.get("/info", response_model=ShelterBasicInfoResponse, status_code=status.HTTP_200_OK)
+def get_shelter_basic_info(
+        service: ShelterService = Depends(get_shelter_service),
+        auth: AuthenticatedUser = Depends(require_shelter_volunteer)
+):
+    try:
+        return service.get_shelter_basic_info_by_id(auth.shelter_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 

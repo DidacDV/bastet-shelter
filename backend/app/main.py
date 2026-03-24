@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.database import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.routers.dashboard_router import router as dashboard_router
 from app.routers.auth_router import router as auth_router
 from app.routers.user_router import router as user_router
 from app.routers.animal_router import router as animal_router
@@ -28,6 +29,7 @@ app.include_router(shelter_router)
 app.include_router(refuge_router)
 app.include_router(task_router)
 app.include_router(shift_router)
+app.include_router(dashboard_router)
 @app.get("/")
 def root():
     return {"message": "bastet is running"}

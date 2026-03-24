@@ -1,14 +1,14 @@
 class Shelter {
   final String name;
   final String location;
-  final String volunteerCode;
-  final String managerCode;
+  final String? volunteerCode;
+  final String? managerCode;
 
   Shelter({
     required this.name,
     required this.location,
-    required this.volunteerCode,
-    required this.managerCode,
+    this.volunteerCode,
+    this.managerCode,
   });
 
   factory Shelter.fromJson(Map<String, dynamic> json) {

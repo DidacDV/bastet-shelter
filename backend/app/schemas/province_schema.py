@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
@@ -6,6 +8,6 @@ class ProvinceResponse(BaseModel):
 
     id: str
     name: str
-    community_code: str
-    last_updated: datetime
 
+class ProvinceListResponse(BaseModel):
+    provinces: List[ProvinceResponse]

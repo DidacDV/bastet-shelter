@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class GeoService:
     @staticmethod
     def get_provinces(db: Session):
-        return db.query(Province.name).order_by(Province.name).all()
+        return db.query(Province.name, Province.id).order_by(Province.name).all()
 
     @staticmethod
     async def fetch_and_update_provinces(db: Session, key: str):

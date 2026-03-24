@@ -1,0 +1,57 @@
+import httpx
+from datetime import datetime, timedelta
+from sqlalchemy.orm import Session
+from app.models.province import Province
+from app.core.config import settings
+import logging
+
+logger = logging.getLogger(__name__)
+
+class GeoService:
+    @staticmethod
+    def get_provinces(db: Session):
+        return db.query(Province.name).order_by(Province.name).all()
+
+    @staticmethod
+    async def fetch_and_update_provinces(db: Session, key: str):
+        url = f"https://apiv1.geoapi.es/provincias?type=JSON&version=2025.07&key={key}"
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.get(url)
+                response.raise_for_status()
+                data = response.json()
+                
+                provinces_data = data.get("data", [])
+                for p in provinces_data:
+                    cpro = p.get("CPRO")
+                    name = p.get("PRO")
+                    ccom = p.get("CCOM")
+                    
+                    if not cpro or not name:
+                        continue
+                        
+                    province = db.query(Province).filter(Province.id == cpro).first()
+                    if province:
+                        province.name = name
+                        province.community_code = ccom
+                    else:
+                        new_province = Province(id=cpro, name=name, community_code=ccom)
+                        db.add(new_province)
+                
+                db.commit()
+                logger.info("Provinces updated successfully")
+            except Exception as e:
+                logger.error(f"Error fetching provinces: {e}")
+                db.rollback()
+
+    @staticmethod
+    async def run_periodic_update(db: Session):
+        if db.query(Province).count() == 0 or db.query(Province).first().last_updated < datetime.now() - timedelta(days=365): #update every year? :p
+            api_key = getattr(settings, "GEOAPI_KEY", None)
+            if api_key:
+                logger.info("Starting periodic provinces update...")
+                await GeoService.fetch_and_update_provinces(db, api_key)
+            else:
+                logger.error("GEOAPI_KEY not found")
+        else:
+            logger.info("Provinces already up to date")

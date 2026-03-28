@@ -1,8 +1,8 @@
-import 'package:bastetshelter/core/providers/geo_provider.dart';
-import 'package:bastetshelter/features/common/components/location_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bastetshelter/core/providers/shelter_notifier.dart';
+
+import 'components/add_refuge_modal.dart';
 
 class ConfigScreen extends ConsumerWidget {
   const ConfigScreen({super.key});
@@ -10,7 +10,6 @@ class ConfigScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final shelterAsync = ref.watch(shelterProvider);
-    final provinces = ref.watch(geoProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Configuration')),
@@ -28,7 +27,7 @@ class ConfigScreen extends ConsumerWidget {
               const SizedBox(height: 24),
               _InfoRow(label: 'Name', value: shelter.name),
               const SizedBox(height: 12),
-              _InfoRow(label: 'Location', value: shelter.location),
+              _InfoRow(label: 'Location', value: shelter.province.name),
               const SizedBox(height: 12),
               _InfoRow(label: 'Volunteer Code', value: shelter.volunteerCode ?? 'Not available'),
               const SizedBox(height: 12),
@@ -47,28 +46,21 @@ class ConfigScreen extends ConsumerWidget {
               const Text('Refuges', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               for (final refuge in shelter.refuges) ...[
-                _InfoRow(label: refuge.name, value: refuge.location),
+                _InfoRow(label: refuge.name, value: refuge.province.name),
                 const SizedBox(height: 12),
               ],
-              Flexible(
-                child: provinces.when(
-                  data: (provinceList) {
-                    final List<String> provinceNames = provinceList.map((province) => province.name).toList();
-                    return LocationDropdown(
-                      items: provinceNames,
-                      initialItem: 'BARCELONA',
-                      onChanged: (value) {
-                        print('Selected location: $value');
-                      },
-                    );
-                  },
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (e, stack) => Text(
-                    'Failed to load provinces: $e',
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ),
-              )
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) => const AddRefugeModal(),
+                  );
+                },
+                icon: const Icon(Icons.add_location_alt_outlined),
+                label: const Text('Add Refuge'),
+              ),
             ],
           ),
         ),

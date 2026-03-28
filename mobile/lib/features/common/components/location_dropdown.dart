@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../geo/data/province_model.dart';
+
 class LocationDropdown extends StatefulWidget {
-  final List<String> items;
+  final List<Province> items;
   final String? initialItem;
   final ValueChanged<String?>? onChanged;
 
@@ -24,12 +26,14 @@ class _LocationDropdownState extends State<LocationDropdown> {
     return SizedBox(
       width: double.infinity,
       child: DropdownMenu<String>(
-        hintText: 'Select a fruit',
+        hintText: 'Type a province here',
         initialSelection: widget.initialItem,
         enableFilter: true,
         requestFocusOnTap: true,
+        menuHeight: 300,
+        showTrailingIcon: true,
         leadingIcon: const Icon(Icons.search),
-        dropdownMenuEntries: widget.items.map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
+        dropdownMenuEntries: widget.items.map((p) => DropdownMenuEntry(value: p.id, label: p.name)).toList(),
         onSelected: (String? newValue) {
           setState(() {
             selectedItem = newValue;

@@ -1,13 +1,15 @@
+import '../../geo/data/province_model.dart';
+
 class Refuge {
   final int id;
   final String name;
-  final String location;
+  final Province province;
   final int shelterId;
 
   Refuge({
     required this.id,
     required this.name,
-    required this.location,
+    required this.province,
     required this.shelterId,
   });
 
@@ -15,7 +17,7 @@ class Refuge {
     return Refuge(
       id: json['id'],
       name: json['name'],
-      location: json['location'],
+      province: Province.fromJson(json['province']),
       shelterId: json['shelter_id'],
     );
   }

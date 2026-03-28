@@ -1,15 +1,17 @@
 import 'package:bastetshelter/features/shelter/data/refuge_model.dart';
 
+import '../../geo/data/province_model.dart';
+
 class Shelter {
   final String name;
-  final String location;
+  final Province province;
   final String? volunteerCode;
   final String? managerCode;
   final List<Refuge> refuges;
 
   Shelter({
     required this.name,
-    required this.location,
+    required this.province,
     this.volunteerCode,
     this.managerCode,
     this.refuges = const [],
@@ -18,7 +20,7 @@ class Shelter {
   factory Shelter.fromJson(Map<String, dynamic> json) {
     return Shelter(
       name: json['name'],
-      location: json['location'],
+      province: Province.fromJson(json['province']),
       volunteerCode: json['volunteer_code'],
       managerCode: json['manager_code'],
       refuges: (json['refuges'] as List<dynamic>?)?.map((refuge) => Refuge.fromJson(refuge)).toList() ??
@@ -33,7 +35,7 @@ class Shelter {
   }) {
     return Shelter(
       name: name,
-      location: location,
+      province: province,
       volunteerCode: volunteerCode ?? this.volunteerCode,
       managerCode: managerCode ?? this.managerCode,
       refuges: refuges ?? this.refuges,

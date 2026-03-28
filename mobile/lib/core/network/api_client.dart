@@ -41,6 +41,8 @@ class ApiClient {
     if (_accessToken == null) return false;
     final exp = getTokenClaim<int>('exp');
     if (exp == null) return false;
+    final hasShelter = getTokenClaim<int>('shelter_id') != null;
+    if (!hasShelter) return false;
     return DateTime.now().isBefore(
         DateTime.fromMillisecondsSinceEpoch(exp * 1000)
     );

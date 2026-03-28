@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/network/api_client.dart';
+import 'package:bastetshelter/features/shelter/data/refuge_model.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_model.dart';
 
 class ShelterRepository {
@@ -29,7 +30,7 @@ class ShelterRepository {
   Future<void> createShelter(String name, String location, String refugeName) async {
     final data = await _client.post('/shelters/', body: {
       'name': name,
-      'location': location,
+      'province_id': location,
       'refuge_name': refugeName,
     });
     final token = data['access_token'];
@@ -56,5 +57,17 @@ class ShelterRepository {
     final response = await _client.post('/shelters/reset/manager');
     return response['code'];
   }
+
+  Future addNewRefuge(String name, String locationId) async {
+    final shelterId = _client.getTokenClaim<int>('shelter_id');
+    if (shelterId == null) throw ApiException(401, 'No shelter in token');
+    final response = await _client.post(
+      '/refuges/',
+      body: {
+        'name': name,
+        'province_id': locationId,
+      },
+    );
+    return Refuge.fromJson(response);  }
   
 }

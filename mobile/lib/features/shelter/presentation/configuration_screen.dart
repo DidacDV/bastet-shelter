@@ -1,3 +1,5 @@
+import 'package:bastetshelter/features/common/components/label_value.dart';
+import 'package:bastetshelter/features/common/components/section_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bastetshelter/core/providers/shelter_notifier.dart';
@@ -13,54 +15,88 @@ class ConfigScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Configuration')),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: shelterAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(
-            child: Text(e.toString(), style: const TextStyle(color: Colors.red)),
-          ),
-          data: (shelter) => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      body: shelterAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Text(e.toString(), style: const TextStyle(color: Colors.red)),
+        ),
+        data: (shelter) => SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text('Shelter Info', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 24),
-              _InfoRow(label: 'Name', value: shelter.name),
-              const SizedBox(height: 12),
-              _InfoRow(label: 'Location', value: shelter.province.name),
-              const SizedBox(height: 12),
-              _InfoRow(label: 'Volunteer Code', value: shelter.volunteerCode ?? 'Not available'),
-              const SizedBox(height: 12),
-              _InfoRow(label: 'Manager Code', value: shelter.managerCode ?? 'Not available'),
-              const SizedBox(height: 24),
-              FilledButton(
-                onPressed: () => ref.read(shelterProvider.notifier).resetVolunteerCode(),
-                child: const Text('Change Volunteer Code'),
+
+              SectionCard(
+                title: 'Shelter Info',
+                icon: Icons.pets,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    LabelValue(label: 'Name', value: shelter.name),
+                    const SizedBox(height: 12),
+                    LabelValue(label: 'Location', value: shelter.province.name),
+                    const Divider(height: 32), // Visual separator for codes
+                    LabelValue(label: 'Volunteer Code', value: shelter.volunteerCode ?? 'Not available'),
+                    const SizedBox(height: 12),
+                    LabelValue(label: 'Manager Code', value: shelter.managerCode ?? 'Not available'),
+                    const SizedBox(height: 24),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FilledButton.tonal(
+                            onPressed: () => ref.read(shelterProvider.notifier).resetVolunteerCode(),
+                            child: const Text('Reset Vol. Code', textAlign: TextAlign.center),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: FilledButton.tonal(
+                            onPressed: () => ref.read(shelterProvider.notifier).resetManagerCode(),
+                            child: const Text('Reset Mgr. Code', textAlign: TextAlign.center),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 12),
-              FilledButton(
-                onPressed: () => ref.read(shelterProvider.notifier).resetManagerCode(),
-                child: const Text('Change Manager Code'),
+
+              const SizedBox(height: 24),
+
+              SectionCard(
+                title: 'Refuges',
+                icon: Icons.holiday_village,
+                trailingAction: IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (context) => const AddRefugeModal(),
+                      );
+                    },
+                    icon: const Icon(Icons.add_circle_outline), iconSize: 28, color: Theme.of(context).colorScheme.primary
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (shelter.refuges.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 16.0),
+                        child: Text('No refuges added yet.', style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic)),
+                      )
+                    else
+                      ...shelter.refuges.map((refuge) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12.0),
+                        child: _RefugeListItem(
+                          name: refuge.name,
+                          location: refuge.province.name,
+                        ),
+                      )),
+                  ],
+                ),
               ),
-              const SizedBox(height: 12),
-              const Text('Refuges', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
-              for (final refuge in shelter.refuges) ...[
-                _InfoRow(label: refuge.name, value: refuge.province.name),
-                const SizedBox(height: 12),
-              ],
-              const SizedBox(height: 8),
-              OutlinedButton.icon(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (context) => const AddRefugeModal(),
-                  );
-                },
-                icon: const Icon(Icons.add_location_alt_outlined),
-                label: const Text('Add Refuge'),
-              ),
             ],
           ),
         ),
@@ -69,25 +105,58 @@ class ConfigScreen extends ConsumerWidget {
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
 
-  const _InfoRow({required this.label, required this.value});
+class _RefugeListItem extends StatelessWidget {
+  final String name;
+  final String location;
+  final VoidCallback onDelete;
+
+  const _RefugeListItem({required this.name, required this.location, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 140,
-          child: Text(label, style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.grey)),
-        ),
-        Expanded(
-          child: Text(value, style: const TextStyle(fontSize: 16)),
-        ),
-      ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.4),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.location_on, color: Theme.of(context).colorScheme.primary, size: 20),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  location,
+                  style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            color: Theme.of(context).colorScheme.error,
+            onPressed: onDelete,
+          )
+        ],
+      ),
     );
   }
 }
+
+

@@ -27,3 +27,11 @@ def get_refuges(
     service: RefugeService = Depends(get_refuge_service)
 ):
     return service.get_refuges(auth.shelter_id)
+
+@router.delete("/{refuge_id}", status_code=204)
+def delete_refuge(
+    refuge_id: int,
+    auth: AuthenticatedUser = Depends(require_manager),
+    service: RefugeService = Depends(get_refuge_service)
+):
+    service.delete_refuge(refuge_id, auth.shelter_id)

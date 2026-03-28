@@ -16,9 +16,9 @@ from app.schemas.shelter_member_schema import ShelterMemberResponse, ShelterMemb
 
 class ShelterService:
     def __init__(self, db: Session):
-        self.refuge_repo = RefugeRepository(db)
         self.db = db
-        self.shelter_repo = ShelterRepository()
+        self.refuge_repo = RefugeRepository(db)
+        self.shelter_repo = ShelterRepository(db)
         self.member_repo = ShelterMemberRepository(db)
 
     #Shelter

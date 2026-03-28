@@ -6,8 +6,9 @@ from app.repositories.generic_repo import BaseRepository
 
 # noinspection PyMethodMayBeStatic
 class ShelterRepository(BaseRepository[Shelter]):
-    def __init__(self):
+    def __init__(self, db: Session = None):
         super().__init__(Shelter)
+        self.db = db
 
     def get_by_manager_code(self, db: Session, code: str) -> Shelter | None:
         return db.query(Shelter).filter(Shelter.manager_code == code).first()

@@ -1,3 +1,4 @@
+import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/label_value.dart';
 import 'package:bastetshelter/features/common/components/section_card.dart';
 import 'package:flutter/material.dart';
@@ -91,6 +92,18 @@ class ConfigScreen extends ConsumerWidget {
                         child: _RefugeListItem(
                           name: refuge.name,
                           location: refuge.province.name,
+                          onDelete: () async {
+                            final confirm = await ConfirmationDialog.show(
+                                context: context,
+                                title: "Delete refuge",
+                                message: "Are you sure you want to delete ${refuge.name}?",
+                                isDestructive: true,
+                                confirmText: "Delete",
+                            );
+                            if (confirm) {
+                              await ref.read(shelterProvider.notifier).deleteRefuge(refuge.id);
+                            }
+                          },
                         ),
                       )),
                   ],

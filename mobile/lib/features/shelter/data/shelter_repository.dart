@@ -61,6 +61,7 @@ class ShelterRepository {
   Future addNewRefuge(String name, String locationId) async {
     final shelterId = _client.getTokenClaim<int>('shelter_id');
     if (shelterId == null) throw ApiException(401, 'No shelter in token');
+
     final response = await _client.post(
       '/refuges/',
       body: {
@@ -68,6 +69,10 @@ class ShelterRepository {
         'province_id': locationId,
       },
     );
-    return Refuge.fromJson(response);  }
-  
+    return Refuge.fromJson(response);
+  }
+
+  Future<void> deleteRefuge(int refugeId) async {
+    await _client.delete('/refuges/$refugeId');
+  }
 }

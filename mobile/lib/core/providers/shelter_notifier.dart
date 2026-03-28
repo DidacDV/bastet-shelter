@@ -41,5 +41,13 @@ class ShelterNotifier extends _$ShelterNotifier {
       return refuge;
     });
   }
+  Future<void> deleteRefuge(int refugeId) async {
+    await genericApiCall(() async {
+      await ref.read(shelterRepositoryProvider).deleteRefuge(refugeId);
+      final currentRefuges = state.value!.refuges;
+      final updatedRefuges = currentRefuges.where((r) => r.id != refugeId).toList();
 
+     state = AsyncData(state.value!.copyWith(refuges: updatedRefuges));
+    });
+  }
 }

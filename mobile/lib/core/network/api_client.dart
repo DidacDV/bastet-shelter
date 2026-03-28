@@ -77,7 +77,7 @@ class ApiClient {
     return _handleResponse(response);
   }
 
-  Future<Map<String, dynamic>> delete(String endpoint) async {
+  Future<dynamic> delete(String endpoint) async {
     final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
     final response = await _client.delete(
       url,
@@ -96,8 +96,11 @@ class ApiClient {
     return headers;
   }
 
-  Map<String, dynamic> _handleResponse(http.Response response) {
+  dynamic _handleResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
+      if (response.statusCode == 204 || response.body.isEmpty) {
+        return null;
+      }
       return jsonDecode(response.body);
     }
     if (response.statusCode == 401) {
@@ -140,7 +143,8 @@ class ApiClient {
     }
   }
 
-  // gets shelter id from token or logs out user if not present
+  // TODO: change to "is token correct" function that is called in the generic api call?
+  //  gets shelter id from token or logs out user if not present
   Future<int> getShelterId() async {
     final shelterId = getTokenClaim<int>('shelter_id');
     if (shelterId == null) {

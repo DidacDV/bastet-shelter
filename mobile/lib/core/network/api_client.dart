@@ -77,6 +77,15 @@ class ApiClient {
     return _handleResponse(response);
   }
 
+  Future<Map<String, dynamic>> delete(String endpoint) async {
+    final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
+    final response = await _client.delete(
+      url,
+      headers: _getHeaders(),
+    );
+    return _handleResponse(response);
+  }
+
   Map<String, String> _getHeaders() {
     final headers = <String, String>{
       'Content-Type': 'application/json',
@@ -129,5 +138,17 @@ class ApiClient {
     } catch (_) {
       return null;
     }
+  }
+
+  // gets shelter id from token or logs out user if not present
+  Future<int> getShelterId() async {
+    final shelterId = getTokenClaim<int>('shelter_id');
+    if (shelterId == null) {
+      await clearToken();
+      NavigationService.instance.redirectToLogin();
+      NavigationService.instance.showSnackBar('Session expired, please log in again', isError: true);
+      throw ApiException(401, 'No shelter in token');
+    }
+    return shelterId;
   }
 }

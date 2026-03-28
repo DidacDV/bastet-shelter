@@ -4,7 +4,7 @@ from app.models.user import User
 
 
 def _create_shelter(db, volunteer_code="VOL123", manager_code="MAN456") -> Shelter:
-    shelter = Shelter(name="Rodamons", location="Barcelona",
+    shelter = Shelter(name="Rodamons", province_id="08",
                       volunteer_code=volunteer_code, manager_code=manager_code)
     db.add(shelter)
     db.commit()

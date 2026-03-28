@@ -1,9 +1,12 @@
 from pydantic import BaseModel, ConfigDict
 
 
+from app.schemas.province_schema import ProvinceResponse
+
+
 class RefugeCreate(BaseModel):
     name: str
-    location: str
+    province_id: str
 
 
 class RefugeResponse(BaseModel):
@@ -11,5 +14,5 @@ class RefugeResponse(BaseModel):
 
     id: int
     name: str
-    location: str
+    province: ProvinceResponse
     shelter_id: int

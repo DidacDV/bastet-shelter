@@ -23,11 +23,10 @@ class ShelterService:
 
     #Shelter
     def create_shelter(self, data: ShelterCreate, user_id: int, user_email: str) -> dict:
-        new_shelter = Shelter(name=data.name, location=data.location)
+        new_shelter = Shelter(name=data.name, province_id=data.province_id)
         created_shelter = self.shelter_repo.create(self.db, new_shelter)
 
-        # TODO: Refactor with its own location
-        first_refuge = Refuge(name=data.refuge_name, location=new_shelter.location, shelter_id=created_shelter.id)
+        first_refuge = Refuge(name=data.refuge_name, province_id=new_shelter.province_id, shelter_id=created_shelter.id)
         self.refuge_repo.create(self.db, first_refuge)
 
         self.create_manager_member_by_id(user_id, created_shelter.id)

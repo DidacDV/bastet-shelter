@@ -6,17 +6,21 @@ from pydantic import BaseModel, ConfigDict
 from app.schemas.refuge_schema import RefugeResponse
 
 
+from app.schemas.province_schema import ProvinceResponse
+
+
 class ShelterCreate(BaseModel):
     name: str
-    location: str
+    province_id: str
     refuge_name: str
 
 
 class ShelterResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    id: int
     name: str
-    location: str
+    province: ProvinceResponse
     volunteer_code: str
     manager_code: str
     refuges: list[RefugeResponse]
@@ -24,8 +28,9 @@ class ShelterResponse(BaseModel):
 class ShelterBasicInfoResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    id: int
     name: str
-    location: str
+    province: ProvinceResponse
     refuges: list[RefugeResponse]
 
 class ShelterWithTokenResponse(BaseModel):

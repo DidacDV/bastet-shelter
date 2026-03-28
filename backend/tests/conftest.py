@@ -12,10 +12,17 @@ engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": Fal
 TestingSessionLocal = sessionmaker(bind=engine)
 
 
+from app.models.province import Province
+
 @pytest.fixture(autouse=True)
 def db():
     Base.metadata.create_all(bind=engine)
     session = TestingSessionLocal()
+    
+    # Add a mock province for testing
+    mock_province = Province(id="08", name="Barcelona", community_code="09")
+    session.add(mock_province)
+    session.commit()
 
     def override_get_db():
         yield session

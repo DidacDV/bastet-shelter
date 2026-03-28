@@ -14,11 +14,11 @@ def _register_and_login(client, email="user@example.com", name="John"):
 def _auth_headers(token):
     return {"Authorization": f"Bearer {token}"}
 
-def _create_shelter(client, token, name="Rodamons", location="Barcelona", refuge_name="refuge"):
+def _create_shelter(client, token, name="Rodamons", province_id="08", refuge_name="refuge"):
     """Helper that returns (new_token, volunteer_code, manager_code)"""
     res = client.post(
         "/shelters/",
-        json={"name": name, "location": location, "refuge_name": refuge_name},
+        json={"name": name, "province_id": province_id, "refuge_name": refuge_name},
         headers=_auth_headers(token)
     )
     assert res.status_code == 201, res.json()
@@ -33,7 +33,7 @@ def test_create_shelter(client):
     assert manager_code is not None
 
 def test_create_shelter_unauthenticated(client):
-    res = client.post("/shelters/", json={"name": "Happy Paws", "location": "Barcelona"})
+    res = client.post("/shelters/", json={"name": "Happy Paws", "province_id": "08"})
     assert res.status_code == 401
 
 def test_get_my_membership_no_shelter(client):

@@ -11,7 +11,10 @@ def _mock_shelter(volunteer_code="VOL123", manager_code="MAN456"):
     shelter = MagicMock()
     shelter.id = 1
     shelter.name = "Rodamons"
-    shelter.location = "Barcelona"
+    shelter.province_id = "08"
+    shelter.province = MagicMock()
+    shelter.province.id = "08"
+    shelter.province.name = "Barcelona"
     shelter.volunteer_code = volunteer_code
     shelter.manager_code = manager_code
     return shelter
@@ -43,7 +46,7 @@ def test_create_shelter_returns_token_and_shelter(service):
     service.shelter_repo.create.return_value = _mock_shelter()
 
     result = service.create_shelter(
-        data=ShelterCreate(name="Rodamons", location="Barcelona", refuge_name="refuge"),
+        data=ShelterCreate(name="Rodamons", province_id="08", refuge_name="refuge"),
         user_id=1,
         user_email="owner@example.com"
     )
@@ -57,7 +60,7 @@ def test_create_shelter_adds_user_as_manager(service):
     service.shelter_repo.create.return_value = _mock_shelter()
 
     service.create_shelter(
-        data=ShelterCreate(name="Rodamons", location="Barcelona", refuge_name="refuge"),
+        data=ShelterCreate(name="Rodamons", province_id="08", refuge_name="refuge"),
         user_id=1,
         user_email="owner@example.com"
     )

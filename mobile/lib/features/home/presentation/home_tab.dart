@@ -35,15 +35,15 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         title: shelterAsync.when(
           data: (shelter) => Text(shelter.name),
           loading: () => const Text('Loading...'),
-          error: (_, __) => const Text('Bastet Shelter'),
+          error: (_, _) => const Text('Bastet Shelter'),
         ),
         actions: [
           if (authService.isManager)
             IconButton(
               icon: const Icon(Icons.settings),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ConfigScreen()),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const ConfigScreen())),
             ),
           IconButton(
             icon: const Icon(Icons.logout),

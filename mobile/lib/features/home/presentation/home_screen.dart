@@ -48,9 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
               offstage: _selectedIndex != i,
               child: Navigator(
                 key: _navigatorKeys[i],
-                onGenerateRoute: (_) => MaterialPageRoute(
-                  builder: (_) => _tabs[i],
-                ),
+                onGenerateRoute: (_) =>
+                    MaterialPageRoute(builder: (_) => _tabs[i]),
               ),
             );
           }),
@@ -59,11 +58,31 @@ class _HomeScreenState extends State<HomeScreen> {
           selectedIndex: _selectedIndex,
           onDestinationSelected: (i) => setState(() => _selectedIndex = i),
           destinations: const [
-            NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Home'),
-            NavigationDestination(icon: Icon(Icons.pets_outlined), selectedIcon: Icon(Icons.pets), label: 'Animals'),
-            NavigationDestination(icon: Icon(Icons.schedule_outlined), selectedIcon: Icon(Icons.schedule), label: 'Shifts'),
-            NavigationDestination(icon: Icon(Icons.task_outlined), selectedIcon: Icon(Icons.task), label: 'Tasks'),
-            NavigationDestination(icon: Icon(Icons.people_outlined), selectedIcon: Icon(Icons.people), label: 'Community'),
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.pets_outlined),
+              selectedIcon: Icon(Icons.pets),
+              label: 'Animals',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.schedule_outlined),
+              selectedIcon: Icon(Icons.schedule),
+              label: 'Shifts',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.task_outlined),
+              selectedIcon: Icon(Icons.task),
+              label: 'Tasks',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.people_outlined),
+              selectedIcon: Icon(Icons.people),
+              label: 'Community',
+            ),
           ],
         ),
       ),

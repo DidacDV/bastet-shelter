@@ -15,7 +15,8 @@ class CreateShelterScreen extends ConsumerStatefulWidget {
   const CreateShelterScreen({super.key});
 
   @override
-  ConsumerState<CreateShelterScreen> createState() => _CreateShelterScreenState();
+  ConsumerState<CreateShelterScreen> createState() =>
+      _CreateShelterScreenState();
 }
 
 class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
@@ -71,7 +72,8 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
                     controller: _nameController,
                     label: 'Shelter Name',
                     keyboardType: TextInputType.emailAddress,
-                    validator: (value) => Validators.validateRequired(value, "shelter's name"),
+                    validator: (value) =>
+                        Validators.validateRequired(value, "shelter's name"),
                   ),
                   const SizedBox(height: 16),
                   provincesAsync.when(
@@ -86,15 +88,16 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
                     ),
                     loading: () => const CircularProgressIndicator(),
                     error: (e, _) => Text(
-                        'Failed to load locations: $e',
-                        style: const TextStyle(color: Colors.red)
+                      'Failed to load locations: $e',
+                      style: const TextStyle(color: Colors.red),
                     ),
                   ),
                   const SizedBox(height: 16),
                   AppTextField(
                     controller: _refugeNameController,
                     label: 'Name of your first refuge',
-                    validator: (value) => Validators.validateRequired(value, "refuge name"),
+                    validator: (value) =>
+                        Validators.validateRequired(value, "refuge name"),
                   ),
                   const SizedBox(height: 24),
                   PrimaryButton(

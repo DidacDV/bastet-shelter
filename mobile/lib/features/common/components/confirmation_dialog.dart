@@ -61,16 +61,19 @@ class ConfirmationDialog extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: FilledButton(
-                style: (isDestructive
-                    ? FilledButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                )
-                    : FilledButton.styleFrom())
-                    .copyWith(
-                  padding: const WidgetStatePropertyAll(
-                    EdgeInsets.symmetric(vertical: 14),
-                  ),
-                ),
+                style:
+                    (isDestructive
+                            ? FilledButton.styleFrom(
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.error,
+                              )
+                            : FilledButton.styleFrom())
+                        .copyWith(
+                          padding: const WidgetStatePropertyAll(
+                            EdgeInsets.symmetric(vertical: 14),
+                          ),
+                        ),
                 onPressed: () => Navigator.pop(context, true),
                 child: Text(confirmText),
               ),

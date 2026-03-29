@@ -33,7 +33,9 @@ class _LocationDropdownState extends State<LocationDropdown> {
         menuHeight: 300,
         showTrailingIcon: true,
         leadingIcon: const Icon(Icons.search),
-        dropdownMenuEntries: widget.items.map((p) => DropdownMenuEntry(value: p.id, label: p.name)).toList(),
+        dropdownMenuEntries: widget.items
+            .map((p) => DropdownMenuEntry(value: p.id, label: p.name))
+            .toList(),
         onSelected: (String? newValue) {
           setState(() {
             selectedItem = newValue;

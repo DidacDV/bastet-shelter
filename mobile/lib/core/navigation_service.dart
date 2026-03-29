@@ -29,15 +29,15 @@ class NavigationService {
     navigationKey.currentState!.pushNamedAndRemoveUntil('/login', (_) => false);
   }
 
+  // TODO create custom snackbar that follows app theme
   void showSnackBar(String message, {bool isError = false}) {
     final context = navigationKey.currentContext;
     if (context == null) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Colors.red : null,
+        backgroundColor: isError ? Colors.blue : null,
       ),
     );
   }
-
 }

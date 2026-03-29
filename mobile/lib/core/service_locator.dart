@@ -13,9 +13,17 @@ final getIt = GetIt.instance;
 void configureDependencies() {
   getIt.registerSingleton<ApiClient>(ApiClient());
   getIt.registerSingleton<AuthRepository>(AuthRepository(getIt<ApiClient>()));
-  getIt.registerSingleton<ShelterRepository>(ShelterRepository(getIt<ApiClient>()));
-  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt<ApiClient>()));
-  getIt.registerLazySingleton<DashboardRepository>(() => DashboardRepository(getIt<ApiClient>()));
+  getIt.registerSingleton<ShelterRepository>(
+    ShelterRepository(getIt<ApiClient>()),
+  );
+  getIt.registerLazySingleton<AuthService>(
+    () => AuthService(getIt<ApiClient>()),
+  );
+  getIt.registerLazySingleton<DashboardRepository>(
+    () => DashboardRepository(getIt<ApiClient>()),
+  );
   getIt.registerLazySingleton<NavigationService>(() => NavigationService());
-  getIt.registerLazySingleton<GeoRepository>(() => GeoRepository(getIt<ApiClient>()));
+  getIt.registerLazySingleton<GeoRepository>(
+    () => GeoRepository(getIt<ApiClient>()),
+  );
 }

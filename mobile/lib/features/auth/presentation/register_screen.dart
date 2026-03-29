@@ -37,19 +37,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _isLoading = true;
       });
 
-    genericApiCall(() async {
-      await _repository.register(_nameController.text,
+      genericApiCall(() async {
+        await _repository.register(
+          _nameController.text,
           _lastname1Controller.text,
           _lastname2Controller.text,
           _emailController.text,
-          _passwordController.text);
+          _passwordController.text,
+        );
 
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, '/role/picker');
-      }
-    });
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/role/picker');
+        }
+      });
 
-    if (mounted) setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -77,7 +79,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       labelText: 'First Name',
                       border: OutlineInputBorder(),
                     ),
-                    validator: (value) => Validators.validateRequired(value, 'first name'),
+                    validator: (value) =>
+                        Validators.validateRequired(value, 'first name'),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -86,7 +89,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       labelText: 'First Last Name',
                       border: OutlineInputBorder(),
                     ),
-                    validator: (value) => Validators.validateRequired(value, 'first last name'),
+                    validator: (value) =>
+                        Validators.validateRequired(value, 'first last name'),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(

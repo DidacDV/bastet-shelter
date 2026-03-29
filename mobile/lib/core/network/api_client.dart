@@ -44,20 +44,20 @@ class ApiClient {
     final hasShelter = getTokenClaim<int>('shelter_id') != null;
     if (!hasShelter) return false;
     return DateTime.now().isBefore(
-        DateTime.fromMillisecondsSinceEpoch(exp * 1000)
+      DateTime.fromMillisecondsSinceEpoch(exp * 1000),
     );
   }
 
   Future<Map<String, dynamic>> get(String endpoint) async {
     final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
-    final response = await _client.get(
-      url,
-      headers: _getHeaders(),
-    );
+    final response = await _client.get(url, headers: _getHeaders());
     return _handleResponse(response);
   }
 
-  Future<Map<String, dynamic>> postForm(String endpoint, {Map<String, String>? body}) async {
+  Future<Map<String, dynamic>> postForm(
+    String endpoint, {
+    Map<String, String>? body,
+  }) async {
     final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
     final response = await _client.post(
       url,
@@ -67,7 +67,10 @@ class ApiClient {
     return _handleResponse(response);
   }
 
-  Future<Map<String, dynamic>> post(String endpoint, {Map<String, dynamic>? body}) async {
+  Future<Map<String, dynamic>> post(
+    String endpoint, {
+    Map<String, dynamic>? body,
+  }) async {
     final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
     final response = await _client.post(
       url,
@@ -79,17 +82,12 @@ class ApiClient {
 
   Future<dynamic> delete(String endpoint) async {
     final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
-    final response = await _client.delete(
-      url,
-      headers: _getHeaders(),
-    );
+    final response = await _client.delete(url, headers: _getHeaders());
     return _handleResponse(response);
   }
 
   Map<String, String> _getHeaders() {
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-    };
+    final headers = <String, String>{'Content-Type': 'application/json'};
     if (_accessToken != null) {
       headers['Authorization'] = 'Bearer $_accessToken';
     }
@@ -106,7 +104,10 @@ class ApiClient {
     if (response.statusCode == 401) {
       clearToken();
       NavigationService.instance.redirectToLogin();
-      NavigationService.instance.showSnackBar("Session expired, please log in again", isError: true);
+      NavigationService.instance.showSnackBar(
+        "Session expired, please log in again",
+        isError: true,
+      );
       throw ApiException(401, 'Session expired');
     }
     String message;
@@ -116,17 +117,23 @@ class ApiClient {
     } catch (_) {
       message = _defaultMessage(response.statusCode);
     }
-     throw ApiException(response.statusCode, message);
+    throw ApiException(response.statusCode, message);
   }
 
   String _defaultMessage(int statusCode) {
     switch (statusCode) {
-      case 400: return 'Invalid request';
-      case 403: return 'You don\'t have permission to do this';
-      case 404: return 'Not found';
-      case 409: return 'This already exists';
-      case 500: return 'Server error, please try again later';
-      default:  return 'Something went wrong';
+      case 400:
+        return 'Invalid request';
+      case 403:
+        return 'You don\'t have permission to do this';
+      case 404:
+        return 'Not found';
+      case 409:
+        return 'This already exists';
+      case 500:
+        return 'Server error, please try again later';
+      default:
+        return 'Something went wrong';
     }
   }
 
@@ -136,7 +143,9 @@ class ApiClient {
     try {
       final parts = _accessToken!.split('.');
       if (parts.length != 3) return null;
-      final payload = utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
+      final payload = utf8.decode(
+        base64Url.decode(base64Url.normalize(parts[1])),
+      );
       return jsonDecode(payload)[key] as T?;
     } catch (_) {
       return null;

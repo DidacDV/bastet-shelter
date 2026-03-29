@@ -36,11 +36,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
     await genericApiCall(() async {
       await _authRepository.login(
-          _emailController.text, _passwordController.text);
+        _emailController.text,
+        _passwordController.text,
+      );
       final hasMembership = await _shelterRepository.hasMembership();
       if (mounted) {
-        Navigator.pushReplacementNamed(context,
-            hasMembership ? '/home' : '/role/picker');
+        Navigator.pushReplacementNamed(
+          context,
+          hasMembership ? '/home' : '/role/picker',
+        );
       }
     });
 
@@ -60,9 +64,10 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Welcome to Bastet Shelter",
-                      style: TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Welcome to Bastet Shelter",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 24),
                   AppTextField(
                     controller: _emailController,

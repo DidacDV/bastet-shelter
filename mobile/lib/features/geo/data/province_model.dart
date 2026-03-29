@@ -4,14 +4,10 @@ class Province {
   Province({required this.id, required this.name});
 
   factory Province.fromJson(Map<String, dynamic> json) {
-    return Province(
-      id: json['id'],
-      name: json['name'],
-    );
+    return Province(id: json['id'], name: json['name']);
   }
 
   static List<Province> listFromJson(List<dynamic> json) {
     return json.map((e) => Province.fromJson(e)).toList();
   }
 }
-

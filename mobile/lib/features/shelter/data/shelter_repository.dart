@@ -27,12 +27,15 @@ class ShelterRepository {
     _client.setToken(data['access_token']);
   }
 
-  Future<void> createShelter(String name, String location, String refugeName) async {
-    final data = await _client.post('/shelters/', body: {
-      'name': name,
-      'province_id': location,
-      'refuge_name': refugeName,
-    });
+  Future<void> createShelter(
+    String name,
+    String location,
+    String refugeName,
+  ) async {
+    final data = await _client.post(
+      '/shelters/',
+      body: {'name': name, 'province_id': location, 'refuge_name': refugeName},
+    );
     final token = data['access_token'];
     _client.setToken(token);
   }
@@ -44,14 +47,14 @@ class ShelterRepository {
     return Shelter.fromJson(response);
   }
 
-  Future<String>  changeVolunteerCode() async {
+  Future<String> changeVolunteerCode() async {
     final shelterId = _client.getTokenClaim<int>('shelter_id');
     if (shelterId == null) throw ApiException(401, 'No shelter in token');
     final response = await _client.post('/shelters/reset/volunteer');
     return response['code'];
   }
 
-  Future<String>  changeManagerCode() async {
+  Future<String> changeManagerCode() async {
     final shelterId = _client.getTokenClaim<int>('shelter_id');
     if (shelterId == null) throw ApiException(401, 'No shelter in token');
     final response = await _client.post('/shelters/reset/manager');
@@ -64,10 +67,7 @@ class ShelterRepository {
 
     final response = await _client.post(
       '/refuges/',
-      body: {
-        'name': name,
-        'province_id': locationId,
-      },
+      body: {'name': name, 'province_id': locationId},
     );
     return Refuge.fromJson(response);
   }

@@ -35,4 +35,7 @@ jobs:
 
       - name: Run pytest
         working-directory: backend
+        env:
+          DATABASE_URL: sqlite:///./test.db      
+          GEOAPI_KEY: ${{ secrets.GEOAPI_KEY }}
         run: pytest tests/ -v --tb=short

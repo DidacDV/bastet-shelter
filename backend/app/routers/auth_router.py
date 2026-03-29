@@ -45,7 +45,7 @@ def register(request: UserCreate, db: Session = Depends(get_db)):
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     login_record = db.query(Login).filter(Login.email == form_data.username).first()
     if not login_record:
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+        raise HTTPException(status_code=401, detail="Invalid eemail or password")
 
     if not verify_password(form_data.password, login_record.password):
         raise HTTPException(status_code=401, detail="Invalid email or password")

@@ -1,5 +1,3 @@
-import 'package:bastetshelter/features/shelter/data/refuge_model.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';

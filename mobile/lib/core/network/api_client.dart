@@ -142,17 +142,4 @@ class ApiClient {
       return null;
     }
   }
-
-  // TODO: change to "is token correct" function that is called in the generic api call?
-  //  gets shelter id from token or logs out user if not present
-  Future<int> getShelterId() async {
-    final shelterId = getTokenClaim<int>('shelter_id');
-    if (shelterId == null) {
-      await clearToken();
-      NavigationService.instance.redirectToLogin();
-      NavigationService.instance.showSnackBar('Session expired, please log in again', isError: true);
-      throw ApiException(401, 'No shelter in token');
-    }
-    return shelterId;
-  }
 }

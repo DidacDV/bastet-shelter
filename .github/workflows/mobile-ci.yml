@@ -1,0 +1,45 @@
+name: Mobile CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'mobile/**'
+  pull_request:
+    paths:
+      - 'mobile/**'
+
+concurrency:
+  group: mobile-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Analyze & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        working-directory: mobile
+        run: flutter pub get
+
+      - name: Analyze (lint)
+        working-directory: mobile
+        run: flutter analyze --fatal-infos
+
+      - name: Check formatting
+        working-directory: mobile
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Build APK (debug)
+        working-directory: mobile
+        run: flutter build apk --debug

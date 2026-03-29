@@ -36,7 +36,7 @@ class NavigationService {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Colors.blue : null,
+        backgroundColor: isError ? Colors.red : null,
       ),
     );
   }

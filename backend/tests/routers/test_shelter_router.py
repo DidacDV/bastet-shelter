@@ -14,11 +14,11 @@ def _register_and_login(client, email="user@example.com", name="John"):
 def _auth_headers(token):
     return {"Authorization": f"Bearer {token}"}
 
-def _create_shelter(client, token, name="Rodamons", location="Barcelona", refuge_name="refuge"):
+def _create_shelter(client, token, name="Rodamons", province_id="08", refuge_name="refuge"):
     """Helper that returns (new_token, volunteer_code, manager_code)"""
     res = client.post(
         "/shelters/",
-        json={"name": name, "location": location, "refuge_name": refuge_name},
+        json={"name": name, "province_id": province_id, "refuge_name": refuge_name},
         headers=_auth_headers(token)
     )
     assert res.status_code == 201, res.json()
@@ -33,7 +33,7 @@ def test_create_shelter(client):
     assert manager_code is not None
 
 def test_create_shelter_unauthenticated(client):
-    res = client.post("/shelters/", json={"name": "Happy Paws", "location": "Barcelona"})
+    res = client.post("/shelters/", json={"name": "Happy Paws", "province_id": "08"})
     assert res.status_code == 401
 
 def test_get_my_membership_no_shelter(client):
@@ -105,5 +105,17 @@ def test_volunteer_cannot_reset_codes(client):
 
     assert client.post("/shelters/reset/volunteer", headers=_auth_headers(vol_token)).status_code == 403
     assert client.post("/shelters/reset/manager", headers=_auth_headers(vol_token)).status_code == 403
+
+def test_get_shelter_basic_info(client):
+    token = _register_and_login(client)
+    manager_token, _, _ = _create_shelter(client, token, name="Shelter X", refuge_name="Main Refuge")
+    
+    res = client.get("/shelters/info", headers=_auth_headers(manager_token))
+    assert res.status_code == 200
+    data = res.json()
+    assert data["name"] == "Shelter X"
+    assert "refuges" in data
+    assert len(data["refuges"]) == 1
+    assert data["refuges"][0]["name"] == "Main Refuge"
 
 # endregion

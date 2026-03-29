@@ -11,7 +11,10 @@ def _mock_shelter(volunteer_code="VOL123", manager_code="MAN456"):
     shelter = MagicMock()
     shelter.id = 1
     shelter.name = "Rodamons"
-    shelter.location = "Barcelona"
+    shelter.province_id = "08"
+    shelter.province = MagicMock()
+    shelter.province.id = "08"
+    shelter.province.name = "Barcelona"
     shelter.volunteer_code = volunteer_code
     shelter.manager_code = manager_code
     return shelter
@@ -43,7 +46,7 @@ def test_create_shelter_returns_token_and_shelter(service):
     service.shelter_repo.create.return_value = _mock_shelter()
 
     result = service.create_shelter(
-        data=ShelterCreate(name="Rodamons", location="Barcelona", refuge_name="refuge"),
+        data=ShelterCreate(name="Rodamons", province_id="08", refuge_name="refuge"),
         user_id=1,
         user_email="owner@example.com"
     )
@@ -57,7 +60,7 @@ def test_create_shelter_adds_user_as_manager(service):
     service.shelter_repo.create.return_value = _mock_shelter()
 
     service.create_shelter(
-        data=ShelterCreate(name="Rodamons", location="Barcelona", refuge_name="refuge"),
+        data=ShelterCreate(name="Rodamons", province_id="08", refuge_name="refuge"),
         user_id=1,
         user_email="owner@example.com"
     )
@@ -193,5 +196,38 @@ def test_reset_manager_code_shelter_not_found(service):
 
     with pytest.raises(ValueError, match="not found"):
         service.reset_manager_code(shelter_id=999)
+
+def test_get_shelter_by_id_success(service):
+    service.shelter_repo.get_by_id.return_value = _mock_shelter()
+    result = service.get_shelter_by_id(1)
+    assert result.id == 1
+
+def test_get_shelter_by_id_not_found(service):
+    service.shelter_repo.get_by_id.return_value = None
+    with pytest.raises(ValueError, match="Shelter not found"):
+        service.get_shelter_by_id(999)
+
+def test_get_shelter_basic_info_by_id_success(service):
+    service.shelter_repo.get_by_id.return_value = _mock_shelter()
+    result = service.get_shelter_basic_info_by_id(1)
+    assert result.name == "Rodamons"
+
+def test_get_shelter_basic_info_by_id_not_found(service):
+    service.shelter_repo.get_by_id.return_value = None
+    with pytest.raises(ValueError, match="Shelter not found"):
+        service.get_shelter_basic_info_by_id(999)
+
+def test_create_volunteer_member_not_found(service):
+    service.shelter_repo.get_by_volunteer_code.return_value = None
+    with pytest.raises(ValueError, match="not found"):
+        service.create_volunteer_member(user_id=1, shelter_code="WRONG")
+
+def test_create_volunteer_member_by_id(service):
+    result = service.create_volunteer_member_by_id(user_id=1, shelter_id=1)
+    assert result.role == RoleEnum.VOLUNTEER
+
+def test_create_manager_member_by_id(service):
+    result = service.create_manager_member_by_id(user_id=1, shelter_id=1)
+    assert result.role == RoleEnum.MANAGER
 
 #endregion

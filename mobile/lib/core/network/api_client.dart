@@ -41,6 +41,8 @@ class ApiClient {
     if (_accessToken == null) return false;
     final exp = getTokenClaim<int>('exp');
     if (exp == null) return false;
+    final hasShelter = getTokenClaim<int>('shelter_id') != null;
+    if (!hasShelter) return false;
     return DateTime.now().isBefore(
         DateTime.fromMillisecondsSinceEpoch(exp * 1000)
     );
@@ -75,6 +77,15 @@ class ApiClient {
     return _handleResponse(response);
   }
 
+  Future<dynamic> delete(String endpoint) async {
+    final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
+    final response = await _client.delete(
+      url,
+      headers: _getHeaders(),
+    );
+    return _handleResponse(response);
+  }
+
   Map<String, String> _getHeaders() {
     final headers = <String, String>{
       'Content-Type': 'application/json',
@@ -85,8 +96,11 @@ class ApiClient {
     return headers;
   }
 
-  Map<String, dynamic> _handleResponse(http.Response response) {
+  dynamic _handleResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
+      if (response.statusCode == 204 || response.body.isEmpty) {
+        return null;
+      }
       return jsonDecode(response.body);
     }
     if (response.statusCode == 401) {

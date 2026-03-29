@@ -5,39 +5,45 @@ import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
 import 'package:bastetshelter/features/common/components/app_text_field.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CreateShelterScreen extends StatefulWidget {
+import '../../../core/constants.dart';
+import '../../../core/providers/geo_provider.dart';
+import '../../common/components/location_dropdown.dart';
+
+class CreateShelterScreen extends ConsumerStatefulWidget {
   const CreateShelterScreen({super.key});
 
   @override
-  State<CreateShelterScreen> createState() => _LoginScreenState();
+  ConsumerState<CreateShelterScreen> createState() => _CreateShelterScreenState();
 }
 
-class _LoginScreenState extends State<CreateShelterScreen> {
+class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _locationController = TextEditingController();
   final _refugeNameController = TextEditingController();
   final _shelterRepository = getIt<ShelterRepository>();
   bool _isLoading = false;
 
+  String? _selectedLocationId;
+
   @override
   void dispose() {
     _nameController.dispose();
-    _locationController.dispose();
     _refugeNameController.dispose();
     super.dispose();
   }
 
   Future<void> _createShelter() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_selectedLocationId == null) return;
 
     setState(() => _isLoading = true);
 
     await genericApiCall(() async {
       await _shelterRepository.createShelter(
         _nameController.text,
-        _locationController.text,
+        _selectedLocationId!,
         _refugeNameController.text,
       );
       if (mounted) Navigator.pushReplacementNamed(context, '/home');
@@ -48,6 +54,8 @@ class _LoginScreenState extends State<CreateShelterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provincesAsync = ref.watch(geoProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Bastet Shelter')),
       body: Padding(
@@ -66,10 +74,21 @@ class _LoginScreenState extends State<CreateShelterScreen> {
                     validator: (value) => Validators.validateRequired(value, "shelter's name"),
                   ),
                   const SizedBox(height: 16),
-                  AppTextField(
-                    controller: _locationController,
-                    label: 'Shelter Location',
-                    validator: (value) => Validators.validateRequired(value, "shelter's location"),
+                  provincesAsync.when(
+                    data: (provinces) => LocationDropdown(
+                      items: provinces,
+                      initialItem: AppConstants.defaultProvince,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedLocationId = value;
+                        });
+                      },
+                    ),
+                    loading: () => const CircularProgressIndicator(),
+                    error: (e, _) => Text(
+                        'Failed to load locations: $e',
+                        style: const TextStyle(color: Colors.red)
+                    ),
                   ),
                   const SizedBox(height: 16),
                   AppTextField(

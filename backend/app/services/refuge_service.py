@@ -1,3 +1,4 @@
+import fastapi
 from sqlalchemy.orm import Session
 from app.models.refuge import Refuge
 from app.repositories.refuge_repo import RefugeRepository
@@ -18,3 +19,31 @@ class RefugeService:
         """All refuges for a shelter"""
         refuges = self.refuge_repo.get_by_shelter(self.db, shelter_id)
         return [RefugeResponse.model_validate(r) for r in refuges]
+
+    def delete_refuge(self, refuge_id: int, shelter_id: int) -> None:
+        """Deletes refuge if it has no animals or shifts and its not the last one"""
+        refuge = self.refuge_repo.get_by_id(self.db, refuge_id)
+        if not refuge or refuge.shelter_id != shelter_id:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail="Refuge not found")
+
+        if refuge.animals:
+            raise fastapi.HTTPException(
+                status_code=400,
+                detail="Cannot delete refuge with animals. You have to move them out first."
+            )
+
+        if refuge.shifts:
+            raise fastapi.HTTPException(
+                status_code=400,
+                detail="Cannot delete refuge with shifts. You have to move them out first."
+            )
+
+        all_refuges = self.refuge_repo.get_by_shelter(self.db, shelter_id)
+        if len(all_refuges) <= 1:
+            raise fastapi.HTTPException(
+                status_code=400,
+                detail="Cannot delete the last refuge of a shelter."
+            )
+
+        self.refuge_repo.delete(self.db, refuge_id)

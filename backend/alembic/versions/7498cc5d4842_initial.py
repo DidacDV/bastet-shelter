@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: 13c41c5f4b9c
+Revision ID: 7498cc5d4842
 Revises: 
-Create Date: 2026-03-22 13:13:54.752536
+Create Date: 2026-03-28 11:35:33.492005
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '13c41c5f4b9c'
+revision: str = '7498cc5d4842'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -31,41 +31,30 @@ def upgrade() -> None:
         batch_op.create_index(batch_op.f('ix_login_email'), ['email'], unique=True)
         batch_op.create_index(batch_op.f('ix_login_id'), ['id'], unique=False)
 
+    op.create_table('provinces',
+    sa.Column('id', sa.String(), nullable=False),
+    sa.Column('name', sa.String(), nullable=True),
+    sa.Column('community_code', sa.String(), nullable=True),
+    sa.Column('last_updated', sa.DateTime(timezone=True), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    with op.batch_alter_table('provinces', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_provinces_id'), ['id'], unique=False)
+        batch_op.create_index(batch_op.f('ix_provinces_name'), ['name'], unique=True)
+
     op.create_table('shelter',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('location', sa.String(), nullable=False),
+    sa.Column('province_id', sa.String(), nullable=False),
     sa.Column('volunteer_code', sa.String(), nullable=False),
     sa.Column('manager_code', sa.String(), nullable=False),
+    sa.ForeignKeyConstraint(['province_id'], ['provinces.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('manager_code'),
     sa.UniqueConstraint('volunteer_code')
     )
     with op.batch_alter_table('shelter', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_shelter_id'), ['id'], unique=False)
-
-    op.create_table('refuge',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(), nullable=False),
-    sa.Column('location', sa.String(), nullable=False),
-    sa.Column('shelter_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['shelter_id'], ['shelter.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    with op.batch_alter_table('refuge', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_refuge_id'), ['id'], unique=False)
-
-    op.create_table('task',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('title', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=False),
-    sa.Column('num_people', sa.Integer(), nullable=False),
-    sa.Column('shelter_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['shelter_id'], ['shelter.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    with op.batch_alter_table('task', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_task_id'), ['id'], unique=False)
 
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -81,20 +70,17 @@ def upgrade() -> None:
     with op.batch_alter_table('user', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_user_id'), ['id'], unique=False)
 
-    op.create_table('animal',
+    op.create_table('refuge',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('birth_date', sa.Date(), nullable=False),
-    sa.Column('description', sa.String(), nullable=False),
-    sa.Column('breed', sa.String(), nullable=False),
-    sa.Column('animal_type', sa.Enum('CAT', 'DOG', name='animaltypeenum'), nullable=False),
-    sa.Column('in_adoption', sa.Boolean(), nullable=False),
-    sa.Column('refuge_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['refuge_id'], ['refuge.id'], ),
+    sa.Column('province_id', sa.String(), nullable=False),
+    sa.Column('shelter_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['province_id'], ['provinces.id'], ),
+    sa.ForeignKeyConstraint(['shelter_id'], ['shelter.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    with op.batch_alter_table('animal', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_animal_id'), ['id'], unique=False)
+    with op.batch_alter_table('refuge', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_refuge_id'), ['id'], unique=False)
 
     op.create_table('shelter_member',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -111,6 +97,38 @@ def upgrade() -> None:
     with op.batch_alter_table('shelter_member', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_shelter_member_id'), ['id'], unique=False)
 
+    op.create_table('task',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(), nullable=False),
+    sa.Column('description', sa.String(), nullable=False),
+    sa.Column('num_people', sa.Integer(), nullable=False),
+    sa.Column('shelter_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['shelter_id'], ['shelter.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    with op.batch_alter_table('task', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_task_id'), ['id'], unique=False)
+
+    op.create_table('animal',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('birth_date', sa.Date(), nullable=False),
+    sa.Column('description', sa.String(), nullable=False),
+    sa.Column('breed', sa.String(), nullable=False),
+    sa.Column('animal_type', sa.Enum('CAT', 'DOG', name='animaltypeenum'), nullable=False),
+    sa.Column('in_adoption', sa.Boolean(), nullable=False),
+    sa.Column('refuge_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['refuge_id'], ['refuge.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    with op.batch_alter_table('animal', schema=None) as batch_op:
+        batch_op.create_index(batch_op.f('ix_animal_id'), ['id'], unique=False)
+
+    op.create_table('manager',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['id'], ['shelter_member.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('shift',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('start_time', sa.DateTime(), nullable=False),
@@ -125,11 +143,6 @@ def upgrade() -> None:
     with op.batch_alter_table('shift', schema=None) as batch_op:
         batch_op.create_index(batch_op.f('ix_shift_id'), ['id'], unique=False)
 
-    op.create_table('manager',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['id'], ['shelter_member.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table('volunteer',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('hours_worked', sa.Integer(), nullable=True),
@@ -179,35 +192,40 @@ def downgrade() -> None:
 
     op.drop_table('shift_participant')
     op.drop_table('volunteer')
-    op.drop_table('manager')
     with op.batch_alter_table('shift', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_shift_id'))
 
     op.drop_table('shift')
-    with op.batch_alter_table('shelter_member', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_shelter_member_id'))
-
-    op.drop_table('shelter_member')
+    op.drop_table('manager')
     with op.batch_alter_table('animal', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_animal_id'))
 
     op.drop_table('animal')
-    with op.batch_alter_table('user', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_user_id'))
-
-    op.drop_table('user')
     with op.batch_alter_table('task', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_task_id'))
 
     op.drop_table('task')
+    with op.batch_alter_table('shelter_member', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_shelter_member_id'))
+
+    op.drop_table('shelter_member')
     with op.batch_alter_table('refuge', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_refuge_id'))
 
     op.drop_table('refuge')
+    with op.batch_alter_table('user', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_user_id'))
+
+    op.drop_table('user')
     with op.batch_alter_table('shelter', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_shelter_id'))
 
     op.drop_table('shelter')
+    with op.batch_alter_table('provinces', schema=None) as batch_op:
+        batch_op.drop_index(batch_op.f('ix_provinces_name'))
+        batch_op.drop_index(batch_op.f('ix_provinces_id'))
+
+    op.drop_table('provinces')
     with op.batch_alter_table('login', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_login_id'))
         batch_op.drop_index(batch_op.f('ix_login_email'))

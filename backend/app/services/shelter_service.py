@@ -16,18 +16,17 @@ from app.schemas.shelter_member_schema import ShelterMemberResponse, ShelterMemb
 
 class ShelterService:
     def __init__(self, db: Session):
-        self.refuge_repo = RefugeRepository(db)
         self.db = db
-        self.shelter_repo = ShelterRepository()
+        self.refuge_repo = RefugeRepository(db)
+        self.shelter_repo = ShelterRepository(db)
         self.member_repo = ShelterMemberRepository(db)
 
     #Shelter
     def create_shelter(self, data: ShelterCreate, user_id: int, user_email: str) -> dict:
-        new_shelter = Shelter(name=data.name, location=data.location)
+        new_shelter = Shelter(name=data.name, province_id=data.province_id)
         created_shelter = self.shelter_repo.create(self.db, new_shelter)
 
-        # TODO: Refactor with its own location
-        first_refuge = Refuge(name=data.refuge_name, location=new_shelter.location, shelter_id=created_shelter.id)
+        first_refuge = Refuge(name=data.refuge_name, province_id=new_shelter.province_id, shelter_id=created_shelter.id)
         self.refuge_repo.create(self.db, first_refuge)
 
         self.create_manager_member_by_id(user_id, created_shelter.id)
@@ -46,6 +45,7 @@ class ShelterService:
         else:
             raise ValueError("Shelter not found")
 
+    #doesn't include manager and volunteer codes
     def get_shelter_basic_info_by_id(self, shelter_id: int) -> Optional[ShelterBasicInfoResponse]:
         shelter = self.shelter_repo.get_by_id(self.db, shelter_id)
         if shelter:

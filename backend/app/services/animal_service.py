@@ -7,8 +7,8 @@ from app.schemas.animals_schema import AnimalCreate, AnimalResponse
 class AnimalService:
     def __init__(self, db: Session):
         self.db = db
-        self.animal_repo = AnimalRepository()
-        self.refuge_repo = RefugeRepository()
+        self.animal_repo = AnimalRepository(db)
+        self.refuge_repo = RefugeRepository(db)
 
     def register_animal(self, data: AnimalCreate, shelter_id: int) -> AnimalResponse:
         """Validates refuge belongs to shelter, then creates"""

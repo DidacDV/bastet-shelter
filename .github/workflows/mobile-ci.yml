@@ -2,7 +2,7 @@ name: Mobile CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, test/*]
     paths:
       - 'mobile/**'
   pull_request:

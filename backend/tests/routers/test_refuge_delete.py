@@ -30,7 +30,7 @@ def test_delete_refuge_with_animals_fails(client):
     
     client.post("/animals/", json={
         "name": "Catty",
-        "birth_date": "2020-01-01",
+        "birth_date": "2026-01-01",
         "description": "Lovely cat",
         "breed": "Common",
         "animal_type": "CAT",

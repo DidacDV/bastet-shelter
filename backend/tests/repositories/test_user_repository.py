@@ -1,9 +1,14 @@
 from app.repositories.user_repo import UserRepository
+from app.models.user import User
 from tests.repositories.utils import _create_user
 
 
 class TestUserRepository:
     repo = UserRepository()
+
+    def test_init(self):
+        repo = UserRepository()
+        assert repo.model == User
 
     def test_get_by_email(self, db):
         _create_user(db, email="find@example.com")

@@ -13,10 +13,19 @@ class LabelValue extends StatelessWidget {
       children: [
         SizedBox(
           width: 130,
-          child: Text(label, style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.grey)),
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Colors.grey,
+            ),
+          ),
         ),
         Expanded(
-          child: Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
         ),
       ],
     );

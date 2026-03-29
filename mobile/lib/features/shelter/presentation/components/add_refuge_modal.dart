@@ -50,37 +50,47 @@ class _AddRefugeModalState extends ConsumerState<AddRefugeModal> {
       ),
       child: Form(
         key: _formKey,
-        child:
-        Column(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Add New Refuge', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text(
+              'Add New Refuge',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 16),
             AppTextField(
               controller: _nameController,
               label: 'Refuge name',
               keyboardType: TextInputType.text,
-              validator: (value) => Validators.validateRequired(value, 'Refuge Name'),
+              validator: (value) =>
+                  Validators.validateRequired(value, 'Refuge Name'),
             ),
             const SizedBox(height: 16),
-            const Text('Select Province', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
+            const Text(
+              'Select Province',
+              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 8),
 
             provincesAsync.when(
               data: (provinceList) {
                 _selectedProvinceId ??= AppConstants.defaultProvince;
                 return LocationDropdown(
-                items: provinceList,
-                initialItem: AppConstants.defaultProvince,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedProvinceId = value;
-                  });
-                },
-              );},
+                  items: provinceList,
+                  initialItem: AppConstants.defaultProvince,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedProvinceId = value;
+                    });
+                  },
+                );
+              },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text('Error loading provinces: $e', style: const TextStyle(color: Colors.red)),
+              error: (e, _) => Text(
+                'Error loading provinces: $e',
+                style: const TextStyle(color: Colors.red),
+              ),
             ),
 
             const SizedBox(height: 24),
@@ -94,7 +104,7 @@ class _AddRefugeModalState extends ConsumerState<AddRefugeModal> {
             ),
           ],
         ),
-      )
+      ),
     );
   }
 }

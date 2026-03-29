@@ -5,12 +5,8 @@ class AnimalDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Animal Details'),
-      ),
-      body: Column(
-        children: [Text("details here")],
-      ),
+      appBar: AppBar(title: const Text('Animal Details')),
+      body: Column(children: [Text("details here")]),
     );
   }
 }

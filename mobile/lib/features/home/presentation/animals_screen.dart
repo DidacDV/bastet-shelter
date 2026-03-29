@@ -8,15 +8,19 @@ class AnimalsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Animals'),
-      ),
+      appBar: AppBar(title: const Text('Animals')),
       body: Center(
         child: Column(
           children: [
-            PrimaryButton(label: "Test local nav", onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => AnimalDetailsScreen())), isLoading: false, )
+            PrimaryButton(
+              label: "Test local nav",
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => AnimalDetailsScreen()),
+              ),
+              isLoading: false,
+            ),
           ],
-        )
+        ),
       ),
     );
   }

@@ -6,7 +6,7 @@ class GeoRepository {
   GeoRepository(this._apiClient);
 
   Future<List<Province>> getAllProvinces() async {
-   final data = await _apiClient.get("/geo/provinces");
-   return Province.listFromJson(data["provinces"] as List<dynamic>);
+    final data = await _apiClient.get("/geo/provinces");
+    return Province.listFromJson(data["provinces"] as List<dynamic>);
   }
 }

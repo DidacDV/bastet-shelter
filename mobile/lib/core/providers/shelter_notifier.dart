@@ -20,32 +20,43 @@ class ShelterNotifier extends _$ShelterNotifier {
 
   Future<void> resetVolunteerCode() async {
     await genericApiCall(() async {
-      final newCode = await ref.read(shelterRepositoryProvider).changeVolunteerCode();
+      final newCode = await ref
+          .read(shelterRepositoryProvider)
+          .changeVolunteerCode();
       state = AsyncData(state.value!.copyWith(volunteerCode: newCode));
     });
   }
 
   Future<void> resetManagerCode() async {
     await genericApiCall(() async {
-      final newCode = await ref.read(shelterRepositoryProvider).changeManagerCode();
+      final newCode = await ref
+          .read(shelterRepositoryProvider)
+          .changeManagerCode();
       state = AsyncData(state.value!.copyWith(managerCode: newCode));
     });
   }
 
   Future<void> addRefuge(String name, String locationId) async {
     await genericApiCall(() async {
-      final refuge = await ref.read(shelterRepositoryProvider).addNewRefuge(name, locationId);
-      state = AsyncData(state.value!.copyWith(refuges: [...state.value!.refuges, refuge]));
+      final refuge = await ref
+          .read(shelterRepositoryProvider)
+          .addNewRefuge(name, locationId);
+      state = AsyncData(
+        state.value!.copyWith(refuges: [...state.value!.refuges, refuge]),
+      );
       return refuge;
     });
   }
+
   Future<void> deleteRefuge(int refugeId) async {
     await genericApiCall(() async {
       await ref.read(shelterRepositoryProvider).deleteRefuge(refugeId);
       final currentRefuges = state.value!.refuges;
-      final updatedRefuges = currentRefuges.where((r) => r.id != refugeId).toList();
+      final updatedRefuges = currentRefuges
+          .where((r) => r.id != refugeId)
+          .toList();
 
-     state = AsyncData(state.value!.copyWith(refuges: updatedRefuges));
+      state = AsyncData(state.value!.copyWith(refuges: updatedRefuges));
     });
   }
 }

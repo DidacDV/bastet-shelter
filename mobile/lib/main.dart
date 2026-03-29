@@ -19,11 +19,7 @@ void main() async {
 
   configureDependencies();
   await getIt<ApiClient>().loadTokenFromStorage();
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -34,18 +30,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Bastet Shelter',
       navigatorKey: NavigationService.instance.navigationKey,
-      theme: ThemeData(
-        useMaterial3: true,
-        primarySwatch: Colors.brown,
-      ),
+      theme: ThemeData(useMaterial3: true, primarySwatch: Colors.brown),
       initialRoute: getIt<ApiClient>().hasValidToken ? '/home' : '/login',
       routes: {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const HomeScreen(),
-        '/role/picker':        (_) => const RolePickerScreen(),
-        '/role/volunteer-code':  (_) => const CodeEntryScreen(mode: CodeScreenMode.volunteer),
-        '/role/manager-code': (_) => const CodeEntryScreen(mode: CodeScreenMode.manager),
+        '/role/picker': (_) => const RolePickerScreen(),
+        '/role/volunteer-code': (_) =>
+            const CodeEntryScreen(mode: CodeScreenMode.volunteer),
+        '/role/manager-code': (_) =>
+            const CodeEntryScreen(mode: CodeScreenMode.manager),
         '/role/manager-picker': (_) => const ManagerPickerScreen(),
         '/role/create-shelter': (_) => const CreateShelterScreen(),
         '/shelter/config': (_) => const ConfigScreen(),

@@ -18,9 +18,7 @@ class PrimaryButton extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
-        child: isLoading
-            ? const CircularProgressIndicator()
-            : Text(label),
+        child: isLoading ? const CircularProgressIndicator() : Text(label),
       ),
     );
   }

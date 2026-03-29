@@ -23,7 +23,10 @@ class Shelter {
       province: Province.fromJson(json['province']),
       volunteerCode: json['volunteer_code'],
       managerCode: json['manager_code'],
-      refuges: (json['refuges'] as List<dynamic>?)?.map((refuge) => Refuge.fromJson(refuge)).toList() ??
+      refuges:
+          (json['refuges'] as List<dynamic>?)
+              ?.map((refuge) => Refuge.fromJson(refuge))
+              .toList() ??
           [],
     );
   }

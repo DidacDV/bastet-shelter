@@ -6,7 +6,13 @@ class SectionCard extends StatelessWidget {
   final Widget child;
   final Widget? trailingAction;
 
-  const SectionCard({super.key, required this.title, required this.icon, required this.child, this.trailingAction});
+  const SectionCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.child,
+    this.trailingAction,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +20,14 @@ class SectionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
+        border: Border.all(
+          color: Theme.of(
+            context,
+          ).colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -33,12 +43,12 @@ class SectionCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 title,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              if (trailingAction != null) ...[
-                const Spacer(),
-                trailingAction!,
-              ],
+              if (trailingAction != null) ...[const Spacer(), trailingAction!],
             ],
           ),
           const SizedBox(height: 20),

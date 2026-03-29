@@ -41,9 +41,9 @@ class _HomeTabState extends ConsumerState<HomeTab> {
           if (authService.isManager)
             IconButton(
               icon: const Icon(Icons.settings),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ConfigScreen()),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const ConfigScreen())),
             ),
           IconButton(
             icon: const Icon(Icons.logout),

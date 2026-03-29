@@ -42,7 +42,11 @@ class _OptionButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
 
-  const _OptionButton({required this.label, required this.icon, required this.onTap});
+  const _OptionButton({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +55,9 @@ class _OptionButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

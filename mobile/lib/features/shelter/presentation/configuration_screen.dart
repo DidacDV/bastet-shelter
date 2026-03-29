@@ -26,7 +26,6 @@ class ConfigScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-
               SectionCard(
                 title: 'Shelter Info',
                 icon: Icons.pets,
@@ -37,24 +36,40 @@ class ConfigScreen extends ConsumerWidget {
                     const SizedBox(height: 12),
                     LabelValue(label: 'Location', value: shelter.province.name),
                     const Divider(height: 32), // Visual separator for codes
-                    LabelValue(label: 'Volunteer Code', value: shelter.volunteerCode ?? 'Not available'),
+                    LabelValue(
+                      label: 'Volunteer Code',
+                      value: shelter.volunteerCode ?? 'Not available',
+                    ),
                     const SizedBox(height: 12),
-                    LabelValue(label: 'Manager Code', value: shelter.managerCode ?? 'Not available'),
+                    LabelValue(
+                      label: 'Manager Code',
+                      value: shelter.managerCode ?? 'Not available',
+                    ),
                     const SizedBox(height: 24),
 
                     Row(
                       children: [
                         Expanded(
                           child: FilledButton.tonal(
-                            onPressed: () => ref.read(shelterProvider.notifier).resetVolunteerCode(),
-                            child: const Text('Reset Vol. Code', textAlign: TextAlign.center),
+                            onPressed: () => ref
+                                .read(shelterProvider.notifier)
+                                .resetVolunteerCode(),
+                            child: const Text(
+                              'Reset Vol. Code',
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: FilledButton.tonal(
-                            onPressed: () => ref.read(shelterProvider.notifier).resetManagerCode(),
-                            child: const Text('Reset Mgr. Code', textAlign: TextAlign.center),
+                            onPressed: () => ref
+                                .read(shelterProvider.notifier)
+                                .resetManagerCode(),
+                            child: const Text(
+                              'Reset Mgr. Code',
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       ],
@@ -69,14 +84,16 @@ class ConfigScreen extends ConsumerWidget {
                 title: 'Refuges',
                 icon: Icons.holiday_village,
                 trailingAction: IconButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) => const AddRefugeModal(),
-                      );
-                    },
-                    icon: const Icon(Icons.add_circle_outline), iconSize: 28, color: Theme.of(context).colorScheme.primary
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) => const AddRefugeModal(),
+                    );
+                  },
+                  icon: const Icon(Icons.add_circle_outline),
+                  iconSize: 28,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -84,28 +101,39 @@ class ConfigScreen extends ConsumerWidget {
                     if (shelter.refuges.isEmpty)
                       const Padding(
                         padding: EdgeInsets.only(bottom: 16.0),
-                        child: Text('No refuges added yet.', style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic)),
+                        child: Text(
+                          'No refuges added yet.',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
                       )
                     else
-                      ...shelter.refuges.map((refuge) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
-                        child: _RefugeListItem(
-                          name: refuge.name,
-                          location: refuge.province.name,
-                          onDelete: () async {
-                            final confirm = await ConfirmationDialog.show(
+                      ...shelter.refuges.map(
+                        (refuge) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: _RefugeListItem(
+                            name: refuge.name,
+                            location: refuge.province.name,
+                            onDelete: () async {
+                              final confirm = await ConfirmationDialog.show(
                                 context: context,
                                 title: "Delete refuge",
-                                message: "Are you sure you want to delete ${refuge.name}?",
+                                message:
+                                    "Are you sure you want to delete ${refuge.name}?",
                                 isDestructive: true,
                                 confirmText: "Delete",
-                            );
-                            if (confirm) {
-                              await ref.read(shelterProvider.notifier).deleteRefuge(refuge.id);
-                            }
-                          },
+                              );
+                              if (confirm) {
+                                await ref
+                                    .read(shelterProvider.notifier)
+                                    .deleteRefuge(refuge.id);
+                              }
+                            },
+                          ),
                         ),
-                      )),
+                      ),
                   ],
                 ),
               ),
@@ -118,19 +146,24 @@ class ConfigScreen extends ConsumerWidget {
   }
 }
 
-
 class _RefugeListItem extends StatelessWidget {
   final String name;
   final String location;
   final VoidCallback onDelete;
 
-  const _RefugeListItem({required this.name, required this.location, required this.onDelete});
+  const _RefugeListItem({
+    required this.name,
+    required this.location,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.4),
+        color: Theme.of(
+          context,
+        ).colorScheme.primaryContainer.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -139,10 +172,16 @@ class _RefugeListItem extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.location_on, color: Theme.of(context).colorScheme.primary, size: 20),
+            child: Icon(
+              Icons.location_on,
+              color: Theme.of(context).colorScheme.primary,
+              size: 20,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -151,12 +190,18 @@ class _RefugeListItem extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   location,
-                  style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),
@@ -165,11 +210,9 @@ class _RefugeListItem extends StatelessWidget {
             icon: const Icon(Icons.delete),
             color: Theme.of(context).colorScheme.error,
             onPressed: onDelete,
-          )
+          ),
         ],
       ),
     );
   }
 }
-
-

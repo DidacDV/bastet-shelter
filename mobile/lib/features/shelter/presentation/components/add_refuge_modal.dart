@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/common/components/api_error_widget.dart';
 import 'package:bastetshelter/features/common/components/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -111,9 +112,9 @@ class _RefugeModalState extends ConsumerState<RefugeModal> {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text(
-                'Error loading provinces: $e',
-                style: const TextStyle(color: Colors.red),
+              error: (e, stack) => ApiErrorWidget(
+                error: e,
+                onRetry: () => ref.invalidate(geoProvider),
               ),
             ),
 

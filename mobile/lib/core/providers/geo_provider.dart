@@ -15,6 +15,7 @@ GeoRepository geoRepository(Ref ref) {
 class Geo extends _$Geo {
   @override
   Future<List<Province>> build() async {
+    ref.keepAlive();
     return ref.read(geoRepositoryProvider).getAllProvinces();
   }
 }

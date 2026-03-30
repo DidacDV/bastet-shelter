@@ -60,6 +60,25 @@ class ShelterNotifier extends _$ShelterNotifier {
     });
   }
 
+  Future<void> updateRefuge(
+    int refugeId,
+    String name,
+    String locationId,
+  ) async {
+    await genericApiCall(() async {
+      final updatedRefuge = await ref
+          .read(shelterRepositoryProvider)
+          .updateRefuge(refugeId, name, locationId);
+
+      //replace previous refuge with updated refuge
+      final updatedList = state.value!.refuges.map((refuge) {
+        return refuge.id == refugeId ? updatedRefuge : refuge;
+      }).toList();
+
+      state = AsyncData(state.value!.copyWith(refuges: updatedList));
+    });
+  }
+
   Future<void> updateShelter({
     required String name,
     required String provinceId,

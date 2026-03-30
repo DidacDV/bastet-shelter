@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:bastetshelter/core/config.dart';
@@ -48,9 +50,21 @@ class ApiClient {
     );
   }
 
+  Future<T> _send<T>(Future<T> Function() request) async {
+    try {
+      return await request();
+    } on TimeoutException {
+      throw ApiException(408, 'Connection timed out, please try again');
+    }
+  }
+
   Future<Map<String, dynamic>> get(String endpoint) async {
     final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
-    final response = await _client.get(url, headers: _getHeaders());
+    final response = await _send(
+      () => _client
+          .get(url, headers: _getHeaders())
+          .timeout(const Duration(seconds: AppConstants.timeoutDuration)),
+    );
     return _handleResponse(response);
   }
 
@@ -59,10 +73,14 @@ class ApiClient {
     Map<String, String>? body,
   }) async {
     final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
-    final response = await _client.post(
-      url,
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: body,
+    final response = await _send(
+      () => _client
+          .post(
+            url,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: body,
+          )
+          .timeout(const Duration(seconds: AppConstants.timeoutDuration)),
     );
     return _handleResponse(response);
   }
@@ -72,26 +90,30 @@ class ApiClient {
     Map<String, dynamic>? body,
   }) async {
     final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
-    final response = await _client.post(
-      url,
-      headers: _getHeaders(),
-      body: jsonEncode(body),
+    final response = await _send(
+      () => _client
+          .post(url, headers: _getHeaders(), body: jsonEncode(body))
+          .timeout(const Duration(seconds: AppConstants.timeoutDuration)),
     );
     return _handleResponse(response);
   }
 
   Future<dynamic> delete(String endpoint) async {
     final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
-    final response = await _client.delete(url, headers: _getHeaders());
+    final response = await _send(
+      () => _client
+          .delete(url, headers: _getHeaders())
+          .timeout(const Duration(seconds: AppConstants.timeoutDuration)),
+    );
     return _handleResponse(response);
   }
 
   Future<dynamic> put(String endpoint, {Map<String, dynamic>? body}) async {
     final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
-    final response = await _client.put(
-      url,
-      headers: _getHeaders(),
-      body: jsonEncode(body),
+    final response = await _send(
+      () => _client
+          .put(url, headers: _getHeaders(), body: jsonEncode(body))
+          .timeout(const Duration(seconds: AppConstants.timeoutDuration)),
     );
     return _handleResponse(response);
   }

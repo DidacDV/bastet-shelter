@@ -25,7 +25,7 @@ class AppShell extends ConsumerWidget {
               title: shelterAsync.when(
                 data: (shelter) => Text(shelter.name),
                 loading: () => const Text('Loading...'),
-                error: (_, __) => const Text('Bastet Shelter'),
+                error: (_, _) => const Text('Bastet Shelter'),
               ),
               actions: [
                 if (authService.isManager)

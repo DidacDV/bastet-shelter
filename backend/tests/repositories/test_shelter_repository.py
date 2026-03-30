@@ -49,3 +49,14 @@ class TestShelterRepository:
         db.refresh(shelter)
         assert shelter.manager_code == "DACDAC11"
         assert shelter.volunteer_code == "VOL123"  # unchanged
+
+    def test_update_generic(self, db):
+        shelter = _create_shelter(db)
+        updated = self.repo.update(db, shelter.id, {"name": "New Name", "province_id": "08"})
+        assert updated is not None
+        assert updated.name == "New Name"
+        assert updated.province_id == "08"
+        # Verify in DB
+        db.refresh(shelter)
+        assert shelter.name == "New Name"
+        assert shelter.province_id == "08"

@@ -4,7 +4,7 @@ from datetime import date
 
 from app.services.shelter_service import ShelterService
 from app.models.shelter_member import RoleEnum
-from app.schemas.shelter_schema import ShelterCreate
+from app.schemas.shelter_schema import ShelterCreate, ShelterUpdate
 
 
 def _mock_shelter(volunteer_code="VOL123", manager_code="MAN456"):
@@ -229,5 +229,24 @@ def test_create_volunteer_member_by_id(service):
 def test_create_manager_member_by_id(service):
     result = service.create_manager_member_by_id(user_id=1, shelter_id=1)
     assert result.role == RoleEnum.MANAGER
+
+
+def test_update_shelter_success(service):
+    mock_shelter = _mock_shelter()
+    service.shelter_repo.update.return_value = mock_shelter
+    data = ShelterUpdate(name="New Name", province_id="08")
+
+    result = service.update_shelter(1, data)
+
+    assert result.name == "Rodamons"  # It returns the mock's original name because update just returns the mock
+    service.shelter_repo.update.assert_called_once_with(service.db, 1, {"name": "New Name", "province_id": "08"})
+
+
+def test_update_shelter_not_found(service):
+    service.shelter_repo.update.return_value = None
+    data = ShelterUpdate(name="New Name")
+
+    with pytest.raises(ValueError, match="Shelter not found"):
+        service.update_shelter(1, data)
 
 #endregion

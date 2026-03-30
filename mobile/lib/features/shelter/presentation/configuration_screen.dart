@@ -1,6 +1,7 @@
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/label_value.dart';
 import 'package:bastetshelter/features/common/components/section_card.dart';
+import 'package:bastetshelter/features/shelter/presentation/components/edit_shelter_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bastetshelter/core/providers/shelter_notifier.dart';
@@ -29,13 +30,24 @@ class ConfigScreen extends ConsumerWidget {
               SectionCard(
                 title: 'Shelter Info',
                 icon: Icons.pets,
+                trailingAction: IconButton(
+                  icon: const Icon(Icons.edit),
+                  color: Theme.of(context).colorScheme.primary,
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    builder: (context) => EditShelterModal(
+                      currentName: shelter.name,
+                      currentProvinceId: shelter.province.id,
+                    ),
+                  ),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LabelValue(label: 'Name', value: shelter.name),
                     const SizedBox(height: 12),
                     LabelValue(label: 'Location', value: shelter.province.name),
-                    const Divider(height: 32), // Visual separator for codes
+                    const Divider(height: 32),
                     LabelValue(
                       label: 'Volunteer Code',
                       value: shelter.volunteerCode ?? 'Not available',

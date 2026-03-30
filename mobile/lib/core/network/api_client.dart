@@ -86,6 +86,16 @@ class ApiClient {
     return _handleResponse(response);
   }
 
+  Future<dynamic> put(String endpoint, {Map<String, dynamic>? body}) async {
+    final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
+    final response = await _client.put(
+      url,
+      headers: _getHeaders(),
+      body: jsonEncode(body),
+    );
+    return _handleResponse(response);
+  }
+
   Map<String, String> _getHeaders() {
     final headers = <String, String>{'Content-Type': 'application/json'};
     if (_accessToken != null) {

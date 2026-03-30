@@ -59,4 +59,20 @@ class ShelterNotifier extends _$ShelterNotifier {
       state = AsyncData(state.value!.copyWith(refuges: updatedRefuges));
     });
   }
+
+  Future<void> updateShelter({
+    required String name,
+    required String provinceId,
+  }) async {
+    await genericApiCall(() async {
+      final updated = await ref
+          .read(shelterRepositoryProvider)
+          .updateShelter(name, provinceId);
+      final newName = updated.name;
+      final newProvince = updated.province;
+      state = AsyncData(
+        state.value!.copyWith(name: newName, province: newProvince),
+      );
+    });
+  }
 }

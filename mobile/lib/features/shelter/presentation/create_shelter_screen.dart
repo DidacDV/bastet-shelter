@@ -58,7 +58,7 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
     final provincesAsync = ref.watch(geoProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Bastet Shelter')),
+      appBar: AppBar(title: const Text('Digitalize your shelter')),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Center(

@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/providers/geo_provider.dart';
+import 'package:bastetshelter/features/common/components/app_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'animals_screen.dart';
@@ -49,49 +50,52 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           nav.pop();
         }
       },
-      child: Scaffold(
-        body: Stack(
-          children: List.generate(_tabs.length, (i) {
-            return Offstage(
-              offstage: _selectedIndex != i,
-              child: Navigator(
-                key: _navigatorKeys[i],
-                onGenerateRoute: (_) =>
-                    MaterialPageRoute(builder: (_) => _tabs[i]),
+      child: AppShell(
+        showAppBar: true,
+        child: Scaffold(
+          body: Stack(
+            children: List.generate(_tabs.length, (i) {
+              return Offstage(
+                offstage: _selectedIndex != i,
+                child: Navigator(
+                  key: _navigatorKeys[i],
+                  onGenerateRoute: (_) =>
+                      MaterialPageRoute(builder: (_) => _tabs[i]),
+                ),
+              );
+            }),
+          ),
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: (i) => setState(() => _selectedIndex = i),
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home),
+                label: 'Home',
               ),
-            );
-          }),
-        ),
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: _selectedIndex,
-          onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.pets_outlined),
-              selectedIcon: Icon(Icons.pets),
-              label: 'Animals',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.schedule_outlined),
-              selectedIcon: Icon(Icons.schedule),
-              label: 'Shifts',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.task_outlined),
-              selectedIcon: Icon(Icons.task),
-              label: 'Tasks',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.people_outlined),
-              selectedIcon: Icon(Icons.people),
-              label: 'Community',
-            ),
-          ],
+              NavigationDestination(
+                icon: Icon(Icons.pets_outlined),
+                selectedIcon: Icon(Icons.pets),
+                label: 'Animals',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.schedule_outlined),
+                selectedIcon: Icon(Icons.schedule),
+                label: 'Shifts',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.task_outlined),
+                selectedIcon: Icon(Icons.task),
+                label: 'Tasks',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.people_outlined),
+                selectedIcon: Icon(Icons.people),
+                label: 'Community',
+              ),
+            ],
+          ),
         ),
       ),
     );

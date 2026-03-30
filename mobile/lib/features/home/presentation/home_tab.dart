@@ -1,12 +1,8 @@
-import 'package:bastetshelter/core/auth/auth_service.dart';
-import 'package:bastetshelter/features/auth/data/auth_repository.dart';
 import 'package:bastetshelter/features/home/data/dashboard_repository.dart';
 import 'package:bastetshelter/features/home/data/dashboard_model.dart';
-import 'package:bastetshelter/features/shelter/presentation/configuration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bastetshelter/core/providers/shelter_notifier.dart';
 
 class HomeTab extends ConsumerStatefulWidget {
   const HomeTab({super.key});
@@ -26,78 +22,49 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    final authRepository = getIt<AuthRepository>();
-    final authService = getIt<AuthService>();
-    final shelterAsync = ref.watch(shelterProvider);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: shelterAsync.when(
-          data: (shelter) => Text(shelter.name),
-          loading: () => const Text('Loading...'),
-          error: (_, _) => const Text('Bastet Shelter'),
-        ),
-        actions: [
-          if (authService.isManager)
-            IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () => Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const ConfigScreen())),
-            ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              authRepository.logout();
-              Navigator.pushReplacementNamed(context, '/login');
-            },
+    return FutureBuilder<DashboardData>(
+      future: _dashboardFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text(snapshot.error.toString()));
+        }
+        final dashboard = snapshot.data!;
+        return Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Benvingut',
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 48),
+              _StatTile(
+                count: dashboard.animalCount,
+                label: 'animals registrats',
+                onTap: () {},
+              ),
+              const SizedBox(height: 24),
+              _StatTile(
+                count: dashboard.activeAdoptionCount,
+                label: "processos d'adopció actius",
+                onTap: () {},
+              ),
+              const SizedBox(height: 24),
+              _StatTile(
+                count: dashboard.volunteerCount,
+                label: 'voluntaris',
+                onTap: () {},
+              ),
+            ],
           ),
-        ],
-      ),
-      body: FutureBuilder<DashboardData>(
-        future: _dashboardFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error.toString()));
-          }
-          final dashboard = snapshot.data!;
-          return Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  'Benvingut',
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 48),
-                _StatTile(
-                  count: dashboard.animalCount,
-                  label: 'animals registrats',
-                  onTap: () {},
-                ),
-                const SizedBox(height: 24),
-                _StatTile(
-                  count: dashboard.activeAdoptionCount,
-                  label: "processos d'adopció actius",
-                  onTap: () {},
-                ),
-                const SizedBox(height: 24),
-                _StatTile(
-                  count: dashboard.volunteerCount,
-                  label: 'voluntaris',
-                  onTap: () {},
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+        );
+      },
     );
   }
 }

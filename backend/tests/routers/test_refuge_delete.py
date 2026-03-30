@@ -2,7 +2,7 @@ from tests.routers.test_shelter_router import _register_and_login, _auth_headers
 
 def test_delete_refuge_success(client):
     token = _register_and_login(client, email="owner@delete.com")
-    new_token, _, _ = _create_shelter(client, token, name="Shelter Delete", refuge_name="Initial Refuge")
+    new_token, _, _, _ = _create_shelter(client, token, name="Shelter Delete", refuge_name="Initial Refuge")
     
     res = client.get("/refuges/", headers=_auth_headers(new_token))
     assert res.status_code == 200
@@ -23,7 +23,7 @@ def test_delete_refuge_success(client):
 
 def test_delete_refuge_with_animals_fails(client):
     token = _register_and_login(client, email="owner_anim@delete.com")
-    new_token, _, _ = _create_shelter(client, token, name="Shelter Animal Delete", refuge_name="Refuge with Animal")
+    new_token, _, _, _ = _create_shelter(client, token, name="Shelter Animal Delete", refuge_name="Refuge with Animal")
     
     res = client.get("/refuges/", headers=_auth_headers(new_token))
     refuge_id = res.json()[0]["id"]
@@ -44,7 +44,7 @@ def test_delete_refuge_with_animals_fails(client):
 
 def test_delete_refuge_with_shifts_fails(client):
     token = _register_and_login(client, email="owner_shift@delete.com")
-    new_token, _, _ = _create_shelter(client, token, name="Shelter Shift Delete", refuge_name="Refuge with Shift")
+    new_token, _, _, _ = _create_shelter(client, token, name="Shelter Shift Delete", refuge_name="Refuge with Shift")
     
     res = client.get("/refuges/", headers=_auth_headers(new_token))
     refuge_id = res.json()[0]["id"]
@@ -61,26 +61,26 @@ def test_delete_refuge_with_shifts_fails(client):
 
 def test_delete_refuge_not_found(client):
     token = _register_and_login(client, email="owner_nf@delete.com")
-    new_token, _, _ = _create_shelter(client, token)
+    new_token, _, _, _ = _create_shelter(client, token)
     
     res = client.delete("/refuges/9999", headers=_auth_headers(new_token))
     assert res.status_code == 404
 
 def test_delete_refuge_other_shelter(client):
     token1 = _register_and_login(client, email="owner1@delete.com")
-    new_token1, _, _ = _create_shelter(client, token1, name="Shelter 1")
+    new_token1, _, _, _ = _create_shelter(client, token1, name="Shelter 1")
     res = client.get("/refuges/", headers=_auth_headers(new_token1))
     refuge_id_1 = res.json()[0]["id"]
     
     token2 = _register_and_login(client, email="owner2@delete.com")
-    new_token2, _, _ = _create_shelter(client, token2, name="Shelter 2")
+    new_token2, _, _, _ = _create_shelter(client, token2, name="Shelter 2")
     
     res = client.delete(f"/refuges/{refuge_id_1}", headers=_auth_headers(new_token2))
     assert res.status_code == 404
 
 def test_delete_last_refuge_fails(client):
     token = _register_and_login(client, email="owner_last@delete.com")
-    new_token, _, _ = _create_shelter(client, token, name="Shelter Last Delete", refuge_name="The Only Refuge")
+    new_token, _, _, _ = _create_shelter(client, token, name="Shelter Last Delete", refuge_name="The Only Refuge")
     
     res = client.get("/refuges/", headers=_auth_headers(new_token))
     refuge_id = res.json()[0]["id"]

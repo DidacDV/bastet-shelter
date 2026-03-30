@@ -24,3 +24,12 @@ class BaseRepository(Generic[T]):
         if obj:
             db.delete(obj)
             db.commit()
+
+    def update(self, db: Session, id: int, data: dict) -> T | None:
+        obj = self.get_by_id(db, id)
+        if obj:
+            for key, value in data.items():
+                setattr(obj, key, value)
+            db.commit()
+            db.refresh(obj)
+        return obj

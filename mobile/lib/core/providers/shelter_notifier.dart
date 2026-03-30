@@ -59,4 +59,39 @@ class ShelterNotifier extends _$ShelterNotifier {
       state = AsyncData(state.value!.copyWith(refuges: updatedRefuges));
     });
   }
+
+  Future<void> updateRefuge(
+    int refugeId,
+    String name,
+    String locationId,
+  ) async {
+    await genericApiCall(() async {
+      final updatedRefuge = await ref
+          .read(shelterRepositoryProvider)
+          .updateRefuge(refugeId, name, locationId);
+
+      //replace previous refuge with updated refuge
+      final updatedList = state.value!.refuges.map((refuge) {
+        return refuge.id == refugeId ? updatedRefuge : refuge;
+      }).toList();
+
+      state = AsyncData(state.value!.copyWith(refuges: updatedList));
+    });
+  }
+
+  Future<void> updateShelter({
+    required String name,
+    required String provinceId,
+  }) async {
+    await genericApiCall(() async {
+      final updated = await ref
+          .read(shelterRepositoryProvider)
+          .updateShelter(name, provinceId);
+      final newName = updated.name;
+      final newProvince = updated.province;
+      state = AsyncData(
+        state.value!.copyWith(name: newName, province: newProvince),
+      );
+    });
+  }
 }

@@ -2,12 +2,22 @@ import fastapi
 from sqlalchemy.orm import Session
 from app.models.refuge import Refuge
 from app.repositories.refuge_repo import RefugeRepository
-from app.schemas.refuge_schema import RefugeCreate, RefugeResponse
+from app.schemas.refuge_schema import RefugeCreate, RefugeResponse, RefugeUpdate
 
 class RefugeService:
     def __init__(self, db: Session):
         self.db = db
         self.refuge_repo = RefugeRepository(db)
+
+    def update_refuge(self, refuge_id: int, shelter_id: int, data: RefugeUpdate) -> RefugeResponse:
+        refuge = self.refuge_repo.get_by_id(self.db, refuge_id)
+        if not refuge or refuge.shelter_id != shelter_id:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail="Refuge not found")
+
+        update_data = data.model_dump(exclude_unset=True)
+        updated_refuge = self.refuge_repo.update(self.db, refuge_id, update_data)
+        return RefugeResponse.model_validate(updated_refuge)
 
     def create_refuge(self, data: RefugeCreate, shelter_id: int) -> RefugeResponse:
         """Creates refuge linked to shelter"""

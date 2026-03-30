@@ -6,7 +6,7 @@ from app.database import get_db
 from app.models.shelter_member import RoleEnum
 from app.models.user import AuthenticatedUser
 from app.schemas.shelter_member_schema import ShelterMemberInfo
-from app.schemas.shelter_schema import ShelterResponse, ShelterCreate, ShelterWithTokenResponse
+from app.schemas.shelter_schema import ShelterResponse, ShelterCreate, ShelterWithTokenResponse, ShelterUpdate
 from app.services.shelter_service import ShelterService
 
 router = APIRouter(prefix="/shelters", tags=["shelters"])
@@ -32,6 +32,20 @@ def get_shelter_info(
 ):
     try:
         return service.get_shelter_by_id(shelter_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@router.put("/{shelter_id}", response_model=ShelterResponse, status_code=status.HTTP_200_OK)
+def update_shelter(
+        shelter_id: int,
+        data: ShelterUpdate,
+        service: ShelterService = Depends(get_shelter_service),
+        auth: AuthenticatedUser = Depends(require_shelter_manager)
+):
+    if auth.shelter_id != shelter_id:
+        raise HTTPException(status_code=403, detail="You can only update your own shelter")
+    try:
+        return service.update_shelter(shelter_id, data)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 

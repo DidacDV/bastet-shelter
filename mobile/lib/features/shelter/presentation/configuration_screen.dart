@@ -1,6 +1,8 @@
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/label_value.dart';
 import 'package:bastetshelter/features/common/components/section_card.dart';
+import 'package:bastetshelter/features/shelter/presentation/components/edit_shelter_modal.dart';
+import 'package:bastetshelter/features/shelter/presentation/components/refuge_list_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bastetshelter/core/providers/shelter_notifier.dart';
@@ -29,13 +31,24 @@ class ConfigScreen extends ConsumerWidget {
               SectionCard(
                 title: 'Shelter Info',
                 icon: Icons.pets,
+                trailingAction: IconButton(
+                  icon: const Icon(Icons.edit),
+                  color: Theme.of(context).colorScheme.primary,
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    builder: (context) => EditShelterModal(
+                      currentName: shelter.name,
+                      currentProvinceId: shelter.province.id,
+                    ),
+                  ),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     LabelValue(label: 'Name', value: shelter.name),
                     const SizedBox(height: 12),
                     LabelValue(label: 'Location', value: shelter.province.name),
-                    const Divider(height: 32), // Visual separator for codes
+                    const Divider(height: 32),
                     LabelValue(
                       label: 'Volunteer Code',
                       value: shelter.volunteerCode ?? 'Not available',
@@ -88,7 +101,7 @@ class ConfigScreen extends ConsumerWidget {
                     showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
-                      builder: (context) => const AddRefugeModal(),
+                      builder: (context) => const RefugeModal(),
                     );
                   },
                   icon: const Icon(Icons.add_circle_outline),
@@ -113,9 +126,20 @@ class ConfigScreen extends ConsumerWidget {
                       ...shelter.refuges.map(
                         (refuge) => Padding(
                           padding: const EdgeInsets.only(bottom: 12.0),
-                          child: _RefugeListItem(
+                          child: RefugeListItem(
                             name: refuge.name,
                             location: refuge.province.name,
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) => RefugeModal(
+                                  refugeId: refuge.id,
+                                  initialName: refuge.name,
+                                  initialProvinceId: refuge.province.id,
+                                ),
+                              );
+                            },
                             onDelete: () async {
                               final confirm = await ConfirmationDialog.show(
                                 context: context,
@@ -141,77 +165,6 @@ class ConfigScreen extends ConsumerWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _RefugeListItem extends StatelessWidget {
-  final String name;
-  final String location;
-  final VoidCallback onDelete;
-
-  const _RefugeListItem({
-    required this.name,
-    required this.location,
-    required this.onDelete,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(
-          context,
-        ).colorScheme.primaryContainer.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Theme.of(
-                context,
-              ).colorScheme.primary.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.location_on,
-              color: Theme.of(context).colorScheme.primary,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  location,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete),
-            color: Theme.of(context).colorScheme.error,
-            onPressed: onDelete,
-          ),
-        ],
       ),
     );
   }

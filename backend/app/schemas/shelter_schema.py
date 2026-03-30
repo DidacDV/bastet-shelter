@@ -15,6 +15,11 @@ class ShelterCreate(BaseModel):
     refuge_name: str
 
 
+class ShelterUpdate(BaseModel):
+    name: Optional[str] = None
+    province_id: Optional[str] = None
+
+
 class ShelterResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

@@ -119,4 +119,50 @@ def test_get_shelter_basic_info(client):
     assert len(data["refuges"]) == 1
     assert data["refuges"][0]["name"] == "Main Refuge"
 
+
+def test_update_shelter(client):
+    token = _register_and_login(client)
+    manager_token, _, _, shelter_id = _create_shelter(client, token, name="Old Name", province_id="08")
+
+    res = client.put(
+        f"/shelters/{shelter_id}",
+        json={"name": "New Name", "province_id": "08"},
+        headers=_auth_headers(manager_token)
+    )
+    assert res.status_code == 200
+    data = res.json()
+    assert data["name"] == "New Name"
+    assert data["province"]["id"] == "08"
+
+
+def test_update_shelter_partial(client):
+    token = _register_and_login(client)
+    manager_token, _, _, shelter_id = _create_shelter(client, token, name="Old Name", province_id="08")
+
+    res = client.put(
+        f"/shelters/{shelter_id}",
+        json={"name": "Updated Name"},
+        headers=_auth_headers(manager_token)
+    )
+    assert res.status_code == 200
+    data = res.json()
+    assert data["name"] == "Updated Name"
+    assert data["province"]["id"] == "08"
+
+
+def test_update_shelter_unauthorized(client):
+    owner_token = _register_and_login(client, email="owner@example.com", name="Owner")
+    _, volunteer_code, _, _ = _create_shelter(client, owner_token)
+
+    volunteer_token = _register_and_login(client, email="vol@example.com", name="Vol")
+    join_res = client.post(f"/shelters/join/volunteer/{volunteer_code}", headers=_auth_headers(volunteer_token))
+    vol_token = join_res.json()["access_token"]
+
+    res = client.put(
+        "/shelters/1",
+        json={"name": "New Name"},
+        headers=_auth_headers(vol_token)
+    )
+    assert res.status_code == 403
+
 # endregion

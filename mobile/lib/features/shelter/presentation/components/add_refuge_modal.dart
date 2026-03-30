@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/common/components/api_error_widget.dart';
 import 'package:bastetshelter/features/common/components/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,17 +9,35 @@ import 'package:bastetshelter/features/common/components/location_dropdown.dart'
 import '../../../../core/providers/shelter_notifier.dart';
 import '../../../../core/utils/validators.dart' show Validators;
 
-class AddRefugeModal extends ConsumerStatefulWidget {
-  const AddRefugeModal({super.key});
+class RefugeModal extends ConsumerStatefulWidget {
+  final int? refugeId;
+  final String? initialName;
+  final String? initialProvinceId;
+
+  const RefugeModal({
+    super.key,
+    this.refugeId,
+    this.initialName,
+    this.initialProvinceId,
+  });
 
   @override
-  ConsumerState<AddRefugeModal> createState() => _AddRefugeModalState();
+  ConsumerState<RefugeModal> createState() => _RefugeModalState();
 }
 
-class _AddRefugeModalState extends ConsumerState<AddRefugeModal> {
+class _RefugeModalState extends ConsumerState<RefugeModal> {
   final _nameController = TextEditingController();
   String? _selectedProvinceId;
   final _formKey = GlobalKey<FormState>();
+
+  bool get isEditing => widget.refugeId != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text = widget.initialName ?? '';
+    _selectedProvinceId = widget.initialProvinceId;
+  }
 
   @override
   void dispose() {
@@ -32,7 +51,13 @@ class _AddRefugeModalState extends ConsumerState<AddRefugeModal> {
     final name = _nameController.text.trim();
     if (name.isEmpty || _selectedProvinceId == null) return;
 
-    ref.read(shelterProvider.notifier).addRefuge(name, _selectedProvinceId!);
+    if (isEditing) {
+      ref
+          .read(shelterProvider.notifier)
+          .updateRefuge(widget.refugeId!, name, _selectedProvinceId!);
+    } else {
+      ref.read(shelterProvider.notifier).addRefuge(name, _selectedProvinceId!);
+    }
 
     Navigator.pop(context);
   }
@@ -54,9 +79,9 @@ class _AddRefugeModalState extends ConsumerState<AddRefugeModal> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Add New Refuge',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              isEditing ? 'Edit Refuge' : 'Add New Refuge',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             AppTextField(
@@ -78,7 +103,7 @@ class _AddRefugeModalState extends ConsumerState<AddRefugeModal> {
                 _selectedProvinceId ??= AppConstants.defaultProvince;
                 return LocationDropdown(
                   items: provinceList,
-                  initialItem: AppConstants.defaultProvince,
+                  initialItem: _selectedProvinceId,
                   onChanged: (value) {
                     setState(() {
                       _selectedProvinceId = value;
@@ -87,9 +112,9 @@ class _AddRefugeModalState extends ConsumerState<AddRefugeModal> {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text(
-                'Error loading provinces: $e',
-                style: const TextStyle(color: Colors.red),
+              error: (e, stack) => ApiErrorWidget(
+                error: e,
+                onRetry: () => ref.invalidate(geoProvider),
               ),
             ),
 
@@ -99,7 +124,7 @@ class _AddRefugeModalState extends ConsumerState<AddRefugeModal> {
               height: 48,
               child: FilledButton(
                 onPressed: _saveRefuge,
-                child: const Text('Save Refuge'),
+                child: Text(isEditing ? 'Update Refuge' : 'Save Refuge'),
               ),
             ),
           ],

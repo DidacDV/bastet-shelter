@@ -32,13 +32,15 @@ class Shelter {
   }
 
   Shelter copyWith({
+    String? name,
+    Province? province,
     String? volunteerCode,
     String? managerCode,
     List<Refuge>? refuges,
   }) {
     return Shelter(
-      name: name,
-      province: province,
+      name: name ?? this.name,
+      province: province ?? this.province,
       volunteerCode: volunteerCode ?? this.volunteerCode,
       managerCode: managerCode ?? this.managerCode,
       refuges: refuges ?? this.refuges,

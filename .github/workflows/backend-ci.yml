@@ -38,4 +38,8 @@ jobs:
         env:
           DATABASE_URL: sqlite:///./test.db      
           GEOAPI_KEY: ${{ secrets.GEOAPI_KEY }}
+          ADMIN_AUTH_SECRET: ${{ secrets.ADMIN_AUTH_SECRET }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
         run: pytest tests/ -v --tb=short

@@ -4,7 +4,9 @@ from typing import Optional
 import jwt
 import bcrypt
 
-SECRET_KEY = "your-super-secret-key-change-this"
+from app.core.config import settings
+
+SECRET_KEY = settings.AUTH_SECRET
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
@@ -21,8 +23,8 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-
 def decode_access_token(token: str) -> Optional[dict]:
+    """Returns the payload of the access token if it's valid, otherwise None"""
     try:
         return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except jwt.ExpiredSignatureError:

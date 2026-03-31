@@ -1,6 +1,11 @@
 import logging
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+
+from sqladmin import Admin
+from app.admin.admin_views import ShelterAdmin, RefugeAdmin, LoginAdmin, UserAdmin, ShelterMemberAdmin, AnimalAdmin, ProvinceAdmin
+from app.admin.admin_auth import authentication_backend
+
 from app.database import Base, engine, SessionLocal
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -38,6 +43,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# routers
 app.include_router(auth_router)
 app.include_router(animal_router)
 app.include_router(user_router)
@@ -47,6 +53,20 @@ app.include_router(task_router)
 app.include_router(shift_router)
 app.include_router(geo_router)
 app.include_router(dashboard_router)
+
+# create SQLAdmin page
+admin = Admin(app, engine, authentication_backend=authentication_backend)
+
+# load views to SQLAdmin
+admin.add_view(ShelterAdmin)
+admin.add_view(RefugeAdmin)
+admin.add_view(ShelterAdmin)
+admin.add_view(RefugeAdmin)
+admin.add_view(LoginAdmin)
+admin.add_view(UserAdmin)
+admin.add_view(ShelterMemberAdmin)
+admin.add_view(AnimalAdmin)
+admin.add_view(ProvinceAdmin)
 @app.get("/")
 def root():
     return {"message": "bastet is running"}

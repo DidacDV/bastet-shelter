@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/service_locator.dart';
+import 'package:bastetshelter/core/theme.dart';
 import 'package:bastetshelter/features/shelter/presentation/configuration_screen.dart';
 import 'package:bastetshelter/features/shelter/presentation/create_shelter_screen.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Bastet Shelter',
       navigatorKey: NavigationService.instance.navigationKey,
-      theme: ThemeData(useMaterial3: true, primarySwatch: Colors.brown),
+      theme: AppTheme.light,
       initialRoute: getIt<ApiClient>().hasValidToken ? '/home' : '/login',
       routes: {
         '/login': (context) => const LoginScreen(),

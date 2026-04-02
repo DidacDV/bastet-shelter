@@ -24,9 +24,10 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
   final _nameController = TextEditingController();
   final _refugeNameController = TextEditingController();
   final _shelterRepository = getIt<ShelterRepository>();
+
   bool _isLoading = false;
 
-  String? _selectedLocationId;
+  String? _selectedLocationId = AppConstants.defaultProvince;
 
   @override
   void dispose() {

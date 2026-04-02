@@ -131,7 +131,7 @@ class AppTheme {
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.surface,
           elevation: 0,
-          shadowColor: AppColors.primary.withValues(alpha:0.25),
+          shadowColor: AppColors.primary.withValues(alpha: 0.25),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
@@ -317,7 +317,7 @@ class AppTheme {
         activeTrackColor: AppColors.primary,
         inactiveTrackColor: AppColors.primaryTint,
         thumbColor: AppColors.primary,
-        overlayColor: AppColors.primary.withValues(alpha:0.12),
+        overlayColor: AppColors.primary.withValues(alpha: 0.12),
         valueIndicatorColor: AppColors.primary,
         valueIndicatorTextStyle: GoogleFonts.nunito(
           fontSize: 13,

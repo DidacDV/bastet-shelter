@@ -144,7 +144,12 @@ class _CodeEntryScreenState extends State<CodeEntryScreen>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          MemberModeDisplay(isVolunteer: isVolunteer),
+                          SectionBadge(
+                            label: isVolunteer ? 'VOLUNTEER' : 'MANAGER',
+                            color: isVolunteer
+                                ? AppColors.primary
+                                : AppColors.secondary,
+                          ),
                           const SizedBox(height: 12),
                           Text(
                             'Join as\n${isVolunteer ? 'Volunteer' : 'Manager'}',

@@ -1,13 +1,18 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:flutter/material.dart';
 
-class MemberModeDisplay extends StatelessWidget {
-  final bool isVolunteer;
-  const MemberModeDisplay({super.key, required this.isVolunteer});
+class SectionBadge extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const SectionBadge({
+    super.key,
+    required this.label,
+    this.color = AppColors.primary,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final color = isVolunteer ? AppColors.primary : AppColors.secondary;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
@@ -15,7 +20,7 @@ class MemberModeDisplay extends StatelessWidget {
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
-        isVolunteer ? 'VOLUNTEER' : 'MANAGER',
+        label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: color,
           letterSpacing: 1.2,

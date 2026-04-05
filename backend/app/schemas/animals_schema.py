@@ -27,6 +27,9 @@ class AnimalResponse(BaseModel):
     in_adoption: bool
     refuge_id: int
 
+class AnimalSummaryInfoList(BaseModel):
+    animals: list[AnimalShortInfo]
+
 class AnimalShortInfo(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

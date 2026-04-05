@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_db, get_current_user, require_manager
 from app.models.user import AuthenticatedUser
-from app.schemas.animals_schema import AnimalCreate, AnimalResponse, AnimalShortInfo
+from app.schemas.animals_schema import AnimalCreate, AnimalResponse, AnimalSummaryInfoList
 from app.services.animal_service import AnimalService
 
 router = APIRouter(prefix="/animals", tags=["animals"])
@@ -35,13 +35,14 @@ def get_animals(
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@router.get("/short_info", response_model=List[AnimalShortInfo])
+@router.get("/short_info", response_model=AnimalSummaryInfoList)
 def get_short_infos(
     auth: AuthenticatedUser = Depends(get_current_user),
     service: AnimalService = Depends(get_animal_service)
 ):
     try:
-        return service.get_all_animals_short_info()
+        animals = service.get_all_animals_short_info()
+        return {"animals": animals}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 

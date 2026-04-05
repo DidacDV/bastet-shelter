@@ -1,4 +1,7 @@
+import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
+import 'package:bastetshelter/features/common/components/app_text_field.dart';
+import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
@@ -37,7 +40,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _isLoading = true;
       });
 
-      genericApiCall(() async {
+      await genericApiCall(() async {
         await _repository.register(
           _nameController.text,
           _lastname1Controller.text,
@@ -57,81 +60,68 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(title: const Text('Register')),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Center(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
           child: Form(
             key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Create Account",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text('Create Account', style: tt.headlineMedium),
+                const SizedBox(height: 8),
+                Text(
+                  'Join us to help shelter animals',
+                  style: tt.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
                   ),
-                  const SizedBox(height: 24),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'First Name',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) =>
-                        Validators.validateRequired(value, 'first name'),
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _lastname1Controller,
-                    decoration: const InputDecoration(
-                      labelText: 'First Last Name',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) =>
-                        Validators.validateRequired(value, 'first last name'),
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _lastname2Controller,
-                    decoration: const InputDecoration(
-                      labelText: 'Second Last Name (Optional)',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: Validators.validateEmail,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: Validators.validatePassword,
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _register,
-                      child: _isLoading
-                          ? const CircularProgressIndicator()
-                          : const Text('Register'),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 32),
+                AppTextField(
+                  controller: _nameController,
+                  label: 'First Name',
+                  validator: (value) =>
+                      Validators.validateRequired(value, 'first name'),
+                ),
+                const SizedBox(height: 14),
+                AppTextField(
+                  controller: _lastname1Controller,
+                  label: 'First Last Name',
+                  validator: (value) =>
+                      Validators.validateRequired(value, 'first last name'),
+                ),
+                const SizedBox(height: 14),
+                AppTextField(
+                  controller: _lastname2Controller,
+                  label: 'Second Last Name (Optional)',
+                ),
+                const SizedBox(height: 14),
+                AppTextField(
+                  controller: _emailController,
+                  label: 'Email',
+                  keyboardType: TextInputType.emailAddress,
+                  validator: Validators.validateEmail,
+                ),
+                const SizedBox(height: 14),
+                AppTextField(
+                  controller: _passwordController,
+                  label: 'Password',
+                  obscure: true,
+                  validator: Validators.validatePassword,
+                ),
+                const SizedBox(height: 32),
+                PrimaryButton(
+                  label: 'Register',
+                  isLoading: _isLoading,
+                  onPressed: _register,
+                ),
+                const SizedBox(height: 24),
+              ],
             ),
           ),
         ),

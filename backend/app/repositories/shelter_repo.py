@@ -11,10 +11,10 @@ class ShelterRepository(BaseRepository[Shelter]):
         self.db = db
 
     def get_by_manager_code(self, db: Session, code: str) -> Shelter | None:
-        return db.query(Shelter).filter(Shelter.manager_code == code).first()
+        return db.query(Shelter).filter(Shelter.manager_code.ilike(code)).first()
 
     def get_by_volunteer_code(self, db: Session, code: str) -> Shelter | None:
-        return db.query(Shelter).filter(Shelter.volunteer_code == code).first()
+        return db.query(Shelter).filter(Shelter.volunteer_code.ilike(code)).first()
 
     def update_volunteer_code(self, db: Session, shelter_id: int, code: str) -> None:
         shelter = db.query(Shelter).filter(Shelter.id == shelter_id).first()

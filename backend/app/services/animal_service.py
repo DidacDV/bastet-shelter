@@ -1,8 +1,11 @@
+from datetime import date
+
 from sqlalchemy.orm import Session
 from app.models.animal import Animal
 from app.repositories.animal_repo import AnimalRepository
 from app.repositories.refuge_repo import RefugeRepository
-from app.schemas.animals_schema import AnimalCreate, AnimalResponse
+from app.schemas.animals_schema import AnimalCreate, AnimalResponse, AnimalShortInfo
+
 
 class AnimalService:
     def __init__(self, db: Session):
@@ -43,3 +46,28 @@ class AnimalService:
         if not animal:
             raise ValueError("Animal not found")
         return AnimalResponse.model_validate(animal)
+
+    def get_all_animals_short_info(self) -> list[AnimalShortInfo]:
+        """Gets short info to display in mobile app, calculating the age of each animal"""
+        results = self.animal_repo.get_all_short_info(self.db)
+
+        short_info_list = []
+        today = date.today()
+
+        for row in results:
+            age = today.year - row.birth_date.year - (
+                    (today.month, today.day) < (row.birth_date.month, row.birth_date.day)
+            )
+
+            short_info_list.append(
+                AnimalShortInfo(
+                    id=row.id,
+                    name=row.name,
+                    age=age,
+                    in_adoption=row.in_adoption,
+                    pending_shift_tasks=row.pending_shift_tasks,
+                    refuge_name=row.refuge_name
+                )
+            )
+
+        return short_info_list

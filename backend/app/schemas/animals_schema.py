@@ -26,3 +26,13 @@ class AnimalResponse(BaseModel):
     animal_type: AnimalTypeEnum
     in_adoption: bool
     refuge_id: int
+
+class AnimalShortInfo(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    age: int
+    in_adoption: bool
+    pending_shift_tasks: int
+    refuge_name: str

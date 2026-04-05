@@ -4,7 +4,7 @@ import 'package:bastetshelter/features/shelter/data/shelter_model.dart';
 import 'package:bastetshelter/features/shelter/presentation/components/edit_shelter_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bastetshelter/core/providers/shelter_notifier.dart';
+import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
 
 class ShelterInfoCard extends ConsumerWidget {
   final Shelter shelter;

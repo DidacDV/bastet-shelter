@@ -40,7 +40,12 @@ class AppTabLayout extends StatelessWidget {
             tabs: tabs,
           ),
 
-          Expanded(child: TabBarView(children: tabViews)),
+          Expanded(
+            child: Container(
+              color: AppColors.background,
+              child: TabBarView(children: tabViews),
+            ),
+          ),
         ],
       ),
     );

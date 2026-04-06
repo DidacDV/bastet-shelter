@@ -1,5 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/%20components/animal_details_header.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info_tab.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
 import 'package:bastetshelter/features/common/components/app_tab_bar.dart';
 import 'package:bastetshelter/features/common/components/edit_bottom_sheet.dart';
@@ -31,21 +32,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
           Tab(icon: Icon(Icons.home_outlined), text: "Adoption"),
         ],
         tabViews: [
-          Column(
-            children: [
-              EditableField(
-                label: "hello",
-                value: "a",
-                canEdit: true,
-                onEdit: () => showEditBottomSheet(
-                  context: context,
-                  label: "Name",
-                  initialValue: "Mochi",
-                  onSave: (newValue) async {},
-                ),
-              ),
-            ],
-          ),
+          BasicInfoTab(animalId: animalId),
 
           const Icon(Icons.directions_transit),
           const Icon(Icons.directions_bike),

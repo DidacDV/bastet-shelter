@@ -11,3 +11,6 @@ class TraitResponse(BaseModel):
     id: int
     name: str
     shelter_id: int
+
+class TraitResponseList(BaseModel):
+    traits: list[TraitResponse]

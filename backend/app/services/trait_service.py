@@ -10,6 +10,10 @@ class TraitService:
         self.db = db
         self.trait_repo = TraitRepository(db)
 
+    def get_traits(self, shelter_id: int) -> list[TraitResponse]:
+        traits = self.trait_repo.get_by_shelter(self.db, shelter_id)
+        return [TraitResponse.model_validate(t) for t in traits]
+
     def add_trait(self, data: TraitCreate, shelter_id: int) -> TraitResponse:
         new_trait = Trait(name=data.name, shelter_id=shelter_id)
         created = self.trait_repo.create(self.db, new_trait)

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_db, require_manager
 from app.models.user import AuthenticatedUser
-from app.schemas.trait_schema import TraitCreate, TraitResponse
+from app.schemas.trait_schema import TraitCreate, TraitResponse, TraitResponseList
 from app.services.trait_service import TraitService
 
 router = APIRouter(prefix="/traits", tags=["traits"])
@@ -11,6 +11,17 @@ router = APIRouter(prefix="/traits", tags=["traits"])
 
 def get_trait_service(db: Session = Depends(get_db)) -> TraitService:
     return TraitService(db)
+
+
+@router.get("/", response_model=TraitResponseList)
+def get_traits(
+    auth: AuthenticatedUser = Depends(require_manager),
+    service: TraitService = Depends(get_trait_service)
+):
+    try:
+        return {"traits":service.get_traits(auth.shelter_id)}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 @router.post("/", response_model=TraitResponse)
@@ -25,7 +36,7 @@ def add_trait(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.patch("/{trait_id}", response_model=TraitResponse)
+@router.put("/{trait_id}", response_model=TraitResponse)
 def edit_trait(
     trait_id: int,
     data: TraitCreate,

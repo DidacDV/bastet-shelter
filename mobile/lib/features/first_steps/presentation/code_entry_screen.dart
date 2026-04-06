@@ -4,6 +4,7 @@ import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/common/components/app_text_field.dart';
+import 'package:bastetshelter/features/common/components/illustrated_header.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:bastetshelter/features/first_steps/presentation/components/member_mode_display.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';
@@ -32,7 +33,7 @@ class _CodeEntryScreenState extends State<CodeEntryScreen>
   late final AnimationController _shakeController;
   late final Animation<double> _shakeAnim;
 
-  static const _childCount = 4;
+  static const _childCount = 2;
 
   @override
   void initState() {
@@ -95,9 +96,7 @@ class _CodeEntryScreenState extends State<CodeEntryScreen>
     final isVolunteer = widget.mode == CodeScreenMode.volunteer;
 
     final s0 = staggerAnim(0, _childCount);
-    final s1 = staggerAnim(1, _childCount);
-    final s2 = staggerAnim(2, _childCount);
-    final s3 = staggerAnim(3, _childCount);
+    final s2 = staggerAnim(3, _childCount);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -123,64 +122,28 @@ class _CodeEntryScreenState extends State<CodeEntryScreen>
                     Staggered(
                       fade: s0.fade,
                       slide: s0.slide,
-                      child: Center(
-                        child: isVolunteer
-                            ? SvgPicture.asset(
-                                'assets/images/Illustration-10.svg',
-                                height: 180,
-                              )
-                            : SvgPicture.asset(
-                                'assets/images/Illustration-1.svg',
-                                height: 180,
-                              ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 36),
-
-                    Staggered(
-                      fade: s1.fade,
-                      slide: s1.slide,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SectionBadge(
-                            label: isVolunteer ? 'VOLUNTEER' : 'MANAGER',
-                            color: isVolunteer
-                                ? AppColors.primary
-                                : AppColors.secondary,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
+                      child: IllustratedHeader(
+                        imageWidget: SvgPicture.asset(
+                          isVolunteer
+                              ? 'assets/images/Illustration-10.svg'
+                              : 'assets/images/Illustration-1.svg',
+                          height: 180,
+                        ),
+                        badgeLabel: isVolunteer ? 'VOLUNTEER' : 'MANAGER',
+                        badgeColor: isVolunteer
+                            ? AppColors.primary
+                            : AppColors.secondary,
+                        title:
                             'Join as\n${isVolunteer ? 'Volunteer' : 'Manager'}',
-                            style: tt.headlineLarge?.copyWith(
-                              height: 1.1,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                        ],
+                        subtitle:
+                            'Enter the unique code provided by the shelter to access their workspace.',
                       ),
                     ),
-
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 32),
 
                     Staggered(
                       fade: s2.fade,
                       slide: s2.slide,
-                      child: Text(
-                        'Enter the unique code provided by the shelter to access their workspace.',
-                        style: tt.bodyMedium?.copyWith(
-                          color: AppColors.textSecondary,
-                          height: 1.5,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    Staggered(
-                      fade: s3.fade,
-                      slide: s3.slide,
                       child: AnimatedBuilder(
                         animation: _shakeAnim,
                         builder: (context, child) => Transform.translate(
@@ -206,8 +169,8 @@ class _CodeEntryScreenState extends State<CodeEntryScreen>
                     const SizedBox(height: 8),
 
                     Staggered(
-                      fade: s3.fade,
-                      slide: s3.slide,
+                      fade: s2.fade,
+                      slide: s2.slide,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 4),
                         child: Text(

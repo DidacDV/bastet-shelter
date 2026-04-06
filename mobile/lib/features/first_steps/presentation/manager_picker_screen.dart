@@ -35,68 +35,77 @@ class _ManagerPickerScreenState extends State<ManagerPickerScreen>
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Spacer(),
+        child: Column(
+          children: [
+            Expanded(
+              // Everything is now inside the SingleChildScrollView!
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 24),
 
-              Staggered(
-                fade: s0.fade,
-                slide: s0.slide,
-                child: Text(
-                  'What would\nyou like to do?',
-                  style: tt.headlineLarge?.copyWith(
-                    height: 1.1,
-                    letterSpacing: -0.5,
-                  ),
+                    Staggered(
+                      fade: s0.fade,
+                      slide: s0.slide,
+                      child: Text(
+                        'What would\nyou like to do?',
+                        style: tt.headlineLarge?.copyWith(
+                          height: 1.1,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    Staggered(
+                      fade: s1.fade,
+                      slide: s1.slide,
+                      child: Text(
+                        'Select how you want to proceed as a manager.',
+                        style: tt.bodyMedium?.copyWith(
+                          color: AppColors.textSecondary,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+
+                    // This spacing pushes the cards down into the "middle" visual area
+                    const SizedBox(height: 48),
+
+                    Staggered(
+                      fade: s2.fade,
+                      slide: s2.slide,
+                      child: AnimatedOptionCard(
+                        label: 'Join a Shelter',
+                        icon: Icons.door_front_door,
+                        onTap: () =>
+                            Navigator.pushNamed(context, '/role/manager-code'),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    Staggered(
+                      fade: s3.fade,
+                      slide: s3.slide,
+                      child: AnimatedOptionCard(
+                        label: 'Create a Shelter',
+                        icon: Icons.add_home,
+                        onTap: () => Navigator.pushNamed(
+                          context,
+                          '/role/create-shelter',
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+                  ],
                 ),
               ),
-
-              const SizedBox(height: 8),
-
-              Staggered(
-                fade: s1.fade,
-                slide: s1.slide,
-                child: Text(
-                  'Select how you want to proceed as a manager.',
-                  style: tt.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                    height: 1.5,
-                  ),
-                ),
-              ),
-
-              const Spacer(),
-
-              Staggered(
-                fade: s2.fade,
-                slide: s2.slide,
-                child: AnimatedOptionCard(
-                  label: 'Join a Shelter',
-                  icon: Icons.door_front_door,
-                  onTap: () =>
-                      Navigator.pushNamed(context, '/role/manager-code'),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              Staggered(
-                fade: s3.fade,
-                slide: s3.slide,
-                child: AnimatedOptionCard(
-                  label: 'Create a Shelter',
-                  icon: Icons.add_home,
-                  onTap: () =>
-                      Navigator.pushNamed(context, '/role/create-shelter'),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

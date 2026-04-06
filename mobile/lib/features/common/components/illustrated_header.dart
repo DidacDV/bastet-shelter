@@ -7,12 +7,14 @@ class IllustratedHeader extends StatelessWidget {
   final String? badgeLabel;
   final String title;
   final String subtitle;
+  final Color? badgeColor;
 
   const IllustratedHeader({
     super.key,
     required this.imageWidget,
     required this.title,
     required this.subtitle,
+    this.badgeColor,
     this.badgeLabel,
   });
 
@@ -27,7 +29,10 @@ class IllustratedHeader extends StatelessWidget {
         const SizedBox(height: 36),
 
         if (badgeLabel != null) ...[
-          SectionBadge(label: badgeLabel!),
+          SectionBadge(
+            label: badgeLabel!,
+            color: badgeColor ?? AppColors.primary,
+          ),
           const SizedBox(height: 12),
         ],
 

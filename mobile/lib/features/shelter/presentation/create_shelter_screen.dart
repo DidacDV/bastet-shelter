@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/common/components/illustrated_header.dart';
 import 'package:bastetshelter/providers/geo/geo_provider.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
@@ -6,7 +7,6 @@ import 'package:bastetshelter/core/utils/validators.dart';
 import 'package:bastetshelter/features/common/components/app_text_field.dart';
 import 'package:bastetshelter/features/common/components/location_dropdown.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
-import 'package:bastetshelter/features/first_steps/presentation/components/member_mode_display.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -82,35 +82,16 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
                     children: [
                       const SizedBox(height: 8),
 
-                      Center(
-                        child: SvgPicture.asset(
+                      IllustratedHeader(
+                        imageWidget: SvgPicture.asset(
                           'assets/images/Illustration-8.svg',
                           height: 180,
                         ),
+                        badgeLabel: 'NEW SHELTER',
+                        title: 'Set up your\nshelter',
+                        subtitle:
+                            'Fill in the details below to create your shelter and get started.',
                       ),
-
-                      const SizedBox(height: 36),
-
-                      SectionBadge(label: 'NEW SHELTER'),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Set up your\nshelter',
-                        style: tt.headlineLarge?.copyWith(
-                          height: 1.1,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      Text(
-                        'Fill in the details below to create your shelter and get started.',
-                        style: tt.bodyMedium?.copyWith(
-                          color: AppColors.textSecondary,
-                          height: 1.5,
-                        ),
-                      ),
-
                       const SizedBox(height: 32),
 
                       _FormLabel(label: 'Shelter name', tt: tt),

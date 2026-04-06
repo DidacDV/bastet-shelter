@@ -7,7 +7,6 @@ import 'package:bastetshelter/core/utils/validators.dart';
 import 'package:bastetshelter/features/common/components/app_text_field.dart';
 import 'package:bastetshelter/features/common/components/location_dropdown.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
-import 'package:bastetshelter/features/first_steps/presentation/components/member_mode_display.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

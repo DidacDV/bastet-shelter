@@ -1,3 +1,4 @@
+import 'package:bastetshelter/features/animals/presentation/components/animal_filter_bar.dart';
 import 'package:bastetshelter/features/common/components/bastet_search_bar.dart';
 import 'package:bastetshelter/providers/animals/animal_filter_provider.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart'
@@ -19,9 +20,14 @@ class AnimalsScreen extends ConsumerWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.defaultPadding,
+          ),
           child: BastetSearchBar(onChanged: animalsFilterNotifier.updateQuery),
         ),
+        const SizedBox(height: 16),
+        const AnimalFilterBar(),
+        const SizedBox(height: 8),
         Expanded(
           child: animalsAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -51,8 +57,11 @@ class AnimalsScreen extends ConsumerWidget {
               child: animals.isEmpty
                   ? const Center(child: Text('No animals found'))
                   : GridView.builder(
-                      padding: const EdgeInsets.all(
-                        AppConstants.defaultPadding,
+                      padding: const EdgeInsets.only(
+                        left: AppConstants.defaultPadding,
+                        right: AppConstants.defaultPadding,
+                        bottom: AppConstants.defaultPadding,
+                        top: 8,
                       ),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(

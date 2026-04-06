@@ -41,7 +41,7 @@ def get_short_infos(
     service: AnimalService = Depends(get_animal_service)
 ):
     try:
-        animals = service.get_all_animals_short_info()
+        animals = service.get_all_animals_short_info(auth.shelter_id)
         return {"animals": animals}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))

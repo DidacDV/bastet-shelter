@@ -14,6 +14,7 @@ from app.models.task.shift_task import ShiftTask
 from app.models.shift.shift import Shift
 from app.models.shift.shift_participant import ShiftParticipant
 from app.models.province import Province
+from app.models.trait import Trait
 from alembic import context
 
 # this is the Alembic Config object, which provides

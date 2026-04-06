@@ -7,9 +7,11 @@ from app.core.utils import generate_code
 from app.models.refuge import Refuge
 from app.models.shelter import Shelter
 from app.models.shelter_member import RoleEnum, Manager, Volunteer
+from app.models.trait import DEFAULT_TRAITS
 from app.repositories.refuge_repo import RefugeRepository
 from app.repositories.shelter_repo import ShelterRepository
 from app.repositories.shelter_member_repo import ShelterMemberRepository
+from app.repositories.trait_repo import TraitRepository
 from app.schemas.shelter_schema import ShelterCreate, ShelterResponse, ShelterBasicInfoResponse, ShelterUpdate
 from app.schemas.shelter_member_schema import ShelterMemberResponse, ShelterMemberInfo
 
@@ -20,6 +22,7 @@ class ShelterService:
         self.refuge_repo = RefugeRepository(db)
         self.shelter_repo = ShelterRepository(db)
         self.member_repo = ShelterMemberRepository(db)
+        self.trait_repo = TraitRepository(db)
 
     #Shelter
     def create_shelter(self, data: ShelterCreate, user_id: int, user_email: str) -> dict:
@@ -32,6 +35,13 @@ class ShelterService:
         self.create_manager_member_by_id(user_id, created_shelter.id)
         new_token = create_access_token(
             data={"sub": user_email, "role": RoleEnum.MANAGER.value, "shelter_id": created_shelter.id})
+
+        self.trait_repo.create_default_traits(
+            self.db,
+            created_shelter.id,
+            DEFAULT_TRAITS
+        )
+
         return {
             "shelter": ShelterResponse.model_validate(created_shelter),
             "access_token": new_token,

@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.models.animal import Animal
 from app.repositories.animal_repo import AnimalRepository
 from app.repositories.refuge_repo import RefugeRepository
+from app.repositories.trait_repo import TraitRepository
 from app.schemas.animals_schema import AnimalCreate, AnimalResponse, AnimalShortInfo
 
 
@@ -12,14 +13,24 @@ class AnimalService:
         self.db = db
         self.animal_repo = AnimalRepository(db)
         self.refuge_repo = RefugeRepository(db)
+        self.trait_repo = TraitRepository(db)
 
     def register_animal(self, data: AnimalCreate, shelter_id: int) -> AnimalResponse:
-        """Validates refuge belongs to shelter, then creates"""
         refuge = self.refuge_repo.get_by_id(self.db, data.refuge_id)
         if not refuge or refuge.shelter_id != shelter_id:
             raise ValueError("Refuge does not belong to this shelter")
-        
-        new_animal = Animal(**data.model_dump())
+
+        animal_data = data.model_dump()
+        trait_ids = animal_data.pop("trait_ids", [])
+        new_animal = Animal(**animal_data)
+
+        if trait_ids:
+            new_animal.traits = self.trait_repo.get_by_ids_and_shelter(
+                self.db,
+                trait_ids,
+                shelter_id
+            )
+
         created_animal = self.animal_repo.create(self.db, new_animal)
         return AnimalResponse.model_validate(created_animal)
 

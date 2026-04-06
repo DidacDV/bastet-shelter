@@ -2,6 +2,7 @@ from sqladmin import ModelView
 
 from app.models.refuge import Refuge
 from app.models.shelter import Shelter
+from app.models.trait import Trait
 from app.models.user import User
 from app.models.login import Login
 from app.models.shelter_member import ShelterMember
@@ -47,4 +48,8 @@ class ProvinceAdmin(ModelView, model=Province):
     column_list = [Province.id, Province.name]
     column_searchable_list = [Province.name]
     column_sortable_list = [Province.id, Province.name]
+    icon = "fa-solid fa-map-location-dot"
+
+class TraitAdmin(ModelView, model=Trait):
+    column_list = [Trait.id, Trait.name, Trait.shelter_id]
     icon = "fa-solid fa-map-location-dot"

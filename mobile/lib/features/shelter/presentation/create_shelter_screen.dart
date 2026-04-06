@@ -1,5 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/core/providers/geo_provider.dart';
+import 'package:bastetshelter/providers/geo/geo_provider.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/core/utils/validators.dart';

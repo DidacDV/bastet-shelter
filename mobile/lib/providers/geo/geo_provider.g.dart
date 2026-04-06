@@ -73,7 +73,7 @@ final class GeoProvider extends $AsyncNotifierProvider<Geo, List<Province>> {
   Geo create() => Geo();
 }
 
-String _$geoHash() => r'5304f521c22e40785e3f9b185cdb5d38386cbcec';
+String _$geoHash() => r'd07414152164dba04abd51a255efec518d2ca63d';
 
 abstract class _$Geo extends $AsyncNotifier<List<Province>> {
   FutureOr<List<Province>> build();

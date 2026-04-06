@@ -1,5 +1,5 @@
-import 'package:bastetshelter/core/providers/geo_provider.dart';
-import 'package:bastetshelter/core/providers/shelter_notifier.dart';
+import 'package:bastetshelter/providers/geo/geo_provider.dart';
+import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
 import 'package:bastetshelter/features/common/components/app_text_field.dart';
 import 'package:bastetshelter/features/common/components/location_dropdown.dart';

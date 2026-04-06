@@ -2,7 +2,7 @@ import 'package:bastetshelter/features/shelter/presentation/components/refuges_c
 import 'package:bastetshelter/features/shelter/presentation/components/shelter_info_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bastetshelter/core/providers/shelter_notifier.dart';
+import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
 
 class ConfigScreen extends ConsumerWidget {
   const ConfigScreen({super.key});

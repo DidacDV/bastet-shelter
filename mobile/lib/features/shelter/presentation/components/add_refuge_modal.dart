@@ -3,10 +3,10 @@ import 'package:bastetshelter/features/common/components/api_error_widget.dart';
 import 'package:bastetshelter/features/common/components/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bastetshelter/core/providers/geo_provider.dart';
+import 'package:bastetshelter/providers/geo/geo_provider.dart';
 import 'package:bastetshelter/features/common/components/location_dropdown.dart';
 
-import '../../../../core/providers/shelter_notifier.dart';
+import '../../../../providers/shelters/shelter_notifier.dart';
 import '../../../../core/utils/validators.dart' show Validators;
 
 class RefugeModal extends ConsumerStatefulWidget {

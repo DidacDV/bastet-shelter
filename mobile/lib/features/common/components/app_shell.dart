@@ -1,7 +1,7 @@
 //this serves as a layout that is reused through the whole app, since it "shells" home screen
 
 import 'package:bastetshelter/core/auth/auth_service.dart';
-import 'package:bastetshelter/core/providers/shelter_notifier.dart';
+import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
 import 'package:bastetshelter/features/shelter/presentation/configuration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

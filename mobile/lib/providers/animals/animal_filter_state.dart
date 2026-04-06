@@ -1,4 +1,4 @@
-import 'package:bastetshelter/features/animals/data/animal_model.dart';
+import 'package:bastetshelter/features/animals/data/models/animal_summary_model.dart';
 
 class AnimalFilterState {
   final String query;

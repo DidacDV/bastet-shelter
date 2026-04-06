@@ -1,5 +1,6 @@
 import 'package:bastetshelter/core/network/api_client.dart';
-import 'animal_model.dart';
+import 'package:bastetshelter/features/animals/data/models/animal_details_model.dart';
+import 'package:bastetshelter/features/animals/data/models/animal_summary_model.dart';
 import 'animal_type_enum.dart';
 
 class AnimalRepository {
@@ -37,5 +38,10 @@ class AnimalRepository {
         'trait_ids': traitIds,
       },
     );
+  }
+
+  Future<void> getAnimalDetails(int animalId) async {
+    final data = await _apiClient.get('/animals/$animalId');
+    return AnimalDetails.fromJson(data);
   }
 }

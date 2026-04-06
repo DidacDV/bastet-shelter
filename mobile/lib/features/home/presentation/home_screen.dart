@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/constants.dart'; // Ensure AppColors is imported
 import 'package:bastetshelter/providers/geo/geo_provider.dart';
 import 'package:bastetshelter/features/animals/presentation/animals_screen.dart';
 import 'package:bastetshelter/features/common/components/app_shell.dart';
@@ -53,6 +54,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       child: AppShell(
         showAppBar: true,
         child: Scaffold(
+          backgroundColor: AppColors.background,
           body: Stack(
             children: List.generate(_tabs.length, (i) {
               return Offstage(
@@ -65,36 +67,65 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               );
             }),
           ),
-          bottomNavigationBar: NavigationBar(
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.pets_outlined),
-                selectedIcon: Icon(Icons.pets),
-                label: 'Animals',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.schedule_outlined),
-                selectedIcon: Icon(Icons.schedule),
-                label: 'Shifts',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.task_outlined),
-                selectedIcon: Icon(Icons.task),
-                label: 'Tasks',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.people_outlined),
-                selectedIcon: Icon(Icons.people),
-                label: 'Community',
-              ),
-            ],
+          bottomNavigationBar: NavigationBarTheme(
+            data: NavigationBarThemeData(
+              backgroundColor: AppColors.background,
+              surfaceTintColor: Colors.transparent,
+              indicatorColor: AppColors.primary.withValues(alpha: 0.15),
+
+              labelTextStyle: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return const TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                  );
+                }
+                return const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                );
+              }),
+
+              iconTheme: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return const IconThemeData(color: AppColors.primary);
+                }
+                return const IconThemeData(color: AppColors.textSecondary);
+              }),
+            ),
+            child: NavigationBar(
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: (i) => setState(() => _selectedIndex = i),
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.home_outlined),
+                  selectedIcon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.pets_outlined),
+                  selectedIcon: Icon(Icons.pets),
+                  label: 'Animals',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.schedule_outlined),
+                  selectedIcon: Icon(Icons.schedule),
+                  label: 'Shifts',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.task_outlined),
+                  selectedIcon: Icon(Icons.task),
+                  label: 'Tasks',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.people_outlined),
+                  selectedIcon: Icon(Icons.people),
+                  label: 'Community',
+                ),
+              ],
+            ),
           ),
         ),
       ),

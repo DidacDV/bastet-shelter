@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/common/components/app_editable_field.dart';
 import 'package:bastetshelter/features/common/components/edit_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,8 +24,6 @@ class AnimalDetailsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -34,11 +33,17 @@ class AnimalDetailsHeader extends StatelessWidget {
           width: 130,
         ),
         const SizedBox(height: 16),
-        Text(
-          name,
-          style: tt.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+        Center(
+          child: EditableField(
+            value: name,
+            isTitle: true,
+            canEdit: canEdit,
+            onEdit: () => showEditBottomSheet(
+              context: context,
+              label: "Name",
+              initialValue: name,
+              onSave: (_) async {},
+            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -51,29 +56,37 @@ class AnimalDetailsHeader extends StatelessWidget {
                 label: "Arrival",
                 date: arrivalDate,
                 canEdit: canEdit,
-                onEdit: !canEdit ? null : () async {
-                  final picked = await showDatePicker(
-                    context: context,
-                    initialDate: arrivalDate,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime.now(),
-                  );
-                  if (picked != null) await onArrivalDateSave!(picked.toIso8601String());
-                },
+                onEdit: !canEdit
+                    ? null
+                    : () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: arrivalDate,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime.now(),
+                        );
+                        if (picked != null) {
+                          await onArrivalDateSave!(picked.toIso8601String());
+                        }
+                      },
               ),
               _DateChip(
                 label: "Birthday",
                 date: birthday,
                 canEdit: canEdit,
-                onEdit: !canEdit ? null : () async {
-                  final picked = await showDatePicker(
-                    context: context,
-                    initialDate: birthday,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime.now(),
-                  );
-                  if (picked != null) await onBirthdaySave!(picked.toIso8601String());
-                },
+                onEdit: !canEdit
+                    ? null
+                    : () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: birthday,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime.now(),
+                        );
+                        if (picked != null) {
+                          await onBirthdaySave!(picked.toIso8601String());
+                        }
+                      },
               ),
             ],
           ),
@@ -117,7 +130,11 @@ class _DateChip extends StatelessWidget {
               const SizedBox(width: 4),
               GestureDetector(
                 onTap: onEdit,
-                child: const Icon(Icons.edit_outlined, size: 13, color: AppColors.textSecondary),
+                child: const Icon(
+                  Icons.edit_outlined,
+                  size: 13,
+                  color: AppColors.textSecondary,
+                ),
               ),
             ],
           ],

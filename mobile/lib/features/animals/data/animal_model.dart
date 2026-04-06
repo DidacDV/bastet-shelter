@@ -22,7 +22,7 @@ class AnimalSummary {
     return AnimalSummary(
       id: json['id'] as int,
       name: json['name'] as String,
-      age: json['age'] as int,
+      age: (json['age'] as int?) ?? 0,
       inAdoption: json['in_adoption'] as bool,
       pendingShiftTasks: json['pending_shift_tasks'] as int,
       refugeName: json['refuge_name'] as String,

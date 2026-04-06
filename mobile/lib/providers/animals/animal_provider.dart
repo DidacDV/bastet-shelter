@@ -1,6 +1,8 @@
 import 'package:bastetshelter/core/service_locator.dart';
+import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/animals/data/animal_model.dart';
 import 'package:bastetshelter/features/animals/data/animal_repository.dart';
+import 'package:bastetshelter/features/animals/data/animal_type_enum.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'animal_provider.g.dart';
@@ -21,5 +23,36 @@ class Animals extends _$Animals {
   Future<void> refresh() async {
     ref.invalidateSelf();
     await future;
+  }
+
+  Future<void> registerAnimal({
+    required String name,
+    required DateTime birthDate,
+    DateTime? arrivalDate,
+    required String description,
+    required String breed,
+    required AnimalTypeEnum animalType,
+    required int refugeId,
+    bool inAdoption = false,
+    List<int> traitIds = const [],
+  }) async {
+    await genericApiCall(() async {
+      await ref
+          .read(animalRepositoryProvider)
+          .registerAnimal(
+            name: name,
+            birthDate: birthDate,
+            arrivalDate: arrivalDate,
+            description: description,
+            breed: breed,
+            animalType: animalType,
+            refugeId: refugeId,
+            inAdoption: inAdoption,
+            traitIds: traitIds,
+          );
+
+      ref.invalidateSelf();
+      await future;
+    });
   }
 }

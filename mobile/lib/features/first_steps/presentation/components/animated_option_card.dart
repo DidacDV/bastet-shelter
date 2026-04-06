@@ -54,6 +54,7 @@ class _AnimatedOptionCardState extends State<AnimatedOptionCard>
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: Container(
+          width: double.infinity,
           height: 120,
           decoration: BoxDecoration(
             color: AppColors.surface,

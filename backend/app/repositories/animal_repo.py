@@ -26,7 +26,7 @@ class AnimalRepository(BaseRepository[Animal]):
         return (db.query(Animal).join(Refuge).filter(Refuge.shelter_id == shelter_id)
             .count())
 
-    def get_all_short_info(self, db: Session):
+    def get_all_short_info(self, db: Session, shelter_id: int):
         return (
             db.query(
                 Animal.id,
@@ -37,6 +37,7 @@ class AnimalRepository(BaseRepository[Animal]):
                 func.count(ShiftTask.id).label("pending_shift_tasks")
             )
             .join(Refuge, Animal.refuge_id == Refuge.id)
+            .filter(Refuge.shelter_id == shelter_id)
             .outerjoin(
                 ShiftTask,
                 (ShiftTask.animal_id == Animal.id) &

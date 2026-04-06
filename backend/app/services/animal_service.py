@@ -47,9 +47,9 @@ class AnimalService:
             raise ValueError("Animal not found")
         return AnimalResponse.model_validate(animal)
 
-    def get_all_animals_short_info(self) -> list[AnimalShortInfo]:
+    def get_all_animals_short_info(self, shelter_id: int) -> list[AnimalShortInfo]:
         """Gets short info to display in mobile app, calculating the age of each animal"""
-        results = self.animal_repo.get_all_short_info(self.db)
+        results = self.animal_repo.get_all_short_info(self.db, shelter_id)
 
         short_info_list = []
         today = date.today()

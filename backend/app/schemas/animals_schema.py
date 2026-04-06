@@ -31,9 +31,6 @@ class AnimalResponse(BaseModel):
     refuge_id: int
     traits: list[TraitResponse] = []
 
-class AnimalSummaryInfoList(BaseModel):
-    animals: list[AnimalShortInfo]
-
 class AnimalShortInfo(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -43,3 +40,6 @@ class AnimalShortInfo(BaseModel):
     in_adoption: bool
     pending_shift_tasks: int
     refuge_name: str
+
+class AnimalSummaryInfoList(BaseModel):
+    animals: list[AnimalShortInfo]

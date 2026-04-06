@@ -1,9 +1,8 @@
 import 'package:bastetshelter/features/animals/presentation/components/animal_filter_bar.dart';
+import 'package:bastetshelter/features/animals/presentation/register_animal_screen.dart';
 import 'package:bastetshelter/features/common/components/bastet_search_bar.dart';
-import 'package:bastetshelter/features/traits/presentation/manage_traits_screen.dart';
 import 'package:bastetshelter/providers/animals/animal_filter_provider.dart';
-import 'package:bastetshelter/providers/animals/animal_provider.dart'
-    show animalsProvider;
+import 'package:bastetshelter/providers/animals/animal_provider.dart';
 import 'package:bastetshelter/features/animals/presentation/components/animal_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -90,10 +89,11 @@ class AnimalsScreen extends ConsumerWidget {
           right: 16,
           child: FloatingActionButton.extended(
             onPressed: () {
-              Navigator.of(
-                context,
-                rootNavigator: true,
-              ).push(MaterialPageRoute(builder: (context) => TraitsScreen()));
+              Navigator.of(context, rootNavigator: true).push(
+                MaterialPageRoute(
+                  builder: (context) => const AnimalRegisterScreen(),
+                ),
+              );
             },
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,

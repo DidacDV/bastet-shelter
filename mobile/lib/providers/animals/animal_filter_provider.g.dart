@@ -8,18 +8,15 @@ part of 'animal_filter_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Holds and mutates the current filter state.
-/// Widgets call methods on the notifier; they never mutate state directly.
+/// holds the current filters state (so widgets don't directly access to filter state)
 
 @ProviderFor(AnimalFilter)
 final animalFilterProvider = AnimalFilterProvider._();
 
-/// Holds and mutates the current filter state.
-/// Widgets call methods on the notifier; they never mutate state directly.
+/// holds the current filters state (so widgets don't directly access to filter state)
 final class AnimalFilterProvider
     extends $NotifierProvider<AnimalFilter, AnimalFilterState> {
-  /// Holds and mutates the current filter state.
-  /// Widgets call methods on the notifier; they never mutate state directly.
+  /// holds the current filters state (so widgets don't directly access to filter state)
   AnimalFilterProvider._()
     : super(
         from: null,
@@ -47,10 +44,9 @@ final class AnimalFilterProvider
   }
 }
 
-String _$animalFilterHash() => r'26a51ac0f87a240c7efaf22899d803f32db93a42';
+String _$animalFilterHash() => r'94b2c51dbd7dacae754d259ba35cc9b3d200a1ca';
 
-/// Holds and mutates the current filter state.
-/// Widgets call methods on the notifier; they never mutate state directly.
+/// holds the current filters state (so widgets don't directly access to filter state)
 
 abstract class _$AnimalFilter extends $Notifier<AnimalFilterState> {
   AnimalFilterState build();
@@ -70,16 +66,8 @@ abstract class _$AnimalFilter extends $Notifier<AnimalFilterState> {
   }
 }
 
-/// Derived provider — no network call, just in-memory filtering.
-/// Automatically recomputes whenever the raw list OR the filter state changes.
-/// Widgets watch this, not animalsProvider directly.
-
 @ProviderFor(filteredAnimals)
 final filteredAnimalsProvider = FilteredAnimalsProvider._();
-
-/// Derived provider — no network call, just in-memory filtering.
-/// Automatically recomputes whenever the raw list OR the filter state changes.
-/// Widgets watch this, not animalsProvider directly.
 
 final class FilteredAnimalsProvider
     extends
@@ -89,9 +77,6 @@ final class FilteredAnimalsProvider
           AsyncValue<List<AnimalSummary>>
         >
     with $Provider<AsyncValue<List<AnimalSummary>>> {
-  /// Derived provider — no network call, just in-memory filtering.
-  /// Automatically recomputes whenever the raw list OR the filter state changes.
-  /// Widgets watch this, not animalsProvider directly.
   FilteredAnimalsProvider._()
     : super(
         from: null,

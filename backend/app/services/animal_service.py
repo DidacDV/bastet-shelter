@@ -5,7 +5,7 @@ from app.models.animal import Animal
 from app.repositories.animal_repo import AnimalRepository
 from app.repositories.refuge_repo import RefugeRepository
 from app.repositories.trait_repo import TraitRepository
-from app.schemas.animals_schema import AnimalCreate, AnimalResponse, AnimalShortInfo
+from app.schemas.animals_schema import AnimalCreate, AnimalResponse, AnimalShortInfo, AnimalUpdate
 
 
 class AnimalService:
@@ -98,3 +98,33 @@ class AnimalService:
             )
 
         return short_info_list
+
+    def update_animal(self, animal_id: int, data: AnimalUpdate, shelter_id: int) -> AnimalResponse:
+        """Update specific fields of an animal."""
+
+        animal = self.animal_repo.get_by_id(self.db, animal_id)
+        if not animal:
+            raise ValueError("Animal not found")
+
+        refuge = self.refuge_repo.get_by_id(self.db, animal.refuge_id)
+        if not refuge or refuge.shelter_id != shelter_id:
+            raise ValueError("Not authorized to edit this animal")
+
+        update_data = data.model_dump(exclude_unset=True)
+
+        if "trait_ids" in update_data:
+            trait_ids = update_data.pop("trait_ids")
+            animal.traits = self.trait_repo.get_by_ids_and_shelter(
+                self.db,
+                trait_ids,
+                shelter_id
+            )
+
+        if update_data:
+            updated_animal = self.animal_repo.update(self.db, animal_id, update_data)
+        else:
+            self.db.commit()
+            self.db.refresh(animal)
+            updated_animal = animal
+
+        return self._to_response(updated_animal)

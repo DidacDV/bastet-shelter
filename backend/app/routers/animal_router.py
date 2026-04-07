@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_db, get_current_user, require_manager
 from app.models.user import AuthenticatedUser
-from app.schemas.animals_schema import AnimalCreate, AnimalResponse, AnimalSummaryInfoList
+from app.schemas.animals_schema import AnimalCreate, AnimalResponse, AnimalSummaryInfoList, AnimalUpdate
 from app.services.animal_service import AnimalService
 
 router = APIRouter(prefix="/animals", tags=["animals"])
@@ -57,6 +57,19 @@ def get_animal_detail(
         return service.get_animal_by_id(animal_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+@router.patch("/{animal_id}", response_model=AnimalResponse)
+def update_animal(
+    animal_id: int,
+    data: AnimalUpdate,
+    auth: AuthenticatedUser = Depends(require_manager),
+    service: AnimalService = Depends(get_animal_service)
+):
+    try:
+        return service.update_animal(animal_id, data, auth.shelter_id)
+    except ValueError as e:
+        status_code = 404 if "not found" in str(e).lower() else 400
+        raise HTTPException(status_code=status_code, detail=str(e))
 
 @router.patch("/{animal_id}/adoption", response_model=AnimalResponse)
 def toggle_adoption(

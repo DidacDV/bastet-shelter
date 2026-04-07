@@ -1,7 +1,7 @@
 import enum
 from datetime import datetime, date
 
-from sqlalchemy import DateTime, ForeignKey, Enum, Date
+from sqlalchemy import DateTime, ForeignKey, Enum, Date, Float
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.sql import func
 
@@ -20,6 +20,12 @@ class MedicineStatusEnum(str, enum.Enum):
     GIVEN = "GIVEN"
     PENDING = "PENDING"
 
+class DosageUnitEnum(str, enum.Enum):
+    MG = "MG"
+    ML = "ML"
+    DROPS = "DROPS"
+    UNITS = "UNITS"
+
 class AnimalTreatment(Base):
     __tablename__ = "animal_treatment"
 
@@ -31,7 +37,9 @@ class AnimalTreatment(Base):
     status: Mapped[MedicineStatusEnum] = mapped_column(Enum(MedicineStatusEnum), nullable=False, default=MedicineStatusEnum.PENDING)
     status_updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())
     start_date: Mapped[date] = mapped_column(Date, nullable=False)
-    end_date: Mapped[date] = mapped_column(Date, nullable=True)  # None = ongoing
+    end_date: Mapped[date] = mapped_column(Date, nullable=True)  #None = ongoing
+    dosage: Mapped[float] = mapped_column(Float, nullable=False)
+    dosage_unit: Mapped[DosageUnitEnum] = mapped_column(Enum(DosageUnitEnum), nullable=False, default=DosageUnitEnum.UNITS)
 
     animal = relationship("Animal", back_populates="treatments")
     medicine = relationship("Medicine", back_populates="treatments")

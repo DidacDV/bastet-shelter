@@ -65,6 +65,7 @@ class Animals extends _$Animals {
     bool? inAdoption,
     DateTime? birthDate,
     DateTime? arrivalDate,
+    List<int>? traitIds,
   }) async {
     final Map<String, dynamic> updates = {};
 
@@ -73,10 +74,14 @@ class Animals extends _$Animals {
     if (description != null) updates['description'] = description;
     if (inAdoption != null) updates['in_adoption'] = inAdoption;
 
-    if (birthDate != null)
+    if (birthDate != null) {
       updates['birth_date'] = birthDate.toIso8601String().split('T')[0];
-    if (arrivalDate != null)
+    }
+    if (arrivalDate != null) {
       updates['arrival_date'] = arrivalDate.toIso8601String().split('T')[0];
+    }
+
+    if (traitIds != null) updates['trait_ids'] = traitIds;
 
     if (updates.isEmpty) return;
 

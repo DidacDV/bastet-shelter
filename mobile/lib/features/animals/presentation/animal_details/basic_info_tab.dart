@@ -1,3 +1,5 @@
+import 'package:bastetshelter/features/animals/presentation/animal_details/%20components/animal_traits_display.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/%20components/edit_traits_bottomsheet.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
 import 'package:bastetshelter/features/common/components/edit_bottom_sheet.dart';
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
@@ -70,6 +72,21 @@ class BasicInfoTab extends ConsumerWidget {
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Divider(height: 1),
+          ),
+          AnimalTraitsDisplay(
+            animalTraitIds: animal.traits.map((t) => t.id).toList(),
+            canEdit: isManager,
+            onEdit: () {
+              showEditTraitsBottomSheet(
+                context: context,
+                initialTraitIds: animal.traits.map((t) => t.id).toList(),
+                onSave: (newTraitIds) async {
+                  await ref
+                      .read(animalsProvider.notifier)
+                      .updateAnimal(animalId: animal.id, traitIds: newTraitIds);
+                },
+              );
+            },
           ),
         ],
       ),

@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/traits/data/trait_model.dart';
 import 'package:bastetshelter/providers/traits/trait_provider.dart';
@@ -36,12 +37,12 @@ class TraitsScreen extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.blue),
+                      icon: const Icon(Icons.edit, color: AppColors.reddish),
                       onPressed: () =>
                           _showTraitDialog(context, ref, existingTrait: trait),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
+                      icon: const Icon(Icons.delete, color: AppColors.error),
                       onPressed: () async {
                         final confirm = await ConfirmationDialog.show(
                           context: context,

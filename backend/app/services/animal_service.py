@@ -15,6 +15,22 @@ class AnimalService:
         self.refuge_repo = RefugeRepository(db)
         self.trait_repo = TraitRepository(db)
 
+    def _to_response(self, animal: Animal) -> AnimalResponse:
+        return AnimalResponse(
+            id=animal.id,
+            name=animal.name,
+            birth_date=animal.birth_date,
+            arrival_date=animal.arrival_date,
+            description=animal.description,
+            breed=animal.breed,
+            animal_type=animal.animal_type,
+            in_adoption=animal.in_adoption,
+            refuge_id=animal.refuge_id,
+            refuge_name=animal.refuge.name,
+            traits=animal.traits,
+            image_url=None,
+        )
+
     def register_animal(self, data: AnimalCreate, shelter_id: int) -> AnimalResponse:
         refuge = self.refuge_repo.get_by_id(self.db, data.refuge_id)
         if not refuge or refuge.shelter_id != shelter_id:
@@ -56,7 +72,7 @@ class AnimalService:
         animal = self.animal_repo.get_by_id(self.db, animal_id)
         if not animal:
             raise ValueError("Animal not found")
-        return AnimalResponse.model_validate(animal)
+        return self._to_response(animal)
 
     def get_all_animals_short_info(self, shelter_id: int) -> list[AnimalShortInfo]:
         """Gets short info to display in mobile app, calculating the age of each animal"""

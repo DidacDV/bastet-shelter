@@ -29,7 +29,9 @@ class AnimalResponse(BaseModel):
     animal_type: AnimalTypeEnum
     in_adoption: bool
     refuge_id: int
+    image_url: str | None
     traits: list[TraitResponse] = []
+    refuge_name: str | None = None
 
 class AnimalShortInfo(BaseModel):
     model_config = ConfigDict(from_attributes=True)

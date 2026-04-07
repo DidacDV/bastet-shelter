@@ -21,6 +21,8 @@ class MedicineResponse(BaseModel):
     name: str
     current_stock: int
 
+class MedicineListResponse(BaseModel):
+    medicines: list[MedicineResponse]
 
 class MedicineUpdate(BaseModel):
     name: Optional[str] = None

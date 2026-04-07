@@ -8,7 +8,7 @@ from app.models.user import AuthenticatedUser
 from app.schemas.medical_schema import (
     MedicineCreate, MedicineResponse, MedicineUpdate,
     MedicalTreatmentCreate, MedicalTreatmentResponse, MedicalTreatmentUpdate,
-    VetVisitCreate, VetVisitResponse, VetVisitUpdate,
+    VetVisitCreate, VetVisitResponse, VetVisitUpdate, MedicineListResponse,
 )
 from app.services.medical_service import MedicalService
 
@@ -31,12 +31,12 @@ def create_medicine(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("/medicines", response_model=List[MedicineResponse])
+@router.get("/medicines", response_model=MedicineListResponse)
 def get_medicines(
     auth: AuthenticatedUser = Depends(get_current_user),
     service: MedicalService = Depends(get_medical_service),
 ):
-    return service.get_all_medicines(auth.shelter_id)
+    return {"medicines": service.get_all_medicines(auth.shelter_id)}
 
 
 @router.get("/medicines/{medicine_id}", response_model=MedicineResponse)

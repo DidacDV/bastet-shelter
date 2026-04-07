@@ -40,8 +40,12 @@ class AnimalRepository {
     );
   }
 
-  Future<void> getAnimalDetails(int animalId) async {
+  Future<AnimalDetails> getAnimalDetails(int animalId) async {
     final data = await _apiClient.get('/animals/$animalId');
     return AnimalDetails.fromJson(data);
+  }
+
+  Future<void> updateAnimal(int animalId, Map<String, dynamic> updates) async {
+    await _apiClient.patch('/animals/$animalId', body: updates);
   }
 }

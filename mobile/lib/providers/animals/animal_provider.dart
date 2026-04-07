@@ -56,9 +56,26 @@ class Animals extends _$Animals {
     });
   }
 
-  Future<void> getAnimalDetails(int animalId) async {
+  Future<void> updateAnimal({
+    required int animalId,
+    String? name,
+    String? breed,
+    String? description,
+    bool? inAdoption,
+  }) async {
+    final Map<String, dynamic> updates = {};
+
+    if (name != null) updates['name'] = name;
+    if (breed != null) updates['breed'] = breed;
+    if (description != null) updates['description'] = description;
+    if (inAdoption != null) updates['in_adoption'] = inAdoption;
+
+    if (updates.isEmpty) return;
+
     await genericApiCall(() async {
-      await ref.read(animalRepositoryProvider).getAnimalDetails(animalId);
+      await ref.read(animalRepositoryProvider).updateAnimal(animalId, updates);
+      ref.invalidateSelf();
+      await future;
     });
   }
 }

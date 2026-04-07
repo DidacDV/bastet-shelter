@@ -1,4 +1,4 @@
-import 'package:bastetshelter/features/animals/data/animal_model.dart';
+import 'package:bastetshelter/features/animals/data/models/animal_summary_model.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'animal_filter_state.dart';

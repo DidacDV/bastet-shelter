@@ -11,6 +11,8 @@ class AppTextField extends StatelessWidget {
   final TextCapitalization textCapitalization;
   final List<TextInputFormatter>? inputFormatters;
   final TextStyle? style;
+  final ValueChanged<String>? onFieldSubmitted;
+  final TextInputAction? textInputAction;
 
   const AppTextField({
     super.key,
@@ -23,6 +25,8 @@ class AppTextField extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.inputFormatters,
     this.style,
+    this.onFieldSubmitted,
+    this.textInputAction,
   });
 
   @override
@@ -37,6 +41,10 @@ class AppTextField extends StatelessWidget {
       style: style,
       decoration: InputDecoration(labelText: label),
       validator: validator,
+      onFieldSubmitted: onFieldSubmitted,
+      textInputAction:
+          textInputAction ??
+          (onFieldSubmitted != null ? TextInputAction.done : null),
     );
   }
 }

@@ -118,6 +118,16 @@ class ApiClient {
     return _handleResponse(response);
   }
 
+  Future<dynamic> patch(String endpoint, {Map<String, dynamic>? body}) async {
+    final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
+    final response = await _send(
+      () => _client
+          .patch(url, headers: _getHeaders(), body: jsonEncode(body))
+          .timeout(const Duration(seconds: AppConstants.timeoutDuration)),
+    );
+    return _handleResponse(response);
+  }
+
   Map<String, String> _getHeaders() {
     final headers = <String, String>{'Content-Type': 'application/json'};
     if (_accessToken != null) {

@@ -44,6 +44,9 @@ def test_register_animal_success(service):
     mock_animal.in_adoption = data.in_adoption
     mock_animal.refuge_id = data.refuge_id
     mock_animal.traits = []
+    mock_animal.image_url = "http://example.com/image.jpg"
+    mock_animal.refuge.name = "Main Refuge"
+
     service.animal_repo.create.return_value = mock_animal
 
     result = service.register_animal(data, shelter_id)
@@ -88,6 +91,9 @@ def test_get_animals_success(service):
     mock_animal.in_adoption = False
     mock_animal.refuge_id = refuge_id
     mock_animal.traits = []
+    mock_animal.image_url = "http://example.com/image.jpg"
+    mock_animal.refuge.name = "Main Refuge"
+
     service.animal_repo.get_by_refuge.return_value = [mock_animal]
 
     result = service.get_animals(refuge_id)
@@ -110,6 +116,9 @@ def test_set_in_adoption(service):
     mock_animal.animal_type = AnimalTypeEnum.CAT
     mock_animal.refuge_id = 10
     mock_animal.traits = []
+    mock_animal.image_url = "http://example.com/image.jpg"
+    mock_animal.refuge.name = "Main Refuge"
+
     service.animal_repo.get_by_id.return_value = mock_animal
 
     mock_updated = MagicMock()
@@ -123,6 +132,9 @@ def test_set_in_adoption(service):
     mock_updated.animal_type = AnimalTypeEnum.CAT
     mock_updated.refuge_id = 10
     mock_updated.traits = []
+    mock_updated.image_url = "http://example.com/image.jpg"
+    mock_updated.refuge.name = "Main Refuge"
+
     service.animal_repo.update_adoption_status.return_value = mock_updated
 
     result = service.set_in_adoption(animal_id)
@@ -144,6 +156,9 @@ def test_get_animal_by_id(service):
     mock_animal.in_adoption = False
     mock_animal.refuge_id = 10
     mock_animal.traits = []
+    mock_animal.image_url = "http://example.com/image.jpg"
+    mock_animal.refuge.name = "Main Refuge"
+
     service.animal_repo.get_by_id.return_value = mock_animal
 
     result = service.get_animal_by_id(animal_id)

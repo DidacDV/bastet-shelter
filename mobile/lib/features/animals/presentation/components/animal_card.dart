@@ -1,9 +1,9 @@
-import 'package:bastetshelter/features/animals/presentation/animal_details_screen.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/animal_details_screen.dart';
 import 'package:bastetshelter/features/animals/presentation/components/tasks_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/animals/data/animal_model.dart';
+import 'package:bastetshelter/features/animals/data/models/animal_summary_model.dart';
 
 class AnimalCard extends StatelessWidget {
   final AnimalSummary animal;

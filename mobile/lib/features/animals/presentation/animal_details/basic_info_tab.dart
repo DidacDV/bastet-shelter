@@ -1,8 +1,11 @@
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
 import 'package:bastetshelter/features/common/components/edit_bottom_sheet.dart';
+import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
+import 'package:bastetshelter/providers/animals/animal_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class BasicInfoTab extends StatelessWidget {
+class BasicInfoTab extends ConsumerWidget {
   final int animalId;
   final bool isManager;
 
@@ -13,11 +16,11 @@ class BasicInfoTab extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    const mockBreed = "Mixed Beagle";
-    const mockDescription =
-        "Mochi is a very sweet and energetic puppy. She loves to play fetch and is already house-trained. Needs a family with a big yard.";
-    final mockTraitIds = [1, 3];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final animal = ref
+        .watch(animalDetailProvider(animalId))
+        .whenOrNull(data: (d) => d);
+    if (animal == null) return const SizedBox.shrink();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -26,13 +29,18 @@ class BasicInfoTab extends StatelessWidget {
         children: [
           EditableField(
             label: "Breed",
-            value: mockBreed,
+            value: animal.breed,
             canEdit: isManager,
             onEdit: () => showEditBottomSheet(
               context: context,
               label: "Breed",
-              initialValue: mockBreed,
-              onSave: (newValue) async {},
+              initialValue: animal.breed,
+              onSave: (newValue) async {
+                await ref
+                    .read(animalsProvider.notifier)
+                    .updateAnimal(animalId: animalId, breed: newValue);
+                ref.invalidate(animalDetailProvider(animalId));
+              },
             ),
           ),
 
@@ -43,14 +51,19 @@ class BasicInfoTab extends StatelessWidget {
 
           EditableField(
             label: "Description",
-            value: mockDescription,
+            value: animal.description,
             canEdit: isManager,
             onEdit: () => showEditBottomSheet(
               context: context,
               label: "Description",
-              initialValue: mockDescription,
+              initialValue: animal.description,
               keyboardType: TextInputType.multiline,
-              onSave: (newValue) async {},
+              onSave: (newValue) async {
+                await ref
+                    .read(animalsProvider.notifier)
+                    .updateAnimal(animalId: animalId, description: newValue);
+                ref.invalidate(animalDetailProvider(animalId));
+              },
             ),
           ),
 

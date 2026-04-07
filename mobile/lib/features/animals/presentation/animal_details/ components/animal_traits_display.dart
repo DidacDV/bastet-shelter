@@ -47,7 +47,7 @@ class AnimalTraitsDisplay extends ConsumerWidget {
         ),
         allTraitsAsync.when(
           loading: () => const CircularProgressIndicator(strokeWidth: 2),
-          error: (_, __) => Text(
+          error: (_, _) => Text(
             'Failed to load traits',
             style: TextStyle(color: AppColors.error),
           ),

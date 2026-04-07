@@ -3,6 +3,7 @@ import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/animals/data/models/animal_summary_model.dart';
 import 'package:bastetshelter/features/animals/data/animal_repository.dart';
 import 'package:bastetshelter/features/animals/data/animal_type_enum.dart';
+import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'animal_provider.g.dart';
@@ -62,6 +63,8 @@ class Animals extends _$Animals {
     String? breed,
     String? description,
     bool? inAdoption,
+    DateTime? birthDate,
+    DateTime? arrivalDate,
   }) async {
     final Map<String, dynamic> updates = {};
 
@@ -70,11 +73,17 @@ class Animals extends _$Animals {
     if (description != null) updates['description'] = description;
     if (inAdoption != null) updates['in_adoption'] = inAdoption;
 
+    if (birthDate != null)
+      updates['birth_date'] = birthDate.toIso8601String().split('T')[0];
+    if (arrivalDate != null)
+      updates['arrival_date'] = arrivalDate.toIso8601String().split('T')[0];
+
     if (updates.isEmpty) return;
 
     await genericApiCall(() async {
       await ref.read(animalRepositoryProvider).updateAnimal(animalId, updates);
       ref.invalidateSelf();
+      ref.invalidate(animalDetailProvider(animalId));
       await future;
     });
   }

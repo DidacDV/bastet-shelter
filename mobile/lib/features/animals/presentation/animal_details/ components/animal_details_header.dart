@@ -9,8 +9,9 @@ class AnimalDetailsHeader extends StatelessWidget {
   final DateTime arrivalDate;
   final DateTime birthday;
   final bool canEdit;
-  final Future<void> Function(String)? onArrivalDateSave;
-  final Future<void> Function(String)? onBirthdaySave;
+  final Future<void> Function(DateTime)? onArrivalDateSave;
+  final Future<void> Function(DateTime)? onBirthdaySave;
+  final Future<void> Function(String)? onNameSave;
 
   const AnimalDetailsHeader({
     super.key,
@@ -20,6 +21,7 @@ class AnimalDetailsHeader extends StatelessWidget {
     this.canEdit = false,
     this.onArrivalDateSave,
     this.onBirthdaySave,
+    this.onNameSave,
   });
 
   @override
@@ -42,7 +44,9 @@ class AnimalDetailsHeader extends StatelessWidget {
               context: context,
               label: "Name",
               initialValue: name,
-              onSave: (_) async {},
+              onSave: (newVal) async {
+                await onNameSave?.call(newVal);
+              },
             ),
           ),
         ),
@@ -65,8 +69,8 @@ class AnimalDetailsHeader extends StatelessWidget {
                           firstDate: DateTime(2000),
                           lastDate: DateTime.now(),
                         );
-                        if (picked != null) {
-                          await onArrivalDateSave!(picked.toIso8601String());
+                        if (picked != null && onArrivalDateSave != null) {
+                          await onArrivalDateSave!(picked);
                         }
                       },
               ),
@@ -83,8 +87,8 @@ class AnimalDetailsHeader extends StatelessWidget {
                           firstDate: DateTime(2000),
                           lastDate: DateTime.now(),
                         );
-                        if (picked != null) {
-                          await onBirthdaySave!(picked.toIso8601String());
+                        if (picked != null && onBirthdaySave != null) {
+                          await onBirthdaySave!(picked);
                         }
                       },
               ),

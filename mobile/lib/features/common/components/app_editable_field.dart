@@ -23,10 +23,17 @@ class EditableField extends StatelessWidget {
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
 
+    //width of icon + padding
+    final double balanceWidth = isTitle ? 22.0 + 8.0 : 0.0;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: isTitle
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
       children: [
+        if (canEdit && isTitle) SizedBox(width: balanceWidth),
+
         Flexible(
           child: Column(
             crossAxisAlignment: alignment,
@@ -63,18 +70,16 @@ class EditableField extends StatelessWidget {
             ],
           ),
         ),
+
         if (canEdit) ...[
           const SizedBox(width: 8),
-          Padding(
-            padding: EdgeInsets.only(top: isTitle ? 4.0 : 0.0),
-            child: IconButton(
-              onPressed: onEdit,
-              icon: const Icon(Icons.edit_outlined),
-              color: AppColors.primary,
-              iconSize: isTitle ? 22 : 20,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-            ),
+          IconButton(
+            onPressed: onEdit,
+            icon: const Icon(Icons.edit_outlined),
+            color: AppColors.primary,
+            iconSize: isTitle ? 22 : 20,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
           ),
         ],
       ],

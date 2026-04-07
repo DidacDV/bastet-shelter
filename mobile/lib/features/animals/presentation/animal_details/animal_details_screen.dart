@@ -3,6 +3,7 @@ import 'package:bastetshelter/features/animals/presentation/animal_details/%20co
 import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info_tab.dart';
 import 'package:bastetshelter/features/common/components/app_tab_bar.dart';
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
+import 'package:bastetshelter/providers/animals/animal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,6 +28,22 @@ class AnimalDetailsScreen extends ConsumerWidget {
               name: animal.name,
               arrivalDate: animal.arrivalDate ?? animal.birthDate,
               birthday: animal.birthDate,
+              canEdit: true,
+              onArrivalDateSave: (newDate) async {
+                await ref
+                    .read(animalsProvider.notifier)
+                    .updateAnimal(animalId: animalId, arrivalDate: newDate);
+              },
+              onBirthdaySave: (newDate) async {
+                await ref
+                    .read(animalsProvider.notifier)
+                    .updateAnimal(animalId: animalId, birthDate: newDate);
+              },
+              onNameSave: (newName) async {
+                await ref
+                    .read(animalsProvider.notifier)
+                    .updateAnimal(animalId: animalId, name: newName);
+              },
             ),
           ),
           tabs: const [

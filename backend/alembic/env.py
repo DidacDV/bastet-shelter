@@ -15,6 +15,10 @@ from app.models.shift.shift import Shift
 from app.models.shift.shift_participant import ShiftParticipant
 from app.models.province import Province
 from app.models.trait import Trait
+from app.models.medical.medicine import Medicine
+from app.models.medical.vet_visit import VetVisit
+from app.models.medical.medical_treatment import AnimalTreatment
+
 from alembic import context
 
 # this is the Alembic Config object, which provides

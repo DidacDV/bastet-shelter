@@ -32,6 +32,8 @@ def test_register_animal_success(client, mock_service):
         "arrival_date": None,
         "description": "Desc", "breed": "Breed",
         "animal_type": "DOG", "in_adoption": False, "refuge_id": 1,
+        "refuge_name": "Main Refuge",
+        "image_url": None,
         "traits": []
     }
 
@@ -39,6 +41,8 @@ def test_register_animal_success(client, mock_service):
         "name": "Buddy", "birth_date": "2026-01-01",
         "description": "Desc", "breed": "Breed",
         "animal_type": "DOG", "refuge_id": 1,
+        "refuge_name": "Main Refuge",
+        "image_url": None,
         "trait_ids": []
     })
 
@@ -54,6 +58,8 @@ def test_register_animal_error(client, mock_service):
         "name": "Buddy", "birth_date": "2026-01-01",
         "description": "Desc", "breed": "Breed",
         "animal_type": "DOG", "refuge_id": 1,
+        "refuge_name": "Main Refuge",
+        "image_url": None,
         "trait_ids": []
     })
 
@@ -65,7 +71,10 @@ def test_get_animals_success(client, mock_service):
     mock_service.get_animals.return_value = [
         {"id": 1, "name": "Buddy", "birth_date": "2026-01-01", "arrival_date": None,
          "description": "Desc", "breed": "Breed",
-         "animal_type": "DOG", "in_adoption": False, "refuge_id": 1, "traits": []}
+         "animal_type": "DOG", "in_adoption": False, "refuge_id": 1,
+         "refuge_name": "Main Refuge",
+         "image_url": None,
+         "traits": []}
     ]
 
     response = client.get("/animals/?refuge_id=1")
@@ -88,7 +97,10 @@ def test_get_animal_detail_success(client, mock_service):
     mock_service.get_animal_by_id.return_value = {
         "id": 1, "name": "Buddy", "birth_date": "2026-01-01", "arrival_date": None,
         "description": "Desc", "breed": "Breed",
-        "animal_type": "DOG", "in_adoption": False, "refuge_id": 1, "traits": []
+        "animal_type": "DOG", "in_adoption": False, "refuge_id": 1,
+        "refuge_name": "Main Refuge",
+        "image_url": None,
+        "traits": []
     }
 
     response = client.get("/animals/1")
@@ -111,7 +123,10 @@ def test_toggle_adoption_success(client, mock_service):
     mock_service.set_in_adoption.return_value = {
         "id": 1, "name": "Buddy", "birth_date": "2026-01-01", "arrival_date": None,
         "description": "Desc", "breed": "Breed",
-        "animal_type": "DOG", "in_adoption": True, "refuge_id": 1, "traits": []
+        "animal_type": "DOG", "in_adoption": True, "refuge_id": 1,
+        "refuge_name": "Main Refuge",
+        "image_url": None,
+        "traits": []
     }
 
     response = client.patch("/animals/1/adoption")

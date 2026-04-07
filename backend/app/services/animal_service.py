@@ -48,7 +48,7 @@ class AnimalService:
             )
 
         created_animal = self.animal_repo.create(self.db, new_animal)
-        return AnimalResponse.model_validate(created_animal)
+        return self._to_response(created_animal)
 
     def get_animals(self, refuge_id: int) -> list[AnimalResponse]:
         """List animals in a refuge"""
@@ -56,7 +56,7 @@ class AnimalService:
         if not refuge:
             raise ValueError("Refuge not found")
         animals = self.animal_repo.get_by_refuge(self.db, refuge_id)
-        return [AnimalResponse.model_validate(a) for a in animals]
+        return [self._to_response(a) for a in animals]
 
     def set_in_adoption(self, animal_id: int) -> AnimalResponse:
         """Toggle adoption status"""
@@ -65,7 +65,7 @@ class AnimalService:
             raise ValueError("Animal not found")
         
         updated_animal = self.animal_repo.update_adoption_status(self.db, animal_id, not animal.in_adoption)
-        return AnimalResponse.model_validate(updated_animal)
+        return self._to_response(updated_animal)
 
     def get_animal_by_id(self, animal_id: int) -> AnimalResponse:
         """Get animal details by ID"""

@@ -1,6 +1,7 @@
 import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:bastetshelter/features/animals/data/animal_repository.dart';
 import 'package:bastetshelter/features/geo/data/geo_repository.dart';
+import 'package:bastetshelter/features/medical/data/medicine_repository.dart';
 import 'package:bastetshelter/features/traits/data/trait_repository.dart';
 import 'package:get_it/get_it.dart';
 
@@ -32,4 +33,7 @@ void configureDependencies() {
     AnimalRepository(getIt<ApiClient>()),
   );
   getIt.registerSingleton<TraitRepository>(TraitRepository(getIt<ApiClient>()));
+  getIt.registerSingleton<MedicineRepository>(
+    MedicineRepository(getIt<ApiClient>()),
+  );
 }

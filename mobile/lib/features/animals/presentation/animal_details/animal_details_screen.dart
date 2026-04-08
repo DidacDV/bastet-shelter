@@ -1,7 +1,7 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/%20components/animal_details_header.dart';
-import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info_tab.dart';
-import 'package:bastetshelter/features/animals/presentation/animal_details/medical_info_tab.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/basic_info_tab.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/medical/medical_info_tab.dart';
 import 'package:bastetshelter/features/common/components/app_tab_bar.dart';
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';
@@ -58,7 +58,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
           ],
           tabViews: [
             BasicInfoTab(animalId: animalId),
-            MedicalInfoTab(),
+            MedicalInfoTab(animalId: animalId),
             const Icon(Icons.directions_bike),
             const Icon(Icons.directions_bike),
           ],

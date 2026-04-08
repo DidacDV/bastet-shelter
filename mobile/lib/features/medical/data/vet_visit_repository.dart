@@ -8,7 +8,7 @@ class VetVisitRepository {
   Future<List<VetVisit>> getVetVisitsByAnimal(int animalId) async {
     final data = await _client.get('/medical/vet-visits/$animalId');
 
-    final vetVisitsList = (data['traits'] ?? []) as List<dynamic>;
+    final vetVisitsList = (data['vet_visits'] ?? []) as List<dynamic>;
     return VetVisit.listFromJson(vetVisitsList);
   }
 

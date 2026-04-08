@@ -141,7 +141,7 @@ class ManageMedicinesScreen extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Container(
+                  SizedBox(
                     width: 40,
                     height: 40,
                     child: const Icon(

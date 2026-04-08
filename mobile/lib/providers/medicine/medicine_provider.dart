@@ -1,5 +1,4 @@
 import 'package:bastetshelter/core/service_locator.dart';
-import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/medical/data/medicine_repository.dart';
 import 'package:bastetshelter/features/medical/data/models/medicine_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

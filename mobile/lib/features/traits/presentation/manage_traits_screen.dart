@@ -14,7 +14,6 @@ class TraitsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final traitsAsync = ref.watch(traitsProvider);
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Traits')),
@@ -94,7 +93,7 @@ class TraitsScreen extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Container(
+                    SizedBox(
                       width: 40,
                       height: 40,
                       child: const Icon(

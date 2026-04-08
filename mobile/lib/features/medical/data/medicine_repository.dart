@@ -24,7 +24,7 @@ class MedicineRepository {
 
   Future<Medicine> updateMedicine(int id, String name, int stock) async {
     final data = await _client.patch(
-      '/medical/medicines/${id}',
+      '/medical/medicines/$id',
       body: {'name': name, 'current_stock': stock},
     );
     return Medicine.fromJson(data);

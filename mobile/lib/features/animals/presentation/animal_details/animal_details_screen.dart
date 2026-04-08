@@ -24,7 +24,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
         error: (e, _) => Center(child: Text('Could not load animal.')),
         data: (animal) => AppTabLayout(
           header: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.28,
+            height: MediaQuery.of(context).size.height * 0.25,
             child: AnimalDetailsHeader(
               name: animal.name,
               arrivalDate: animal.arrivalDate ?? animal.birthDate,
@@ -49,16 +49,15 @@ class AnimalDetailsScreen extends ConsumerWidget {
           ),
           tabs: const [
             Tab(icon: Icon(Icons.info_outline), text: "Basic"),
-            Tab(
-              icon: Icon(Icons.medical_information_outlined),
-              text: "Medical",
-            ),
+            Tab(icon: Icon(Icons.pets_rounded), text: "Vet"),
+            Tab(icon: Icon(Icons.medical_information), text: "Medical"),
             Tab(icon: Icon(Icons.task_alt), text: "Tasks"),
-            Tab(icon: Icon(Icons.home_outlined), text: "Adoption"),
+            Tab(icon: Icon(Icons.home_outlined), text: "Adopt"),
           ],
           tabViews: [
             BasicInfoTab(animalId: animalId),
             MedicalInfoTab(animalId: animalId),
+            const Icon(Icons.directions_bike),
             const Icon(Icons.directions_bike),
             const Icon(Icons.directions_bike),
           ],

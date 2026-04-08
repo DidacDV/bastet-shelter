@@ -1,7 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical/components/add_vet_visit_dialog.dart';
-import 'package:bastetshelter/features/animals/presentation/animal_details/medical/components/vet_visit_row.dart';
-import 'package:bastetshelter/features/common/components/app_statuses/empty_state.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/medical/components/vet_visits_history_table.dart';
 import 'package:bastetshelter/features/medical/presentation/manage_medicines_screen.dart';
 import 'package:bastetshelter/providers/vet_visits/vet_visit_provider.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +26,12 @@ class MedicalInfoTab extends ConsumerWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          padding: const EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 24,
+            bottom: 12,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -70,7 +74,29 @@ class MedicalInfoTab extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 32),
-              Text('Vet Visits History', style: theme.textTheme.titleLarge),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const Icon(
+                    Icons.history_rounded,
+                    size: 24,
+                    color: AppColors.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text('Vet Visits History', style: theme.textTheme.titleLarge),
+                  const SizedBox(width: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 2),
+                    child: Text(
+                      '(Click on a visit to see notes)',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -87,29 +113,10 @@ class MedicalInfoTab extends ConsumerWidget {
               ),
             ),
             data: (vetVisits) {
-              if (vetVisits.isEmpty) {
-                return AppEmptyState(
-                  icon: Icons.hourglass_empty,
-                  title: "No past vet visits",
-                  message: "You have not done any vet visits yet.",
-                );
-              }
-
-              return ListView.separated(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                itemCount:
-                    vetVisits.length +
-                    headerOverflow, //we add headerOverflow positions to include the header
-                separatorBuilder: (_, index) => index == 0
-                    ? const SizedBox(height: 8)
-                    : const SizedBox(height: 8),
-                itemBuilder: (context, index) {
-                  if (index == 0) return VetVisitHeader();
-
-                  final visit = vetVisits[index - headerOverflow];
-                  return VetVisitRow(visit: visit);
-                },
-              );
+              final pastVisits = vetVisits
+                  .where((v) => v.visitDate.isBefore(DateTime.now()))
+                  .toList();
+              return VetVisitsHistoryTable(pastVisits: pastVisits);
             },
           ),
         ),

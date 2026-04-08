@@ -1,5 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/animals/presentation/animal_details/medical/components/vet_visit_row.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/vet/components/vet_visit_row.dart';
 import 'package:bastetshelter/features/common/components/app_statuses/empty_state.dart';
 import 'package:bastetshelter/features/medical/data/models/vet_visit_model.dart';
 import 'package:flutter/material.dart';

@@ -111,14 +111,9 @@ class _VetVisitsContent extends StatelessWidget {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  const Icon(
-                    Icons.lightbulb_outline_rounded,
-                    size: 14,
-                    color: AppColors.textSecondary,
-                  ),
                   const SizedBox(width: 6),
                   Text(
-                    'Tip: Tap on a visit to view details or edit.',
+                    'Tap on a visit to view details or edit.',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: AppColors.textSecondary,
                       fontStyle: FontStyle.italic,

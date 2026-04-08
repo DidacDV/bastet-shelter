@@ -24,7 +24,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
         error: (e, _) => Center(child: Text('Could not load animal.')),
         data: (animal) => AppTabLayout(
           header: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.35,
+            height: MediaQuery.of(context).size.height * 0.28,
             child: AnimalDetailsHeader(
               name: animal.name,
               arrivalDate: animal.arrivalDate ?? animal.birthDate,

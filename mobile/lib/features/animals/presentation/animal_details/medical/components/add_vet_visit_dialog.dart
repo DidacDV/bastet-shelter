@@ -1,7 +1,7 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/core/utils/date_utils.dart';
 import 'package:bastetshelter/features/medical/data/models/vet_visit_model.dart';
 import 'package:bastetshelter/providers/vet_visits/vet_visit_provider.dart';
+import 'package:bastetshelter/features/common/components/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,22 +19,7 @@ class _AddVetVisitDialogState extends ConsumerState<AddVetVisitDialog> {
   final _notesController = TextEditingController();
 
   DateTime _selectedDate = DateTime.now();
-
-  String get _selectedDateFormatted => DateUtilsHelper.toApi(_selectedDate);
-
   VetVisitType _selectedType = VetVisitType.generalCheckup;
-
-  Future<void> _pickDate() async {
-    final date = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
-    if (date != null) {
-      setState(() => _selectedDate = date);
-    }
-  }
 
   @override
   void dispose() {
@@ -56,10 +41,10 @@ class _AddVetVisitDialogState extends ConsumerState<AddVetVisitDialog> {
           children: [
             Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 40,
                   height: 40,
-                  child: const Icon(
+                  child: Icon(
                     Icons.local_hospital_rounded,
                     color: AppColors.primary,
                     size: 22,
@@ -74,19 +59,16 @@ class _AddVetVisitDialogState extends ConsumerState<AddVetVisitDialog> {
             Row(
               children: [
                 Expanded(
-                  child: InkWell(
-                    onTap: _pickDate,
-                    borderRadius: BorderRadius.circular(14),
-                    child: InputDecorator(
-                      decoration: const InputDecoration(
-                        labelText: 'Date',
-                        prefixIcon: Icon(
-                          Icons.calendar_today_rounded,
-                          size: 18,
-                        ),
-                      ),
-                      child: Text(_selectedDateFormatted),
-                    ),
+                  child: DateField(
+                    label: 'Date',
+                    value: _selectedDate,
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                    onChanged: (val) {
+                      if (val != null) {
+                        setState(() => _selectedDate = val);
+                      }
+                    },
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -123,7 +105,7 @@ class _AddVetVisitDialogState extends ConsumerState<AddVetVisitDialog> {
               controller: _clinicController,
               decoration: const InputDecoration(
                 labelText: 'Clinic Name',
-                hintText: 'e.g.VetRubiCanoriol',
+                hintText: 'e.g. VetRubiCanoriol',
                 prefixIcon: Icon(Icons.storefront_rounded, size: 20),
               ),
               textCapitalization: TextCapitalization.words,

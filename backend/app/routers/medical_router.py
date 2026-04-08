@@ -8,7 +8,7 @@ from app.models.user import AuthenticatedUser
 from app.schemas.medical_schema import (
     MedicineCreate, MedicineResponse, MedicineUpdate,
     MedicalTreatmentCreate, MedicalTreatmentResponse, MedicalTreatmentUpdate,
-    VetVisitCreate, VetVisitResponse, VetVisitUpdate, MedicineListResponse,
+    VetVisitCreate, VetVisitResponse, VetVisitUpdate, MedicineListResponse, VetVisitListResponse,
 )
 from app.services.medical_service import MedicalService
 
@@ -144,16 +144,13 @@ def create_vet_visit(
         raise HTTPException(status_code=status_code, detail=str(e))
 
 
-@router.get("/vet-visits", response_model=List[VetVisitResponse])
+@router.get("/vet-visits/{animal_id}", response_model=VetVisitListResponse)
 def get_vet_visits(
     animal_id: int,
     auth: AuthenticatedUser = Depends(get_current_user),
     service: MedicalService = Depends(get_medical_service),
 ):
-    try:
-        return service.get_vet_visits_by_animal(animal_id)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return {"vet_visits": service.get_vet_visits_by_animal(animal_id)}
 
 
 @router.patch("/vet-visits/{visit_id}", response_model=VetVisitResponse)

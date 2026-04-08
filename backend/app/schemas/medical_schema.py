@@ -92,3 +92,6 @@ class VetVisitUpdate(BaseModel):
     visit_type: Optional[VetVisitTypeEnum] = None
     clinic_name: Optional[str] = None
     notes: Optional[str] = None
+
+class VetVisitListResponse(BaseModel):
+    vet_visits: list[VetVisitResponse]

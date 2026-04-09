@@ -76,16 +76,25 @@ class _EditTraitsBottomSheetState extends State<EditTraitsBottomSheet> {
           ),
           const SizedBox(height: 24),
 
-          TraitsChipSelector(
-            selectedTraitIds: _selectedTraitIds,
-            onToggle: (id, isSelected) {
-              setState(() {
-                isSelected
-                    ? _selectedTraitIds.add(id)
-                    : _selectedTraitIds.remove(id);
-              });
-            },
-          ),
+          if (_selectedTraitIds.isEmpty)
+            Text(
+              "You can add traits on the shelter configuration screen",
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppColors.textSecondary,
+                fontStyle: FontStyle.italic,
+              ),
+            )
+          else
+            TraitsChipSelector(
+              selectedTraitIds: _selectedTraitIds,
+              onToggle: (id, isSelected) {
+                setState(() {
+                  isSelected
+                      ? _selectedTraitIds.add(id)
+                      : _selectedTraitIds.remove(id);
+                });
+              },
+            ),
 
           const SizedBox(height: 32),
 

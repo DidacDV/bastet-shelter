@@ -1,5 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DateField extends StatelessWidget {
   final String label;
@@ -19,8 +20,37 @@ class DateField extends StatelessWidget {
     this.required = true,
   });
 
+  @override
+  Widget build(BuildContext context) {
+    final tt = Theme.of(context).textTheme;
+    final hasValue = value != null;
+
+    return InkWell(
+      onTap: () => _pick(context),
+      borderRadius: BorderRadius.circular(8),
+      child: InputDecorator(
+        isEmpty: !hasValue,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: required ? 'Select date' : 'Optional',
+          suffixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 2,
+            vertical: 16,
+          ),
+        ),
+        child: hasValue
+            ? Text(
+                DateFormat('dd/MM/yyyy').format(value!),
+                style: tt.bodyMedium?.copyWith(color: AppColors.textPrimary),
+              )
+            : const SizedBox.shrink(),
+      ),
+    );
+  }
+
   Future<void> _pick(BuildContext context) async {
-    // Hide the keyboard if it's open before showing the date picker
     FocusScope.of(context).unfocus();
 
     final picked = await showDatePicker(
@@ -30,35 +60,5 @@ class DateField extends StatelessWidget {
       lastDate: lastDate ?? DateTime.now(),
     );
     if (picked != null) onChanged(picked);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
-    final hasValue = value != null;
-
-    return InkWell(
-      // Replaced GestureDetector with InkWell for the Material splash effect
-      onTap: () => _pick(context),
-      borderRadius: BorderRadius.circular(
-        8,
-      ), // Adjust this if your TextFields are more rounded
-      child: InputDecorator(
-        isEmpty: !hasValue, // floats label when hasValue, sits inside when not
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: required
-              ? 'Select date'
-              : 'Optional', // hint shows when empty, no collision
-          suffixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
-        ),
-        child: hasValue
-            ? Text(
-                MaterialLocalizations.of(context).formatMediumDate(value!),
-                style: tt.bodyMedium?.copyWith(color: AppColors.textPrimary),
-              )
-            : const SizedBox.shrink(), // nothing in child when empty — label + hint handle it
-      ),
-    );
   }
 }

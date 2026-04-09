@@ -1,5 +1,7 @@
+import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/home/data/dashboard_repository.dart';
 import 'package:bastetshelter/features/home/data/dashboard_model.dart';
+import 'package:bastetshelter/features/home/presentation/components/home_card.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +24,8 @@ class _HomeTabState extends ConsumerState<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return FutureBuilder<DashboardData>(
       future: _dashboardFuture,
       builder: (context, snapshot) {
@@ -31,72 +35,85 @@ class _HomeTabState extends ConsumerState<HomeTab> {
         if (snapshot.hasError) {
           return Center(child: Text(snapshot.error.toString()));
         }
+
         final dashboard = snapshot.data!;
-        return Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'Benvingut',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 48),
-              _StatTile(
-                count: dashboard.animalCount,
-                label: 'animals registrats',
-                onTap: () {},
-              ),
-              const SizedBox(height: 24),
-              _StatTile(
-                count: dashboard.activeAdoptionCount,
-                label: "processos d'adopció actius",
-                onTap: () {},
-              ),
-              const SizedBox(height: 24),
-              _StatTile(
-                count: dashboard.volunteerCount,
-                label: 'voluntaris',
-                onTap: () {},
-              ),
-            ],
+
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 32),
+                Text('Welcome', style: theme.textTheme.displayLarge),
+                Text(
+                  'Keep on track with your shelter.',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 16,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: FractionallySizedBox(
+                            widthFactor: 0.85,
+                            child: StatCard(
+                              count: dashboard.animalCount,
+                              label: 'Registered animals',
+                              icon: Icons.pets_rounded,
+                              bgColor: AppColors.primaryTint,
+                              fgColor: AppColors.primary,
+                              onTap: () {},
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: FractionallySizedBox(
+                            widthFactor: 0.85,
+                            child: StatCard(
+                              count: dashboard.activeAdoptionCount,
+                              label: 'Adoption processes',
+                              icon: Icons.home_rounded,
+                              bgColor: AppColors.secondaryTint,
+                              fgColor: AppColors.secondary,
+                              onTap: () {},
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: FractionallySizedBox(
+                            widthFactor: 0.85,
+                            child: StatCard(
+                              count: dashboard.volunteerCount,
+                              label: 'Active volunteers',
+                              icon: Icons.people_rounded,
+                              bgColor: AppColors.accentTint,
+                              fgColor: AppColors.accent,
+                              onTap: () {},
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 32),
+              ],
+            ),
           ),
         );
       },
-    );
-  }
-}
-
-class _StatTile extends StatelessWidget {
-  final int count;
-  final String label;
-  final VoidCallback onTap;
-
-  const _StatTile({
-    required this.count,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Text(
-            '$count',
-            style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 16),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
     );
   }
 }

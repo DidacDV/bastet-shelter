@@ -20,6 +20,7 @@ from app.routers.task_router import router as task_router
 from app.routers.shift_router import router as shift_router
 from app.routers.geo_router import router as geo_router
 from app.routers.trait_router import router as trait_router
+from app.routers.medical_router import router as medical_router
 
 from app.services.geo_service import GeoService
 import app.models as models
@@ -57,6 +58,7 @@ app.include_router(shift_router)
 app.include_router(geo_router)
 app.include_router(dashboard_router)
 app.include_router(trait_router)
+app.include_router(medical_router)
 
 # create SQLAdmin page
 admin = Admin(app, engine, authentication_backend=authentication_backend)

@@ -17,3 +17,4 @@ class Shelter(Base):
     refuges = relationship("Refuge", back_populates="shelter")
     tasks = relationship("Task", back_populates="shelter")
     traits = relationship("Trait", back_populates="shelter", cascade="all, delete-orphan")
+    medicines = relationship("Medicine", back_populates="shelter", cascade="all, delete-orphan")

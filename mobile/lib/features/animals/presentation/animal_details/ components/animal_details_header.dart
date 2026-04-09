@@ -31,8 +31,8 @@ class AnimalDetailsHeader extends StatelessWidget {
       children: [
         SvgPicture.asset(
           'assets/images/Illustration-13.svg',
-          height: 130,
-          width: 130,
+          height: 100,
+          width: 100,
         ),
         const SizedBox(height: 16),
         Center(

@@ -1,5 +1,5 @@
-import 'package:bastetshelter/features/animals/presentation/animal_details/%20components/animal_traits_display.dart';
-import 'package:bastetshelter/features/animals/presentation/animal_details/%20components/edit_traits_bottomsheet.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/components/animal_traits_display.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/components/edit_traits_bottomsheet.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
 import 'package:bastetshelter/features/common/components/edit_bottom_sheet.dart';
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';

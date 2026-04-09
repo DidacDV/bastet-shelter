@@ -1,3 +1,4 @@
+import 'package:bastetshelter/features/shelter/presentation/components/management_card.dart';
 import 'package:bastetshelter/features/shelter/presentation/components/refuges_card.dart';
 import 'package:bastetshelter/features/shelter/presentation/components/shelter_info_card.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,8 @@ class ConfigScreen extends ConsumerWidget {
               ShelterInfoCard(shelter: shelter),
               const SizedBox(height: 24),
               RefugesCard(shelter: shelter),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+              ManagementCard(),
             ],
           ),
         ),

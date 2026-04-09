@@ -1,12 +1,12 @@
 import 'package:bastetshelter/core/constants.dart'; // Ensure AppColors is imported
+import 'package:bastetshelter/features/community/presentation/community_screen.dart';
+import 'package:bastetshelter/features/shifts/presentation/shifts_screen.dart';
+import 'package:bastetshelter/features/tasks/presentation/tasks_screen.dart';
 import 'package:bastetshelter/providers/geo/geo_provider.dart';
 import 'package:bastetshelter/features/animals/presentation/animals_screen.dart';
 import 'package:bastetshelter/features/common/components/app_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'shifts_screen.dart';
-import 'tasks_screen.dart';
-import 'community_screen.dart';
 import 'package:bastetshelter/features/home/presentation/home_tab.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {

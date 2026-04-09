@@ -7,6 +7,7 @@ from app.repositories.animal_repo import AnimalRepository
 from app.repositories.medical_treatment_repo import MedicalTreatmentRepository
 from app.repositories.medicine_repo import MedicineRepository
 from app.repositories.refuge_repo import RefugeRepository
+from app.repositories.user_repo import user_repo
 from app.repositories.vet_visit_repo import VetVisitRepository
 from app.schemas.medical_schema import (
     MedicineCreate, MedicineResponse, MedicineUpdate,
@@ -45,6 +46,7 @@ class MedicalService:
             end_date=treatment.end_date,
             dosage=treatment.dosage,
             dosage_unit=treatment.dosage_unit,
+            status_last_updated_by_name=treatment.status_last_updated_by_name,
         )
 
     def _vet_visit_to_response(self, visit: VetVisit) -> VetVisitResponse:
@@ -132,7 +134,7 @@ class MedicalService:
         treatments = self.treatment_repo.get_by_animal(self.db, animal_id)
         return [self._treatment_to_response(t) for t in treatments]
 
-    def update_treatment(self, treatment_id: int, data: MedicalTreatmentUpdate, shelter_id: int) -> MedicalTreatmentResponse:
+    def update_treatment(self, user_id: int, treatment_id: int, data: MedicalTreatmentUpdate, shelter_id: int) -> MedicalTreatmentResponse:
         treatment = self.treatment_repo.get_by_id(self.db, treatment_id)
         if not treatment:
             raise ValueError("Treatment not found")
@@ -140,6 +142,9 @@ class MedicalService:
         self._validate_animal_belongs_to_shelter(treatment.animal_id, shelter_id)
 
         update_data = data.model_dump(exclude_unset=True)
+
+        if "status" in update_data and update_data["status"] != treatment.status:
+            treatment.status_last_updated_by_id = user_id
 
         if "medicine_id" in update_data:
             medicine = self.medicine_repo.get_by_id(self.db, update_data["medicine_id"])

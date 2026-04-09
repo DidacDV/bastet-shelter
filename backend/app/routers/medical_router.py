@@ -9,6 +9,7 @@ from app.schemas.medical_schema import (
     MedicineCreate, MedicineResponse, MedicineUpdate,
     MedicalTreatmentCreate, MedicalTreatmentResponse, MedicalTreatmentUpdate,
     VetVisitCreate, VetVisitResponse, VetVisitUpdate, MedicineListResponse, VetVisitListResponse,
+    MedicalTreatmentListResponse,
 )
 from app.services.medical_service import MedicalService
 
@@ -92,14 +93,14 @@ def create_treatment(
         raise HTTPException(status_code=status_code, detail=str(e))
 
 
-@router.get("/treatments", response_model=List[MedicalTreatmentResponse])
+@router.get("/treatments/{animal_id}", response_model=MedicalTreatmentListResponse)
 def get_treatments(
     animal_id: int,
     auth: AuthenticatedUser = Depends(get_current_user),
     service: MedicalService = Depends(get_medical_service),
 ):
     try:
-        return service.get_treatments_by_animal(animal_id)
+        return {"medical_treatments": service.get_treatments_by_animal(animal_id)}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
@@ -112,7 +113,7 @@ def update_treatment(
     service: MedicalService = Depends(get_medical_service),
 ):
     try:
-        return service.update_treatment(treatment_id, data, auth.shelter_id)
+        return service.update_treatment(auth.user.id, treatment_id, data, auth.shelter_id)
     except ValueError as e:
         status_code = 404 if "not found" in str(e).lower() else 400
         raise HTTPException(status_code=status_code, detail=str(e))

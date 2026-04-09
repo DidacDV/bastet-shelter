@@ -52,6 +52,7 @@ class MedicalTreatmentResponse(BaseModel):
     frequency: MedicineFrequencyEnum
     status: MedicineStatusEnum
     status_updated_at: datetime
+    status_last_updated_by_name: Optional[str] = None
     start_date: date
     end_date: Optional[date]
     dosage: float
@@ -65,6 +66,8 @@ class MedicalTreatmentUpdate(BaseModel):
     start_date: Optional[date] = None
     end_date: Optional[date] = None
 
+class MedicalTreatmentListResponse(BaseModel):
+    medical_treatments: list[MedicalTreatmentResponse]
 
 #VET VISIT
 

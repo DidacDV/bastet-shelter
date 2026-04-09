@@ -125,7 +125,7 @@ class _VetVisitsContent extends StatelessWidget {
           ),
         ),
 
-        Expanded(child: VetVisitsHistoryTable(pastVisits: pastVisits)),
+        VetVisitsHistoryTable(pastVisits: pastVisits),
       ],
     );
   }

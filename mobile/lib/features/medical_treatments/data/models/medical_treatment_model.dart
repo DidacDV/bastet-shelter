@@ -61,6 +61,7 @@ class MedicalTreatment {
   final MedicineFrequency frequency;
   final MedicineStatus status;
   final DateTime statusUpdatedAt;
+  final String? statusLastUpdatedByName;
   final DateTime startDate;
   final DateTime? endDate;
   final double dosage;
@@ -74,6 +75,7 @@ class MedicalTreatment {
     required this.frequency,
     required this.status,
     required this.statusUpdatedAt,
+    this.statusLastUpdatedByName,
     required this.startDate,
     this.endDate,
     required this.dosage,
@@ -89,6 +91,7 @@ class MedicalTreatment {
       frequency: MedicineFrequency.fromString(json['frequency'] as String),
       status: MedicineStatus.fromString(json['status'] as String),
       statusUpdatedAt: DateTime.parse(json['status_updated_at'] as String),
+      statusLastUpdatedByName: json['status_last_updated_by_name'] as String?,
       startDate: DateTime.parse(json['start_date'] as String),
       endDate: json['end_date'] != null
           ? DateTime.parse(json['end_date'] as String)
@@ -123,6 +126,7 @@ class MedicalTreatment {
     MedicineFrequency? frequency,
     MedicineStatus? status,
     DateTime? statusUpdatedAt,
+    String? statusLastUpdatedByName,
     DateTime? startDate,
     DateTime? endDate,
     double? dosage,
@@ -136,6 +140,8 @@ class MedicalTreatment {
       frequency: frequency ?? this.frequency,
       status: status ?? this.status,
       statusUpdatedAt: statusUpdatedAt ?? this.statusUpdatedAt,
+      statusLastUpdatedByName:
+          statusLastUpdatedByName ?? this.statusLastUpdatedByName,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       dosage: dosage ?? this.dosage,

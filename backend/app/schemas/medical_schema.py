@@ -65,6 +65,8 @@ class MedicalTreatmentUpdate(BaseModel):
     status: Optional[MedicineStatusEnum] = None
     start_date: Optional[date] = None
     end_date: Optional[date] = None
+    dosage: Optional[float] = None
+    dosage_unit: Optional[DosageUnitEnum] = None
 
 class MedicalTreatmentListResponse(BaseModel):
     medical_treatments: list[MedicalTreatmentResponse]

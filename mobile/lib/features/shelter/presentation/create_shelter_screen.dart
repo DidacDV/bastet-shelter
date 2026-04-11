@@ -4,13 +4,13 @@ import 'package:bastetshelter/providers/geo/geo_provider.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
-import 'package:bastetshelter/features/common/components/app_text_field.dart';
-import 'package:bastetshelter/features/common/components/location_dropdown.dart';
+import 'package:bastetshelter/features/common/components/dropdowns/location_dropdown.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
 
 class CreateShelterScreen extends ConsumerStatefulWidget {
   const CreateShelterScreen({super.key});

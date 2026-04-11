@@ -1,8 +1,8 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/common/components/app_text_field.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
 
 ///this SHOULD be used for all fields that can get eddited and are simple text fields
 class EditBottomSheet extends StatefulWidget {

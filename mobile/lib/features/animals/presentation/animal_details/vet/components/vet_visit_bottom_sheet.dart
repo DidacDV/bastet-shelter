@@ -1,6 +1,6 @@
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
-import 'package:bastetshelter/features/common/components/label_value.dart';
+import 'package:bastetshelter/features/common/components/fields/label_value.dart';
 import 'package:bastetshelter/features/medical/data/models/vet_visit_model.dart';
 import 'package:bastetshelter/providers/vet_visits/vet_visit_provider.dart';
 import 'package:flutter/material.dart';

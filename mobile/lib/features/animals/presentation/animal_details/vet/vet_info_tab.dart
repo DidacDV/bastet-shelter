@@ -58,7 +58,7 @@ class _AddVisitButton extends StatelessWidget {
         builder: (_) => AddVetVisitDialog(animalId: animalId),
       ),
       icon: const Icon(Icons.add_rounded, size: 18),
-      label: const Text('Add Vet Visit'),
+      label: const Text('Plan Vet Visit'),
       style: FilledButton.styleFrom(
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.surface,

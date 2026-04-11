@@ -1,11 +1,11 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
-import 'package:bastetshelter/features/common/components/app_text_field.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
+import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

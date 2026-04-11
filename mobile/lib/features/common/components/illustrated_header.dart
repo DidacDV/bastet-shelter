@@ -1,5 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/first_steps/presentation/components/member_mode_display.dart';
+import 'package:bastetshelter/features/common/components/section_badge.dart';
 import 'package:flutter/material.dart';
 
 class IllustratedHeader extends StatelessWidget {

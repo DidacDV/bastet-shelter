@@ -1,8 +1,8 @@
+import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
 import 'package:bastetshelter/providers/geo/geo_provider.dart';
 import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
-import 'package:bastetshelter/features/common/components/app_text_field.dart';
-import 'package:bastetshelter/features/common/components/location_dropdown.dart';
+import 'package:bastetshelter/features/common/components/dropdowns/location_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

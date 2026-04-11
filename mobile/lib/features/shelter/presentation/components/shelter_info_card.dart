@@ -1,4 +1,4 @@
-import 'package:bastetshelter/features/common/components/label_value.dart';
+import 'package:bastetshelter/features/common/components/fields/label_value.dart';
 import 'package:bastetshelter/features/common/components/section_card.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_model.dart';
 import 'package:bastetshelter/features/shelter/presentation/components/edit_shelter_modal.dart';

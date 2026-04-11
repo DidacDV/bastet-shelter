@@ -33,46 +33,20 @@ class VetInfoTab extends ConsumerWidget {
                   ),
                 ),
               ),
-              data: (visits) => _VetVisitsContent(visits: visits),
+              data: (visits) =>
+                  _VetVisitsContent(visits: visits, animalId: animalId),
             ),
           ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
-          child: _AddVisitButton(animalId: animalId),
-        ),
       ],
     );
   }
 }
 
-class _AddVisitButton extends StatelessWidget {
-  const _AddVisitButton({required this.animalId});
-
-  final int animalId;
-
-  @override
-  Widget build(BuildContext context) {
-    return FilledButton.icon(
-      onPressed: () => showDialog(
-        context: context,
-        builder: (_) => AddVetVisitDialog(animalId: animalId),
-      ),
-      icon: const Icon(Icons.add_rounded, size: 18),
-      label: const Text('Plan Vet Visit'),
-      style: FilledButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.surface,
-        minimumSize: const Size.fromHeight(25),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
-  }
-}
-
 class _VetVisitsContent extends StatelessWidget {
-  const _VetVisitsContent({required this.visits});
+  const _VetVisitsContent({required this.visits, required this.animalId});
 
   final List<VetVisit> visits;
+  final int animalId;
 
   @override
   Widget build(BuildContext context) {
@@ -95,15 +69,47 @@ class _VetVisitsContent extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (nextVisit != null) ...[
-                _SectionHeader(
-                  icon: Icons.next_plan_outlined,
-                  label: 'Next visit',
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _SectionHeader(
+                    icon: Icons.next_plan_outlined,
+                    label: 'Next visit',
+                  ),
+                  FilledButton.icon(
+                    onPressed: () => showDialog(
+                      context: context,
+                      builder: (_) => AddVetVisitDialog(animalId: animalId),
+                    ),
+                    icon: const Icon(Icons.add_rounded, size: 18),
+                    label: const Text('Plan visit'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.surface,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              if (nextVisit != null)
+                NextVisitCard(visit: nextVisit)
+              else
+                Padding(
+                  padding: const EdgeInsets.only(left: 6, bottom: 4),
+                  child: Text(
+                    'No upcoming vet visits planned.',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppColors.textSecondary,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 8),
-                NextVisitCard(visit: nextVisit),
-                const SizedBox(height: 24),
-              ],
+              const SizedBox(height: 24),
+
               _SectionHeader(
                 icon: Icons.history_rounded,
                 label: 'Vet Visits History',

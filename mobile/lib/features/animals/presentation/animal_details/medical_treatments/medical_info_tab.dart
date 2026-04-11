@@ -1,6 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/theme.dart';
-import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/components/treatment_bottom_sheet.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/components/view_treatment_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/app_statuses/empty_state.dart';
 import 'package:bastetshelter/features/common/components/section_badge.dart';
 import 'package:bastetshelter/features/common/components/table/app_table.dart';
@@ -9,6 +9,9 @@ import 'package:bastetshelter/features/medical_treatments/data/models/medical_tr
 import 'package:bastetshelter/providers/medical_treatments/medical_treatment_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'components/create_treatment_bottom_sheet.dart'
+    show showAddTreatmentBottomSheet;
 
 class MedicalTreatmentsTab extends ConsumerWidget {
   final bool isManager;
@@ -34,15 +37,39 @@ class MedicalTreatmentsTab extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.vaccines_rounded,
-                    size: 24,
-                    color: AppColors.primary,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const Icon(
+                        Icons.vaccines_rounded,
+                        size: 24,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Active Treatments',
+                        style: theme.textTheme.titleLarge,
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Text('Active Treatments', style: theme.textTheme.titleLarge),
+                  FilledButton.icon(
+                    onPressed: () => showAddTreatmentBottomSheet(
+                      context: context,
+                      animalId: animalId,
+                    ),
+                    icon: const Icon(Icons.add_rounded, size: 18),
+                    label: const Text('Add'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.surface,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 4),

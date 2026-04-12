@@ -1,8 +1,8 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/animals/presentation/animal_details/vet/components/add_vet_visit_dialog.dart';
-import 'package:bastetshelter/features/animals/presentation/animal_details/vet/components/next_visit_card.dart';
-import 'package:bastetshelter/features/animals/presentation/animal_details/vet/components/vet_visits_history_table.dart';
-import 'package:bastetshelter/features/medical/data/models/vet_visit_model.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/add_vet_visit_dialog.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/next_visit_card.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/vet_visits_history_table.dart';
+import 'package:bastetshelter/features/medicine/data/models/vet_visit_model.dart';
 import 'package:bastetshelter/providers/vet_visits/vet_visit_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -78,9 +78,9 @@ class _VetVisitsContent extends StatelessWidget {
                     label: 'Next visit',
                   ),
                   FilledButton.icon(
-                    onPressed: () => showDialog(
+                    onPressed: () => showAddVetVisitBottomSheet(
                       context: context,
-                      builder: (_) => AddVetVisitDialog(animalId: animalId),
+                      animalId: animalId,
                     ),
                     icon: const Icon(Icons.add_rounded, size: 18),
                     label: const Text('Plan visit'),

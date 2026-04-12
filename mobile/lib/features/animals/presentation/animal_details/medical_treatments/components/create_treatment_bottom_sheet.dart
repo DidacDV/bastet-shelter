@@ -8,7 +8,7 @@ import 'package:bastetshelter/features/common/components/fields/app_text_field.d
 import 'package:bastetshelter/features/common/components/fields/date_field.dart';
 import 'package:bastetshelter/features/common/components/layout/api_error_widget.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
-import 'package:bastetshelter/features/medical/data/models/medicine_model.dart';
+import 'package:bastetshelter/features/medicine/data/models/medicine_model.dart';
 import 'package:bastetshelter/features/medical_treatments/data/models/medical_treatment_model.dart';
 import 'package:bastetshelter/providers/medical_treatments/medical_treatment_provider.dart';
 import 'package:bastetshelter/providers/medicine/medicine_provider.dart';

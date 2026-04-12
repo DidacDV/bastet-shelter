@@ -1,6 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/animals/presentation/animal_details/vet/components/vet_visit_bottom_sheet.dart';
-import 'package:bastetshelter/features/medical/data/models/vet_visit_model.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/vet_visit_bottom_sheet.dart';
+import 'package:bastetshelter/features/medicine/data/models/vet_visit_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

@@ -2,7 +2,7 @@ import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/%20components/animal_details_header.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/basic_info_tab.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/medical_info_tab.dart';
-import 'package:bastetshelter/features/animals/presentation/animal_details/vet/vet_info_tab.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/vet_info_tab.dart';
 import 'package:bastetshelter/features/common/components/layout/app_tab_bar.dart';
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';

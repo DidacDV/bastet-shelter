@@ -1,4 +1,4 @@
-import 'package:bastetshelter/features/medical/data/models/vet_visit_model.dart';
+import 'package:bastetshelter/features/medicine/data/models/vet_visit_model.dart';
 import 'package:flutter/material.dart';
 
 class VetVisitTypeDropdown extends StatefulWidget {

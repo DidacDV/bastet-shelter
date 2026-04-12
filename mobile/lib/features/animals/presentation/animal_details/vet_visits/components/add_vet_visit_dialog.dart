@@ -1,25 +1,32 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/vet_visit_type_dropdown.dart';
+import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
+import 'package:bastetshelter/features/common/components/fields/app_text_field.dart'; // Added AppTextField
 import 'package:bastetshelter/features/common/components/fields/date_field.dart';
+import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:bastetshelter/features/medicine/data/models/vet_visit_model.dart';
 import 'package:bastetshelter/providers/vet_visits/vet_visit_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddVetVisitDialog extends ConsumerStatefulWidget {
+class AddVetVisitBottomSheet extends ConsumerStatefulWidget {
   final int animalId;
 
-  const AddVetVisitDialog({super.key, required this.animalId});
+  const AddVetVisitBottomSheet({super.key, required this.animalId});
 
   @override
-  ConsumerState<AddVetVisitDialog> createState() => _AddVetVisitDialogState();
+  ConsumerState<AddVetVisitBottomSheet> createState() =>
+      _AddVetVisitBottomSheetState();
 }
 
-class _AddVetVisitDialogState extends ConsumerState<AddVetVisitDialog> {
+class _AddVetVisitBottomSheetState
+    extends ConsumerState<AddVetVisitBottomSheet> {
   final _clinicController = TextEditingController();
   final _notesController = TextEditingController();
 
   DateTime _selectedDate = DateTime.now();
   VetVisitType _selectedType = VetVisitType.generalCheckup;
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -28,142 +35,132 @@ class _AddVetVisitDialogState extends ConsumerState<AddVetVisitDialog> {
     super.dispose();
   }
 
+  Future<void> _save() async {
+    final clinic = _clinicController.text.trim();
+    if (clinic.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a clinic name')),
+      );
+      return;
+    }
+
+    setState(() => _loading = true);
+
+    final newVisit = VetVisit(
+      id: 0,
+      animalId: widget.animalId,
+      visitDate: _selectedDate,
+      visitType: _selectedType,
+      clinicName: clinic,
+      notes: _notesController.text.trim().isEmpty
+          ? null
+          : _notesController.text.trim(),
+    );
+
+    await ref
+        .read(vetVisitsProvider(widget.animalId).notifier)
+        .addVisit(newVisit);
+
+    if (mounted) Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Dialog(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+    return FormBottomSheet(
+      title: 'New Vet Visit',
+      leading: const Icon(
+        Icons.local_hospital_rounded,
+        color: AppColors.primary,
+        size: 24,
+      ),
+      actions: [
+        PrimaryButton(
+          label: 'Save Visit',
+          isLoading: _loading,
+          onPressed: _save,
+        ),
+      ],
+      children: [
+        Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                const SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: Icon(
-                    Icons.local_hospital_rounded,
-                    color: AppColors.primary,
-                    size: 22,
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Date',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Text('New Vet Visit', style: theme.textTheme.titleLarge),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            Row(
-              children: [
-                Expanded(
-                  child: DateField(
-                    label: 'Date',
+                  const SizedBox(height: 8),
+                  DateField(
+                    label: '',
                     value: _selectedDate,
                     firstDate: DateTime(2000),
                     lastDate: DateTime.now().add(const Duration(days: 365)),
                     onChanged: (val) {
-                      if (val != null) {
-                        setState(() => _selectedDate = val);
-                      }
+                      if (val != null) setState(() => _selectedDate = val);
                     },
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: DropdownButtonFormField<VetVisitType>(
-                    initialValue: _selectedType,
-                    isExpanded: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Visit Type',
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 16,
-                      ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Visit Type',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: AppColors.textSecondary,
                     ),
-                    items: VetVisitType.values.map((type) {
-                      return DropdownMenuItem(
-                        value: type,
-                        child: Text(
-                          type.label,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (val) {
-                      if (val != null) setState(() => _selectedType = val);
-                    },
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            TextField(
-              controller: _clinicController,
-              decoration: const InputDecoration(
-                labelText: 'Clinic Name',
-                hintText: 'e.g. VetRubiCanoriol',
-                prefixIcon: Icon(Icons.storefront_rounded, size: 20),
+                  const SizedBox(height: 8),
+                  VetVisitTypeDropdown(
+                    initialItem: _selectedType,
+                    onChanged: (t) =>
+                        setState(() => _selectedType = t ?? _selectedType),
+                  ),
+                ],
               ),
-              textCapitalization: TextCapitalization.words,
-            ),
-            const SizedBox(height: 16),
-
-            TextField(
-              controller: _notesController,
-              maxLines: 3,
-              minLines: 2,
-              decoration: const InputDecoration(
-                labelText: 'Notes (Optional)',
-                hintText: 'Add details about the visit...',
-                alignLabelWithHint: true,
-              ),
-              textCapitalization: TextCapitalization.sentences,
-            ),
-            const SizedBox(height: 28),
-
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      final clinic = _clinicController.text.trim();
-                      if (clinic.isNotEmpty) {
-                        final newVisit = VetVisit(
-                          id: 0,
-                          animalId: widget.animalId,
-                          visitDate: _selectedDate,
-                          visitType: _selectedType,
-                          clinicName: clinic,
-                          notes: _notesController.text.trim().isEmpty
-                              ? null
-                              : _notesController.text.trim(),
-                        );
-
-                        ref
-                            .read(vetVisitsProvider(widget.animalId).notifier)
-                            .addVisit(newVisit);
-                        Navigator.pop(context);
-                      }
-                    },
-                    child: const Text('Save'),
-                  ),
-                ),
-              ],
             ),
           ],
         ),
-      ),
+        const SizedBox(height: 20),
+
+        AppTextField(
+          controller: _clinicController,
+          label: 'Clinic Name',
+          textCapitalization: TextCapitalization.words,
+        ),
+        const SizedBox(height: 20),
+
+        AppTextField(
+          controller: _notesController,
+          label: 'Notes (Optional)',
+          textCapitalization: TextCapitalization.sentences,
+        ),
+      ],
     );
   }
+}
+
+Future<void> showAddVetVisitBottomSheet({
+  required BuildContext context,
+  required int animalId,
+}) {
+  return showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    builder: (_) => AddVetVisitBottomSheet(animalId: animalId),
+  );
 }

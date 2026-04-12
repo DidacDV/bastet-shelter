@@ -78,9 +78,9 @@ class _VetVisitsContent extends StatelessWidget {
                     label: 'Next visit',
                   ),
                   FilledButton.icon(
-                    onPressed: () => showDialog(
+                    onPressed: () => showAddVetVisitBottomSheet(
                       context: context,
-                      builder: (_) => AddVetVisitDialog(animalId: animalId),
+                      animalId: animalId,
                     ),
                     icon: const Icon(Icons.add_rounded, size: 18),
                     label: const Text('Plan visit'),

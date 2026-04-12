@@ -1,6 +1,6 @@
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-from app.models.animal import Animal
+from app.models.animal.animal import Animal
 from app.models.refuge import Refuge
 from app.models.task.shift_task import ShiftTask
 from app.models.task.task import TaskStatusEnum

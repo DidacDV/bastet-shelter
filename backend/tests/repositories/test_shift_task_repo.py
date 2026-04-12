@@ -5,7 +5,7 @@ from app.models.shift.shift_participant import ShiftParticipant
 from app.models.task.shift_task import ShiftTask
 from app.models.task.task import Task, TaskStatusEnum
 from app.models.refuge import Refuge
-from app.models.animal import Animal, AnimalTypeEnum
+from app.models.animal.animal import Animal, AnimalTypeEnum
 from app.models.shelter_member import Volunteer, RoleEnum
 from tests.repositories.utils import _create_shelter, _create_user
 

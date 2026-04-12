@@ -1,12 +1,27 @@
 from datetime import date
 
+from fastapi import UploadFile
 from sqlalchemy.orm import Session
-from app.models.animal import Animal
+
+from app.core.config import settings
+from app.models.animal.animal import Animal
+from app.repositories.animal_image_repo import AnimalImageRepository
 from app.repositories.animal_repo import AnimalRepository
 from app.repositories.refuge_repo import RefugeRepository
 from app.repositories.trait_repo import TraitRepository
-from app.schemas.animals_schema import AnimalCreate, AnimalResponse, AnimalShortInfo, AnimalUpdate
+from app.schemas.animals_schema.animals_image_schema import AnimalImageResponse
+from app.schemas.animals_schema.animals_schema import AnimalCreate, AnimalResponse, AnimalShortInfo, AnimalUpdate
 
+import cloudinary
+import cloudinary.uploader as cloudinary_uploader
+
+MAX_IMAGES = 5
+
+cloudinary.config(
+    cloud_name=settings.CLOUDINARY_CLOUD_NAME,
+    api_key=settings.CLOUDINARY_API_KEY,
+    api_secret=settings.CLOUDINARY_API_SECRET,
+)
 
 class AnimalService:
     def __init__(self, db: Session):
@@ -14,6 +29,7 @@ class AnimalService:
         self.animal_repo = AnimalRepository(db)
         self.refuge_repo = RefugeRepository(db)
         self.trait_repo = TraitRepository(db)
+        self.animal_image_repo = AnimalImageRepository(db)
 
     def _to_response(self, animal: Animal) -> AnimalResponse:
         return AnimalResponse(
@@ -28,7 +44,15 @@ class AnimalService:
             refuge_id=animal.refuge_id,
             refuge_name=animal.refuge.name,
             traits=animal.traits,
-            image_url=None,
+            images=[
+                AnimalImageResponse(
+                    id=img.id,
+                    url=img.url,
+                    cloudinary_public_id=img.cloudinary_public_id,
+                    order=img.order
+                )
+                for img in sorted(animal.images, key=lambda x: x.order)
+            ],
         )
 
     def register_animal(self, data: AnimalCreate, shelter_id: int) -> AnimalResponse:
@@ -128,3 +152,58 @@ class AnimalService:
             updated_animal = animal
 
         return self._to_response(updated_animal)
+
+    #ANIMAL IMAGES REGION
+    def upload_image(self, animal_id: int, file: UploadFile, shelter_id: int) -> AnimalImageResponse:
+        animal = self.animal_repo.get_by_id(self.db, animal_id)
+        if not animal:
+            raise ValueError("Animal not found")
+
+        refuge = self.refuge_repo.get_by_id(self.db, animal.refuge_id)
+        if not refuge or refuge.shelter_id != shelter_id:
+            raise ValueError("Not authorized to upload images for this animal")
+
+        current_count = self.animal_image_repo.get_image_count(self.db, animal_id)
+        if current_count >= MAX_IMAGES:
+            raise ValueError(f"Cannot upload more than {MAX_IMAGES} images per animal")
+
+        result = cloudinary_uploader.upload(
+            file.file,
+            asset_folder=f"shelters/{shelter_id}/animals/{animal_id}",
+            resource_type="image"
+        )
+
+        image = self.animal_image_repo.add_image(
+            db=self.db,
+            animal_id=animal_id,
+            url=result["secure_url"],
+            cloudinary_public_id=result["public_id"],
+            order=current_count
+        )
+
+        return AnimalImageResponse(
+            id=image.id,
+            url=image.url,
+            cloudinary_public_id=image.cloudinary_public_id,
+            order=image.order
+        )
+
+    def delete_image(self, animal_id: int, image_id: int, shelter_id: int) -> None:
+        animal = self.animal_repo.get_by_id(self.db, animal_id)
+        if not animal:
+            raise ValueError("Animal not found")
+
+        refuge = self.refuge_repo.get_by_id(self.db, animal.refuge_id)
+        if not refuge or refuge.shelter_id != shelter_id:
+            raise ValueError("Not authorized to delete images for this animal")
+
+        image = self.animal_image_repo.get_image_by_id(self.db, image_id)
+        if not image or image.animal_id != animal_id:
+            raise ValueError("Image not found")
+
+        remaining = self.animal_image_repo.get_image_count(self.db, animal_id)
+        if remaining <= 1:
+            raise ValueError("Cannot delete the last image: an animal must have at least 1 image")
+
+        cloudinary_uploader.destroy(image.cloudinary_public_id)
+        self.animal_image_repo.delete_image(self.db, image)

@@ -3,7 +3,7 @@ import 'package:bastetshelter/features/common/components/app_statuses/empty_stat
 import 'package:bastetshelter/features/common/components/app_statuses/error_state.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/manage_list_card.dart';
-import 'package:bastetshelter/features/medical/data/models/medicine_model.dart';
+import 'package:bastetshelter/features/medicine/data/models/medicine_model.dart';
 import 'package:bastetshelter/providers/medicine/medicine_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

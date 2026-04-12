@@ -1,9 +1,9 @@
-import 'package:bastetshelter/features/animals/presentation/animal_details/vet/components/vet_visit_type_dropdown.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/vet_visit_type_dropdown.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
-import 'package:bastetshelter/features/medical/data/models/vet_visit_model.dart';
+import 'package:bastetshelter/features/medicine/data/models/vet_visit_model.dart';
 import 'package:bastetshelter/providers/vet_visits/vet_visit_provider.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:flutter/material.dart';

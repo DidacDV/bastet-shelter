@@ -1,6 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/common/components/section_card.dart';
-import 'package:bastetshelter/features/medical/presentation/manage_medicines_screen.dart';
+import 'package:bastetshelter/features/medicine/presentation/manage_medicines_screen.dart';
 import 'package:bastetshelter/features/traits/presentation/manage_traits_screen.dart';
 import 'package:flutter/material.dart';
 

@@ -1,6 +1,6 @@
 import 'package:bastetshelter/core/service_locator.dart';
-import 'package:bastetshelter/features/medical/data/models/vet_visit_model.dart';
-import 'package:bastetshelter/features/medical/data/vet_visit_repository.dart';
+import 'package:bastetshelter/features/medicine/data/models/vet_visit_model.dart';
+import 'package:bastetshelter/features/medicine/data/vet_visit_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'vet_visit_provider.g.dart';

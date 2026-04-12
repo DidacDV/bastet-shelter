@@ -1,4 +1,4 @@
-import 'package:bastetshelter/features/medical/data/models/medicine_model.dart';
+import 'package:bastetshelter/features/medicine/data/models/medicine_model.dart';
 import 'package:flutter/material.dart';
 
 class MedicineDropdown extends StatefulWidget {

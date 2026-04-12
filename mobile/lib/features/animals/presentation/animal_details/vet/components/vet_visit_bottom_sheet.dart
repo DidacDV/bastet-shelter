@@ -1,13 +1,15 @@
+import 'package:bastetshelter/features/animals/presentation/animal_details/vet/components/vet_visit_type_dropdown.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
-import 'package:bastetshelter/features/common/components/fields/label_value.dart';
+import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
+import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:bastetshelter/features/medical/data/models/vet_visit_model.dart';
 import 'package:bastetshelter/providers/vet_visits/vet_visit_provider.dart';
+import 'package:bastetshelter/core/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-//TODO: REFACTOR
 class VetVisitBottomSheet extends ConsumerStatefulWidget {
   const VetVisitBottomSheet({
     super.key,
@@ -30,8 +32,9 @@ class VetVisitBottomSheet extends ConsumerStatefulWidget {
       context: context,
       isScrollControlled: true,
       useRootNavigator: true,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => VetVisitBottomSheet(
         visit: visit,
@@ -48,7 +51,7 @@ class VetVisitBottomSheet extends ConsumerStatefulWidget {
 
 class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
   late DateTime _visitDate;
-  late String _reason;
+  late VetVisitType _visitType;
   late String _clinicName;
 
   bool _isSaving = false;
@@ -57,7 +60,7 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
   void initState() {
     super.initState();
     _visitDate = widget.visit.visitDate;
-    _reason = widget.visit.visitType.toString();
+    _visitType = widget.visit.visitType;
     _clinicName = widget.visit.clinicName;
   }
 
@@ -73,21 +76,17 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
     if (picked != null) setState(() => _visitDate = picked);
   }
 
-  void _editField({
-    required String label,
-    required String initialValue,
-    required void Function(String) onSave,
-  }) {
-    final controller = TextEditingController(text: initialValue);
+  void _editClinic() {
+    final controller = TextEditingController(text: _clinicName);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Edit $label'),
+        title: const Text('Edit Clinic'),
         content: TextField(
           controller: controller,
           autofocus: true,
-          textCapitalization: TextCapitalization.sentences,
-          decoration: InputDecoration(labelText: label),
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(labelText: 'Clinic name'),
         ),
         actions: [
           Row(
@@ -104,7 +103,7 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
                   onPressed: () {
                     final value = controller.text.trim();
                     if (value.isNotEmpty) {
-                      onSave(value);
+                      setState(() => _clinicName = value);
                       Navigator.pop(context);
                     }
                   },
@@ -120,7 +119,15 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
 
   Future<void> _save() async {
     setState(() => _isSaving = true);
+    final nw = widget.visit.copyWith(
+      visitDate: _visitDate,
+      visitType: _visitType,
+      clinicName: _clinicName,
+    );
 
+    await ref
+        .read(vetVisitsProvider(widget.animalId).notifier)
+        .updateVisit(widget.visit.id, nw);
     setState(() => _isSaving = false);
     if (mounted) Navigator.pop(context);
   }
@@ -148,98 +155,91 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
     final theme = Theme.of(context);
     final canEdit = widget.isManager;
 
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
-        left: 24,
-        right: 24,
-        top: 24,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          Row(
-            children: [
-              Expanded(
-                child: Text('Vet Visit', style: theme.textTheme.titleLarge),
-              ),
-              if (canEdit)
-                IconButton(
-                  onPressed: _delete,
-                  icon: const Icon(Icons.delete_outline_rounded),
-                  color: theme.colorScheme.error,
-                  tooltip: 'Delete visit',
-                ),
-            ],
+    return FormBottomSheet(
+      title: 'Vet Visit',
+      actions: [
+        if (canEdit) ...[
+          PrimaryButton(
+            label: 'Save Changes',
+            isLoading: _isSaving,
+            onPressed: _save,
           ),
-          const SizedBox(height: 20),
-
-          // Date
-          EditableField(
-            label: 'Date',
-            value: _formattedDate,
-            canEdit: canEdit,
-            onEdit: _pickDate,
-          ),
-          const SizedBox(height: 16),
-
-          // Reason
-          EditableField(
-            label: 'Reason',
-            value: _reason,
-            canEdit: canEdit,
-            onEdit: () => _editField(
-              label: 'Reason',
-              initialValue: _reason,
-              onSave: (v) => setState(() => _reason = v),
+          const SizedBox(height: 8),
+          TextButton.icon(
+            onPressed: _delete,
+            icon: const Icon(Icons.delete_outline_rounded, size: 18),
+            label: const Text('Delete visit'),
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.error,
             ),
           ),
-          const SizedBox(height: 16),
-
-          // Vet name
-          EditableField(
-            label: 'Clinic',
-            value: _clinicName,
-            canEdit: canEdit,
-            onEdit: () => _editField(
-              label: 'Clinic',
-              initialValue: _clinicName,
-              onSave: (v) => setState(() => _clinicName = v),
-            ),
-          ),
-
-          // Notes (read-only, shown only if present)
-          if (widget.visit.notes?.isNotEmpty == true) ...[
-            const SizedBox(height: 20),
-            const Divider(),
-            const SizedBox(height: 12),
-            LabelValue(label: 'Notes', value: widget.visit.notes!),
-          ],
-
-          if (canEdit) ...[
-            const SizedBox(height: 28),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: FilledButton(
-                onPressed: _isSaving ? null : _save,
-                child: _isSaving
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Text('Save Changes'),
-              ),
-            ),
-          ],
         ],
-      ),
+      ],
+      children: [
+        EditableField(
+          label: 'Date',
+          value: _formattedDate,
+          canEdit: canEdit,
+          onEdit: _pickDate,
+        ),
+        const SizedBox(height: 20),
+
+        if (canEdit) ...[
+          Text(
+            'Visit Type',
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          VetVisitTypeDropdown(
+            initialItem: _visitType,
+            onChanged: (t) => setState(() => _visitType = t ?? _visitType),
+          ),
+        ] else
+          EditableField(
+            label: 'Visit Type',
+            value: _visitType.label,
+            canEdit: false,
+          ),
+        const SizedBox(height: 20),
+
+        EditableField(
+          label: 'Clinic',
+          value: _clinicName,
+          canEdit: canEdit,
+          onEdit: _editClinic,
+        ),
+
+        if (widget.visit.notes?.isNotEmpty == true) ...[
+          const SizedBox(height: 20),
+          const Divider(),
+          const SizedBox(height: 12),
+          Text(
+            'Notes',
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: AppColors.textSecondary,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.secondaryTint,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              widget.visit.notes!,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textPrimary,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

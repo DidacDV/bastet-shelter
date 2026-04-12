@@ -65,7 +65,7 @@ class _VetVisitsContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+          padding: AppConstants.tabsPadding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

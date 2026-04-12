@@ -10,12 +10,14 @@ class RefugeDropdown extends StatefulWidget {
   final List<RefugeItem> items;
   final int? initialItem;
   final ValueChanged<int?> onChanged;
+  final bool showLabel;
 
   const RefugeDropdown({
     super.key,
     required this.items,
     this.initialItem,
     required this.onChanged,
+    this.showLabel = true,
   });
 
   @override
@@ -35,7 +37,13 @@ class _RefugeDropdownState extends State<RefugeDropdown> {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<int>(
       initialValue: _selected,
-      decoration: const InputDecoration(labelText: 'Refuge'),
+      decoration: InputDecoration(
+        labelText: widget.showLabel ? 'Refuge' : null,
+        border: widget.showLabel ? null : InputBorder.none,
+        contentPadding: widget.showLabel
+            ? null
+            : const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+      ),
       items: widget.items
           .map((r) => DropdownMenuItem(value: r.id, child: Text(r.name)))
           .toList(),

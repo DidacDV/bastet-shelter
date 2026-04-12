@@ -63,6 +63,7 @@ class Animals extends _$Animals {
     String? breed,
     String? description,
     bool? inAdoption,
+    int? refugeId,
     DateTime? birthDate,
     DateTime? arrivalDate,
     List<int>? traitIds,
@@ -73,6 +74,7 @@ class Animals extends _$Animals {
     if (breed != null) updates['breed'] = breed;
     if (description != null) updates['description'] = description;
     if (inAdoption != null) updates['in_adoption'] = inAdoption;
+    if (refugeId != null) updates['refuge_id'] = refugeId;
 
     if (birthDate != null) {
       updates['birth_date'] = birthDate.toIso8601String().split('T')[0];

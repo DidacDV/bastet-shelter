@@ -1,9 +1,12 @@
+import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/components/animal_traits_display.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/components/edit_traits_bottomsheet.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
+import 'package:bastetshelter/features/common/components/dropdowns/refuge_dropdown.dart';
 import 'package:bastetshelter/features/common/components/edit_bottom_sheet.dart';
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';
+import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,6 +26,8 @@ class BasicInfoTab extends ConsumerWidget {
         .watch(animalDetailProvider(animalId))
         .whenOrNull(data: (d) => d);
     if (animal == null) return const SizedBox.shrink();
+
+    final shelterAsync = ref.watch(shelterProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -87,6 +92,36 @@ class BasicInfoTab extends ConsumerWidget {
                 },
               );
             },
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: Divider(height: 1),
+          ),
+          Text(
+            'REFUGE',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: AppColors.textSecondary,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 4),
+          shelterAsync.when(
+            loading: () => const CircularProgressIndicator(),
+            error: (e, _) => Text(e.toString()),
+            data: (shelter) => RefugeDropdown(
+              showLabel: false,
+              items: shelter.refuges
+                  .map((r) => RefugeItem(id: r.id, name: r.name))
+                  .toList(),
+              initialItem: animal.refugeId,
+              onChanged: (v) async {
+                if (v == null) return;
+                await ref
+                    .read(animalsProvider.notifier)
+                    .updateAnimal(animalId: animalId, refugeId: v);
+                ref.invalidate(animalDetailProvider(animalId));
+              },
+            ),
           ),
         ],
       ),

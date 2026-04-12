@@ -1,6 +1,4 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class AppConstants {
   static const String defaultProvince = '08'; //code for bcn

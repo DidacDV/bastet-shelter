@@ -1,5 +1,6 @@
 import enum
 from datetime import datetime, date
+from typing import Optional
 
 from sqlalchemy import DateTime, ForeignKey, Enum, Date, Float
 from sqlalchemy.orm import relationship, Mapped, mapped_column
@@ -40,6 +41,14 @@ class AnimalTreatment(Base):
     end_date: Mapped[date] = mapped_column(Date, nullable=True)  #None = ongoing
     dosage: Mapped[float] = mapped_column(Float, nullable=False)
     dosage_unit: Mapped[DosageUnitEnum] = mapped_column(Enum(DosageUnitEnum), nullable=False, default=DosageUnitEnum.UNITS)
+    status_last_updated_by_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="SET NULL"), nullable=True)
 
+    last_updated_by_user = relationship("User", foreign_keys=[status_last_updated_by_id])
     animal = relationship("Animal", back_populates="treatments")
     medicine = relationship("Medicine", back_populates="treatments")
+
+    @property
+    def status_last_updated_by_name(self) -> Optional[str]:
+        if self.last_updated_by_user:
+            return self.last_updated_by_user.name
+        return None

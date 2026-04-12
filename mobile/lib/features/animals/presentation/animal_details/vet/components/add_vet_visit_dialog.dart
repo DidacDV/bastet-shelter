@@ -1,7 +1,7 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/common/components/fields/date_field.dart';
 import 'package:bastetshelter/features/medical/data/models/vet_visit_model.dart';
 import 'package:bastetshelter/providers/vet_visits/vet_visit_provider.dart';
-import 'package:bastetshelter/features/common/components/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

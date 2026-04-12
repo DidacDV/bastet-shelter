@@ -3,13 +3,13 @@ import 'package:bastetshelter/core/animations/staggered_helper.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
-import 'package:bastetshelter/features/common/components/app_text_field.dart';
 import 'package:bastetshelter/features/common/components/illustrated_header.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
 
 enum CodeScreenMode { volunteer, manager }
 

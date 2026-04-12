@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../geo/data/province_model.dart';
+import '../../../geo/data/province_model.dart';
 
 class LocationDropdown extends StatefulWidget {
   final List<Province> items;

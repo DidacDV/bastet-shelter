@@ -1,10 +1,10 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/common/components/api_error_widget.dart';
-import 'package:bastetshelter/features/common/components/app_text_field.dart';
+import 'package:bastetshelter/features/common/components/layout/api_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bastetshelter/providers/geo/geo_provider.dart';
-import 'package:bastetshelter/features/common/components/location_dropdown.dart';
+import 'package:bastetshelter/features/common/components/dropdowns/location_dropdown.dart';
+import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
 
 import '../../../../providers/shelters/shelter_notifier.dart';
 import '../../../../core/utils/validators.dart' show Validators;

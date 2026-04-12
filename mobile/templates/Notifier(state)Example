@@ -1,0 +1,44 @@
+// features/FEATURENAME/providers/your_provider.dart
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:bastetshelter/core/service_locator.dart';
+import 'package:bastetshelter/features/FEATURENAME/data/your_repository.dart';
+import 'package:bastetshelter/features/FEATURENAME/data/your_model.dart';
+
+part 'your_provider.g.dart';
+
+@riverpod
+YourRepository yourRepository(Ref ref) {
+  return getIt<YourRepository>();
+}
+
+//class that holds the desired state
+@riverpod
+class YourNotifier extends _$YourNotifier {
+
+  //this is called on the first .watch call, it is to make the initial fetch to the backend
+  @override
+  Future<YourModel> build() async {
+    return ref.read(yourRepositoryProvider).getYourData();
+  }
+
+  //this updates on the server, and if the server returns the value that changed, we can update only the
+  //local state of notifier (so we save an extra fetch to the server)
+  Future<void> updateSomething(String newValue) async {
+    final result = await ref.read(yourRepositoryProvider).updateSomething(newValue);
+    state = AsyncData(state.value!.copyWith(field: result));
+  }
+
+  //this is an example of a call that would FETCH AGAIN from the backend
+  Future<void> deleteSomething() async {
+    await ref.read(yourRepositoryProvider).deleteSomething();
+    ref.invalidateSelf();
+  }
+}
+
+//IN FILES:
+
+//to set data that changes when the state date changes
+final dataAsync = ref.watch(yourProvider);
+ref.read(yourProvider.notifier).updateSomething(value);

@@ -1,0 +1,227 @@
+import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/components/dosage_unit_dropdown.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/components/treatment_frequency_dropdown.dart';
+import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
+import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
+import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
+import 'package:bastetshelter/features/common/components/info_row.dart';
+import 'package:bastetshelter/features/common/components/primary_button.dart';
+import 'package:bastetshelter/features/medical_treatments/data/models/medical_treatment_model.dart';
+import 'package:bastetshelter/providers/medical_treatments/medical_treatment_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class TreatmentDetailBottomSheet extends ConsumerStatefulWidget {
+  final MedicalTreatment treatment;
+  final int animalId;
+
+  const TreatmentDetailBottomSheet({
+    super.key,
+    required this.treatment,
+    required this.animalId,
+  });
+
+  @override
+  ConsumerState<TreatmentDetailBottomSheet> createState() =>
+      TreatmentDetailBottomSheetState();
+}
+
+class TreatmentDetailBottomSheetState
+    extends ConsumerState<TreatmentDetailBottomSheet> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _dosageController;
+
+  late MedicineFrequency _frequency;
+  late DosageUnit _dosageUnit;
+  bool _loading = false;
+  bool _deleting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _frequency = widget.treatment.frequency;
+    _dosageUnit = widget.treatment.dosageUnit;
+    _dosageController = TextEditingController(
+      text: widget.treatment.dosage.toStringAsFixed(
+        widget.treatment.dosage.truncateToDouble() == widget.treatment.dosage
+            ? 0
+            : 1,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _dosageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    setState(() => _loading = true);
+
+    final updated = widget.treatment.copyWith(
+      dosage: double.parse(_dosageController.text),
+      dosageUnit: _dosageUnit,
+      frequency: _frequency,
+    );
+
+    await ref
+        .read(medicalTreatmentsProvider(widget.animalId).notifier)
+        .updateTreatment(widget.treatment.id, updated);
+
+    if (mounted) Navigator.of(context).pop();
+  }
+
+  Future<void> _delete() async {
+    final confirmed = await ConfirmationDialog.show(
+      context: context,
+      title: 'Delete treatment',
+      message:
+          'Are you sure you want to delete this animal treatment? This cannot be undone.',
+      confirmText: 'Delete',
+      isDestructive: true,
+    );
+
+    if (confirmed != true) return;
+    setState(() => _deleting = true);
+
+    await ref
+        .read(medicalTreatmentsProvider(widget.animalId).notifier)
+        .deleteTreatment(widget.treatment.id);
+
+    if (mounted) Navigator.of(context).pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return FormBottomSheet(
+      title: widget.treatment.medicineName,
+      actions: [
+        PrimaryButton(
+          label: 'Save changes',
+          isLoading: _loading,
+          onPressed: _save,
+        ),
+        const SizedBox(height: 12),
+        TextButton(
+          onPressed: _deleting ? null : _delete,
+          style: TextButton.styleFrom(foregroundColor: AppColors.error),
+          child: _deleting
+              ? const SizedBox(
+                  height: 16,
+                  width: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Text('Delete treatment'),
+        ),
+      ],
+      children: [
+        Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Dosage row — text field + unit selector together
+              Text(
+                'Dosage',
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: AppTextField(
+                      controller: _dosageController,
+                      label: 'Amount',
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d*\.?\d*'),
+                        ),
+                      ],
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Required';
+                        if (double.tryParse(v) == null) return 'Invalid number';
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  DosageUnitDropdown(
+                    initialItem: _dosageUnit,
+                    onChanged: (u) =>
+                        setState(() => _dosageUnit = u ?? _dosageUnit),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              Text(
+                'Frequency',
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              FrequencyDropdown(
+                initialItem: _frequency,
+                onChanged: (f) => setState(() => _frequency = f ?? _frequency),
+              ),
+
+              const SizedBox(height: 20),
+
+              InfoRow(
+                label: 'Start date',
+                value: _formatDate(widget.treatment.startDate),
+              ),
+              if (widget.treatment.endDate != null)
+                InfoRow(
+                  label: 'End date',
+                  value: _formatDate(widget.treatment.endDate!),
+                ),
+              InfoRow(
+                label: 'Last status update',
+                value: _formatDate(widget.treatment.statusUpdatedAt),
+              ),
+              if (widget.treatment.statusLastUpdatedByName != null)
+                InfoRow(
+                  label: 'Status last updated by',
+                  value: widget.treatment.statusLastUpdatedByName!,
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatDate(DateTime date) =>
+      '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+}
+
+//helper to open it
+Future<void> showTreatmentDetailBottomSheet({
+  required BuildContext context,
+  required MedicalTreatment treatment,
+  required int animalId,
+}) {
+  return showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: AppColors.surface,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) =>
+        TreatmentDetailBottomSheet(treatment: treatment, animalId: animalId),
+  );
+}

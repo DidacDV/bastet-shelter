@@ -10,18 +10,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bastetshelter/features/home/presentation/home_tab.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+  final int initialIndex;
+  const HomeScreen({super.key, this.initialIndex = 0});
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
 
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.initialIndex;
     Future.microtask(() => ref.read(geoProvider));
   }
 

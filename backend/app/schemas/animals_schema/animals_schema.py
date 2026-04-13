@@ -44,6 +44,7 @@ class AnimalShortInfo(BaseModel):
     in_adoption: bool
     pending_shift_tasks: int
     refuge_name: str
+    image_url: str | None = None
 
 class AnimalSummaryInfoList(BaseModel):
     animals: list[AnimalShortInfo]

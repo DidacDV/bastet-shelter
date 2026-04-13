@@ -117,7 +117,8 @@ class AnimalService:
                     age=age,
                     in_adoption=row.in_adoption,
                     pending_shift_tasks=row.pending_shift_tasks,
-                    refuge_name=row.refuge_name
+                    refuge_name=row.refuge_name,
+                    image_url=row.image_url
                 )
             )
 

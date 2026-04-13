@@ -1,10 +1,20 @@
-from sqlalchemy import func
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 from app.models.animal.animal import Animal
+from app.models.animal.animal_image import AnimalImage
 from app.models.refuge import Refuge
 from app.models.task.shift_task import ShiftTask
 from app.models.task.task import TaskStatusEnum
 from app.repositories.generic_repo import BaseRepository
+
+primary_image = (
+    select(AnimalImage.url)
+    .where(AnimalImage.animal_id == Animal.id)
+    .order_by(AnimalImage.order.asc())
+    .limit(1)
+    .correlate(Animal)
+    .scalar_subquery()
+)
 
 class AnimalRepository(BaseRepository[Animal]):
     def __init__(self, db: Session):
@@ -34,7 +44,8 @@ class AnimalRepository(BaseRepository[Animal]):
                 Animal.birth_date,
                 Animal.in_adoption,
                 Refuge.name.label("refuge_name"),
-                func.count(ShiftTask.id).label("pending_shift_tasks")
+                func.count(ShiftTask.id).label("pending_shift_tasks"),
+                primary_image.label("image_url"),
             )
             .join(Refuge, Animal.refuge_id == Refuge.id)
             .filter(Refuge.shelter_id == shelter_id)

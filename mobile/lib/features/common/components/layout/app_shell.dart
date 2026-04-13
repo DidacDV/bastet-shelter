@@ -2,8 +2,11 @@
 
 import 'package:bastetshelter/core/auth/auth_service.dart';
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/providers/animals/animal_provider.dart';
 import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
 import 'package:bastetshelter/features/shelter/presentation/configuration_screen.dart';
+import 'package:bastetshelter/providers/traits/trait_provider.dart';
+import 'package:bastetshelter/providers/vet_visits/vet_visit_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bastetshelter/core/service_locator.dart';
@@ -39,9 +42,19 @@ class AppShell extends ConsumerWidget {
                   ),
                 IconButton(
                   icon: const Icon(Icons.logout),
-                  onPressed: () {
-                    getIt<AuthRepository>().logout();
-                    Navigator.pushReplacementNamed(context, '/login');
+                  onPressed: () async {
+                    ref.invalidate(shelterProvider);
+                    ref.invalidate(animalsProvider);
+                    ref.invalidate(traitsProvider);
+                    ref.invalidate(vetVisitsProvider);
+                    await getIt<AuthRepository>().logout();
+                    if (context.mounted) {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/login',
+                        (route) => false,
+                      );
+                    }
                   },
                 ),
               ],

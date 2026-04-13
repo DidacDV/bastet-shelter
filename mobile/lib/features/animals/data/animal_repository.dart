@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:bastetshelter/core/network/api_client.dart';
 import 'package:bastetshelter/features/animals/data/models/animal_details_model.dart';
+import 'package:bastetshelter/features/animals/data/models/animal_image_model.dart';
 import 'package:bastetshelter/features/animals/data/models/animal_summary_model.dart';
+import 'package:image_picker/image_picker.dart';
 import 'animal_type_enum.dart';
 
 class AnimalRepository {
@@ -12,7 +16,7 @@ class AnimalRepository {
     return AnimalSummary.listFromJson(data['animals'] as List<dynamic>);
   }
 
-  Future<void> registerAnimal({
+  Future<AnimalDetails> registerAnimal({
     required String name,
     required DateTime birthDate,
     DateTime? arrivalDate,
@@ -23,7 +27,7 @@ class AnimalRepository {
     bool inAdoption = false,
     List<int> traitIds = const [],
   }) async {
-    await _apiClient.post(
+    final response = await _apiClient.post(
       '/animals/',
       body: {
         'name': name,
@@ -38,6 +42,7 @@ class AnimalRepository {
         'trait_ids': traitIds,
       },
     );
+    return AnimalDetails.fromJson(response);
   }
 
   Future<AnimalDetails> getAnimalDetails(int animalId) async {
@@ -47,5 +52,25 @@ class AnimalRepository {
 
   Future<void> updateAnimal(int animalId, Map<String, dynamic> updates) async {
     await _apiClient.patch('/animals/$animalId', body: updates);
+  }
+
+  Future<AnimalImage> uploadAnimalImage(int animalId, XFile image) async {
+    final data = await _apiClient.postMultipart(
+      '/animals/$animalId/images',
+      File(image.path),
+    );
+    return AnimalImage.fromJson(data);
+  }
+
+  Future<List<AnimalImage>> uploadAnimalImages(
+    int animalId,
+    List<XFile> images,
+  ) async {
+    final results = <AnimalImage>[];
+    for (final img in images) {
+      final result = await uploadAnimalImage(animalId, img);
+      results.add(result);
+    }
+    return results;
   }
 }

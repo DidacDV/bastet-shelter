@@ -4,6 +4,7 @@ import 'package:bastetshelter/features/animals/data/models/animal_summary_model.
 import 'package:bastetshelter/features/animals/data/animal_repository.dart';
 import 'package:bastetshelter/features/animals/data/animal_type_enum.dart';
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'animal_provider.g.dart';
@@ -26,7 +27,7 @@ class Animals extends _$Animals {
     await future;
   }
 
-  Future<void> registerAnimal({
+  Future<int?> registerAnimal({
     required String name,
     required DateTime birthDate,
     DateTime? arrivalDate,
@@ -37,8 +38,8 @@ class Animals extends _$Animals {
     bool inAdoption = false,
     List<int> traitIds = const [],
   }) async {
-    await genericApiCall(() async {
-      await ref
+    final animal = await genericApiCall(() async {
+      return await ref
           .read(animalRepositoryProvider)
           .registerAnimal(
             name: name,
@@ -51,10 +52,12 @@ class Animals extends _$Animals {
             inAdoption: inAdoption,
             traitIds: traitIds,
           );
-
-      ref.invalidateSelf();
-      await future;
     });
+
+    if (animal == null) return null;
+
+    ref.invalidateSelf();
+    return animal.id;
   }
 
   Future<void> updateAnimal({
@@ -92,6 +95,16 @@ class Animals extends _$Animals {
       ref.invalidateSelf();
       ref.invalidate(animalDetailProvider(animalId));
       await future;
+    });
+  }
+
+  Future<void> uploadAnimalImages(int animalId, List<XFile> images) async {
+    await genericApiCall(() async {
+      await ref
+          .read(animalRepositoryProvider)
+          .uploadAnimalImages(animalId, images);
+      ref.invalidate(animalDetailProvider(animalId));
+      ref.invalidateSelf();
     });
   }
 }

@@ -171,7 +171,16 @@ class AnimalService:
         result = cloudinary_uploader.upload(
             file.file,
             asset_folder=f"shelters/{shelter_id}/animals/{animal_id}",
-            resource_type="image"
+            resource_type="image",
+            transformation=[
+                {
+                    'width': 400,
+                    'height': 500,
+                    'crop': 'fill',
+                    'quality': 'auto',
+                    'fetch_format': 'auto'
+                }
+            ]
         )
 
         image = self.animal_image_repo.add_image(

@@ -1,6 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/animals/presentation/animal_details/%20components/animal_details_header.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/basic_info_tab.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/components/animal_details_header.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/medical_info_tab.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/vet_info_tab.dart';
 import 'package:bastetshelter/features/common/components/layout/app_tab_bar.dart';
@@ -25,7 +25,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
         error: (e, _) => Center(child: Text('Could not load animal.')),
         data: (animal) => AppTabLayout(
           header: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.25,
+            height: MediaQuery.of(context).size.height * 0.30,
             child: AnimalDetailsHeader(
               name: animal.name,
               arrivalDate: animal.arrivalDate ?? animal.birthDate,
@@ -46,6 +46,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
                     .read(animalsProvider.notifier)
                     .updateAnimal(animalId: animalId, name: newName);
               },
+              imageUrls: animal.images.map((img) => img.url).toList(),
             ),
           ),
           tabs: const [

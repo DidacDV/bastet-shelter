@@ -1,8 +1,8 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/components/animal_image_slider.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
 import 'package:bastetshelter/features/common/components/edit_bottom_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class AnimalDetailsHeader extends StatelessWidget {
   final String name;
@@ -12,12 +12,14 @@ class AnimalDetailsHeader extends StatelessWidget {
   final Future<void> Function(DateTime)? onArrivalDateSave;
   final Future<void> Function(DateTime)? onBirthdaySave;
   final Future<void> Function(String)? onNameSave;
+  final List<String> imageUrls;
 
   const AnimalDetailsHeader({
     super.key,
     required this.name,
     required this.arrivalDate,
     required this.birthday,
+    required this.imageUrls,
     this.canEdit = false,
     this.onArrivalDateSave,
     this.onBirthdaySave,
@@ -29,12 +31,8 @@ class AnimalDetailsHeader extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SvgPicture.asset(
-          'assets/images/Illustration-13.svg',
-          height: 100,
-          width: 100,
-        ),
-        const SizedBox(height: 16),
+        AnimalImageSlider(imageUrls: imageUrls),
+        const SizedBox(height: 6),
         Center(
           child: EditableField(
             value: name,

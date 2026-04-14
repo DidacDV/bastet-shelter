@@ -13,25 +13,36 @@ class AnimalImageSlider extends StatefulWidget {
 class _AnimalImageSliderState extends State<AnimalImageSlider> {
   @override
   Widget build(BuildContext context) {
+    if (widget.imageUrls.isEmpty) {
+      return Container(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        child: const Center(
+          child: Icon(Icons.pets, size: 50, color: Colors.grey),
+        ),
+      );
+    }
+
     return CarouselSlider(
       items: widget.imageUrls
           .map(
             (item) => Container(
-              margin: EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                image: DecorationImage(
-                  image: NetworkImage(item),
+              margin: const EdgeInsets.symmetric(horizontal: 2.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.network(
+                  item,
                   fit: BoxFit.cover,
+                  width: double.infinity,
                 ),
               ),
             ),
           )
           .toList(),
       options: CarouselOptions(
-        height: 100,
+        height: double.infinity,
+        viewportFraction: 0.85,
         enlargeCenterPage: true,
-        aspectRatio: 16 / 9,
+        enableInfiniteScroll: widget.imageUrls.length > 1,
       ),
     );
   }

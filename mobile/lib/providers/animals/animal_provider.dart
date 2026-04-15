@@ -7,6 +7,8 @@ import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../dashboard/dashboard_provider.dart' show dashboardProvider;
+
 part 'animal_provider.g.dart';
 
 @riverpod
@@ -57,6 +59,7 @@ class Animals extends _$Animals {
     if (animal == null) return null;
 
     ref.invalidateSelf();
+    ref.invalidate(dashboardProvider);
     return animal.id;
   }
 
@@ -115,5 +118,7 @@ class Animals extends _$Animals {
     state = AsyncValue.data(
       previousState.where((animal) => animal.id != id).toList(),
     );
+    //refetch animal count
+    ref.invalidate(dashboardProvider);
   }
 }

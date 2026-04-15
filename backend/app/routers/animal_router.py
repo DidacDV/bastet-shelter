@@ -72,6 +72,18 @@ def update_animal(
         status_code = 404 if "not found" in str(e).lower() else 400
         raise HTTPException(status_code=status_code, detail=str(e))
 
+@router.delete("/{animal_id}", status_code=204)
+def delete_trait(
+    animal_id: int,
+    auth: AuthenticatedUser = Depends(require_manager),
+    service: AnimalService = Depends(get_animal_service)
+):
+    try:
+        service.delete_animal(animal_id, auth.shelter_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
 @router.patch("/{animal_id}/adoption", response_model=AnimalResponse)
 def toggle_adoption(
     animal_id: int,

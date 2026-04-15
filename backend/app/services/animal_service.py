@@ -154,6 +154,17 @@ class AnimalService:
 
         return self._to_response(updated_animal)
 
+    def delete_animal(self, animal_id: int, shelter_id: int) -> None:
+        animal = self.animal_repo.get_by_id(self.db, animal_id)
+        if not animal:
+            raise ValueError("Animal not found")
+
+        refuge = self.refuge_repo.get_by_id(self.db, animal.refuge_id)
+        if not refuge or refuge.shelter_id != shelter_id:
+            raise ValueError("Not authorized to edit this animal")
+
+        self.animal_repo.delete(self.db, animal_id)
+
     #ANIMAL IMAGES REGION
     def upload_image(self, animal_id: int, file: UploadFile, shelter_id: int) -> AnimalImageResponse:
         animal = self.animal_repo.get_by_id(self.db, animal_id)

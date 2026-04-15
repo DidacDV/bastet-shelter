@@ -73,4 +73,8 @@ class AnimalRepository {
     }
     return results;
   }
+
+  Future<void> deleteAnimal(int animalId) {
+    return _apiClient.delete('/animals/$animalId');
+  }
 }

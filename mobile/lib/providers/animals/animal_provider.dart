@@ -107,4 +107,13 @@ class Animals extends _$Animals {
       ref.invalidateSelf();
     });
   }
+
+  Future<void> deleteAnimal(int id) async {
+    final previousState = await future;
+
+    await ref.read(animalRepositoryProvider).deleteAnimal(id);
+    state = AsyncValue.data(
+      previousState.where((animal) => animal.id != id).toList(),
+    );
+  }
 }

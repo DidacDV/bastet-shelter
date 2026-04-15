@@ -2,6 +2,7 @@ import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/components/animal_traits_display.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/components/edit_traits_bottomsheet.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
+import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/dropdowns/refuge_dropdown.dart';
 import 'package:bastetshelter/features/common/components/edit_bottom_sheet.dart';
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
@@ -123,6 +124,44 @@ class BasicInfoTab extends ConsumerWidget {
               },
             ),
           ),
+          if (isManager) ...[
+            const SizedBox(height: 12),
+            Center(
+              child: OutlinedButton.icon(
+                onPressed: () async {
+                  final confirm = await ConfirmationDialog.show(
+                    context: context,
+                    title: 'Delete Animal',
+                    message:
+                        'Are you sure you want to delete the record for "${animal.name}"? This action cannot be undone.',
+                    isDestructive: true,
+                    confirmText: 'Delete',
+                  );
+                  if (confirm == true) {
+                    await ref
+                        .read(animalsProvider.notifier)
+                        .deleteAnimal(animalId);
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
+                  }
+                },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.error,
+                  side: const BorderSide(color: AppColors.error, width: 1.5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
+                icon: const Icon(Icons.delete_forever),
+                label: const Text(
+                  'Delete Animal Record',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

@@ -23,13 +23,11 @@ class AnimalDetailsScreen extends ConsumerWidget {
       body: detailAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Could not load animal.')),
-        data: (animal) => AppTabLayout(
+        data: (animalDetails) => AppTabLayout(
           header: SizedBox(
             height: MediaQuery.of(context).size.height * 0.30,
             child: AnimalDetailsHeader(
-              name: animal.name,
-              arrivalDate: animal.arrivalDate ?? animal.birthDate,
-              birthday: animal.birthDate,
+              animal: animalDetails,
               canEdit: true,
               onArrivalDateSave: (newDate) async {
                 await ref
@@ -46,7 +44,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
                     .read(animalsProvider.notifier)
                     .updateAnimal(animalId: animalId, name: newName);
               },
-              imageUrls: animal.images.map((img) => img.url).toList(),
+              imageUrls: animalDetails.images.map((img) => img.url).toList(),
             ),
           ),
           tabs: const [

@@ -111,6 +111,16 @@ class Animals extends _$Animals {
     });
   }
 
+  Future<void> deleteAnimalImage(int animalId, int imageId) async {
+    await genericApiCall(() async {
+      await ref
+          .read(animalRepositoryProvider)
+          .deleteAnimalImage(animalId, imageId);
+      ref.invalidate(animalDetailProvider(animalId));
+      ref.invalidateSelf();
+    });
+  }
+
   Future<void> deleteAnimal(int id) async {
     final previousState = await future;
 

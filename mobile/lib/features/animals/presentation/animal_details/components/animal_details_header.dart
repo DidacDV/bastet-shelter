@@ -1,14 +1,14 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/animals/data/models/animal_details_model.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/components/animal_image_slider.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/components/manage_animal_images.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
 import 'package:bastetshelter/features/common/components/edit_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 
 class AnimalDetailsHeader extends StatelessWidget {
-  final String name;
-  final DateTime arrivalDate;
-  final DateTime birthday;
   final bool canEdit;
+  final AnimalDetails animal;
   final Future<void> Function(DateTime)? onArrivalDateSave;
   final Future<void> Function(DateTime)? onBirthdaySave;
   final Future<void> Function(String)? onNameSave;
@@ -16,10 +16,8 @@ class AnimalDetailsHeader extends StatelessWidget {
 
   const AnimalDetailsHeader({
     super.key,
-    required this.name,
-    required this.arrivalDate,
-    required this.birthday,
     required this.imageUrls,
+    required this.animal,
     this.canEdit = false,
     this.onArrivalDateSave,
     this.onBirthdaySave,
@@ -32,10 +30,41 @@ class AnimalDetailsHeader extends StatelessWidget {
       context,
     ).colorScheme.surface.withValues(alpha: 0.95);
 
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+
     return Stack(
       fit: StackFit.expand,
       children: [
         Positioned.fill(child: AnimalImageSlider(imageUrls: imageUrls)),
+
+        if (canEdit)
+          Positioned(
+            top: statusBarHeight + 8,
+            right: 16,
+            child: Material(
+              color: pillBackgroundColor,
+              borderRadius: BorderRadius.circular(16),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ManageAnimalImagesScreen(
+                      animalId: animal.id,
+                      existingImages: animal.images,
+                    ),
+                  ),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Icon(
+                    Icons.add_a_photo_outlined,
+                    color: AppColors.primary,
+                    size: 22,
+                  ),
+                ),
+              ),
+            ),
+          ),
 
         Positioned(
           bottom: 2,
@@ -52,13 +81,13 @@ class AnimalDetailsHeader extends StatelessWidget {
                 ),
                 child: EditableField(
                   label: 'Name',
-                  value: name,
+                  value: animal.name,
                   isTitle: true,
                   canEdit: canEdit,
                   onEdit: () => showEditBottomSheet(
                     context: context,
                     label: "Name",
-                    initialValue: name,
+                    initialValue: animal.name,
                     onSave: (newVal) async {
                       await onNameSave?.call(newVal);
                     },
@@ -67,13 +96,13 @@ class AnimalDetailsHeader extends StatelessWidget {
               ),
 
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _DateChip(
                       label: "Arrival",
-                      date: arrivalDate,
+                      date: animal.arrivalDate ?? animal.birthDate,
                       canEdit: canEdit,
                       backgroundColor: pillBackgroundColor,
                       onEdit: !canEdit
@@ -81,7 +110,8 @@ class AnimalDetailsHeader extends StatelessWidget {
                           : () async {
                               final picked = await showDatePicker(
                                 context: context,
-                                initialDate: arrivalDate,
+                                initialDate:
+                                    animal.arrivalDate ?? animal.birthDate,
                                 firstDate: DateTime(2000),
                                 lastDate: DateTime.now(),
                               );
@@ -92,7 +122,7 @@ class AnimalDetailsHeader extends StatelessWidget {
                     ),
                     _DateChip(
                       label: "Birthday",
-                      date: birthday,
+                      date: animal.birthDate,
                       canEdit: canEdit,
                       backgroundColor: pillBackgroundColor,
                       onEdit: !canEdit
@@ -100,7 +130,7 @@ class AnimalDetailsHeader extends StatelessWidget {
                           : () async {
                               final picked = await showDatePicker(
                                 context: context,
-                                initialDate: birthday,
+                                initialDate: animal.birthDate,
                                 firstDate: DateTime(2000),
                                 lastDate: DateTime.now(),
                               );

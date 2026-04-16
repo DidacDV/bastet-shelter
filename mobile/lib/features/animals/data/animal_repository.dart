@@ -74,6 +74,10 @@ class AnimalRepository {
     return results;
   }
 
+  Future<void> deleteAnimalImage(int animalId, int imageId) async {
+    return _apiClient.delete('/animals/$animalId/images/$imageId');
+  }
+
   Future<void> deleteAnimal(int animalId) {
     return _apiClient.delete('/animals/$animalId');
   }

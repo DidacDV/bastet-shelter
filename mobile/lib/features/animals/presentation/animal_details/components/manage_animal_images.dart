@@ -2,6 +2,7 @@ import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:bastetshelter/features/animals/data/models/animal_image_model.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
+import 'package:bastetshelter/features/common/components/layout/app_bar.dart'; // Import your reusable bar
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';
 import 'package:flutter/material.dart';
@@ -95,6 +96,12 @@ class _ManageAnimalImagesScreenState
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: const BastetAppBar(
+        customTitle: 'Manage Photos',
+        showBackButton: true,
+        showLogout: false,
+        showConfig: false,
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : animalDetailsAsync.when(

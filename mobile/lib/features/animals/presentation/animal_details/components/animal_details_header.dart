@@ -46,7 +46,8 @@ class AnimalDetailsHeader extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
-                onTap: () => Navigator.of(context).push(
+                onTap: () => Navigator.of(context, rootNavigator: true).push(
+                  // <-- This bypasses AppShell!
                   MaterialPageRoute(
                     builder: (context) => ManageAnimalImagesScreen(
                       animalId: animal.id,

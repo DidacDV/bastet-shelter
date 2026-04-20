@@ -66,7 +66,6 @@ admin = Admin(app, engine, authentication_backend=authentication_backend)
 # load views to SQLAdmin
 admin.add_view(ShelterAdmin)
 admin.add_view(RefugeAdmin)
-admin.add_view(RefugeAdmin)
 admin.add_view(LoginAdmin)
 admin.add_view(UserAdmin)
 admin.add_view(ShelterMemberAdmin)

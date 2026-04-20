@@ -223,8 +223,6 @@ class AnimalService:
             raise ValueError("Image not found")
 
         remaining = self.animal_image_repo.get_image_count(self.db, animal_id)
-        if remaining <= 1:
-            raise ValueError("Cannot delete the last image: an animal must have at least 1 image")
 
         cloudinary_uploader.destroy(image.cloudinary_public_id)
         self.animal_image_repo.delete_image(self.db, image)

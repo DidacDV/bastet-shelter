@@ -13,6 +13,5 @@ class MagicLinkToken(Base):
     adoptant_id: Mapped[int] = mapped_column(ForeignKey("adoptant.id", ondelete="CASCADE"), nullable=False)
     token: Mapped[str] = mapped_column(String, nullable=False, unique=True, index=True)
     expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    used: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
     adoptant = relationship("Adoptant", back_populates="magic_link_tokens")

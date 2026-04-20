@@ -1,29 +1,27 @@
-from fastapi import BackgroundTasks, status, Depends, APIRouter
-from fastapi_mail import MessageSchema, MessageType
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 
-from app.core.email import fast_mail
 from app.database import get_db
-from app.schemas.user_schema import UserCreate
+from app.schemas.adoption.magic_link_schema import MagicLinkRequest, AdoptantTokenResponse
+from app.services.adoptant_auth_service import AdoptantAuthService
 
-router = APIRouter(prefix="/adoption", tags=["adoptions"])
+router = APIRouter(prefix="/adoption", tags=["Adoption Login"])
 
-
-@router.post("/register", status_code=status.HTTP_201_CREATED)
-def register(
-    request: UserCreate,
+# used when user requests a link for the first time in the adoption portal
+@router.post("/request-access", status_code=status.HTTP_200_OK)
+def request_magic_link(
+    data: MagicLinkRequest,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
-    magic_link_url = "http://localhost:5173/test-link"
+    service = AdoptantAuthService(db)
+    return service.request_magic_link(data, background_tasks)
 
-    message = MessageSchema(
-        subject="Welcome to Bastet Shelter!", #
-        recipients=[request.email],
-        body=f"Hello {request.name}, click here to log in: {magic_link_url}",
-        subtype=MessageType.html
-    )
-
-    background_tasks.add_task(fast_mail.send_message, message)
-
-    return {"message": "Email sent! Go check your Mailtrap dashboard."}
+# used when user clicks the link received through request access to get the adoptant JWT token
+@router.get("/verify", response_model=AdoptantTokenResponse)
+def verify_magic_link(token: str, db: Session = Depends(get_db)):
+    service = AdoptantAuthService(db)
+    try:
+        return service.verify_magic_link(token)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))

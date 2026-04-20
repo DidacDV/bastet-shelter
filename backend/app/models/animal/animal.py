@@ -8,6 +8,7 @@ from app.database import Base
 from app.models import trait
 from app.models.medical.medical_treatment import AnimalTreatment
 from app.models.medical.vet_visit import VetVisit
+from app.models.animal.animal_image import AnimalImage
 
 class AnimalTypeEnum(str, enum.Enum):
     CAT = "CAT"
@@ -38,3 +39,4 @@ class Animal(Base):
     traits = relationship("Trait", secondary=animal_trait_association, backref="animals")
     treatments = relationship("AnimalTreatment", back_populates="animal", cascade="all, delete-orphan")
     vet_visits = relationship("VetVisit", back_populates="animal", cascade="all, delete-orphan")
+    images = relationship("AnimalImage", back_populates="animal", cascade="all, delete-orphan")

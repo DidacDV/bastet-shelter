@@ -3,7 +3,8 @@ from typing import Optional, List
 
 from pydantic import BaseModel, ConfigDict
 
-from app.models.animal import AnimalTypeEnum
+from app.models.animal.animal import AnimalTypeEnum
+from app.schemas.animals_schema.animals_image_schema import AnimalImageResponse
 from app.schemas.trait_schema import TraitResponse
 
 
@@ -30,9 +31,9 @@ class AnimalResponse(BaseModel):
     animal_type: AnimalTypeEnum
     in_adoption: bool
     refuge_id: int
-    image_url: str | None
     traits: list[TraitResponse] = []
     refuge_name: str | None = None
+    images: list[AnimalImageResponse] = []
 
 class AnimalShortInfo(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -43,6 +44,7 @@ class AnimalShortInfo(BaseModel):
     in_adoption: bool
     pending_shift_tasks: int
     refuge_name: str
+    image_url: str | None = None
 
 class AnimalSummaryInfoList(BaseModel):
     animals: list[AnimalShortInfo]

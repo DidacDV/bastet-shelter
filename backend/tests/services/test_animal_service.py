@@ -2,8 +2,8 @@ import pytest
 from unittest.mock import MagicMock
 from datetime import date
 from app.services.animal_service import AnimalService
-from app.schemas.animals_schema import AnimalCreate
-from app.models.animal import AnimalTypeEnum
+from app.schemas.animals_schema.animals_schema import AnimalCreate
+from app.models.animal.animal import AnimalTypeEnum
 
 
 @pytest.fixture

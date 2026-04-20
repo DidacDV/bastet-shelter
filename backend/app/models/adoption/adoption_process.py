@@ -5,9 +5,8 @@ from sqlalchemy import Date, Enum, ForeignKey
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from app.database import Base
-
+from app.models.adoption.adoptant import Adoptant
 from app.models.adoption.adoption_steps.adoption_step import AdoptionStep
-from app.models.adoption.adoption_steps.adoptant import Adoptant
 
 class AdoptionProcessStatusEnum(str, enum.Enum):
     ACTIVE = "ACTIVE"

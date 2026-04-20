@@ -1,4 +1,4 @@
-from app.models.adoption.adoption_steps.adoptant import Adoptant
+from app.models.adoption.adoptant import Adoptant
 from app.models.adoption.adoption_process import AdoptionProcess
 from app.models.adoption.adoption_steps.adoption_step import AdoptionStep
 from app.models.adoption.adoption_steps.animal_pickup import AnimalPickup

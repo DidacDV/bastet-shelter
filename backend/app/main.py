@@ -10,6 +10,7 @@ from app.admin.admin_auth import authentication_backend
 from app.database import Base, engine, SessionLocal
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.routers.adoption_router import router as adoption_router
 from app.routers.dashboard_router import router as dashboard_router
 from app.routers.auth_router import router as auth_router
 from app.routers.user_router import router as user_router
@@ -59,6 +60,7 @@ app.include_router(geo_router)
 app.include_router(dashboard_router)
 app.include_router(trait_router)
 app.include_router(medical_router)
+app.include_router(adoption_router)
 
 # create SQLAdmin page
 admin = Admin(app, engine, authentication_backend=authentication_backend)

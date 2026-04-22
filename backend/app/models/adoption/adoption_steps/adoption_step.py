@@ -19,6 +19,15 @@ class StepStatusEnum(str, enum.Enum):
     PENDING = "PENDING"
     COMPLETED = "COMPLETED"
     REJECTED = "REJECTED"
+    SKIPPED = "SKIPPED"
+
+STEP_ORDER: list[StepTypeEnum] = [
+    StepTypeEnum.FORM,
+    StepTypeEnum.INTERVIEW,
+    StepTypeEnum.SHELTER_VISIT,
+    StepTypeEnum.CONTRACT,
+    StepTypeEnum.ANIMAL_PICKUP,
+]
 
 
 class AdoptionStep(Base):

@@ -83,7 +83,7 @@ class AnimalService:
         return [self._to_response(a) for a in animals]
 
     def set_in_adoption(self, animal_id: int) -> AnimalResponse:
-        """Toggle adoption status"""
+        """Toggle adoption_schema status"""
         animal = self.animal_repo.get_by_id(self.db, animal_id)
         if not animal:
             raise ValueError("Animal not found")

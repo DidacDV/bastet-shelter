@@ -3,7 +3,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_db, get_current_user, require_manager, require_volunteer
+from app.core.dependencies.role_dependencies import get_db, get_current_user, require_manager, require_volunteer
 from app.models.user import AuthenticatedUser
 from app.schemas.shift_schema.shift_schema import ShiftCreate, ShiftResponse
 from app.schemas.shift_schema.shift_participant_schema import ShiftParticipantResponse

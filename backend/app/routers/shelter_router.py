@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_current_user, require_shelter_manager, require_shelter_volunteer
+from app.core.dependencies.role_dependencies import get_current_user, require_shelter_manager, require_shelter_volunteer
 from app.database import get_db
 from app.models.shelter_member import RoleEnum
 from app.models.user import AuthenticatedUser

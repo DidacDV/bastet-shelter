@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_db, require_manager
+from app.core.dependencies.role_dependencies import get_db, require_manager
 from app.models.user import AuthenticatedUser
 from app.schemas.trait_schema import TraitCreate, TraitResponse, TraitResponseList
 from app.services.trait_service import TraitService

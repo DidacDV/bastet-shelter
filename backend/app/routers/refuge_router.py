@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_db, get_current_user, require_manager
+from app.core.dependencies.role_dependencies import get_db, get_current_user, require_manager
 from app.models.user import AuthenticatedUser
 from app.schemas.refuge_schema import RefugeCreate, RefugeResponse, RefugeUpdate
 from app.services.refuge_service import RefugeService

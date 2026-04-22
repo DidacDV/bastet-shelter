@@ -1,9 +1,7 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_db, get_current_user, require_manager
+from app.core.dependencies.role_dependencies import get_db, get_current_user, require_manager
 from app.models.user import AuthenticatedUser
 from app.schemas.medical_schema import (
     MedicineCreate, MedicineResponse, MedicineUpdate,

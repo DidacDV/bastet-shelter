@@ -9,9 +9,9 @@ from app.core.email import fast_mail
 from app.core.security import create_access_token
 from app.models.adoption.adoptant import Adoptant
 from app.models.adoption.adoption_steps.magic_link_token import MagicLinkToken
-from app.repositories.adoptant_repo import AdoptantRepository
+from app.repositories.adoption.adoptant_repo import AdoptantRepository
 from app.repositories.magic_link_repo import MagicLinkTokenRepository
-from app.schemas.adoption.magic_link_schema import MagicLinkRequest, AdoptantTokenResponse
+from app.schemas.adoption_schema.magic_link_schema import MagicLinkRequest, AdoptantTokenResponse
 
 
 class AdoptantAuthService:

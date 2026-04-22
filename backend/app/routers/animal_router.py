@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_db, get_current_user, require_manager
+from app.core.dependencies.role_dependencies import get_db, get_current_user, require_manager
 from app.models.user import AuthenticatedUser
 from app.schemas.animals_schema.animals_image_schema import AnimalImageResponse
 from app.schemas.animals_schema.animals_schema import AnimalCreate, AnimalResponse, AnimalSummaryInfoList, AnimalUpdate

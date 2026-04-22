@@ -9,8 +9,10 @@ logger = logging.getLogger(__name__)
 
 class GeoService:
     @staticmethod
-    def get_provinces(db: Session):
-        return db.query(Province.name, Province.id).order_by(Province.name).all()
+    def get_provinces(db: Session) -> list[dict]:
+        """returns a list of formatted dictionaries ready for the response schema"""
+        provinces = db.query(Province.name, Province.id).order_by(Province.name).all()
+        return [{"name": p.name, "id": p.id} for p in provinces]
 
     @staticmethod
     async def fetch_and_update_provinces(db: Session, key: str):
@@ -20,16 +22,16 @@ class GeoService:
                 response = await client.get(url)
                 response.raise_for_status()
                 data = response.json()
-                
+
                 provinces_data = data.get("data", [])
                 for p in provinces_data:
                     cpro = p.get("CPRO")
                     name = p.get("PRO")
                     ccom = p.get("CCOM")
-                    
+
                     if not cpro or not name:
                         continue
-                        
+
                     province = db.query(Province).filter(Province.id == cpro).first()
                     if province:
                         province.name = name
@@ -37,7 +39,7 @@ class GeoService:
                     else:
                         new_province = Province(id=cpro, name=name, community_code=ccom)
                         db.add(new_province)
-                
+
                 db.commit()
                 logger.info("Provinces updated successfully")
             except Exception as e:
@@ -46,7 +48,8 @@ class GeoService:
 
     @staticmethod
     async def run_periodic_update(db: Session):
-        if db.query(Province).count() == 0 or db.query(Province).first().last_updated < datetime.now() - timedelta(days=365): #update every year? :p
+        if db.query(Province).count() == 0 or db.query(Province).first().last_updated < datetime.now() - timedelta(
+                days=365):
             api_key = getattr(settings, "GEOAPI_KEY", None)
             if api_key:
                 logger.info("Starting periodic provinces update...")

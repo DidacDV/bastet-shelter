@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from sqlalchemy.orm import Session
 
+from app.core.exceptions import NotFoundError, BusinessLogicError
 from app.models.adoption.adoption_steps.adoption_step import AdoptionStep, StepStatusEnum, StepTypeEnum
 from app.models.adoption.adoption_steps.adoption_form import AdoptionForm
 from app.models.adoption.adoption_steps.animal_pickup import AnimalPickup
@@ -21,14 +22,14 @@ class AdoptionStepsService:
     def _get_current_step_or_raise(self, process_id: int) -> AdoptionStep:
         step = self.step_repo.get_current_step(self.db, process_id)
         if not step:
-            raise ValueError("No pending steps found for this adoption process")
+            raise NotFoundError("No pending steps found for this adoption process")
         return step
 
     def _check_has_scheduled_date_passed(self, scheduled_at: datetime | None, step_name: str) -> None:
         if not scheduled_at:
-            raise ValueError(f"{step_name} has no scheduled date set yet")
+            raise BusinessLogicError(f"{step_name} has no scheduled date set yet")
         if datetime.now() < scheduled_at:
-            raise ValueError(f"{step_name} scheduled date has not passed yet")
+            raise BusinessLogicError(f"{step_name} scheduled date has not passed yet")
 
     def _advance_form(self, step: AdoptionForm, request: AdvanceStepRequest) -> None:
         step.accepted = True
@@ -74,7 +75,7 @@ class AdoptionStepsService:
 
         handler = advance_handlers.get(current_step.type)
         if not handler:
-            raise ValueError(f"Unknown step type: {current_step.type}")
+            raise BusinessLogicError(f"Unknown step type: {current_step.type}")
 
         handler(current_step, request)
         self.db.commit()
@@ -84,9 +85,9 @@ class AdoptionStepsService:
         current_step = self._get_current_step_or_raise(process_id)
 
         if current_step.type == StepTypeEnum.FORM:
-            raise ValueError("The form step cannot be skipped")
+            raise BusinessLogicError("The form step cannot be skipped")
         if current_step.type == StepTypeEnum.ANIMAL_PICKUP:
-            raise ValueError("The animal pickup step cannot be skipped")
+            raise BusinessLogicError("The animal pickup step cannot be skipped")
 
         current_step.status = StepStatusEnum.SKIPPED
         current_step.finish_date = date.today()
@@ -100,7 +101,7 @@ class AdoptionStepsService:
         steps = self.step_repo.get_steps_for_process(self.db, process_id)
         form = next((s for s in steps if isinstance(s, AdoptionForm)), None)
         if not form:
-            raise ValueError("Form step not found for this process")
+            raise NotFoundError("Form step not found for this process")
         return form
 
     def _set_scheduled_date(self, process_id: int, step_type: StepTypeEnum, scheduled_at: datetime) -> AdoptionStepDetailResponse:
@@ -110,13 +111,13 @@ class AdoptionStepsService:
         current_step = self._get_current_step_or_raise(process_id)
 
         if current_step.type != step_type:
-            raise ValueError(
+            raise BusinessLogicError(
                 f"You cannot schedule the {step_type.value} until the {current_step.type.value} is completed.")
 
         if not step:
-            raise ValueError(f"{step_type.value} step not found for this process")
+            raise NotFoundError(f"{step_type.value} step not found for this process")
         if step.status != StepStatusEnum.PENDING:
-            raise ValueError(f"{step_type.value} step is already {step.status.value.lower()}")
+            raise BusinessLogicError(f"{step_type.value} step is already {step.status.value.lower()}")
 
         step.scheduled_at = scheduled_at
         self.db.commit()

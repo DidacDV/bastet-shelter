@@ -1,6 +1,7 @@
 from datetime import date
 from sqlalchemy.orm import Session
 
+from app.core.exceptions import NotFoundError, BusinessLogicError, AuthorizationError
 from app.models.adoption.adoption_process import AdoptionProcess, AdoptionProcessStatusEnum
 from app.models.adoption.adoption_steps.adoption_step import AdoptionStep, StepStatusEnum, StepTypeEnum, STEP_ORDER
 from app.models.adoption.adoption_steps.adoption_form import AdoptionForm
@@ -29,13 +30,13 @@ class AdoptionProcessService:
     def _get_process_or_raise(self, process_id: int) -> AdoptionProcess:
         process = self.process_repo.get_by_id(self.db, process_id)
         if not process:
-            raise ValueError("Adoption process not found")
+            raise NotFoundError("Adoption process not found")
         return process
 
     def check_is_process_active(self, process_id: int) -> None:
         process = self._get_process_or_raise(process_id)
         if process.status != AdoptionProcessStatusEnum.ACTIVE:
-            raise ValueError("Adoption process is not active")
+            raise BusinessLogicError("Adoption process is not active")
 
     def _initialize_steps_for_new_process(self, process_id: int) -> list[AdoptionStep]:
         step_classes = {
@@ -60,19 +61,19 @@ class AdoptionProcessService:
         animal = self.animal_repo.get_by_id(self.db, process.animal_id)
         refuge = self.db.query(Refuge).filter(Refuge.id == animal.refuge_id).first()
         if not refuge or refuge.shelter_id != shelter_id:
-            raise ValueError("Not authorized to view this adoption process")
+            raise AuthorizationError("Not authorized to view this adoption process")
 
     def start_adoption(self, animal_id: int, adoptant_email: str, adoptant_name: str, form_data: AdoptionFormSubmit) -> AdoptionProcessResponse:
         """an adoption process starts with an adoptant sending the form for X animal adoption"""
         animal = self.animal_repo.get_by_id(self.db, animal_id)
         if not animal:
-            raise ValueError("Animal not found")
+            raise NotFoundError("Animal not found")
         if not animal.in_adoption:
-            raise ValueError("Animal is not available for adoption")
+            raise BusinessLogicError("Animal is not available for adoption")
 
         existing = self.process_repo.get_active_process_for_animal(self.db, animal_id)
         if existing:
-            raise ValueError("An active adoption process already exists for this animal")
+            raise BusinessLogicError("An active adoption process already exists for this animal")
 
         adoptant = self.adoptant_repo.get_or_create(self.db, adoptant_email, adoptant_name)
 
@@ -102,7 +103,7 @@ class AdoptionProcessService:
         """done by ADOPTANT"""
         process = self._get_process_or_raise(process_id)
         if process.adoptant_id != adoptant_id:
-            raise ValueError("Not authorized to cancel this adoption process")
+            raise AuthorizationError("Not authorized to cancel this adoption process")
         self.check_is_process_active(process_id)
 
         self.step_repo.mark_all_rejected(self.db, process_id)
@@ -147,7 +148,7 @@ class AdoptionProcessService:
         """adoptant views their own adoption process (which has less info)"""
         process = self._get_process_or_raise(process_id)
         if process.adoptant_id != adoptant_id:
-            raise ValueError("Not authorized to view this adoption process")
+            raise AuthorizationError("Not authorized to view this adoption process")
         steps = self.step_repo.get_steps_for_process(self.db, process.id)
         return process_to_response(process, steps)
 

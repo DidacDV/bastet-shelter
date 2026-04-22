@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.core.dependencies.role_dependencies import get_db, get_current_user, require_manager
@@ -13,22 +13,17 @@ from app.services.medical_service import MedicalService
 
 router = APIRouter(prefix="/medical", tags=["medical"])
 
-
 def get_medical_service(db: Session = Depends(get_db)) -> MedicalService:
     return MedicalService(db)
 
-#MEDICINE
+# MEDICINE
 @router.post("/medicines", response_model=MedicineResponse)
 def create_medicine(
     data: MedicineCreate,
     auth: AuthenticatedUser = Depends(require_manager),
     service: MedicalService = Depends(get_medical_service),
 ):
-    try:
-        return service.create_medicine(data, auth.shelter_id)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
+    return service.create_medicine(data, auth.shelter_id)
 
 @router.get("/medicines", response_model=MedicineListResponse)
 def get_medicines(
@@ -37,19 +32,13 @@ def get_medicines(
 ):
     return {"medicines": service.get_all_medicines(auth.shelter_id)}
 
-
 @router.get("/medicines/{medicine_id}", response_model=MedicineResponse)
 def get_medicine(
     medicine_id: int,
     auth: AuthenticatedUser = Depends(get_current_user),
     service: MedicalService = Depends(get_medical_service),
 ):
-    try:
-        return service.get_medicine_by_id(medicine_id, auth.shelter_id)
-    except ValueError as e:
-        status_code = 404 if "not found" in str(e).lower() else 403
-        raise HTTPException(status_code=status_code, detail=str(e))
-
+    return service.get_medicine_by_id(medicine_id, auth.shelter_id)
 
 @router.patch("/medicines/{medicine_id}", response_model=MedicineResponse)
 def update_medicine(
@@ -58,12 +47,7 @@ def update_medicine(
     auth: AuthenticatedUser = Depends(require_manager),
     service: MedicalService = Depends(get_medical_service),
 ):
-    try:
-        return service.update_medicine(medicine_id, data, auth.shelter_id)
-    except ValueError as e:
-        status_code = 404 if "not found" in str(e).lower() else 400
-        raise HTTPException(status_code=status_code, detail=str(e))
-
+    return service.update_medicine(medicine_id, data, auth.shelter_id)
 
 @router.delete("/medicines/{medicine_id}", status_code=204)
 def delete_medicine(
@@ -71,25 +55,16 @@ def delete_medicine(
     auth: AuthenticatedUser = Depends(require_manager),
     service: MedicalService = Depends(get_medical_service),
 ):
-    try:
-        service.delete_medicine(medicine_id, auth.shelter_id)
-    except ValueError as e:
-        status_code = 404 if "not found" in str(e).lower() else 403
-        raise HTTPException(status_code=status_code, detail=str(e))
+    service.delete_medicine(medicine_id, auth.shelter_id)
 
-#TREATMENT
+# TREATMENT
 @router.post("/treatments", response_model=MedicalTreatmentResponse)
 def create_treatment(
     data: MedicalTreatmentCreate,
     auth: AuthenticatedUser = Depends(require_manager),
     service: MedicalService = Depends(get_medical_service),
 ):
-    try:
-        return service.create_treatment(data, auth.shelter_id)
-    except ValueError as e:
-        status_code = 404 if "not found" in str(e).lower() else 400
-        raise HTTPException(status_code=status_code, detail=str(e))
-
+    return service.create_treatment(data, auth.shelter_id)
 
 @router.get("/treatments/{animal_id}", response_model=MedicalTreatmentListResponse)
 def get_treatments(
@@ -97,11 +72,7 @@ def get_treatments(
     auth: AuthenticatedUser = Depends(get_current_user),
     service: MedicalService = Depends(get_medical_service),
 ):
-    try:
-        return {"medical_treatments": service.get_treatments_by_animal(animal_id)}
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-
+    return {"medical_treatments": service.get_treatments_by_animal(animal_id)}
 
 @router.patch("/treatments/{treatment_id}", response_model=MedicalTreatmentResponse)
 def update_treatment(
@@ -110,12 +81,7 @@ def update_treatment(
     auth: AuthenticatedUser = Depends(require_manager),
     service: MedicalService = Depends(get_medical_service),
 ):
-    try:
-        return service.update_treatment(auth.user.id, treatment_id, data, auth.shelter_id)
-    except ValueError as e:
-        status_code = 404 if "not found" in str(e).lower() else 400
-        raise HTTPException(status_code=status_code, detail=str(e))
-
+    return service.update_treatment(auth.user.id, treatment_id, data, auth.shelter_id)
 
 @router.delete("/treatments/{treatment_id}", status_code=204)
 def delete_treatment(
@@ -123,25 +89,16 @@ def delete_treatment(
     auth: AuthenticatedUser = Depends(require_manager),
     service: MedicalService = Depends(get_medical_service),
 ):
-    try:
-        service.delete_treatment(treatment_id, auth.shelter_id)
-    except ValueError as e:
-        status_code = 404 if "not found" in str(e).lower() else 403
-        raise HTTPException(status_code=status_code, detail=str(e))
+    service.delete_treatment(treatment_id, auth.shelter_id)
 
-#VET VISITS
+# VET VISITS
 @router.post("/vet-visits", response_model=VetVisitResponse)
 def create_vet_visit(
     data: VetVisitCreate,
     auth: AuthenticatedUser = Depends(require_manager),
     service: MedicalService = Depends(get_medical_service),
 ):
-    try:
-        return service.create_vet_visit(data, auth.shelter_id)
-    except ValueError as e:
-        status_code = 404 if "not found" in str(e).lower() else 400
-        raise HTTPException(status_code=status_code, detail=str(e))
-
+    return service.create_vet_visit(data, auth.shelter_id)
 
 @router.get("/vet-visits/{animal_id}", response_model=VetVisitListResponse)
 def get_vet_visits(
@@ -151,7 +108,6 @@ def get_vet_visits(
 ):
     return {"vet_visits": service.get_vet_visits_by_animal(animal_id)}
 
-
 @router.patch("/vet-visits/{visit_id}", response_model=VetVisitResponse)
 def update_vet_visit(
     visit_id: int,
@@ -159,12 +115,7 @@ def update_vet_visit(
     auth: AuthenticatedUser = Depends(require_manager),
     service: MedicalService = Depends(get_medical_service),
 ):
-    try:
-        return service.update_vet_visit(visit_id, data, auth.shelter_id)
-    except ValueError as e:
-        status_code = 404 if "not found" in str(e).lower() else 400
-        raise HTTPException(status_code=status_code, detail=str(e))
-
+    return service.update_vet_visit(visit_id, data, auth.shelter_id)
 
 @router.delete("/vet-visits/{visit_id}", status_code=204)
 def delete_vet_visit(
@@ -172,8 +123,4 @@ def delete_vet_visit(
     auth: AuthenticatedUser = Depends(require_manager),
     service: MedicalService = Depends(get_medical_service),
 ):
-    try:
-        service.delete_vet_visit(visit_id, auth.shelter_id)
-    except ValueError as e:
-        status_code = 404 if "not found" in str(e).lower() else 403
-        raise HTTPException(status_code=status_code, detail=str(e))
+    service.delete_vet_visit(visit_id, auth.shelter_id)

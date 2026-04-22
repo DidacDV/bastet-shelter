@@ -26,7 +26,4 @@ def get_current_user_profile(auth: AuthenticatedUser = Depends(get_current_user)
 
 @router.get("/{email}", response_model=UserResponse)
 def get_user_by_email(email: str, service: UserService = Depends(get_user_service)):
-    try:
-        return service.get_user(email)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return service.get_user(email)

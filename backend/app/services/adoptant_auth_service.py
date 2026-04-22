@@ -6,13 +6,13 @@ from sqlalchemy.orm import Session
 from fastapi_mail import MessageSchema, MessageType
 
 from app.core.email import fast_mail
+from app.core.exceptions import AuthorizationError
 from app.core.security import create_access_token
 from app.models.adoption.adoptant import Adoptant
 from app.models.adoption.adoption_steps.magic_link_token import MagicLinkToken
 from app.repositories.adoption.adoptant_repo import AdoptantRepository
 from app.repositories.magic_link_repo import MagicLinkTokenRepository
 from app.schemas.adoption_schema.magic_link_schema import MagicLinkRequest, AdoptantTokenResponse
-
 
 class AdoptantAuthService:
     def __init__(self, db: Session):
@@ -60,11 +60,10 @@ class AdoptantAuthService:
         magic_link = self.token_repo.get_by_token(self.db, token)
 
         if not magic_link:
-            raise ValueError("Invalid token")
+            raise AuthorizationError("Invalid token")
 
         if magic_link.expires_at < datetime.now(timezone.utc).replace(tzinfo=None):
-            raise ValueError("Token has expired. Please request a new one.")
-
+            raise AuthorizationError("Token has expired. Please request a new one.")
 
         jwt_payload = {
             "sub": magic_link.adoptant.email,

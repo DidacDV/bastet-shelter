@@ -1,6 +1,6 @@
 from datetime import date
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.core.dependencies.role_dependencies import get_db, get_current_user, require_manager, require_volunteer
@@ -15,7 +15,6 @@ router = APIRouter(prefix="/shifts", tags=["shifts"])
 def get_shift_service(db: Session = Depends(get_db)) -> ShiftService:
     return ShiftService(db)
 
-
 @router.post("/", response_model=ShiftResponse)
 def create_shift(
     data: ShiftCreate,
@@ -23,10 +22,7 @@ def create_shift(
     auth: AuthenticatedUser = Depends(require_manager),
     service: ShiftService = Depends(get_shift_service)
 ):
-    try:
-        return service.create_shift(data, refuge_id, auth.shelter_id)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return service.create_shift(data, refuge_id, auth.shelter_id)
 
 @router.get("/", response_model=List[ShiftResponse])
 def get_shifts(
@@ -35,10 +31,7 @@ def get_shifts(
     auth: AuthenticatedUser = Depends(get_current_user),
     service: ShiftService = Depends(get_shift_service)
 ):
-    try:
-        return service.get_shifts(refuge_id, day)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return service.get_shifts(refuge_id, day)
 
 @router.post("/{shift_id}/join", response_model=ShiftParticipantResponse)
 def join_shift(
@@ -46,10 +39,7 @@ def join_shift(
     auth: AuthenticatedUser = Depends(require_volunteer),
     service: ShiftService = Depends(get_shift_service)
 ):
-    try:
-        return service.join_shift(shift_id, auth.user.id)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return service.join_shift(shift_id, auth.user.id)
 
 @router.delete("/{shift_id}/leave")
 def leave_shift(
@@ -57,11 +47,8 @@ def leave_shift(
     auth: AuthenticatedUser = Depends(require_volunteer),
     service: ShiftService = Depends(get_shift_service)
 ):
-    try:
-        service.leave_shift(shift_id, auth.user.id)
-        return {"message": "Left shift successfully"}
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    service.leave_shift(shift_id, auth.user.id)
+    return {"message": "Left shift successfully"}
 
 @router.post("/{shift_id}/tasks", response_model=ShiftTaskResponse)
 def add_task_to_shift(
@@ -71,10 +58,7 @@ def add_task_to_shift(
     auth: AuthenticatedUser = Depends(require_manager),
     service: ShiftService = Depends(get_shift_service)
 ):
-    try:
-        return service.add_task_to_shift(shift_id, task_id, animal_id)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return service.add_task_to_shift(shift_id, task_id, animal_id)
 
 @router.patch("/tasks/{shift_task_id}/assign", response_model=ShiftTaskResponse)
 def assign_task(
@@ -83,10 +67,7 @@ def assign_task(
     auth: AuthenticatedUser = Depends(require_manager),
     service: ShiftService = Depends(get_shift_service)
 ):
-    try:
-        return service.assign_task(shift_task_id, participant_id)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return service.assign_task(shift_task_id, participant_id)
 
 @router.patch("/tasks/{shift_task_id}/complete", response_model=ShiftTaskResponse)
 def complete_task(
@@ -94,7 +75,4 @@ def complete_task(
     auth: AuthenticatedUser = Depends(require_volunteer),
     service: ShiftService = Depends(get_shift_service)
 ):
-    try:
-        return service.complete_task(shift_task_id)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return service.complete_task(shift_task_id)

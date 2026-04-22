@@ -12,7 +12,6 @@ router = APIRouter(prefix="/refuges", tags=["refuges"])
 def get_refuge_service(db: Session = Depends(get_db)) -> RefugeService:
     return RefugeService(db)
 
-
 @router.post("/", response_model=RefugeResponse)
 def create_refuge(
     data: RefugeCreate,

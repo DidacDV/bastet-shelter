@@ -3,9 +3,8 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import BackgroundTasks
 from sqlalchemy.orm import Session
-from fastapi_mail import MessageSchema, MessageType
 
-from app.core.email import fast_mail
+from app.core.email.email_sender import send_email
 from app.core.exceptions import AuthorizationError
 from app.core.security import create_access_token
 from app.models.adoption.adoptant import Adoptant
@@ -40,19 +39,7 @@ class AdoptantAuthService:
         self.token_repo.create(self.db, magic_link)
 
         frontend_magic_link_url = f"http://localhost:5173/verify?token={raw_token}"
-        message = MessageSchema(
-            subject="Your Bastet Shelter Access Link",
-            recipients=[str(adoptant.email)],
-            body=f"""
-            <h3>Hello {adoptant.name},</h3>
-            <p>Click the link below to securely log into your adoption profile.</p>
-            <p><a href="{frontend_magic_link_url}"><strong>Access My Profile</strong></a></p>
-            <p><i>This link will expire in 30 days.</i></p>
-            """,
-            subtype=MessageType.html
-        )
-
-        background_tasks.add_task(fast_mail.send_message, message)
+        send_email(subject="Your Bastet Shelter Access Link", recipients=[str(adoptant.email)], body=f"Your magic link is: {frontend_magic_link_url}", background_tasks=background_tasks)
 
         return {"message": "If the details are correct, a magic link has been sent to your email."}
 

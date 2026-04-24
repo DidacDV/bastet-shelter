@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 from fastapi import status
 from app.main import app
 from app.routers.animal_router import get_animal_service
-from app.core.dependencies import get_current_user, require_manager
+from app.core.dependencies.role_dependencies import get_current_user, require_manager
 from app.models.user import AuthenticatedUser
 
 mock_user = MagicMock()
@@ -129,7 +129,7 @@ def test_toggle_adoption_success(client, mock_service):
         "traits": []
     }
 
-    response = client.patch("/animals/1/adoption")
+    response = client.patch("/animals/1/adoption_schema")
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json()["in_adoption"] is True
@@ -146,7 +146,7 @@ def test_get_animal_service(db):
 def test_toggle_adoption_error(client, mock_service):
     mock_service.set_in_adoption.side_effect = ValueError("Animal not found")
 
-    response = client.patch("/animals/1/adoption")
+    response = client.patch("/animals/1/adoption_schema")
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["detail"] == "Animal not found"

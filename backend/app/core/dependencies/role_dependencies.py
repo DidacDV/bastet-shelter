@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.core.security import decode_access_token
 from app.database import get_db
+from app.models.adoption.adoptant import Adoptant
 from app.models.login import Login
 from app.models.shelter import Shelter
 from app.models.shelter_member import ShelterMember, RoleEnum
@@ -46,6 +47,43 @@ def get_current_user(
         )
 
     return AuthenticatedUser(user = user, role =  role, shelter_id = payload.get("shelter_id"))
+
+
+def get_current_adoptant(
+        token: str = Depends(oauth2_scheme),
+        db: Session = Depends(get_db),
+) -> type[Adoptant]:
+    payload = decode_access_token(token)
+
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    role: str = payload.get("role")
+    if role != "adoptant":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Insufficient permissions. Adoptant access required.",
+        )
+
+    adoptant_id = payload.get("adoptant_id")
+    if adoptant_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token payload: missing adoptant ID",
+        )
+
+    adoptant = db.query(Adoptant).filter(Adoptant.id == adoptant_id).first()
+    if adoptant is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Adoptant not found",
+        )
+
+    return adoptant
 
 def require_role(*roles: str):
     def checker(auth: AuthenticatedUser = Depends(get_current_user)):

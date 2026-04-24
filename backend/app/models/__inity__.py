@@ -1,4 +1,12 @@
-from app.models.animal import Animal, animal_trait_association
+from app.models.adoption.adoptant import Adoptant
+from app.models.adoption.adoption_process import AdoptionProcess
+from app.models.adoption.adoption_steps.adoption_step import AdoptionStep
+from app.models.adoption.adoption_steps.animal_pickup import AnimalPickup
+from app.models.adoption.adoption_steps.contract import Contract
+from app.models.adoption.adoption_steps.interview import Interview
+from app.models.adoption.adoption_steps.shelter_visit import ShelterVisit
+from app.models.adoption.adoption_steps.adoption_form import AdoptionForm
+from app.models.animal.animal import Animal, animal_trait_association
 from app.models.trait import Trait
 from app.models.shelter import Shelter
 from app.models.refuge import Refuge
@@ -13,3 +21,4 @@ from app.models.shift.shift_participant import ShiftParticipant
 from app.models.medical.medical_treatment import AnimalTreatment
 from app.models.medical.medicine import Medicine
 from app.models.medical.vet_visit import VetVisit
+from app.models.animal.animal_image import AnimalImage

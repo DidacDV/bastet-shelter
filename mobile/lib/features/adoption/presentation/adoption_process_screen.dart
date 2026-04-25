@@ -33,6 +33,10 @@ class AdoptionProcessScreen extends ConsumerWidget {
               animalImageUrl: data.animal.primaryImageUrl,
             ),
             Expanded(child: AdoptionProcessBody(steps: data.process.steps)),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text("footer here"),
+            ),
           ],
         ),
       ),

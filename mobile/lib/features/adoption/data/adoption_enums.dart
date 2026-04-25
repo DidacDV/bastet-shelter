@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 enum AdoptionProcessStatus {
   pending('PENDING'),
   completed('COMPLETED'),
@@ -48,4 +50,22 @@ enum StepStatus {
       orElse: () => StepStatus.pending,
     );
   }
+}
+
+extension StepTypeDisplay on StepType {
+  String get label => switch (this) {
+    StepType.form => 'Form',
+    StepType.interview => 'Interview',
+    StepType.shelterVisit => 'Visit',
+    StepType.contract => 'Contract',
+    StepType.animalPickup => 'Pickup',
+  };
+
+  IconData get icon => switch (this) {
+    StepType.form => Icons.description_outlined,
+    StepType.interview => Icons.chat_outlined,
+    StepType.shelterVisit => Icons.home_outlined,
+    StepType.contract => Icons.handshake_outlined,
+    StepType.animalPickup => Icons.pets_outlined,
+  };
 }

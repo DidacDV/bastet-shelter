@@ -18,6 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers.adoption_process_router import router as adoption_process_router
 from app.routers.adoption_steps_router import router as adoption_steps_router
 from app.routers.adoption_auth_router import router as adoption_auth_router
+from app.routers.adoptant_router import router as adoptant_router
 from app.routers.dashboard_router import router as dashboard_router
 from app.routers.auth_router import router as auth_router
 from app.routers.user_router import router as user_router
@@ -91,6 +92,7 @@ app.include_router(medical_router)
 app.include_router(adoption_steps_router)
 app.include_router(adoption_process_router)
 app.include_router(adoption_auth_router)
+app.include_router(adoptant_router)
 
 # create SQLAdmin page
 admin = Admin(app, engine, authentication_backend=authentication_backend)

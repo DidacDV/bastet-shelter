@@ -27,7 +27,7 @@ def get_step_service(db: Session = Depends(get_db)) -> AdoptionStepsService:
 
 
 # ADOPTANT REGION
-@router.post("/start", response_model=AdoptionProcessResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/start/{animal_id}", response_model=AdoptionProcessResponse, status_code=status.HTTP_201_CREATED)
 def start_adoption(
         animal_id: int,
         form_data: AdoptionFormSubmit,

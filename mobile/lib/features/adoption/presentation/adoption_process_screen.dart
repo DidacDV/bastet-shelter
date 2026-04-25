@@ -1,3 +1,5 @@
+import 'package:bastetshelter/features/adoption/presentation/components/adoption_process_body.dart';
+import 'package:bastetshelter/features/adoption/presentation/components/adoption_process_header.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/providers/adoption/adoption_screen_data_provider.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,6 @@ class AdoptionProcessScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the composite provider!
     final screenDataAsync = ref.watch(
       adoptionScreenDataProvider(adoptionProcessId),
     );
@@ -23,15 +24,17 @@ class AdoptionProcessScreen extends ConsumerWidget {
       body: screenDataAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error loading data')),
-        data: (data) {
-          return Column(
-            children: [
-              Text('Process Status: ${data.process.status.name}'),
-              Text('Animal Name: ${data.animal.name}'),
-              Text('Adoptant Email: ${data.adoptant.email}'),
-            ],
-          );
-        },
+        data: (data) => Column(
+          children: [
+            AdoptionProcessHeader(
+              process: data.process,
+              animalName: data.animal.name,
+              adoptantName: data.adoptant.name,
+              animalImageUrl: data.animal.primaryImageUrl,
+            ),
+            Expanded(child: AdoptionProcessBody(steps: data.process.steps)),
+          ],
+        ),
       ),
     );
   }

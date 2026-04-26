@@ -1,6 +1,8 @@
 import 'package:bastetshelter/features/adoption/presentation/components/adoption_process_body.dart';
+import 'package:bastetshelter/features/adoption/presentation/components/adoption_process_footer.dart';
 import 'package:bastetshelter/features/adoption/presentation/components/adoption_process_header.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
+import 'package:bastetshelter/providers/adoption/adoption_detail_provider.dart';
 import 'package:bastetshelter/providers/adoption/adoption_screen_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,9 +35,13 @@ class AdoptionProcessScreen extends ConsumerWidget {
               animalImageUrl: data.animal.primaryImageUrl,
             ),
             Expanded(child: AdoptionProcessBody(steps: data.process.steps)),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text("footer here"),
+            AdoptionProcessFooter(
+              onReject: (reason) async {},
+              onApprove: (notes) async {
+                await ref
+                    .read(adoptionDetailProvider(adoptionProcessId).notifier)
+                    .advanceStep(notes: notes);
+              },
             ),
           ],
         ),

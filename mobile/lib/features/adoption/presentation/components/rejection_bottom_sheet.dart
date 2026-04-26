@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/utils/validators.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
@@ -64,12 +65,8 @@ class _RejectAdoptionBottomSheetState extends State<RejectAdoptionBottomSheet> {
           child: AppTextField(
             controller: _reasonController,
             label: 'Reason for rejection',
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Please provide a reason.';
-              }
-              return null;
-            },
+            validator: (value) =>
+                Validators.validateRequired(value?.trim(), "reason"),
           ),
         ),
       ],

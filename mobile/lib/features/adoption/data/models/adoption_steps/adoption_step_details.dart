@@ -42,4 +42,19 @@ class AdoptionStepDetails {
         return AnimalPickupStepDetails.fromJson(json);
     }
   }
+
+  String getStepName() {
+    switch (type) {
+      case StepType.form:
+        return 'Form';
+      case StepType.interview:
+        return 'Interview';
+      case StepType.shelterVisit:
+        return 'Shelter Visit';
+      case StepType.contract:
+        return 'Contract';
+      case StepType.animalPickup:
+        return "Animal pick up";
+    }
+  }
 }

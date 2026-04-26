@@ -4,10 +4,10 @@ import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/form_step_details.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/interview_step_details.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/shelter_visit_step_details.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/steps/step_form_view.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/steps/step_interview_view.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/steps/step_pickup_view.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/steps/step_shelter_visit_view.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_form_view.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_interview_view.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_pickup_view.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_shelter_visit_view.dart';
 import 'package:flutter/material.dart';
 
 class StepContent extends StatelessWidget {

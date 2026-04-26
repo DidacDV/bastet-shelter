@@ -1,5 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/rejection_bottom_sheet.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/rejection_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:flutter/material.dart';

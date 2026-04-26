@@ -1,5 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/adoption/presentation/adoption_process_screen.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_list/adoption_list_screen.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/home/presentation/components/home_card.dart';
 import 'package:bastetshelter/providers/dashboard/dashboard_provider.dart';
@@ -70,9 +70,7 @@ class HomeTab extends ConsumerWidget {
                               fgColor: AppColors.secondary,
                               onTap: () => Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => AdoptionProcessScreen(
-                                    adoptionProcessId: 2,
-                                  ),
+                                  builder: (context) => AdoptionList(),
                                 ),
                               ),
                             ),

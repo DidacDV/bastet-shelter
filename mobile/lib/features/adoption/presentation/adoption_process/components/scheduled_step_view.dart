@@ -1,6 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/adoption_step_details.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/steps/step_common_info.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_common_info.dart';
 import 'package:bastetshelter/features/common/components/fields/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

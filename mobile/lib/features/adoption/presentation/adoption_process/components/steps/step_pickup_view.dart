@@ -1,6 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/animal_pickup_step_details.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/steps/step_common_info.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_common_info.dart';
 import 'package:bastetshelter/features/common/components/fields/date_field.dart';
 import 'package:bastetshelter/providers/adoption/adoption_detail_provider.dart';
 import 'package:flutter/material.dart';

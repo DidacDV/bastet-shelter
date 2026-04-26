@@ -31,6 +31,9 @@ class AdoptionProcessResponse(BaseModel):
     steps: list[AdoptionStepResponse] = []
     rejection_reason: str | None = None
 
+class AdoptionProcessResponseList(BaseModel):
+    processes: list[AdoptionProcessResponse] = []
+
 class AdoptionProcessDetailResponse(AdoptionProcessResponse):
     steps: list[AnyStepDetailResponse] = []
 

@@ -1,5 +1,9 @@
+import 'dart:ui';
+
+import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/adoption/data/adoption_enums.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/adoption_step_summary.dart';
+import 'package:flutter/material.dart';
 
 class AdoptionProcessSummary {
   final int id;
@@ -57,5 +61,16 @@ class AdoptionProcessSummary {
     return list
         .map((e) => AdoptionProcessSummary.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  Color get statusColor {
+    switch (status) {
+      case AdoptionProcessStatus.rejected:
+        return AppColors.error;
+      case AdoptionProcessStatus.completed:
+        return Colors.green;
+      default:
+        return AppColors.primary;
+    }
   }
 }

@@ -33,7 +33,7 @@ final class AdoptionListProvider
   AdoptionList create() => AdoptionList();
 }
 
-String _$adoptionListHash() => r'872cb955ca6f88265365b7cf1e85edbfffa649f9';
+String _$adoptionListHash() => r'f4bb222829f5a9abea21951c5b4a0e5750d5813d';
 
 abstract class _$AdoptionList
     extends $AsyncNotifier<List<AdoptionProcessSummary>> {

@@ -1,10 +1,7 @@
-import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_process/adoption_process_summary.dart';
-import 'package:bastetshelter/features/adoption/data/models/adoption_requests/adoption_requests.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'adoption_repository_provider.dart';
-import 'adoption_detail_provider.dart';
 
 part 'adoption_list_provider.g.dart';
 
@@ -19,16 +16,5 @@ class AdoptionList extends _$AdoptionList {
   Future<void> refresh() async {
     ref.invalidateSelf();
     await future;
-  }
-
-  Future<void> rejectProcess(int processId, String reason) async {
-    await genericApiCall(() async {
-      await ref
-          .read(adoptionRepositoryProvider)
-          .rejectAdoptionProcess(processId, RejectionRequest(reason: reason));
-
-      ref.invalidateSelf();
-      ref.invalidate(adoptionDetailProvider(processId));
-    });
   }
 }

@@ -9,6 +9,7 @@ class AdoptionProcessDetails {
   final DateTime? endDate;
   final AdoptionProcessStatus status;
   final List<AdoptionStepDetails> steps;
+  final String? rejectionReason;
 
   const AdoptionProcessDetails({
     required this.id,
@@ -18,6 +19,7 @@ class AdoptionProcessDetails {
     this.endDate,
     required this.status,
     required this.steps,
+    this.rejectionReason,
   });
 
   factory AdoptionProcessDetails.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class AdoptionProcessDetails {
               ) //should automatically cast to AdoptionStepDetails
               .toList() ??
           [],
+      rejectionReason: json['rejection_reason'] as String?,
     );
   }
 }

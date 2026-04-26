@@ -1,6 +1,7 @@
 import 'package:bastetshelter/features/adoption/presentation/components/adoption_process_body.dart';
 import 'package:bastetshelter/features/adoption/presentation/components/adoption_process_footer.dart';
 import 'package:bastetshelter/features/adoption/presentation/components/adoption_process_header.dart';
+import 'package:bastetshelter/features/adoption/presentation/components/rejection_banner.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/providers/adoption/adoption_detail_provider.dart';
 import 'package:bastetshelter/providers/adoption/adoption_screen_data_provider.dart';
@@ -26,25 +27,46 @@ class AdoptionProcessScreen extends ConsumerWidget {
       body: screenDataAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error loading data')),
-        data: (data) => Column(
-          children: [
-            AdoptionProcessHeader(
-              process: data.process,
-              animalName: data.animal.name,
-              adoptantName: data.adoptant.name,
-              animalImageUrl: data.animal.primaryImageUrl,
-            ),
-            Expanded(child: AdoptionProcessBody(steps: data.process.steps)),
-            AdoptionProcessFooter(
-              onReject: (reason) async {},
-              onApprove: (notes) async {
-                await ref
-                    .read(adoptionDetailProvider(adoptionProcessId).notifier)
-                    .advanceStep(notes: notes);
-              },
-            ),
-          ],
-        ),
+        data: (data) {
+          final isDone =
+              data.process.status.name == 'rejected' ||
+              data.process.status.name == 'completed';
+          final isRejected = data.process.status.name == 'rejected';
+          return Column(
+            children: [
+              AdoptionProcessHeader(
+                process: data.process,
+                animalName: data.animal.name,
+                adoptantName: data.adoptant.name,
+                animalImageUrl: data.animal.primaryImageUrl,
+              ),
+              if (isRejected)
+                RejectionBanner(
+                  reason:
+                      data.process.rejectionReason ??
+                      'No reason provided for this rejection.',
+                ),
+              Expanded(child: AdoptionProcessBody(steps: data.process.steps)),
+              if (!isDone)
+                AdoptionProcessFooter(
+                  onReject: (reason) async {
+                    await ref
+                        .read(
+                          adoptionDetailProvider(adoptionProcessId).notifier,
+                        )
+                        .rejectProcess(reason);
+                  },
+                  onApprove: (notes) async {
+                    await ref
+                        .read(
+                          adoptionDetailProvider(adoptionProcessId).notifier,
+                        )
+                        .advanceStep(notes: notes);
+                  },
+                ),
+            ],
+          );
+        },
       ),
     );
   }

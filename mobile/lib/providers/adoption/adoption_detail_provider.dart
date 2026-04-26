@@ -31,6 +31,17 @@ class AdoptionDetail extends _$AdoptionDetail {
     });
   }
 
+  Future<void> rejectProcess(String reason) async {
+    await genericApiCall(() async {
+      await ref
+          .read(adoptionRepositoryProvider)
+          .rejectAdoptionProcess(processId, RejectionRequest(reason: reason));
+
+      ref.invalidateSelf();
+      ref.invalidate(adoptionDetailProvider(processId));
+    });
+  }
+
   Future<void> skipStep() async {
     await genericApiCall(() async {
       await ref.read(adoptionRepositoryProvider).skipStep(processId);

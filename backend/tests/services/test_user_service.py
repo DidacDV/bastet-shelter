@@ -1,5 +1,7 @@
 import pytest
 from unittest.mock import MagicMock
+
+from app.core.exceptions import NotFoundError
 from app.services.user_service import UserService
 
 @pytest.fixture
@@ -24,6 +26,6 @@ def test_get_user_not_found(service):
     email = "nonexistent@example.com"
     service.repository.get_by_email.return_value = None
 
-    with pytest.raises(ValueError, match=f"User with email {email} not found"):
+    with pytest.raises(NotFoundError, match=f"User with email {email} not found"):
         service.get_user(email)
     service.repository.get_by_email.assert_called_once_with(service.db, email)

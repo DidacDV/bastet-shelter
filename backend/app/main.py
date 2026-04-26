@@ -69,6 +69,20 @@ async def auth_error_handler(request: Request, exc: AuthorizationError):
         content={"detail": exc.message},
     )
 
+
+@app.exception_handler(ValueError)
+async def value_error_handler(request: Request, exc: ValueError):
+    error_msg = str(exc).lower()
+    if "not found" in error_msg or "invalid code" in error_msg or "code not found" in error_msg:
+        status_code = 404
+    else:
+        status_code = 400
+
+    return JSONResponse(
+        status_code=status_code,
+        content={"detail": str(exc)},
+    )
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],

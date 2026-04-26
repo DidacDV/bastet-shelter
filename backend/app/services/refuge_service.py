@@ -37,7 +37,7 @@ class RefugeService:
         if not refuge:
             raise NotFoundError("Refuge not found")
         if refuge.shelter_id != shelter_id:
-            raise AuthorizationError("Refuge does not belong to this shelter")
+            raise NotFoundError("Refuge not found")
 
         if refuge.animals:
             raise BusinessLogicError("Cannot delete refuge with animals. You have to move them out first.")

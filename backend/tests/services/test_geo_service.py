@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 import pytest
 from unittest.mock import MagicMock, AsyncMock, patch
 from datetime import datetime, timedelta
@@ -8,12 +10,20 @@ async def test_get_provinces():
     db = MagicMock()
     query_mock = db.query.return_value
     order_mock = query_mock.order_by.return_value
-    order_mock.all.return_value = [("Barcelona", "08"), ("Madrid", "28")]
+
+    MockRow = namedtuple('MockRow', ['name', 'id'])
+    order_mock.all.return_value = [
+        MockRow("Barcelona", "08"),
+        MockRow("Madrid", "28")
+    ]
 
     result = GeoService.get_provinces(db)
 
     assert len(result) == 2
-    assert result[0] == ("Barcelona", "08")
+
+    assert result[0] == {"name": "Barcelona", "id": "08"}
+    assert result[1] == {"name": "Madrid", "id": "28"}
+
     db.query.assert_called_once()
 
 @pytest.mark.asyncio

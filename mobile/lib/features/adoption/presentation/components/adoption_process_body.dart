@@ -1,13 +1,19 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/adoption/data/adoption_enums.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/adoption_step_details.dart';
+import 'package:bastetshelter/features/adoption/presentation/components/steps/step_content.dart';
 import 'package:bastetshelter/features/common/components/vertical_stepper.dart';
 import 'package:flutter/material.dart' hide StepState;
 
 class AdoptionProcessBody extends StatefulWidget {
   final List<AdoptionStepDetails> steps;
+  final int processId;
 
-  const AdoptionProcessBody({super.key, required this.steps});
+  const AdoptionProcessBody({
+    super.key,
+    required this.steps,
+    required this.processId,
+  });
 
   @override
   State<AdoptionProcessBody> createState() => _AdoptionProcessBodyState();
@@ -42,7 +48,6 @@ class _AdoptionProcessBodyState extends State<AdoptionProcessBody> {
   @override
   Widget build(BuildContext context) {
     final sorted = _sorted;
-    final tt = Theme.of(context).textTheme;
 
     final stepperItems = sorted.asMap().entries.map((entry) {
       return VerticalStepperItem(
@@ -55,7 +60,6 @@ class _AdoptionProcessBodyState extends State<AdoptionProcessBody> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ── Left: stepper ─────────────────────────────────────
         SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
           child: VerticalStepper(
@@ -69,7 +73,6 @@ class _AdoptionProcessBodyState extends State<AdoptionProcessBody> {
 
         const VerticalDivider(width: 1),
 
-        // ── Right: content ────────────────────────────────────
         Expanded(
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
@@ -80,16 +83,9 @@ class _AdoptionProcessBodyState extends State<AdoptionProcessBody> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      sorted[_selectedIndex].type.label,
-                      style: tt.titleMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Status: ${sorted[_selectedIndex].status.name}',
-                      style: tt.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    StepContent(
+                      step: sorted[_selectedIndex],
+                      processId: widget.processId,
                     ),
                   ],
                 ),

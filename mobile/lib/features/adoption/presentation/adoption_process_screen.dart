@@ -46,7 +46,12 @@ class AdoptionProcessScreen extends ConsumerWidget {
                       data.process.rejectionReason ??
                       'No reason provided for this rejection.',
                 ),
-              Expanded(child: AdoptionProcessBody(steps: data.process.steps)),
+              Expanded(
+                child: AdoptionProcessBody(
+                  steps: data.process.steps,
+                  processId: data.process.id,
+                ),
+              ),
               if (!isDone)
                 AdoptionProcessFooter(
                   onReject: (reason) async {

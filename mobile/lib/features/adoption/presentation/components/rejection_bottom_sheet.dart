@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
@@ -35,6 +36,10 @@ class _RejectAdoptionBottomSheetState extends State<RejectAdoptionBottomSheet> {
       await widget.onReject(_reasonController.text.trim());
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
+      NavigationService.instance.showSnackBar(
+        'An error occurred while rejecting the adoption process.',
+        isError: true,
+      );
     } finally {
       if (mounted) setState(() => _loading = false);
     }

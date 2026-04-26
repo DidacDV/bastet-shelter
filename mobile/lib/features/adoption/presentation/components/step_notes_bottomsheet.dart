@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
@@ -44,6 +45,10 @@ class _StepNotesBottomSheetState extends State<StepNotesBottomSheet> {
       await widget.onSave(_notesController.text.trim());
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
+      NavigationService.instance.showSnackBar(
+        'An error occurred while saving the notes.',
+        isError: true,
+      );
     } finally {
       if (mounted) setState(() => _loading = false);
     }

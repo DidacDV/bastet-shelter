@@ -153,7 +153,7 @@ class _InfoBlock extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            if (trailing != null) trailing!,
+            trailing!,
           ],
         ),
         const SizedBox(height: 6),

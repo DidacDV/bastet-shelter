@@ -123,4 +123,16 @@ class AdoptionRepository {
     );
     return AdoptionStepDetails.fromJson(response);
   }
+
+  Future<AdoptionStepDetails> updateNotes(
+    int processId,
+    int stepId,
+    NotesUpdate data,
+  ) async {
+    final response = await _apiClient.patch(
+      '/adoption/$processId/steps/$stepId/notes',
+      body: data.toJson(),
+    );
+    return AdoptionStepDetails.fromJson(response);
+  }
 }

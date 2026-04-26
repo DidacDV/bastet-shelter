@@ -82,6 +82,15 @@ class AdoptionDetail extends _$AdoptionDetail {
     });
   }
 
+  Future<void> updateNotes(String notes, int stepId) async {
+    await genericApiCall(() async {
+      await ref
+          .read(adoptionRepositoryProvider)
+          .updateNotes(processId, stepId, NotesUpdate(notes: notes));
+      _invalidateAndRefresh();
+    });
+  }
+
   void _invalidateAndRefresh() {
     ref.invalidateSelf();
     ref.invalidate(adoptionListProvider);

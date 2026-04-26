@@ -52,6 +52,16 @@ class ScheduledDateUpdate {
   }
 }
 
+class NotesUpdate {
+  final String notes;
+
+  const NotesUpdate({required this.notes});
+
+  Map<String, dynamic> toJson() {
+    return {'notes': notes};
+  }
+}
+
 class AdvanceStepRequest {
   final String? notes;
 

@@ -11,7 +11,8 @@ from app.models.adoption.adoption_steps.shelter_visit import ShelterVisit
 from app.repositories.adoption.adoption_step_repo import AdoptionStepRepository
 from app.schemas.adoption_schema.adoption_mappers import step_to_detail_response
 from app.schemas.adoption_schema.adoption_schema import ScheduledDateUpdate
-from app.schemas.adoption_schema.adoption_step_schema import AdvanceStepRequest, AdoptionStepDetailResponse
+from app.schemas.adoption_schema.adoption_step_schema import AdvanceStepRequest, InterviewResponse, \
+    ShelterVisitResponse, AnimalPickupResponse, AdoptionStepBaseResponse
 
 
 class AdoptionStepsService:
@@ -77,7 +78,7 @@ class AdoptionStepsService:
         if not handler:
             raise BusinessLogicError(f"Unknown step type: {current_step.type}")
 
-        handler(current_step, request)
+        handler(current_step, request) # type: ignore (in runtime, the correct value is obtained from the dictionary)
         self.db.commit()
         self.db.refresh(current_step)
 
@@ -104,7 +105,7 @@ class AdoptionStepsService:
             raise NotFoundError("Form step not found for this process")
         return form
 
-    def _set_scheduled_date(self, process_id: int, step_type: StepTypeEnum, scheduled_at: datetime) -> AdoptionStepDetailResponse:
+    def _set_scheduled_date(self, process_id: int, step_type: StepTypeEnum, scheduled_at: datetime) -> AdoptionStepBaseResponse:
         steps = self.step_repo.get_steps_for_process(self.db, process_id)
         step = next((s for s in steps if s.type == step_type), None)
 
@@ -124,11 +125,11 @@ class AdoptionStepsService:
         self.db.refresh(step)
         return step_to_detail_response(step)
 
-    def set_interview_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> AdoptionStepDetailResponse:
-        return self._set_scheduled_date(process_id, StepTypeEnum.INTERVIEW, data.scheduled_at)
+    def set_interview_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> InterviewResponse:
+        return self._set_scheduled_date(process_id, StepTypeEnum.INTERVIEW, data.scheduled_at)  # type: ignore
 
-    def set_shelter_visit_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> AdoptionStepDetailResponse:
-        return self._set_scheduled_date(process_id, StepTypeEnum.SHELTER_VISIT, data.scheduled_at)
+    def set_shelter_visit_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> ShelterVisitResponse:
+        return self._set_scheduled_date(process_id, StepTypeEnum.SHELTER_VISIT, data.scheduled_at) # type: ignore
 
-    def set_animal_pickup_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> AdoptionStepDetailResponse:
-        return self._set_scheduled_date(process_id, StepTypeEnum.ANIMAL_PICKUP, data.scheduled_at)
+    def set_animal_pickup_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> AnimalPickupResponse:
+        return self._set_scheduled_date(process_id, StepTypeEnum.ANIMAL_PICKUP, data.scheduled_at) # type: ignore

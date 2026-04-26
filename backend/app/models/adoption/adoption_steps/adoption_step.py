@@ -48,7 +48,7 @@ class AdoptionStep(Base):
     )
     order: Mapped[int] = mapped_column(Integer, nullable=False)
     finish_date: Mapped[date] = mapped_column(Date, nullable=True)
-    notes: Mapped[str] = mapped_column(String, nullable=True)
-    rejection_reason: Mapped[str] = mapped_column(String, nullable=True)
+    notes: Mapped[str | None] = mapped_column(String, nullable=True)
+    rejection_reason: Mapped[str | None] = mapped_column(String, nullable=True)
 
     adoption_process = relationship("AdoptionProcess", back_populates="steps")

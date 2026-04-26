@@ -5,7 +5,8 @@ from app.core.dependencies.role_dependencies import get_db, require_manager
 from app.models.user import AuthenticatedUser
 from app.schemas.adoption_schema.adoption_form_schema import AdoptionFormResponse
 from app.schemas.adoption_schema.adoption_schema import ScheduledDateUpdate
-from app.schemas.adoption_schema.adoption_step_schema import AdoptionStepDetailResponse
+from app.schemas.adoption_schema.adoption_step_schema import InterviewResponse, ShelterVisitResponse
+from app.schemas.animals_schema.animals_schema import AnimalResponse
 
 from app.services.adoption_steps_service import AdoptionStepsService
 
@@ -22,7 +23,7 @@ def get_form_details(
 ):
     return step_service.get_form_details(process_id)
 
-@router.patch("/interview", response_model=AdoptionStepDetailResponse)
+@router.patch("/interview", response_model=InterviewResponse)
 def set_interview_date(
         process_id: int,
         data: ScheduledDateUpdate,
@@ -31,7 +32,7 @@ def set_interview_date(
 ):
     return step_service.set_interview_scheduled_date(process_id, data)
 
-@router.patch("/shelter-visit", response_model=AdoptionStepDetailResponse)
+@router.patch("/shelter-visit", response_model=ShelterVisitResponse)
 def set_shelter_visit_date(
         process_id: int,
         data: ScheduledDateUpdate,
@@ -40,7 +41,7 @@ def set_shelter_visit_date(
 ):
     return step_service.set_shelter_visit_scheduled_date(process_id, data)
 
-@router.patch("/pickup", response_model=AdoptionStepDetailResponse)
+@router.patch("/pickup", response_model=AnimalResponse)
 def set_animal_pickup_scheduled_date(
         process_id: int,
         data: ScheduledDateUpdate,

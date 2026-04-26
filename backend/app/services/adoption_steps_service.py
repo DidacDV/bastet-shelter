@@ -143,6 +143,25 @@ class AdoptionStepsService:
     def set_animal_pickup_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> AnimalPickupResponse:
         return self._set_scheduled_date(process_id, StepTypeEnum.ANIMAL_PICKUP, data.scheduled_at) # type: ignore
 
+    def set_animal_pickup_actual_date(self, process_id: int, step_id: int, data: ScheduledDateUpdate) -> AnimalPickupResponse:
+        """Sets the actual date the animal was picked up incase it doesnt match the scheduled date"""
+        step = self.step_repo.get_by_id(self.db, step_id)
+        if not step:
+            raise NotFoundError("Animal pickup step not found")
+
+        if not isinstance(step, AnimalPickup):
+            raise BusinessLogicError("This step is not an animal pickup step")
+        if step.adoption_process_id != process_id:
+            raise BusinessLogicError("Step does not belong to this process")
+        if step.scheduled_at is None:
+            raise BusinessLogicError("Animal pickup step has no scheduled date set")
+
+        step.actual_pickup_at = data.scheduled_at
+
+        self.db.commit()
+        self.db.refresh(step)
+        return step_to_detail_response(step)  # type: ignore
+
     def add_notes(self, process_id: int, step_id: int, notes: NotesUpdate) -> AdoptionStepBaseResponse:
         step = self.step_repo.get_by_id(self.db, step_id)
         if not step:

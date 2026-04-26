@@ -74,8 +74,21 @@ class AdoptionDetail extends _$AdoptionDetail {
     await genericApiCall(() async {
       await ref
           .read(adoptionRepositoryProvider)
-          .setAnimalPickupDate(
+          .setAnimalScheduledPickupDate(
             processId,
+            ScheduledDateUpdate(scheduledAt: date),
+          );
+      _invalidateAndRefresh();
+    });
+  }
+
+  Future<void> setAnimalPickupActualDate(DateTime date, int stepId) async {
+    await genericApiCall(() async {
+      await ref
+          .read(adoptionRepositoryProvider)
+          .setAnimalActualPickupDate(
+            processId,
+            stepId,
             ScheduledDateUpdate(scheduledAt: date),
           );
       _invalidateAndRefresh();

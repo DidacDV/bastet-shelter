@@ -108,12 +108,24 @@ class AdoptionRepository {
     return AdoptionStepDetails.fromJson(response);
   }
 
-  Future<AdoptionStepDetails> setAnimalPickupDate(
+  Future<AdoptionStepDetails> setAnimalScheduledPickupDate(
     int processId,
     ScheduledDateUpdate data,
   ) async {
     final response = await _apiClient.patch(
       '/adoption/$processId/steps/pickup',
+      body: data.toJson(),
+    );
+    return AdoptionStepDetails.fromJson(response);
+  }
+
+  Future<AdoptionStepDetails> setAnimalActualPickupDate(
+    int processId,
+    int stepId,
+    ScheduledDateUpdate data,
+  ) async {
+    final response = await _apiClient.patch(
+      '/adoption/$processId/steps/$stepId/actual-pickup',
       body: data.toJson(),
     );
     return AdoptionStepDetails.fromJson(response);

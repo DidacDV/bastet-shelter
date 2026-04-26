@@ -53,12 +53,17 @@ def process_to_response(process: AdoptionProcess, steps: list[AdoptionStep]) -> 
 def process_to_detail_response(process: AdoptionProcess, steps: list[AdoptionStep]) -> AdoptionProcessDetailResponse:
     response_steps = []
     current_step_found = False
+    rejection_reason = None
+
     for step in steps:
         step_resp = step_to_detail_response(step)
 
         if step.status == "PENDING" and not current_step_found:
             step_resp.is_current = True
             current_step_found = True
+
+        if step.rejection_reason:
+            rejection_reason = step.rejection_reason
 
         response_steps.append(step_resp)
 
@@ -69,5 +74,6 @@ def process_to_detail_response(process: AdoptionProcess, steps: list[AdoptionSte
         start_date=process.start_date,
         end_date=process.end_date,
         status=process.status,
+        rejection_reason=rejection_reason,
         steps=response_steps,
     )

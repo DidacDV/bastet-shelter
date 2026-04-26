@@ -16,7 +16,7 @@ class AdoptionProcessResponse(BaseModel):
     end_date: Optional[date] = None
     status: AdoptionProcessStatusEnum
     steps: list[AdoptionStepResponse] = []
-
+    rejection_reason: Optional[str] = None
 
 class AdoptionProcessDetailResponse(AdoptionProcessResponse):
     steps: list[AdoptionStepDetailResponse] = []

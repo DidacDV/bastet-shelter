@@ -38,21 +38,29 @@ def process_to_response(process: AdoptionProcess, steps: list[AdoptionStep]) -> 
 def process_to_detail_response(process: AdoptionProcess, steps: list[AdoptionStep]) -> AdoptionProcessDetailResponse:
     response_steps = []
     current_step_found = False
+    rejection_reason = None
+
     for step in steps:
         step_resp = step_to_detail_response(step)
-
         if step.status == "PENDING" and not current_step_found:
             step_resp.is_current = True
             current_step_found = True
-
+        if step.rejection_reason:
+            rejection_reason = step.rejection_reason
         response_steps.append(step_resp)
+
+    primary_image = min(process.animal.images, key=lambda i: i.order, default=None)
 
     return AdoptionProcessDetailResponse(
         id=process.id,
         animal_id=process.animal_id,
+        animal_name=process.animal.name,
+        animal_image_url=primary_image.url if primary_image else None,
         adoptant_id=process.adoptant_id,
+        adoptant_name=process.adoptant.name,
         start_date=process.start_date,
         end_date=process.end_date,
         status=process.status,
+        rejection_reason=rejection_reason,
         steps=response_steps,
     )

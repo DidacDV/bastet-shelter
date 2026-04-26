@@ -1,5 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/adoption/presentation/components/rejection_bottom_sheet.dart';
+import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +22,19 @@ class _AdoptionProcessFooterState extends State<AdoptionProcessFooter> {
   bool _isApproving = false;
 
   Future<void> _handleApprove() async {
+    final confirm = await ConfirmationDialog.show(
+      context: context,
+      title: 'Approve',
+      message:
+          'Are you sure you want to approve this step? Make sure to add some notes!',
+      isDestructive: false,
+      confirmText: 'Approve',
+    );
+
+    if (!confirm) {
+      return;
+    }
+
     setState(() => _isApproving = true);
     try {
       await widget.onApprove(null);

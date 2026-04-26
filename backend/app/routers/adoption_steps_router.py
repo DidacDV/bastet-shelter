@@ -4,8 +4,9 @@ from sqlalchemy.orm import Session
 from app.core.dependencies.role_dependencies import get_db, require_manager
 from app.models.user import AuthenticatedUser
 from app.schemas.adoption_schema.adoption_form_schema import AdoptionFormResponse
-from app.schemas.adoption_schema.adoption_schema import ScheduledDateUpdate
-from app.schemas.adoption_schema.adoption_step_schema import InterviewResponse, ShelterVisitResponse
+from app.schemas.adoption_schema.adoption_schema import ScheduledDateUpdate, NotesUpdate
+from app.schemas.adoption_schema.adoption_step_schema import InterviewResponse, ShelterVisitResponse, \
+    AdoptionStepResponse
 from app.schemas.animals_schema.animals_schema import AnimalResponse
 
 from app.services.adoption_steps_service import AdoptionStepsService
@@ -49,3 +50,13 @@ def set_animal_pickup_scheduled_date(
         step_service: AdoptionStepsService = Depends(get_step_service)
 ):
     return step_service.set_animal_pickup_scheduled_date(process_id, data)
+
+@router.patch("/{step_id}/notes", response_model=AdoptionStepResponse)
+def add_notes(
+        process_id: int,
+        step_id: int,
+        data: NotesUpdate,
+        auth: AuthenticatedUser = Depends(require_manager),
+        step_service: AdoptionStepsService = Depends(get_step_service)
+):
+    return step_service.add_notes(process_id, step_id, notes= data)

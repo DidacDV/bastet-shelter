@@ -10,7 +10,7 @@ from app.models.adoption.adoption_steps.interview import Interview
 from app.models.adoption.adoption_steps.shelter_visit import ShelterVisit
 from app.repositories.adoption.adoption_step_repo import AdoptionStepRepository
 from app.schemas.adoption_schema.adoption_mappers import step_to_detail_response
-from app.schemas.adoption_schema.adoption_schema import ScheduledDateUpdate
+from app.schemas.adoption_schema.adoption_schema import ScheduledDateUpdate, NotesUpdate
 from app.schemas.adoption_schema.adoption_step_schema import AdvanceStepRequest, InterviewResponse, \
     ShelterVisitResponse, AnimalPickupResponse, AdoptionStepBaseResponse
 
@@ -133,3 +133,14 @@ class AdoptionStepsService:
 
     def set_animal_pickup_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> AnimalPickupResponse:
         return self._set_scheduled_date(process_id, StepTypeEnum.ANIMAL_PICKUP, data.scheduled_at) # type: ignore
+
+    def add_notes(self, process_id: int, step_id: int, notes: NotesUpdate) -> AdoptionStepBaseResponse:
+        step = self.step_repo.get_by_id(self.db, step_id)
+        if not step:
+            raise NotFoundError("Step not found")
+        if step.adoption_process_id != process_id:
+            raise BusinessLogicError("Step does not belong to this process")
+        step.notes = notes.notes
+        self.db.commit()
+        self.db.refresh(step)
+        return step_to_detail_response(step)

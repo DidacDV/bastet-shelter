@@ -86,11 +86,6 @@ class AdoptionRepository {
   }
 
   // ADOPTION STEPS REGION
-  Future<FormStepDetails> getFormDetails(int processId) async {
-    final response = await _apiClient.get('/adoption/$processId/steps/form');
-    return FormStepDetails.fromJson(response);
-  }
-
   Future<AdoptionStepDetails> setInterviewDate(
     int processId,
     ScheduledDateUpdate data,
@@ -134,5 +129,10 @@ class AdoptionRepository {
       body: data.toJson(),
     );
     return AdoptionStepDetails.fromJson(response);
+  }
+
+  Future<AdoptionFormContent> getFormDetails(int processId) async {
+    final response = await _apiClient.get('/adoption/$processId/steps/form');
+    return AdoptionFormContent.fromJson(response);
   }
 }

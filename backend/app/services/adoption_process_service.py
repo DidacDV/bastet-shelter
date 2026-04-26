@@ -13,6 +13,7 @@ from app.repositories.adoption.adoptant_repo import AdoptantRepository
 from app.repositories.adoption.adoption_process_repo import AdoptionProcessRepository
 from app.repositories.adoption.adoption_step_repo import AdoptionStepRepository
 from app.repositories.animal_repo import AnimalRepository
+from app.schemas.adoption_schema.adoptant_schema import AdoptantResponse
 from app.schemas.adoption_schema.adoption_form_schema import AdoptionFormSubmit
 
 from app.schemas.adoption_schema.adoption_mappers import process_to_response, process_to_detail_response
@@ -165,3 +166,13 @@ class AdoptionProcessService:
             process_to_response(p, self.step_repo.get_steps_for_process(self.db, p.id))
             for p in processes
         ]
+
+    def get_adoptant(self, adoptant_id: int, shelter_id: int) -> AdoptantResponse:
+        adoptant = self.adoptant_repo.get_by_id(self.db, adoptant_id)
+        if not adoptant:
+            raise NotFoundError("Adoptant not found")
+
+        if not self.adoptant_repo.has_process_in_shelter(self.db, adoptant_id, shelter_id):
+            raise AuthorizationError("Adoptant does not have an active adoption process in this shelter")
+
+        return AdoptantResponse.model_validate(adoptant)

@@ -18,6 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers.adoption_process_router import router as adoption_process_router
 from app.routers.adoption_steps_router import router as adoption_steps_router
 from app.routers.adoption_auth_router import router as adoption_auth_router
+from app.routers.adoptant_router import router as adoptant_router
 from app.routers.dashboard_router import router as dashboard_router
 from app.routers.auth_router import router as auth_router
 from app.routers.user_router import router as user_router
@@ -68,6 +69,20 @@ async def auth_error_handler(request: Request, exc: AuthorizationError):
         content={"detail": exc.message},
     )
 
+
+@app.exception_handler(ValueError)
+async def value_error_handler(request: Request, exc: ValueError):
+    error_msg = str(exc).lower()
+    if "not found" in error_msg or "invalid code" in error_msg or "code not found" in error_msg:
+        status_code = 404
+    else:
+        status_code = 400
+
+    return JSONResponse(
+        status_code=status_code,
+        content={"detail": str(exc)},
+    )
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -91,6 +106,7 @@ app.include_router(medical_router)
 app.include_router(adoption_steps_router)
 app.include_router(adoption_process_router)
 app.include_router(adoption_auth_router)
+app.include_router(adoptant_router)
 
 # create SQLAdmin page
 admin = Admin(app, engine, authentication_backend=authentication_backend)

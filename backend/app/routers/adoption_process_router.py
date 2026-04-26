@@ -27,7 +27,7 @@ def get_step_service(db: Session = Depends(get_db)) -> AdoptionStepsService:
 
 
 # ADOPTANT REGION
-@router.post("/start", response_model=AdoptionProcessResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/start/{animal_id}", response_model=AdoptionProcessResponse, status_code=status.HTTP_201_CREATED)
 def start_adoption(
         animal_id: int,
         form_data: AdoptionFormSubmit,
@@ -44,24 +44,6 @@ def cancel_adoption(
         process_service: AdoptionProcessService = Depends(get_process_service)
 ):
     process_service.cancel_adoption(process_id, adoptant.id)
-
-
-@router.get("/adoptant", response_model=List[AdoptionProcessResponse])
-def get_all_processes_for_adoptant(
-        adoptant: Adoptant = Depends(get_current_adoptant),
-        process_service: AdoptionProcessService = Depends(get_process_service)
-):
-    return process_service.get_all_processes_for_adoptant(adoptant.id)
-
-
-@router.get("/{process_id}/adoptant", response_model=AdoptionProcessResponse)
-def get_adoption_process_adoptant(
-        process_id: int,
-        adoptant: Adoptant = Depends(get_current_adoptant),
-        process_service: AdoptionProcessService = Depends(get_process_service)
-):
-    return process_service.get_adoption_process_steps_adoptant(process_id, adoptant.id)
-
 
 # MANAGER REGION
 @router.post("/{process_id}/reject", status_code=status.HTTP_204_NO_CONTENT)

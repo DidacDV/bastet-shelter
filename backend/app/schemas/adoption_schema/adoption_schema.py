@@ -9,3 +9,9 @@ class AdoptantCreate(BaseModel):
 
 class ScheduledDateUpdate(BaseModel):
     scheduled_at: datetime
+
+class ActualPickUpDateUpdate(BaseModel):
+    picked_up_at: datetime
+
+class NotesUpdate(BaseModel):
+    notes: str

@@ -2,7 +2,7 @@ from datetime import date
 from typing import Optional
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import NotFoundError, BusinessLogicError
+from app.core.exceptions import NotFoundError
 from app.core.security import create_access_token
 from app.core.utils import generate_code
 from app.models.refuge import Refuge
@@ -72,7 +72,8 @@ class ShelterService:
     def join_as_volunteer(self, user_id: int, shelter_code: str, user_email: str) -> dict:
         shelter = self.shelter_repo.get_by_volunteer_code(self.db, shelter_code)
         if not shelter:
-            raise BusinessLogicError("Invalid volunteer code")
+            raise NotFoundError("Invalid volunteer code")
+
         self.create_volunteer_member(user_id, shelter_code)
         acc_token = create_access_token(data={"sub": user_email, "role": RoleEnum.VOLUNTEER.value, "shelter_id": shelter.id})
         return {"access_token": acc_token, "token_type": "bearer"}
@@ -80,7 +81,8 @@ class ShelterService:
     def join_as_manager(self, user_id: int, shelter_code: str, user_email: str) -> dict:
         shelter = self.shelter_repo.get_by_manager_code(self.db, shelter_code)
         if not shelter:
-            raise BusinessLogicError("Invalid manager code")
+            raise NotFoundError("Invalid manager code")
+
         self.create_manager_member_by_id(user_id, shelter.id)
         acc_token = create_access_token(data={"sub": user_email, "role": RoleEnum.MANAGER.value, "shelter_id": shelter.id})
         return {"access_token": acc_token, "token_type": "bearer"}

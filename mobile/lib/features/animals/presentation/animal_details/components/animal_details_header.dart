@@ -4,6 +4,7 @@ import 'package:bastetshelter/features/animals/presentation/animal_details/compo
 import 'package:bastetshelter/features/animals/presentation/animal_details/components/manage_animal_images.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
 import 'package:bastetshelter/features/common/components/edit_bottom_sheet.dart';
+import 'package:bastetshelter/features/common/components/fields/date_chip.dart';
 import 'package:flutter/material.dart';
 
 class AnimalDetailsHeader extends StatelessWidget {
@@ -101,7 +102,7 @@ class AnimalDetailsHeader extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _DateChip(
+                    DateChip(
                       label: "Arrival",
                       date: animal.arrivalDate ?? animal.birthDate,
                       canEdit: canEdit,
@@ -121,7 +122,7 @@ class AnimalDetailsHeader extends StatelessWidget {
                               }
                             },
                     ),
-                    _DateChip(
+                    DateChip(
                       label: "Birthday",
                       date: animal.birthDate,
                       canEdit: canEdit,
@@ -147,72 +148,6 @@ class AnimalDetailsHeader extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _DateChip extends StatelessWidget {
-  final String label;
-  final DateTime date;
-  final bool canEdit;
-  final Color backgroundColor;
-  final VoidCallback? onEdit;
-
-  const _DateChip({
-    required this.label,
-    required this.date,
-    required this.backgroundColor,
-    this.canEdit = false,
-    this.onEdit,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
-
-    return Material(
-      color: backgroundColor,
-      borderRadius: BorderRadius.circular(16),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onEdit,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    label.toUpperCase(),
-                    style: tt.labelSmall?.copyWith(
-                      color: AppColors.textSecondary,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  if (canEdit) ...[
-                    const SizedBox(width: 4),
-                    const Icon(
-                      Icons.edit_outlined,
-                      size: 13,
-                      color: AppColors.textSecondary,
-                    ),
-                  ],
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                MaterialLocalizations.of(context).formatMediumDate(date),
-                style: tt.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

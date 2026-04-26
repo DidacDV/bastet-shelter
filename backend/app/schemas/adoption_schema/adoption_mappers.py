@@ -1,41 +1,21 @@
 from app.models.adoption.adoption_process import AdoptionProcess
-from app.models.adoption.adoption_steps.adoption_step import AdoptionStep
-from app.models.adoption.adoption_steps.adoption_form import AdoptionForm
-from app.models.adoption.adoption_steps.animal_pickup import AnimalPickup
-from app.models.adoption.adoption_steps.contract import Contract
-from app.models.adoption.adoption_steps.interview import Interview
-from app.models.adoption.adoption_steps.shelter_visit import ShelterVisit
+from app.models.adoption.adoption_steps.adoption_step import AdoptionStep, StepTypeEnum
 from app.schemas.adoption_schema.adoption_process_schema import AdoptionProcessResponse, AdoptionProcessDetailResponse
-from app.schemas.adoption_schema.adoption_step_schema import AdoptionStepDetailResponse, AdoptionStepResponse
+from app.schemas.adoption_schema.adoption_step_schema import AdoptionStepResponse, \
+    AdoptionStepBaseResponse, AnimalPickupResponse, ContractResponse, ShelterVisitResponse, InterviewResponse, \
+    AdoptionFormResponse
 
+STEP_RESPONSE_CLASS = {
+    StepTypeEnum.FORM: AdoptionFormResponse,
+    StepTypeEnum.INTERVIEW: InterviewResponse,
+    StepTypeEnum.SHELTER_VISIT: ShelterVisitResponse,
+    StepTypeEnum.CONTRACT: ContractResponse,
+    StepTypeEnum.ANIMAL_PICKUP: AnimalPickupResponse,
+}
 
-def step_to_detail_response(step: AdoptionStep) -> AdoptionStepDetailResponse:
-    """transforms a single step into its detailed response schema"""
-    base = dict(
-        id=step.id,
-        type=step.type,
-        status=step.status,
-        order=step.order,
-        finish_date=step.finish_date,
-        notes=step.notes,
-        rejection_reason=step.rejection_reason,
-    )
-    if isinstance(step, AdoptionForm):
-        base.update(accepted=step.accepted)
-    elif isinstance(step, (Interview, ShelterVisit)):
-        base.update(scheduled_at=step.scheduled_at)
-    elif isinstance(step, Contract):
-        base.update(
-            signed_by_adoptant=step.signed_by_adoptant,
-            signed_by_shelter=step.signed_by_shelter,
-            contract_url=step.contract_url,
-        )
-    elif isinstance(step, AnimalPickup):
-        base.update(
-            scheduled_at=step.scheduled_at,
-            actual_pickup_at=step.actual_pickup_at,
-        )
-    return AdoptionStepDetailResponse(**base)
+def step_to_detail_response(step: AdoptionStep) -> AdoptionStepBaseResponse:
+    response_class = STEP_RESPONSE_CLASS[step.type]
+    return response_class.model_validate(step)
 
 
 def process_to_response(process: AdoptionProcess, steps: list[AdoptionStep]) -> AdoptionProcessResponse:

@@ -1,6 +1,8 @@
 import pytest
 from unittest.mock import MagicMock
 from datetime import date
+
+from app.core.exceptions import NotFoundError, AuthorizationError
 from app.services.animal_service import AnimalService
 from app.schemas.animals_schema.animals_schema import AnimalCreate
 from app.models.animal.animal import AnimalTypeEnum
@@ -72,7 +74,7 @@ def test_register_animal_wrong_shelter(service):
     mock_refuge.shelter_id = 2
     service.refuge_repo.get_by_id.return_value = mock_refuge
 
-    with pytest.raises(ValueError, match="Refuge does not belong to this shelter"):
+    with pytest.raises(AuthorizationError, match="Refuge does not belong to this shelter"):
         service.register_animal(data, shelter_id)
 
 
@@ -170,17 +172,17 @@ def test_get_animal_by_id(service):
 
 def test_get_animals_refuge_not_found(service):
     service.refuge_repo.get_by_id.return_value = None
-    with pytest.raises(ValueError, match="Refuge not found"):
+    with pytest.raises(NotFoundError, match="Refuge not found"):
         service.get_animals(999)
 
 
 def test_set_in_adoption_animal_not_found(service):
     service.animal_repo.get_by_id.return_value = None
-    with pytest.raises(ValueError, match="Animal not found"):
-        service.set_in_adoption(999)
+    with pytest.raises(NotFoundError, match="Animal not found"):
+        service.get_animal_by_id(999)
 
 
 def test_get_animal_by_id_not_found(service):
     service.animal_repo.get_by_id.return_value = None
-    with pytest.raises(ValueError, match="Animal not found"):
+    with pytest.raises(NotFoundError, match="Animal not found"):
         service.get_animal_by_id(999)

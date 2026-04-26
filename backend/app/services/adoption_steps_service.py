@@ -10,8 +10,9 @@ from app.models.adoption.adoption_steps.interview import Interview
 from app.models.adoption.adoption_steps.shelter_visit import ShelterVisit
 from app.repositories.adoption.adoption_step_repo import AdoptionStepRepository
 from app.schemas.adoption_schema.adoption_mappers import step_to_detail_response
-from app.schemas.adoption_schema.adoption_schema import ScheduledDateUpdate
-from app.schemas.adoption_schema.adoption_step_schema import AdvanceStepRequest, AdoptionStepDetailResponse
+from app.schemas.adoption_schema.adoption_schema import ScheduledDateUpdate, NotesUpdate
+from app.schemas.adoption_schema.adoption_step_schema import AdvanceStepRequest, InterviewResponse, \
+    ShelterVisitResponse, AnimalPickupResponse, AdoptionStepBaseResponse
 
 
 class AdoptionStepsService:
@@ -35,24 +36,31 @@ class AdoptionStepsService:
         step.accepted = True
         step.status = StepStatusEnum.COMPLETED
         step.finish_date = date.today()
-        step.notes = request.notes
+        if request.notes is not None:
+            step.notes = request.notes
 
     def _advance_interview(self, step: Interview, request: AdvanceStepRequest) -> None:
         self._check_has_scheduled_date_passed(step.scheduled_at, "Interview")
         step.status = StepStatusEnum.COMPLETED
         step.finish_date = date.today()
         step.notes = request.notes
+        if request.notes is not None:
+            step.notes = request.notes
 
     def _advance_shelter_visit(self, step: ShelterVisit, request: AdvanceStepRequest) -> None:
         self._check_has_scheduled_date_passed(step.scheduled_at, "Shelter visit")
         step.status = StepStatusEnum.COMPLETED
         step.finish_date = date.today()
         step.notes = request.notes
+        if request.notes is not None:
+            step.notes = request.notes
 
     def _advance_contract(self, step: Contract, request: AdvanceStepRequest) -> None:
         step.status = StepStatusEnum.COMPLETED
         step.finish_date = date.today()
         step.notes = request.notes
+        if request.notes is not None:
+            step.notes = request.notes
 
     def _advance_animal_pickup(self, step: AnimalPickup, request: AdvanceStepRequest) -> None:
         self._check_has_scheduled_date_passed(step.scheduled_at, "Animal pickup")
@@ -60,6 +68,8 @@ class AdoptionStepsService:
         step.status = StepStatusEnum.COMPLETED
         step.finish_date = date.today()
         step.notes = request.notes
+        if request.notes is not None:
+            step.notes = request.notes
 
     def advance_current_step(self, process_id: int, request: AdvanceStepRequest) -> None:
         """completes the current pending step (and advances to the next one)"""
@@ -77,7 +87,7 @@ class AdoptionStepsService:
         if not handler:
             raise BusinessLogicError(f"Unknown step type: {current_step.type}")
 
-        handler(current_step, request)
+        handler(current_step, request) # type: ignore (in runtime, the correct value is obtained from the dictionary)
         self.db.commit()
         self.db.refresh(current_step)
 
@@ -104,7 +114,7 @@ class AdoptionStepsService:
             raise NotFoundError("Form step not found for this process")
         return form
 
-    def _set_scheduled_date(self, process_id: int, step_type: StepTypeEnum, scheduled_at: datetime) -> AdoptionStepDetailResponse:
+    def _set_scheduled_date(self, process_id: int, step_type: StepTypeEnum, scheduled_at: datetime) -> AdoptionStepBaseResponse:
         steps = self.step_repo.get_steps_for_process(self.db, process_id)
         step = next((s for s in steps if s.type == step_type), None)
 
@@ -124,11 +134,41 @@ class AdoptionStepsService:
         self.db.refresh(step)
         return step_to_detail_response(step)
 
-    def set_interview_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> AdoptionStepDetailResponse:
-        return self._set_scheduled_date(process_id, StepTypeEnum.INTERVIEW, data.scheduled_at)
+    def set_interview_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> InterviewResponse:
+        return self._set_scheduled_date(process_id, StepTypeEnum.INTERVIEW, data.scheduled_at)  # type: ignore
 
-    def set_shelter_visit_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> AdoptionStepDetailResponse:
-        return self._set_scheduled_date(process_id, StepTypeEnum.SHELTER_VISIT, data.scheduled_at)
+    def set_shelter_visit_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> ShelterVisitResponse:
+        return self._set_scheduled_date(process_id, StepTypeEnum.SHELTER_VISIT, data.scheduled_at) # type: ignore
 
-    def set_animal_pickup_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> AdoptionStepDetailResponse:
-        return self._set_scheduled_date(process_id, StepTypeEnum.ANIMAL_PICKUP, data.scheduled_at)
+    def set_animal_pickup_scheduled_date(self, process_id: int, data: ScheduledDateUpdate) -> AnimalPickupResponse:
+        return self._set_scheduled_date(process_id, StepTypeEnum.ANIMAL_PICKUP, data.scheduled_at) # type: ignore
+
+    def set_animal_pickup_actual_date(self, process_id: int, step_id: int, data: ScheduledDateUpdate) -> AnimalPickupResponse:
+        """Sets the actual date the animal was picked up incase it doesnt match the scheduled date"""
+        step = self.step_repo.get_by_id(self.db, step_id)
+        if not step:
+            raise NotFoundError("Animal pickup step not found")
+
+        if not isinstance(step, AnimalPickup):
+            raise BusinessLogicError("This step is not an animal pickup step")
+        if step.adoption_process_id != process_id:
+            raise BusinessLogicError("Step does not belong to this process")
+        if step.scheduled_at is None:
+            raise BusinessLogicError("Animal pickup step has no scheduled date set")
+
+        step.actual_pickup_at = data.scheduled_at
+
+        self.db.commit()
+        self.db.refresh(step)
+        return step_to_detail_response(step)  # type: ignore
+
+    def add_notes(self, process_id: int, step_id: int, notes: NotesUpdate) -> AdoptionStepBaseResponse:
+        step = self.step_repo.get_by_id(self.db, step_id)
+        if not step:
+            raise NotFoundError("Step not found")
+        if step.adoption_process_id != process_id:
+            raise BusinessLogicError("Step does not belong to this process")
+        step.notes = notes.notes
+        self.db.commit()
+        self.db.refresh(step)
+        return step_to_detail_response(step)

@@ -36,24 +36,31 @@ class AdoptionStepsService:
         step.accepted = True
         step.status = StepStatusEnum.COMPLETED
         step.finish_date = date.today()
-        step.notes = request.notes
+        if request.notes is not None:
+            step.notes = request.notes
 
     def _advance_interview(self, step: Interview, request: AdvanceStepRequest) -> None:
         self._check_has_scheduled_date_passed(step.scheduled_at, "Interview")
         step.status = StepStatusEnum.COMPLETED
         step.finish_date = date.today()
         step.notes = request.notes
+        if request.notes is not None:
+            step.notes = request.notes
 
     def _advance_shelter_visit(self, step: ShelterVisit, request: AdvanceStepRequest) -> None:
         self._check_has_scheduled_date_passed(step.scheduled_at, "Shelter visit")
         step.status = StepStatusEnum.COMPLETED
         step.finish_date = date.today()
         step.notes = request.notes
+        if request.notes is not None:
+            step.notes = request.notes
 
     def _advance_contract(self, step: Contract, request: AdvanceStepRequest) -> None:
         step.status = StepStatusEnum.COMPLETED
         step.finish_date = date.today()
         step.notes = request.notes
+        if request.notes is not None:
+            step.notes = request.notes
 
     def _advance_animal_pickup(self, step: AnimalPickup, request: AdvanceStepRequest) -> None:
         self._check_has_scheduled_date_passed(step.scheduled_at, "Animal pickup")
@@ -61,6 +68,8 @@ class AdoptionStepsService:
         step.status = StepStatusEnum.COMPLETED
         step.finish_date = date.today()
         step.notes = request.notes
+        if request.notes is not None:
+            step.notes = request.notes
 
     def advance_current_step(self, process_id: int, request: AdvanceStepRequest) -> None:
         """completes the current pending step (and advances to the next one)"""

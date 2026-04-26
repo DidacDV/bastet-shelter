@@ -21,12 +21,15 @@ class AdoptionProcessResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     animal_id: int
+    animal_name: str
+    animal_image_url: str | None = None
     adoptant_id: int
+    adoptant_name: str
     start_date: date
-    end_date: Optional[date] = None
+    end_date: date | None = None
     status: AdoptionProcessStatusEnum
     steps: list[AdoptionStepResponse] = []
-    rejection_reason: Optional[str] = None
+    rejection_reason: str | None = None
 
 class AdoptionProcessDetailResponse(AdoptionProcessResponse):
     steps: list[AnyStepDetailResponse] = []

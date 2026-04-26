@@ -19,6 +19,8 @@ def step_to_detail_response(step: AdoptionStep) -> AdoptionStepBaseResponse:
 
 
 def process_to_response(process: AdoptionProcess, steps: list[AdoptionStep]) -> AdoptionProcessResponse:
+    primary_image = min(process.animal.images, key=lambda i: i.order, default=None)
+
     return AdoptionProcessResponse(
         id=process.id,
         animal_id=process.animal_id,
@@ -27,6 +29,9 @@ def process_to_response(process: AdoptionProcess, steps: list[AdoptionStep]) -> 
         end_date=process.end_date,
         status=process.status,
         steps=[AdoptionStepResponse.model_validate(s) for s in steps],
+        animal_name=process.animal.name,
+        animal_image_url=primary_image.url if primary_image else None,
+        adoptant_name=process.adoptant.name,
     )
 
 

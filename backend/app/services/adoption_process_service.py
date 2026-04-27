@@ -19,6 +19,7 @@ from app.schemas.adoption_schema.adoption_form_schema import AdoptionFormSubmit
 from app.schemas.adoption_schema.adoption_mappers import process_to_response, process_to_detail_response
 from app.schemas.adoption_schema.adoption_process_schema import AdoptionProcessResponse, AdoptionProcessDetailResponse
 
+UNTOGGLE_ADOPTION_REASON = "This adoption process has been rejected because the animal is no longer in adoption."
 
 class AdoptionProcessService:
     def __init__(self, db: Session):
@@ -100,6 +101,17 @@ class AdoptionProcessService:
         self.db.refresh(process)
         return process_to_response(process, steps)
 
+    def _cancel_process(self, process: AdoptionProcess, reason: str = UNTOGGLE_ADOPTION_REASON) -> None:
+        """rejects all pending steps, marks process rejected, and notifies adoptant."""
+        if reason:
+            current_step = self.step_repo.get_current_step(self.db, process.id)
+            if current_step:
+                current_step.rejection_reason = reason
+
+        self.step_repo.mark_all_rejected(self.db, process.id)
+        self.process_repo.mark_rejected(self.db, process)
+        # TODO: notify adoptant (process.adoptant_id)
+
     def cancel_adoption(self, process_id: int, adoptant_id: int) -> None:
         """done by ADOPTANT"""
         process = self._get_process_or_raise(process_id)
@@ -107,8 +119,7 @@ class AdoptionProcessService:
             raise AuthorizationError("Not authorized to cancel this adoption process")
         self.check_is_process_active(process_id)
 
-        self.step_repo.mark_all_rejected(self.db, process_id)
-        self.process_repo.mark_rejected(self.db, process)
+        self._cancel_process(process)
 
     def reject_adoption(self, process_id: int, shelter_id: int, reason: str) -> None:
         """rejected by a shelter MANAGER"""
@@ -117,14 +128,13 @@ class AdoptionProcessService:
         self._check_belongs_to_shelter(process, shelter_id)
         self.check_is_process_active(process_id)
 
-        current_step = self.step_repo.get_current_step(self.db, process_id)
-        if current_step:
-            current_step.rejection_reason = reason
+        self._cancel_process(process, reason=reason)
 
-        self.step_repo.mark_all_rejected(self.db, process_id)
-        self.process_repo.mark_rejected(self.db, process)
-
-        # TODO: notify ADOPTANT
+    def cancel_all_active_for_animal(self, animal_id: int) -> None:
+        """vancel all active adoption processes for an animal"""
+        active_processes = self.process_repo.get_all_active_processes_for_animal(self.db, animal_id)
+        for process in active_processes:
+            self._cancel_process(process)
 
     def mark_process_completed(self, process_id: int) -> None:
         """marks the entire adoption process as completed (its steps too)"""

@@ -28,6 +28,16 @@ class AdoptionProcessRepository(BaseRepository[AdoptionProcess]):
             .first()
         )
 
+    def get_all_active_processes_for_animal(self, db: Session, animal_id: int) -> list[type[AdoptionProcess]]:
+        return (
+            db.query(AdoptionProcess)
+            .filter(
+                AdoptionProcess.animal_id == animal_id,
+                AdoptionProcess.status == AdoptionProcessStatusEnum.ACTIVE
+            )
+            .all()
+        )
+
     def get_processes_for_adoptant(self, db: Session, adoptant_id: int) -> list[type[AdoptionProcess]]:
         return (
             db.query(AdoptionProcess)
@@ -68,3 +78,9 @@ class AdoptionProcessRepository(BaseRepository[AdoptionProcess]):
         db.commit()
         db.refresh(process)
         return process
+
+    def get_process_ids_for_animal(self, db: Session, animal_id: int) -> list[int]:
+        results = db.query(AdoptionProcess.id).filter(AdoptionProcess.animal_id == animal_id,
+        AdoptionProcess.status == AdoptionProcessStatusEnum.ACTIVE
+        ).all()
+        return [row[0] for row in results]

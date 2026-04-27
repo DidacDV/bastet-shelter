@@ -34,6 +34,7 @@ class AnimalResponse(BaseModel):
     traits: list[TraitResponse] = []
     refuge_name: str | None = None
     images: list[AnimalImageResponse] = []
+    adoption_processes: list[int] = []
 
 class AnimalShortInfo(BaseModel):
     model_config = ConfigDict(from_attributes=True)

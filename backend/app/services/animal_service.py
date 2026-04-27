@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.exceptions import NotFoundError, AuthorizationError, BusinessLogicError
 from app.models.animal.animal import Animal
+from app.repositories.adoption.adoption_process_repo import AdoptionProcessRepository
 from app.repositories.animal_image_repo import AnimalImageRepository
 from app.repositories.animal_repo import AnimalRepository
 from app.repositories.refuge_repo import RefugeRepository
@@ -30,8 +31,11 @@ class AnimalService:
         self.refuge_repo = RefugeRepository(db)
         self.trait_repo = TraitRepository(db)
         self.animal_image_repo = AnimalImageRepository(db)
+        self.process_repo = AdoptionProcessRepository(db)
 
     def _to_response(self, animal: Animal) -> AnimalResponse:
+        process_ids = self.process_repo.get_process_ids_for_animal(self.db, animal.id)
+
         return AnimalResponse(
             id=animal.id,
             name=animal.name,
@@ -44,6 +48,7 @@ class AnimalService:
             refuge_id=animal.refuge_id,
             refuge_name=animal.refuge.name,
             traits=animal.traits,
+            adoption_processes=process_ids,
             images=[
                 AnimalImageResponse(
                     id=img.id,

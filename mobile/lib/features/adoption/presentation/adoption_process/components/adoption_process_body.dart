@@ -20,6 +20,17 @@ class AdoptionProcessBody extends StatefulWidget {
 }
 
 class _AdoptionProcessBodyState extends State<AdoptionProcessBody> {
+  @override
+  void didUpdateWidget(covariant AdoptionProcessBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    //change to the next (or whichever it is) step
+    if (widget.steps != oldWidget.steps) {
+      setState(() {
+        _selectedIndex = _firstPendingIndex;
+      });
+    }
+  }
+
   late int _selectedIndex;
 
   List<AdoptionStepDetails> get _sorted =>

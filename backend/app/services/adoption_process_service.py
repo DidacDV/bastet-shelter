@@ -224,4 +224,4 @@ class AdoptionProcessService:
         contract_step.generation_date = date.today()
         self.db.commit()
 
-        return contract_step.contract_url
+        return contract_step.contract_url #type: ignore

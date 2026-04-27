@@ -1,19 +1,30 @@
+import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/adoption/data/adoption_enums.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/adoption_step_summary.dart';
+import 'package:flutter/material.dart';
 
 class AdoptionProcessSummary {
   final int id;
   final int animalId;
+  final String animalName;
+  final String? animalImageUrl;
   final int adoptantId;
+  final String adoptantName;
   final DateTime startDate;
   final DateTime? endDate;
   final AdoptionProcessStatus status;
   final List<AdoptionStepSummary> steps;
 
+  AdoptionStepSummary? get currentStep =>
+      steps.where((s) => s.status == StepStatus.pending).firstOrNull;
+
   const AdoptionProcessSummary({
     required this.id,
     required this.animalId,
+    required this.animalName,
+    this.animalImageUrl,
     required this.adoptantId,
+    required this.adoptantName,
     required this.startDate,
     this.endDate,
     required this.status,
@@ -24,7 +35,10 @@ class AdoptionProcessSummary {
     return AdoptionProcessSummary(
       id: json['id'] as int,
       animalId: json['animal_id'] as int,
+      animalName: json['animal_name'] as String,
+      animalImageUrl: json['animal_image_url'] as String?,
       adoptantId: json['adoptant_id'] as int,
+      adoptantName: json['adoptant_name'] as String,
       startDate: DateTime.parse(json['start_date'] as String),
       endDate: json['end_date'] != null
           ? DateTime.parse(json['end_date'] as String)
@@ -45,5 +59,16 @@ class AdoptionProcessSummary {
     return list
         .map((e) => AdoptionProcessSummary.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  Color get statusColor {
+    switch (status) {
+      case AdoptionProcessStatus.rejected:
+        return AppColors.error;
+      case AdoptionProcessStatus.completed:
+        return Colors.green;
+      default:
+        return AppColors.primary;
+    }
   }
 }

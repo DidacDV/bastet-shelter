@@ -1,7 +1,7 @@
-import 'package:bastetshelter/features/adoption/presentation/components/adoption_process_body.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/adoption_process_footer.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/adoption_process_header.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/rejection_banner.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/adoption_process_body.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/adoption_process_footer.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/adoption_process_header.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/rejection_banner.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/providers/adoption/adoption_detail_provider.dart';
 import 'package:bastetshelter/providers/adoption/adoption_screen_data_provider.dart';

@@ -3,6 +3,7 @@ import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/animals/data/models/animal_summary_model.dart';
 import 'package:bastetshelter/features/animals/data/animal_repository.dart';
 import 'package:bastetshelter/features/animals/data/animal_type_enum.dart';
+import 'package:bastetshelter/providers/adoption/adoption_list_provider.dart';
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -130,5 +131,16 @@ class Animals extends _$Animals {
     );
     //refetch animal count
     ref.invalidate(dashboardProvider);
+  }
+
+  Future<void> toggleAnimalAdoption(int id) async {
+    await genericApiCall(() async {
+      await ref.read(animalRepositoryProvider).toggleAnimalAdoption(id);
+      ref.invalidate(animalDetailProvider(id));
+      ref.invalidate(adoptionListProvider);
+      ref.invalidate(animalsProvider);
+      ref.invalidate(dashboardProvider);
+      ref.invalidateSelf();
+    });
   }
 }

@@ -1,6 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/adoption_step_details.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/step_notes_bottomsheet.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/step_notes_bottomsheet.dart';
 import 'package:bastetshelter/providers/adoption/adoption_detail_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -153,7 +153,7 @@ class _InfoBlock extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            trailing!,
+            ?trailing,
           ],
         ),
         const SizedBox(height: 6),

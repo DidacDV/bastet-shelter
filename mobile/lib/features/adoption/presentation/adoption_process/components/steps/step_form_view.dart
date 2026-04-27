@@ -1,6 +1,6 @@
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/form_step_details.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/show_form_details_bottomsheet.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/steps/step_common_info.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/show_form_details_bottomsheet.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_common_info.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:bastetshelter/providers/adoption/form_step_content_provider.dart';
 import 'package:flutter/material.dart';

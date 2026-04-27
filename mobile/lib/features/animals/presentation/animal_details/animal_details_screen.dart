@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/adoption/adoption_tab.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/basic_info_tab.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/components/animal_details_header.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/medical_info_tab.dart';
@@ -67,7 +68,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
             VetInfoTab(animalId: animalId),
             MedicalTreatmentsTab(animalId: animalId),
             const Icon(Icons.directions_bike),
-            const Icon(Icons.directions_bike),
+            AdoptionTab(animalId: animalId),
           ],
         ),
       ),

@@ -16,6 +16,7 @@ class AnimalDetails {
   final String refugeName;
   final List<AnimalImage> images;
   final List<Trait> traits;
+  final List<int>? adoptionProcessesIds;
 
   const AnimalDetails({
     required this.id,
@@ -30,6 +31,7 @@ class AnimalDetails {
     required this.refugeName,
     required this.images,
     required this.traits,
+    this.adoptionProcessesIds,
   });
 
   factory AnimalDetails.fromJson(Map<String, dynamic> json) {
@@ -54,6 +56,11 @@ class AnimalDetails {
       traits: (json['traits'] as List<dynamic>)
           .map((t) => Trait.fromJson(t as Map<String, dynamic>))
           .toList(),
+      adoptionProcessesIds: json['adoption_processes'] != null
+          ? (json['adoption_processes'] as List<dynamic>)
+                .map((e) => e as int)
+                .toList()
+          : null,
     );
   }
   String? get primaryImageUrl => images.isEmpty

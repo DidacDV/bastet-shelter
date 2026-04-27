@@ -25,6 +25,7 @@ class AdoptionProcessHeader extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+      color: AppColors.iris.withValues(alpha: 0.15),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

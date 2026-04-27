@@ -9,7 +9,7 @@ from app.schemas.adoption_schema.adoption_form_schema import AdoptionFormSubmit
 from app.schemas.adoption_schema.adoption_process_schema import (
     AdoptionProcessResponse,
     RejectionRequest,
-    AdoptionProcessDetailResponse
+    AdoptionProcessDetailResponse, AdoptionProcessResponseList
 )
 from app.schemas.adoption_schema.adoption_step_schema import AdvanceStepRequest
 from app.services.adoption_process_service import AdoptionProcessService
@@ -56,12 +56,12 @@ def reject_adoption_process(
     process_service.reject_adoption(process_id, auth.shelter_id, request.reason)
 
 
-@router.get("/shelter", response_model=List[AdoptionProcessResponse])
+@router.get("/shelter", response_model=AdoptionProcessResponseList)
 def get_all_processes_for_shelter(
         auth: AuthenticatedUser = Depends(require_manager),
         process_service: AdoptionProcessService = Depends(get_process_service)
 ):
-    return process_service.get_all_processes_for_shelter(auth.shelter_id)
+    return {"processes": process_service.get_all_processes_for_shelter(auth.shelter_id)}
 
 
 @router.get("/{process_id}/manager", response_model=AdoptionProcessDetailResponse)

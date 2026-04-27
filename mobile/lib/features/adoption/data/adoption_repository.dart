@@ -51,7 +51,9 @@ class AdoptionRepository {
 
   Future<List<AdoptionProcessSummary>> getProcessesForShelter() async {
     final response = await _apiClient.get('/adoption/shelter');
-    return AdoptionProcessSummary.listFromJson(response as List<dynamic>);
+    return AdoptionProcessSummary.listFromJson(
+      response["processes"] as List<dynamic>,
+    );
   }
 
   Future<AdoptionProcessDetails> getAdoptionProcessManager(

@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.exceptions import NotFoundError, AuthorizationError, BusinessLogicError
 from app.models.animal.animal import Animal
+from app.repositories.adoption.adoption_process_repo import AdoptionProcessRepository
+from app.services.adoption_process_service import AdoptionProcessService
 from app.repositories.animal_image_repo import AnimalImageRepository
 from app.repositories.animal_repo import AnimalRepository
 from app.repositories.refuge_repo import RefugeRepository
@@ -30,8 +32,12 @@ class AnimalService:
         self.refuge_repo = RefugeRepository(db)
         self.trait_repo = TraitRepository(db)
         self.animal_image_repo = AnimalImageRepository(db)
+        self.process_repo = AdoptionProcessRepository(db)
+        self.adoption_process_service = AdoptionProcessService(db)
 
     def _to_response(self, animal: Animal) -> AnimalResponse:
+        process_ids = self.process_repo.get_process_ids_for_animal(self.db, animal.id)
+
         return AnimalResponse(
             id=animal.id,
             name=animal.name,
@@ -44,6 +50,7 @@ class AnimalService:
             refuge_id=animal.refuge_id,
             refuge_name=animal.refuge.name,
             traits=animal.traits,
+            adoption_processes=process_ids,
             images=[
                 AnimalImageResponse(
                     id=img.id,
@@ -100,7 +107,11 @@ class AnimalService:
         if not animal:
             raise NotFoundError("Animal not found")
 
-        updated_animal = self.animal_repo.update_adoption_status(self.db, animal_id, not animal.in_adoption)
+        new_status = not animal.in_adoption
+        if not new_status:
+            self.adoption_process_service.cancel_all_active_for_animal(animal_id)
+
+        updated_animal = self.animal_repo.update_adoption_status(self.db, animal_id, new_status)
         return self._to_response(updated_animal)
 
     def get_animal_by_id(self, animal_id: int) -> AnimalResponse:

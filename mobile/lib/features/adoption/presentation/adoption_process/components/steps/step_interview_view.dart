@@ -1,16 +1,16 @@
-import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/shelter_visit_step_details.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/scheduled_step_view.dart';
+import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/interview_step_details.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/scheduled_step_view.dart';
 import 'package:bastetshelter/providers/adoption/adoption_detail_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ShelterVisitStepView extends ConsumerWidget {
-  const ShelterVisitStepView({
+class InterviewStepView extends ConsumerWidget {
+  const InterviewStepView({
     super.key,
     required this.step,
     required this.processId,
   });
-  final ShelterVisitStepDetails step;
+  final InterviewStepDetails step;
   final int processId;
 
   @override
@@ -18,11 +18,11 @@ class ShelterVisitStepView extends ConsumerWidget {
     return ScheduledStepView(
       step: step,
       processId: processId,
-      sectionTitle: 'Visit Schedule',
+      sectionTitle: 'Interview Schedule',
       scheduledAt: step.scheduledAt,
       onSchedule: (date) => ref
           .read(adoptionDetailProvider(processId).notifier)
-          .scheduleShelterVisit(date),
+          .scheduleInterview(date),
     );
   }
 }

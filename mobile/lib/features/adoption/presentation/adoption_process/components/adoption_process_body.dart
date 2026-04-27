@@ -1,7 +1,7 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/adoption/data/adoption_enums.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/adoption_step_details.dart';
-import 'package:bastetshelter/features/adoption/presentation/components/steps/step_content.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_content.dart';
 import 'package:bastetshelter/features/common/components/vertical_stepper.dart';
 import 'package:flutter/material.dart' hide StepState;
 
@@ -20,6 +20,17 @@ class AdoptionProcessBody extends StatefulWidget {
 }
 
 class _AdoptionProcessBodyState extends State<AdoptionProcessBody> {
+  @override
+  void didUpdateWidget(covariant AdoptionProcessBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    //change to the next (or whichever it is) step
+    if (widget.steps != oldWidget.steps) {
+      setState(() {
+        _selectedIndex = _firstPendingIndex;
+      });
+    }
+  }
+
   late int _selectedIndex;
 
   List<AdoptionStepDetails> get _sorted =>

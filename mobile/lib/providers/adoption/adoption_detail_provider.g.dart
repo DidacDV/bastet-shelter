@@ -50,7 +50,7 @@ final class AdoptionDetailProvider
   }
 }
 
-String _$adoptionDetailHash() => r'bcbec2cf9f5243a9235416a9f76199aca4406a9c';
+String _$adoptionDetailHash() => r'ec81932e413d10ace3149d20fff8349ff98298be';
 
 final class AdoptionDetailFamily extends $Family
     with

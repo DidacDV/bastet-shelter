@@ -81,4 +81,8 @@ class AnimalRepository {
   Future<void> deleteAnimal(int animalId) {
     return _apiClient.delete('/animals/$animalId');
   }
+
+  Future<void> toggleAnimalAdoption(int animalId) async {
+    return _apiClient.patch('/animals/$animalId/adoption');
+  }
 }

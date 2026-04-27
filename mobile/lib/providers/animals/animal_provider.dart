@@ -131,4 +131,12 @@ class Animals extends _$Animals {
     //refetch animal count
     ref.invalidate(dashboardProvider);
   }
+
+  Future<void> toggleAnimalAdoption(int id) async {
+    await genericApiCall(() async {
+      await ref.read(animalRepositoryProvider).toggleAnimalAdoption(id);
+      ref.invalidate(animalDetailProvider(id));
+      ref.invalidateSelf();
+    });
+  }
 }

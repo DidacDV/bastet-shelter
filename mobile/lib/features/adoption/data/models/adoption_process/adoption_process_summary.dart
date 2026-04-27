@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/adoption/data/adoption_enums.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/adoption_step_summary.dart';

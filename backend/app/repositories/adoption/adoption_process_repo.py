@@ -46,6 +46,15 @@ class AdoptionProcessRepository(BaseRepository[AdoptionProcess]):
             .all()
         )
 
+    def count_processes_for_shelter(self, db: Session, shelter_id: int) -> int:
+        return (
+            db.query(AdoptionProcess)
+            .join(Animal, AdoptionProcess.animal_id == Animal.id)
+            .join(Refuge, Animal.refuge_id == Refuge.id)
+            .filter(Refuge.shelter_id == shelter_id)
+            .count()
+        )
+
     def mark_rejected(self, db: Session, process: AdoptionProcess) -> AdoptionProcess:
         process.status = AdoptionProcessStatusEnum.REJECTED
         db.commit()

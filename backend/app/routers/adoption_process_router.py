@@ -114,3 +114,11 @@ def skip_step(
         process_service.mark_process_completed(process_id)
 
     return process_service.get_adoption_process_steps_manager(process_id, auth.shelter_id)
+
+@router.get("/{process_id}/pdf")
+def get_process_contract_pdf(
+            process_id: int,
+            auth: AuthenticatedUser = Depends(require_manager),
+            process_service: AdoptionProcessService = Depends(get_process_service),
+    ):
+    process_service.generate_pdf(process_id, auth.shelter_id)

@@ -3,6 +3,7 @@ import 'package:bastetshelter/features/adoption/data/models/adoption_process/ado
 import 'package:bastetshelter/features/adoption/data/models/adoption_process/adoption_process_summary.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_requests/adoption_requests.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/adoption_step_details.dart';
+import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/contract_step_details.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/form_step_details.dart';
 
 class AdoptionRepository {
@@ -148,5 +149,23 @@ class AdoptionRepository {
   Future<AdoptionFormContent> getFormDetails(int processId) async {
     final response = await _apiClient.get('/adoption/$processId/steps/form');
     return AdoptionFormContent.fromJson(response);
+  }
+
+  Future<ContractStepDetails> updateShelterContractSignature(
+    int processId,
+  ) async {
+    final response = await _apiClient.patch(
+      '/adoption/$processId/steps/contract/shelter-signature',
+    );
+    return ContractStepDetails.fromJson(response);
+  }
+
+  Future<ContractStepDetails> updateAdoptantContractSignature(
+    int processId,
+  ) async {
+    final response = await _apiClient.patch(
+      '/adoption/$processId/steps/contract/adoptant-signature',
+    );
+    return ContractStepDetails.fromJson(response);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/contract_step_details.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_common_info.dart';
 import 'package:bastetshelter/features/common/pdf_viewer.dart';
+import 'package:bastetshelter/providers/adoption/adoption_detail_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -117,9 +118,9 @@ class ContractStepView extends ConsumerWidget {
                   title: const Text('Signed by Shelter'),
                   value: step.signedByShelter ?? false,
                   onChanged: (bool? value) {
-                    //     ref
-                    //           .read(adoptionDetailProvider(processId).notifier)
-                    //             .updateShelterSignature(value ?? false);
+                    ref
+                        .read(adoptionDetailProvider(processId).notifier)
+                        .updateShelterSignature();
                   },
                 ),
                 const Divider(height: 1),
@@ -127,9 +128,9 @@ class ContractStepView extends ConsumerWidget {
                   title: const Text('Signed by Adoptant'),
                   value: step.signedByAdoptant ?? false,
                   onChanged: (bool? value) {
-                    //       ref
-                    //       .read(adoptionDetailProvider(processId).notifier)
-                    //         .updateAdoptantSignature(value ?? false);
+                    ref
+                        .read(adoptionDetailProvider(processId).notifier)
+                        .updateAdoptantSignature();
                   },
                 ),
               ],

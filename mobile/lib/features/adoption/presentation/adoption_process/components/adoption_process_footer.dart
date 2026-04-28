@@ -7,11 +7,13 @@ import 'package:flutter/material.dart';
 class AdoptionProcessFooter extends StatefulWidget {
   final Future<void> Function(String reason) onReject;
   final Future<void> Function(String? notes) onApprove;
+  final bool canApprove;
 
   const AdoptionProcessFooter({
     super.key,
     required this.onReject,
     required this.onApprove,
+    this.canApprove = true,
   });
 
   @override
@@ -92,7 +94,7 @@ class _AdoptionProcessFooterState extends State<AdoptionProcessFooter> {
               child: PrimaryButton(
                 label: 'Approve & Continue',
                 isLoading: _isApproving,
-                onPressed: _handleApprove,
+                onPressed: widget.canApprove ? _handleApprove : null,
               ),
             ),
           ],

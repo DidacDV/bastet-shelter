@@ -1,7 +1,8 @@
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/contract_step_details.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_common_info.dart';
+import 'package:bastetshelter/features/common/pdf_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ContractStepView extends ConsumerWidget {
   const ContractStepView({
@@ -13,19 +14,27 @@ class ContractStepView extends ConsumerWidget {
   final ContractStepDetails step;
   final int processId;
 
-  //TODO: FIX
+  //TODO: ON EMULTARO, IT CRASHES, TEST P
   Future<void> _downloadPdf(String rawUrl) async {
-    final parts = rawUrl.split('/upload/');
-    final downloadUrl = '${parts[0]}/upload/fl_attachment/${parts[1]}';
-    final uri = Uri.parse(downloadUrl);
+    //final parts = rawUrl.split('/upload/');
+    //final downloadUrl = '${parts[0]}/upload/fl_attachment/${parts[1]}';
+    //final uri = Uri.parse(downloadUrl);
 
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
-    }
+    //if (!await canLaunchUrl(uri)) {
+    //debugPrint('Cannot launch URL: $uri');
+    //return;
+    //}
+
+    //  await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
   }
 
   void _viewPdf(BuildContext context, String url) {
-    //TODO: USE PDFRX TO DISPLAY PREVIEW
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PdfViewerScreen(url: url, title: 'Contract'),
+      ),
+    );
   }
 
   @override
@@ -38,30 +47,51 @@ class ContractStepView extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'Contract Details',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
+          StepCommonInfo(step: step, processId: processId),
+          const SizedBox(height: 26),
+          const Divider(),
+          const SizedBox(height: 26),
 
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton.icon(
-                onPressed: hasContract
-                    ? () => _viewPdf(context, step.contractUrl!)
-                    : null,
-                icon: const Icon(Icons.picture_as_pdf),
-                label: const Text('View PDF'),
+              Expanded(
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 12,
+                    ),
+                  ),
+                  onPressed: hasContract
+                      ? () => _viewPdf(context, step.contractUrl!)
+                      : null,
+                  icon: const Icon(Icons.picture_as_pdf, size: 20),
+                  label: const FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text('View PDF', maxLines: 1),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 12,
+                    ),
+                  ),
+                  onPressed: hasContract
+                      ? () => _downloadPdf(step.contractUrl!)
+                      : null,
+                  icon: const Icon(Icons.download, size: 20),
+                  label: const FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text('Download', maxLines: 1),
+                  ),
+                ),
               ),
             ],
-          ),
-          OutlinedButton.icon(
-            onPressed: hasContract
-                ? () => _downloadPdf(step.contractUrl!)
-                : null,
-            icon: const Icon(Icons.download),
-            label: const Text('Download'),
           ),
           if (!hasContract)
             const Padding(
@@ -85,7 +115,6 @@ class ContractStepView extends ConsumerWidget {
               children: [
                 CheckboxListTile(
                   title: const Text('Signed by Shelter'),
-                  subtitle: const Text('Manager signature verified'),
                   value: step.signedByShelter ?? false,
                   onChanged: (bool? value) {
                     //     ref
@@ -96,7 +125,6 @@ class ContractStepView extends ConsumerWidget {
                 const Divider(height: 1),
                 CheckboxListTile(
                   title: const Text('Signed by Adoptant'),
-                  subtitle: const Text('Adoptant signature verified'),
                   value: step.signedByAdoptant ?? false,
                   onChanged: (bool? value) {
                     //       ref

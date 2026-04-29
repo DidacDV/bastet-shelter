@@ -8,17 +8,19 @@ from app.models.adoption.adoption_steps.animal_pickup import AnimalPickup
 from app.models.adoption.adoption_steps.contract import Contract
 from app.models.adoption.adoption_steps.interview import Interview
 from app.models.adoption.adoption_steps.shelter_visit import ShelterVisit
+from app.repositories.adoption.adoption_process_repo import AdoptionProcessRepository
 from app.repositories.adoption.adoption_step_repo import AdoptionStepRepository
 from app.schemas.adoption_schema.adoption_mappers import step_to_detail_response
 from app.schemas.adoption_schema.adoption_schema import ScheduledDateUpdate, NotesUpdate
 from app.schemas.adoption_schema.adoption_step_schema import AdvanceStepRequest, InterviewResponse, \
-    ShelterVisitResponse, AnimalPickupResponse, AdoptionStepBaseResponse
+    ShelterVisitResponse, AnimalPickupResponse, AdoptionStepBaseResponse, ContractResponse
 
 
 class AdoptionStepsService:
     def __init__(self, db: Session):
         self.db = db
         self.step_repo = AdoptionStepRepository(db)
+        self.process_repo = AdoptionProcessRepository(db)
 
     def _get_current_step_or_raise(self, process_id: int) -> AdoptionStep:
         step = self.step_repo.get_current_step(self.db, process_id)
@@ -56,6 +58,9 @@ class AdoptionStepsService:
             step.notes = request.notes
 
     def _advance_contract(self, step: Contract, request: AdvanceStepRequest) -> None:
+        if not step.signed_by_adoptant or not step.signed_by_shelter:
+            raise BusinessLogicError("Contract has to be signed by both parties before it can be completed.")
+
         step.status = StepStatusEnum.COMPLETED
         step.finish_date = date.today()
         step.notes = request.notes
@@ -172,3 +177,29 @@ class AdoptionStepsService:
         self.db.commit()
         self.db.refresh(step)
         return step_to_detail_response(step)
+
+    def _get_contract_step_or_raise(self, process_id: int) -> Contract:
+        steps = self.step_repo.get_steps_for_process(self.db, process_id)
+        contract = next((s for s in steps if isinstance(s, Contract)), None)
+        if not contract:
+            raise NotFoundError("Contract step not found for this process")
+        return contract
+
+    def update_adoptant_signature(self, process_id: int, adoptant_id: int) -> ContractResponse:
+        process = self.process_repo.get_by_id(self.db, process_id)
+        if not process:
+            raise NotFoundError("Adoption process not found")
+        if process.adoptant_id != adoptant_id:
+            raise BusinessLogicError("You are not the adoptant of this process")
+        contract = self._get_contract_step_or_raise(process_id)
+        contract.signed_by_adoptant = True
+        self.db.commit()
+        self.db.refresh(contract)
+        return step_to_detail_response(contract)  # type: ignore
+
+    def update_shelter_signature(self, process_id: int) -> ContractResponse:
+        contract = self._get_contract_step_or_raise(process_id)
+        contract.signed_by_shelter = not contract.signed_by_shelter
+        self.db.commit()
+        self.db.refresh(contract)
+        return step_to_detail_response(contract)  # type: ignore

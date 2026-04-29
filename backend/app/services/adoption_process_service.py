@@ -1,3 +1,4 @@
+import io
 from datetime import date
 from sqlalchemy.orm import Session
 
@@ -18,6 +19,10 @@ from app.schemas.adoption_schema.adoption_form_schema import AdoptionFormSubmit
 
 from app.schemas.adoption_schema.adoption_mappers import process_to_response, process_to_detail_response
 from app.schemas.adoption_schema.adoption_process_schema import AdoptionProcessResponse, AdoptionProcessDetailResponse
+from app.services.pdf import pdf_service
+
+import cloudinary.uploader as cloudinary_uploader
+
 
 UNTOGGLE_ADOPTION_REASON = "This adoption process has been rejected because the animal is no longer in adoption."
 
@@ -186,3 +191,37 @@ class AdoptionProcessService:
             raise AuthorizationError("Adoptant does not have an active adoption process in this shelter")
 
         return AdoptantResponse.model_validate(adoptant)
+
+    def generate_pdf(self, process_id: int, shelter_id: int) -> str:
+        process = self.process_repo.get_by_id(self.db, process_id)
+        if not process:
+            raise NotFoundError("Adoption process not found")
+        animal = process.animal
+        adoptant = process.adoptant
+        if not animal or not adoptant:
+            raise NotFoundError("Animal or adoptant not found")
+
+        steps = self.step_repo.get_steps_for_process(self.db, process_id)
+        contract_step: Contract | None = next((s for s in steps if isinstance(s, Contract)), None)
+        if not contract_step:
+            raise NotFoundError("Contract step not found for this process")
+        if contract_step.status not in (StepStatusEnum.PENDING,):
+            raise BusinessLogicError("Contract step is not in a state that allows PDF generation")
+
+        file_name = f"contract_{process_id}_{animal.name}_{adoptant.name}".replace(" ", "_")
+
+        pdfbytes = pdf_service.generate_contract_pdf(animal=animal, adoptant=adoptant)
+        result = cloudinary_uploader.upload(
+            io.BytesIO(pdfbytes),
+            folder=f"shelters/{shelter_id}/contracts/",
+            public_id=file_name,
+            resource_type="raw",
+            format="pdf"
+        )
+
+        contract_step.contract_url = result["secure_url"]
+        contract_step.cloudinary_public_id = result["public_id"]
+        contract_step.generation_date = date.today()
+        self.db.commit()
+
+        return contract_step.contract_url #type: ignore

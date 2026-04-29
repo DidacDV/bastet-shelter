@@ -104,8 +104,29 @@ class AdoptionDetail extends _$AdoptionDetail {
     });
   }
 
-  void _invalidateAndRefresh() {
-    ref.invalidateSelf();
+  Future<void> _invalidateAndRefresh() async {
     ref.invalidate(adoptionListProvider);
+    ref.invalidateSelf();
+    await future;
+  }
+
+  Future<void> updateShelterSignature() async {
+    await genericApiCall(() async {
+      await ref
+          .read(adoptionRepositoryProvider)
+          .updateShelterContractSignature(processId);
+
+      await _invalidateAndRefresh();
+    });
+  }
+
+  Future<void> updateAdoptantSignature() async {
+    await genericApiCall(() async {
+      await ref
+          .read(adoptionRepositoryProvider)
+          .updateAdoptantContractSignature(processId);
+
+      await _invalidateAndRefresh();
+    });
   }
 }

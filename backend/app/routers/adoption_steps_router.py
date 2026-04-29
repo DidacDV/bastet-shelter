@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.core.dependencies.role_dependencies import get_db, require_manager
+from app.core.dependencies.role_dependencies import get_db, require_manager, get_current_adoptant
+from app.models.adoption.adoptant import Adoptant
 from app.models.user import AuthenticatedUser
 from app.schemas.adoption_schema.adoption_form_schema import AdoptionFormResponse
 from app.schemas.adoption_schema.adoption_schema import ScheduledDateUpdate, NotesUpdate, ActualPickUpDateUpdate
 from app.schemas.adoption_schema.adoption_step_schema import InterviewResponse, ShelterVisitResponse, \
-    AdoptionStepResponse, AnimalPickupResponse
-from app.schemas.animals_schema.animals_schema import AnimalResponse
+    AdoptionStepResponse, AnimalPickupResponse, ContractResponse
 
 from app.services.adoption_steps_service import AdoptionStepsService
 
@@ -70,3 +70,19 @@ def add_notes(
         step_service: AdoptionStepsService = Depends(get_step_service)
 ):
     return step_service.add_notes(process_id, step_id, notes= data)
+
+@router.patch("/contract/adoptant-signature", response_model=ContractResponse)
+def update_adoptant_signature(
+        process_id: int,
+        adoptant: Adoptant = Depends(get_current_adoptant),
+        step_service: AdoptionStepsService = Depends(get_step_service)
+):
+    return step_service.update_adoptant_signature(process_id, adoptant.id)
+
+@router.patch("/contract/shelter-signature", response_model=ContractResponse)
+def update_shelter_signature(
+        process_id: int,
+        auth: AuthenticatedUser = Depends(require_manager),
+        step_service: AdoptionStepsService = Depends(get_step_service)
+):
+    return step_service.update_shelter_signature(process_id)

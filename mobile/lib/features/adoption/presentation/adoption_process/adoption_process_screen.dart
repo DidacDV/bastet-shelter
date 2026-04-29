@@ -1,3 +1,4 @@
+import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/contract_step_details.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/adoption_process_body.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/adoption_process_footer.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/adoption_process_header.dart';
@@ -32,6 +33,17 @@ class AdoptionProcessScreen extends ConsumerWidget {
               data.process.status.name == 'rejected' ||
               data.process.status.name == 'completed';
           final isRejected = data.process.status.name == 'rejected';
+
+          final currentStep = data.process.steps
+              .where((s) => s.isCurrent)
+              .firstOrNull;
+
+          bool canApprove = true;
+          if (currentStep is ContractStepDetails) {
+            canApprove =
+                (currentStep.signedByAdoptant ?? false) &&
+                (currentStep.signedByShelter ?? false);
+          }
           return Column(
             children: [
               AdoptionProcessHeader(
@@ -54,6 +66,7 @@ class AdoptionProcessScreen extends ConsumerWidget {
               ),
               if (!isDone)
                 AdoptionProcessFooter(
+                  canApprove: canApprove,
                   onReject: (reason) async {
                     await ref
                         .read(

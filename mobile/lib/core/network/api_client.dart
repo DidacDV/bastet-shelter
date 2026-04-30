@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/navigation_service.dart';
@@ -95,6 +96,24 @@ class ApiClient {
           .post(url, headers: _getHeaders(), body: jsonEncode(body))
           .timeout(const Duration(seconds: AppConstants.timeoutDuration)),
     );
+    return _handleResponse(response);
+  }
+
+  //it seems to work : ) https://stackoverflow.com/a/69959721
+  Future<Map<String, dynamic>> postMultipart(String endpoint, File file) async {
+    final url = Uri.parse('${AppConfig.baseUrl}$endpoint');
+
+    final request = http.MultipartRequest('POST', url)
+      ..headers['Authorization'] = 'Bearer $_accessToken'
+      ..files.add(await http.MultipartFile.fromPath('file', file.path));
+
+    final streamed = await _send(
+      () => request.send().timeout(
+        const Duration(seconds: AppConstants.timeoutDuration),
+      ),
+    );
+
+    final response = await http.Response.fromStream(streamed);
     return _handleResponse(response);
   }
 

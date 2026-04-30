@@ -1,50 +1,34 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/home/data/dashboard_repository.dart';
-import 'package:bastetshelter/features/home/data/dashboard_model.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_list/adoption_list_screen.dart';
+import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/home/presentation/components/home_card.dart';
+import 'package:bastetshelter/providers/dashboard/dashboard_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:bastetshelter/core/service_locator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomeTab extends ConsumerStatefulWidget {
+class HomeTab extends ConsumerWidget {
   const HomeTab({super.key});
 
   @override
-  ConsumerState<HomeTab> createState() => _HomeTabState();
-}
-
-class _HomeTabState extends ConsumerState<HomeTab> {
-  late final Future<DashboardData> _dashboardFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _dashboardFuture = getIt<DashboardRepository>().getDashboard();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final dashboardAsync = ref.watch(dashboardProvider);
 
-    return FutureBuilder<DashboardData>(
-      future: _dashboardFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text(snapshot.error.toString()));
-        }
+    return Scaffold(
+      backgroundColor: AppColors.background,
 
-        final dashboard = snapshot.data!;
+      appBar: const BastetAppBar(),
 
-        return SafeArea(
+      body: dashboardAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(child: Text(error.toString())),
+        data: (dashboard) => SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
                 Text('Welcome', style: theme.textTheme.displayLarge),
                 Text(
                   'Keep on track with your shelter.',
@@ -84,7 +68,11 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                               icon: Icons.home_rounded,
                               bgColor: AppColors.secondaryTint,
                               fgColor: AppColors.secondary,
-                              onTap: () {},
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => AdoptionList(),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -107,13 +95,12 @@ class _HomeTabState extends ConsumerState<HomeTab> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 32),
               ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

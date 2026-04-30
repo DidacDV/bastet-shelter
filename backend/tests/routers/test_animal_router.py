@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 from fastapi import status
 from app.main import app
 from app.routers.animal_router import get_animal_service
-from app.core.dependencies import get_current_user, require_manager
+from app.core.dependencies.role_dependencies import get_current_user, require_manager
 from app.models.user import AuthenticatedUser
 
 mock_user = MagicMock()

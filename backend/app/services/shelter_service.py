@@ -2,6 +2,7 @@ from datetime import date
 from typing import Optional
 from sqlalchemy.orm import Session
 
+from app.core.exceptions import NotFoundError
 from app.core.security import create_access_token
 from app.core.utils import generate_code
 from app.models.refuge import Refuge
@@ -24,7 +25,6 @@ class ShelterService:
         self.member_repo = ShelterMemberRepository(db)
         self.trait_repo = TraitRepository(db)
 
-    #Shelter
     def create_shelter(self, data: ShelterCreate, user_id: int, user_email: str) -> dict:
         new_shelter = Shelter(name=data.name, province_id=data.province_id)
         created_shelter = self.shelter_repo.create(self.db, new_shelter)
@@ -53,38 +53,36 @@ class ShelterService:
         if shelter:
             return ShelterResponse.model_validate(shelter)
         else:
-            raise ValueError("Shelter not found")
+            raise NotFoundError("Shelter not found")
 
-    #doesn't include manager and volunteer codes
     def get_shelter_basic_info_by_id(self, shelter_id: int) -> Optional[ShelterBasicInfoResponse]:
         shelter = self.shelter_repo.get_by_id(self.db, shelter_id)
         if shelter:
             return ShelterBasicInfoResponse.model_validate(shelter)
         else:
-            raise ValueError("Shelter not found")
+            raise NotFoundError("Shelter not found")
 
     def update_shelter(self, shelter_id: int, data: ShelterUpdate) -> ShelterResponse:
         update_data = data.model_dump(exclude_unset=True)
         updated_shelter = self.shelter_repo.update(self.db, shelter_id, update_data)
         if not updated_shelter:
-            raise ValueError("Shelter not found")
+            raise NotFoundError("Shelter not found")
         return ShelterResponse.model_validate(updated_shelter)
 
-    #Shelter Members
     def join_as_volunteer(self, user_id: int, shelter_code: str, user_email: str) -> dict:
-        """Joins a shelter strictly as volunteer and rejects manager codes."""
         shelter = self.shelter_repo.get_by_volunteer_code(self.db, shelter_code)
         if not shelter:
-            raise ValueError("Invalid volunteer code")
+            raise NotFoundError("Invalid volunteer code")
+
         self.create_volunteer_member(user_id, shelter_code)
         acc_token = create_access_token(data={"sub": user_email, "role": RoleEnum.VOLUNTEER.value, "shelter_id": shelter.id})
         return {"access_token": acc_token, "token_type": "bearer"}
 
     def join_as_manager(self, user_id: int, shelter_code: str, user_email: str) -> dict:
-        """Joins a shelter strictly as manager and rejects volunteer codes."""
         shelter = self.shelter_repo.get_by_manager_code(self.db, shelter_code)
         if not shelter:
-            raise ValueError("Invalid manager code")
+            raise NotFoundError("Invalid manager code")
+
         self.create_manager_member_by_id(user_id, shelter.id)
         acc_token = create_access_token(data={"sub": user_email, "role": RoleEnum.MANAGER.value, "shelter_id": shelter.id})
         return {"access_token": acc_token, "token_type": "bearer"}
@@ -110,14 +108,13 @@ class ShelterService:
     def create_volunteer_member(self, user_id: int, shelter_code: str) -> ShelterMemberResponse:
         shelter = self.shelter_repo.get_by_volunteer_code(self.db, shelter_code)
         if not shelter:
-            raise ValueError(f"Shelter with code {shelter_code} not found")
+            raise NotFoundError(f"Shelter with code {shelter_code} not found")
         return self.create_volunteer_member_by_id(user_id, shelter.id)
 
-    #region CODE_MANAGEMENT
     def reset_manager_code(self, shelter_id: int) -> str:
         shelter = self.shelter_repo.get_by_id(self.db, shelter_id)
         if not shelter:
-            raise ValueError(f"Shelter with id {shelter_id} not found")
+            raise NotFoundError(f"Shelter with id {shelter_id} not found")
         new_code = generate_code()
         self.shelter_repo.update_manager_code(self.db, shelter_id, new_code)
         return new_code
@@ -125,7 +122,7 @@ class ShelterService:
     def reset_volunteer_code(self, shelter_id: int) -> str:
         shelter = self.shelter_repo.get_by_id(self.db, shelter_id)
         if not shelter:
-            raise ValueError(f"Shelter with id {shelter_id} not found")
+            raise NotFoundError(f"Shelter with id {shelter_id} not found")
         new_code = generate_code()
         self.shelter_repo.update_volunteer_code(self.db, shelter_id, new_code)
         return new_code

@@ -1,8 +1,8 @@
-import fastapi
 from sqlalchemy.orm import Session
 from app.models.refuge import Refuge
 from app.repositories.refuge_repo import RefugeRepository
 from app.schemas.refuge_schema import RefugeCreate, RefugeResponse, RefugeUpdate
+from app.core.exceptions import NotFoundError, AuthorizationError, BusinessLogicError
 
 class RefugeService:
     def __init__(self, db: Session):
@@ -11,9 +11,10 @@ class RefugeService:
 
     def update_refuge(self, refuge_id: int, shelter_id: int, data: RefugeUpdate) -> RefugeResponse:
         refuge = self.refuge_repo.get_by_id(self.db, refuge_id)
-        if not refuge or refuge.shelter_id != shelter_id:
-            from fastapi import HTTPException
-            raise HTTPException(status_code=404, detail="Refuge not found")
+        if not refuge:
+            raise NotFoundError("Refuge not found")
+        if refuge.shelter_id != shelter_id:
+            raise AuthorizationError("Refuge does not belong to this shelter")
 
         update_data = data.model_dump(exclude_unset=True)
         updated_refuge = self.refuge_repo.update(self.db, refuge_id, update_data)
@@ -33,27 +34,19 @@ class RefugeService:
     def delete_refuge(self, refuge_id: int, shelter_id: int) -> None:
         """Deletes refuge if it has no animals or shifts and its not the last one"""
         refuge = self.refuge_repo.get_by_id(self.db, refuge_id)
-        if not refuge or refuge.shelter_id != shelter_id:
-            from fastapi import HTTPException
-            raise HTTPException(status_code=404, detail="Refuge not found")
+        if not refuge:
+            raise NotFoundError("Refuge not found")
+        if refuge.shelter_id != shelter_id:
+            raise NotFoundError("Refuge not found")
 
         if refuge.animals:
-            raise fastapi.HTTPException(
-                status_code=400,
-                detail="Cannot delete refuge with animals. You have to move them out first."
-            )
+            raise BusinessLogicError("Cannot delete refuge with animals. You have to move them out first.")
 
         if refuge.shifts:
-            raise fastapi.HTTPException(
-                status_code=400,
-                detail="Cannot delete refuge with shifts. You have to move them out first."
-            )
+            raise BusinessLogicError("Cannot delete refuge with shifts. You have to move them out first.")
 
         all_refuges = self.refuge_repo.get_by_shelter(self.db, shelter_id)
         if len(all_refuges) <= 1:
-            raise fastapi.HTTPException(
-                status_code=400,
-                detail="Cannot delete the last refuge of a shelter."
-            )
+            raise BusinessLogicError("Cannot delete the last refuge of a shelter.")
 
         self.refuge_repo.delete(self.db, refuge_id)

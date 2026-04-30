@@ -3,8 +3,12 @@ import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/animals/data/models/animal_summary_model.dart';
 import 'package:bastetshelter/features/animals/data/animal_repository.dart';
 import 'package:bastetshelter/features/animals/data/animal_type_enum.dart';
+import 'package:bastetshelter/providers/adoption/adoption_list_provider.dart';
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../dashboard/dashboard_provider.dart' show dashboardProvider;
 
 part 'animal_provider.g.dart';
 
@@ -26,7 +30,7 @@ class Animals extends _$Animals {
     await future;
   }
 
-  Future<void> registerAnimal({
+  Future<int?> registerAnimal({
     required String name,
     required DateTime birthDate,
     DateTime? arrivalDate,
@@ -37,8 +41,8 @@ class Animals extends _$Animals {
     bool inAdoption = false,
     List<int> traitIds = const [],
   }) async {
-    await genericApiCall(() async {
-      await ref
+    final animal = await genericApiCall(() async {
+      return await ref
           .read(animalRepositoryProvider)
           .registerAnimal(
             name: name,
@@ -51,10 +55,13 @@ class Animals extends _$Animals {
             inAdoption: inAdoption,
             traitIds: traitIds,
           );
-
-      ref.invalidateSelf();
-      await future;
     });
+
+    if (animal == null) return null;
+
+    ref.invalidateSelf();
+    ref.invalidate(dashboardProvider);
+    return animal.id;
   }
 
   Future<void> updateAnimal({
@@ -92,6 +99,48 @@ class Animals extends _$Animals {
       ref.invalidateSelf();
       ref.invalidate(animalDetailProvider(animalId));
       await future;
+    });
+  }
+
+  Future<void> uploadAnimalImages(int animalId, List<XFile> images) async {
+    await genericApiCall(() async {
+      await ref
+          .read(animalRepositoryProvider)
+          .uploadAnimalImages(animalId, images);
+      ref.invalidate(animalDetailProvider(animalId));
+      ref.invalidateSelf();
+    });
+  }
+
+  Future<void> deleteAnimalImage(int animalId, int imageId) async {
+    await genericApiCall(() async {
+      await ref
+          .read(animalRepositoryProvider)
+          .deleteAnimalImage(animalId, imageId);
+      ref.invalidate(animalDetailProvider(animalId));
+      ref.invalidateSelf();
+    });
+  }
+
+  Future<void> deleteAnimal(int id) async {
+    final previousState = await future;
+
+    await ref.read(animalRepositoryProvider).deleteAnimal(id);
+    state = AsyncValue.data(
+      previousState.where((animal) => animal.id != id).toList(),
+    );
+    //refetch animal count
+    ref.invalidate(dashboardProvider);
+  }
+
+  Future<void> toggleAnimalAdoption(int id) async {
+    await genericApiCall(() async {
+      await ref.read(animalRepositoryProvider).toggleAnimalAdoption(id);
+      ref.invalidate(animalDetailProvider(id));
+      ref.invalidate(adoptionListProvider);
+      ref.invalidate(animalsProvider);
+      ref.invalidate(dashboardProvider);
+      ref.invalidateSelf();
     });
   }
 }

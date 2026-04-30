@@ -113,6 +113,7 @@ class _AddTreatmentBottomSheetState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // which MEDICNIE section
                         Text(
                           'Medicine',
                           style: theme.textTheme.labelMedium?.copyWith(
@@ -141,6 +142,8 @@ class _AddTreatmentBottomSheetState
                     ),
                   ),
                   const SizedBox(width: 12),
+
+                  //FREQUENCY Section
                   Expanded(
                     flex: 2,
                     child: Column(
@@ -165,6 +168,7 @@ class _AddTreatmentBottomSheetState
               ),
               const SizedBox(height: 20),
 
+              //DOSAGE Section
               Text(
                 'Dosage',
                 style: theme.textTheme.labelMedium?.copyWith(
@@ -203,7 +207,7 @@ class _AddTreatmentBottomSheetState
               ),
               const SizedBox(height: 20),
 
-              // 3. Dates
+              // Dates
               Text(
                 'Duration',
                 style: theme.textTheme.labelMedium?.copyWith(

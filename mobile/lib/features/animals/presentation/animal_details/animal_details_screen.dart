@@ -1,8 +1,10 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/animals/presentation/animal_details/%20components/animal_details_header.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/adoption/adoption_tab.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/basic_info_tab.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/components/animal_details_header.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/medical_info_tab.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/vet_info_tab.dart';
+import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/common/components/layout/app_tab_bar.dart';
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';
@@ -18,18 +20,23 @@ class AnimalDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final detailAsync = ref.watch(animalDetailProvider(animalId));
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: detailAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Could not load animal.')),
-        data: (animal) => AppTabLayout(
+    return detailAsync.when(
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (e, _) =>
+          const Scaffold(body: Center(child: Text('Could not load animal.'))),
+      data: (animalDetails) => Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: const BastetAppBar(
+          customTitle: 'Animal Details',
+          showBackButton: true,
+          showLogout: false,
+        ),
+        body: AppTabLayout(
           header: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.25,
+            height: MediaQuery.of(context).size.height * 0.30,
             child: AnimalDetailsHeader(
-              name: animal.name,
-              arrivalDate: animal.arrivalDate ?? animal.birthDate,
-              birthday: animal.birthDate,
+              animal: animalDetails,
               canEdit: true,
               onArrivalDateSave: (newDate) async {
                 await ref
@@ -46,6 +53,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
                     .read(animalsProvider.notifier)
                     .updateAnimal(animalId: animalId, name: newName);
               },
+              imageUrls: animalDetails.images.map((img) => img.url).toList(),
             ),
           ),
           tabs: const [
@@ -60,7 +68,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
             VetInfoTab(animalId: animalId),
             MedicalTreatmentsTab(animalId: animalId),
             const Icon(Icons.directions_bike),
-            const Icon(Icons.directions_bike),
+            AdoptionTab(animalId: animalId),
           ],
         ),
       ),

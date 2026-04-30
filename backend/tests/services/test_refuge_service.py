@@ -1,6 +1,8 @@
 import pytest
 from unittest.mock import MagicMock
 from fastapi import HTTPException
+
+from app.core.exceptions import BusinessLogicError, NotFoundError
 from app.services.refuge_service import RefugeService
 from app.schemas.refuge_schema import RefugeCreate
 from app.models.refuge import Refuge
@@ -73,34 +75,26 @@ def test_delete_refuge_success(refuge_service):
 
 def test_delete_refuge_not_found(refuge_service):
     refuge_service.refuge_repo.get_by_id.return_value = None
-    
-    with pytest.raises(HTTPException) as excinfo:
+    with pytest.raises(NotFoundError) as excinfo:
         refuge_service.delete_refuge(1, 1)
-    
-    assert excinfo.value.status_code == 404
-    assert excinfo.value.detail == "Refuge not found"
+    assert excinfo.value.message == "Refuge not found"
 
 def test_delete_refuge_wrong_shelter(refuge_service):
     mock_refuge = MagicMock(spec=Refuge)
     mock_refuge.shelter_id = 2
     refuge_service.refuge_repo.get_by_id.return_value = mock_refuge
-    
-    with pytest.raises(HTTPException) as excinfo:
+    with pytest.raises(NotFoundError) as excinfo:
         refuge_service.delete_refuge(1, 1)
-    
-    assert excinfo.value.status_code == 404
+    assert excinfo.value.message == "Refuge not found"
 
 def test_delete_refuge_with_animals(refuge_service):
     mock_refuge = MagicMock(spec=Refuge)
     mock_refuge.shelter_id = 1
     mock_refuge.animals = [MagicMock()]
     refuge_service.refuge_repo.get_by_id.return_value = mock_refuge
-    
-    with pytest.raises(HTTPException) as excinfo:
+    with pytest.raises(BusinessLogicError) as excinfo:
         refuge_service.delete_refuge(1, 1)
-    
-    assert excinfo.value.status_code == 400
-    assert "animals" in excinfo.value.detail
+    assert "animals" in excinfo.value.message.lower()
 
 def test_delete_refuge_with_shifts(refuge_service):
     mock_refuge = MagicMock(spec=Refuge)
@@ -108,12 +102,9 @@ def test_delete_refuge_with_shifts(refuge_service):
     mock_refuge.animals = []
     mock_refuge.shifts = [MagicMock()]
     refuge_service.refuge_repo.get_by_id.return_value = mock_refuge
-    
-    with pytest.raises(HTTPException) as excinfo:
+    with pytest.raises(BusinessLogicError) as excinfo:
         refuge_service.delete_refuge(1, 1)
-    
-    assert excinfo.value.status_code == 400
-    assert "shifts" in excinfo.value.detail
+    assert "shifts" in excinfo.value.message.lower()
 
 def test_delete_refuge_last_refuge(refuge_service):
     mock_refuge = MagicMock(spec=Refuge)
@@ -121,12 +112,9 @@ def test_delete_refuge_last_refuge(refuge_service):
     mock_refuge.shelter_id = 1
     mock_refuge.animals = []
     mock_refuge.shifts = []
-    
+
     refuge_service.refuge_repo.get_by_id.return_value = mock_refuge
     refuge_service.refuge_repo.get_by_shelter.return_value = [mock_refuge]
-    
-    with pytest.raises(HTTPException) as excinfo:
+    with pytest.raises(BusinessLogicError) as excinfo:
         refuge_service.delete_refuge(1, 1)
-    
-    assert excinfo.value.status_code == 400
-    assert "last refuge" in excinfo.value.detail
+    assert "last refuge" in excinfo.value.message.lower()

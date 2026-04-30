@@ -5,6 +5,7 @@ from datetime import date
 from app.services.shelter_service import ShelterService
 from app.models.shelter_member import RoleEnum
 from app.schemas.shelter_schema import ShelterCreate, ShelterUpdate
+from app.core.exceptions import NotFoundError
 
 
 def _mock_shelter(volunteer_code="VOL123", manager_code="MAN456"):
@@ -94,14 +95,14 @@ def test_join_as_volunteer_creates_volunteer_member(service):
 def test_join_as_volunteer_invalid_code_raises(service):
     service.shelter_repo.get_by_volunteer_code.return_value = None
 
-    with pytest.raises(ValueError, match="Invalid volunteer code"):
+    with pytest.raises(NotFoundError, match="Invalid volunteer code"): # Changed to NotFoundError
         service.join_as_volunteer(user_id=2, shelter_code="WRONG", user_email="vol@example.com")
 
 
 def test_join_as_volunteer_rejects_manager_code(service):
     service.shelter_repo.get_by_volunteer_code.return_value = None
 
-    with pytest.raises(ValueError, match="Invalid volunteer code"):
+    with pytest.raises(NotFoundError, match="Invalid volunteer code"): # Changed to NotFoundError
         service.join_as_volunteer(user_id=2, shelter_code="MAN456", user_email="vol@example.com")
 
 #endregion
@@ -128,14 +129,14 @@ def test_join_as_manager_creates_manager_member(service):
 def test_join_as_manager_invalid_code_raises(service):
     service.shelter_repo.get_by_manager_code.return_value = None
 
-    with pytest.raises(ValueError, match="Invalid manager code"):
+    with pytest.raises(NotFoundError, match="Invalid manager code"): # Changed to NotFoundError
         service.join_as_manager(user_id=3, shelter_code="WRONG", user_email="mgr@example.com")
 
 
 def test_join_as_manager_rejects_volunteer_code(service):
     service.shelter_repo.get_by_manager_code.return_value = None
 
-    with pytest.raises(ValueError, match="Invalid manager code"):
+    with pytest.raises(NotFoundError, match="Invalid manager code"): # Changed to NotFoundError
         service.join_as_manager(user_id=3, shelter_code="VOL123", user_email="mgr@example.com")
 #endregion
 
@@ -187,14 +188,14 @@ def test_reset_manager_code_returns_new_code(service):
 def test_reset_volunteer_code_shelter_not_found(service):
     service.shelter_repo.get_by_id.return_value = None
 
-    with pytest.raises(ValueError, match="not found"):
+    with pytest.raises(NotFoundError, match="not found"): # Changed to NotFoundError
         service.reset_volunteer_code(shelter_id=999)
 
 
 def test_reset_manager_code_shelter_not_found(service):
     service.shelter_repo.get_by_id.return_value = None
 
-    with pytest.raises(ValueError, match="not found"):
+    with pytest.raises(NotFoundError, match="not found"): # Changed to NotFoundError
         service.reset_manager_code(shelter_id=999)
 
 def test_get_shelter_by_id_success(service):
@@ -204,7 +205,7 @@ def test_get_shelter_by_id_success(service):
 
 def test_get_shelter_by_id_not_found(service):
     service.shelter_repo.get_by_id.return_value = None
-    with pytest.raises(ValueError, match="Shelter not found"):
+    with pytest.raises(NotFoundError, match="Shelter not found"): # Changed to NotFoundError
         service.get_shelter_by_id(999)
 
 def test_get_shelter_basic_info_by_id_success(service):
@@ -214,12 +215,12 @@ def test_get_shelter_basic_info_by_id_success(service):
 
 def test_get_shelter_basic_info_by_id_not_found(service):
     service.shelter_repo.get_by_id.return_value = None
-    with pytest.raises(ValueError, match="Shelter not found"):
+    with pytest.raises(NotFoundError, match="Shelter not found"): # Changed to NotFoundError
         service.get_shelter_basic_info_by_id(999)
 
 def test_create_volunteer_member_not_found(service):
     service.shelter_repo.get_by_volunteer_code.return_value = None
-    with pytest.raises(ValueError, match="not found"):
+    with pytest.raises(NotFoundError, match="not found"): # Changed to NotFoundError
         service.create_volunteer_member(user_id=1, shelter_code="WRONG")
 
 def test_create_volunteer_member_by_id(service):
@@ -238,7 +239,7 @@ def test_update_shelter_success(service):
 
     result = service.update_shelter(1, data)
 
-    assert result.name == "Rodamons"  # It returns the mock's original name because update just returns the mock
+    assert result.name == "Rodamons"
     service.shelter_repo.update.assert_called_once_with(service.db, 1, {"name": "New Name", "province_id": "08"})
 
 
@@ -246,7 +247,7 @@ def test_update_shelter_not_found(service):
     service.shelter_repo.update.return_value = None
     data = ShelterUpdate(name="New Name")
 
-    with pytest.raises(ValueError, match="Shelter not found"):
+    with pytest.raises(NotFoundError, match="Shelter not found"): # Changed to NotFoundError
         service.update_shelter(1, data)
 
 #endregion

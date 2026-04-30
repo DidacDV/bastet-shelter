@@ -1,9 +1,9 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/navigation_service.dart';
-import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
 import 'package:bastetshelter/features/animals/data/animal_type_enum.dart';
 import 'package:bastetshelter/features/animals/presentation/components/register_animal_form_utilities.dart';
+import 'package:bastetshelter/features/animals/presentation/upload_animal_images_screen.dart';
 import 'package:bastetshelter/features/common/components/dropdowns/refuge_dropdown.dart';
 import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
 import 'package:bastetshelter/features/common/components/fields/date_field.dart';
@@ -88,22 +88,29 @@ class _AnimalRegisterScreenState extends ConsumerState<AnimalRegisterScreen> {
 
     setState(() => _isLoading = true);
 
-    await genericApiCall(() async {
-      await ref
-          .read(animalsProvider.notifier)
-          .registerAnimal(
-            name: _nameController.text.trim(),
-            birthDate: _birthDate!,
-            arrivalDate: _arrivalDate,
-            description: _descriptionController.text.trim(),
-            breed: _breedController.text.trim(),
-            animalType: _animalType,
-            refugeId: finalRefugeId!,
-            inAdoption: _inAdoption,
-            traitIds: _selectedTraitIds.toList(),
-          );
-      if (mounted) Navigator.pop(context);
-    });
+    final int? newAnimalId = await ref
+        .read(animalsProvider.notifier)
+        .registerAnimal(
+          name: _nameController.text.trim(),
+          birthDate: _birthDate!,
+          arrivalDate: _arrivalDate,
+          description: _descriptionController.text.trim(),
+          breed: _breedController.text.trim(),
+          animalType: _animalType,
+          refugeId: finalRefugeId,
+          inAdoption: _inAdoption,
+          traitIds: _selectedTraitIds.toList(),
+        );
+
+    if (mounted) setState(() => _isLoading = false);
+
+    if (newAnimalId != null && mounted) {
+      Navigator.of(context, rootNavigator: true).push(
+        MaterialPageRoute(
+          builder: (context) => UploadAnimalImagesScreen(animalId: newAnimalId),
+        ),
+      );
+    }
 
     if (mounted) setState(() => _isLoading = false);
   }
@@ -220,7 +227,7 @@ class _AnimalRegisterScreenState extends ConsumerState<AnimalRegisterScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(28, 8, 28, 20),
               child: PrimaryButton(
-                label: 'Register Animal',
+                label: 'Register Animal And Continue',
                 isLoading: _isLoading,
                 onPressed: _submit,
               ),

@@ -101,7 +101,7 @@ class AnimalCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        if (!animal.inAdoption) ...[
+                        if (animal.inAdoption) ...[
                           const SizedBox(height: 4),
                           Row(
                             children: [

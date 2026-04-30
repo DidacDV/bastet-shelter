@@ -1,6 +1,8 @@
 import pytest
 from unittest.mock import MagicMock
 from datetime import datetime, date
+
+from app.core.exceptions import NotFoundError
 from app.services.shift_service import ShiftService
 from app.schemas.shift_schema.shift_schema import ShiftCreate
 from app.models.task.task import TaskStatusEnum
@@ -51,7 +53,7 @@ def test_create_shift_refuge_not_found(service):
     service.refuge_repo.get_by_id.return_value = None
     data = ShiftCreate(start_time=datetime.now(), end_time=datetime.now(), day=date.today())
 
-    with pytest.raises(ValueError, match="Refuge not found or does not belong to this shelter"):
+    with pytest.raises(NotFoundError, match="Refuge not found"):
         service.create_shift(data, 1, 1)
 
 def test_get_shifts(service):
@@ -195,43 +197,43 @@ def test_complete_task(service):
 
 def test_get_shifts_refuge_not_found(service):
     service.refuge_repo.get_by_id.return_value = None
-    with pytest.raises(ValueError, match="Refuge not found"):
+    with pytest.raises(NotFoundError, match="Refuge not found"):
         service.get_shifts(999)
 
 def test_join_shift_volunteer_not_found(service):
     service.member_repo.get_by_user.return_value = None
-    with pytest.raises(ValueError, match="Volunteer record not found"):
+    with pytest.raises(NotFoundError, match="Volunteer record not found"):
         service.join_shift(1, 1)
 
 def test_leave_shift_volunteer_not_found(service):
     service.member_repo.get_by_user.return_value = None
-    with pytest.raises(ValueError, match="Volunteer record not found"):
+    with pytest.raises(NotFoundError, match="Volunteer record not found"):
         service.leave_shift(1, 1)
 
 def test_add_task_to_shift_not_found(service):
     service.shift_repo.get_by_id.return_value = None
-    with pytest.raises(ValueError, match="Shift not found"):
+    with pytest.raises(NotFoundError, match="Shift not found"):
         service.add_task_to_shift(999, 1)
 
 def test_add_task_to_shift_template_not_found(service):
     service.shift_repo.get_by_id.return_value = MagicMock()
     service.task_repo.get_by_id.return_value = None
-    with pytest.raises(ValueError, match="Task template not found"):
+    with pytest.raises(NotFoundError, match="Task template not found"):
         service.add_task_to_shift(1, 999)
 
 def test_add_task_to_shift_animal_not_found(service):
     service.shift_repo.get_by_id.return_value = MagicMock()
     service.task_repo.get_by_id.return_value = MagicMock()
     service.animal_repo.get_by_id.return_value = None
-    with pytest.raises(ValueError, match="Animal not found"):
+    with pytest.raises(NotFoundError, match="Animal not found"):
         service.add_task_to_shift(1, 1, animal_id=999)
 
 def test_assign_task_not_found(service):
     service.shift_task_repo.assign_participant.return_value = None
-    with pytest.raises(ValueError, match="ShiftTask not found"):
+    with pytest.raises(NotFoundError, match="ShiftTask not found"):
         service.assign_task(999, 1)
 
 def test_complete_task_not_found(service):
     service.shift_task_repo.update_status.return_value = None
-    with pytest.raises(ValueError, match="ShiftTask not found"):
+    with pytest.raises(NotFoundError, match="ShiftTask not found"):
         service.complete_task(999)

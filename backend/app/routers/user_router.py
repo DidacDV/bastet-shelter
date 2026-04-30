@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_current_user, require_manager, require_volunteer
+from app.core.dependencies.role_dependencies import get_current_user
 from app.database import get_db
-from app.models.user import User, AuthenticatedUser
+from app.models.user import AuthenticatedUser
 from app.repositories.user_repo import UserRepository
 from app.schemas.user_schema import UserResponse
 from app.services.user_service import UserService
@@ -26,7 +26,4 @@ def get_current_user_profile(auth: AuthenticatedUser = Depends(get_current_user)
 
 @router.get("/{email}", response_model=UserResponse)
 def get_user_by_email(email: str, service: UserService = Depends(get_user_service)):
-    try:
-        return service.get_user(email)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return service.get_user(email)

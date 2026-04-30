@@ -6,7 +6,7 @@ from app.models.trait import Trait
 from app.models.user import User
 from app.models.login import Login
 from app.models.shelter_member import ShelterMember
-from app.models.animal import Animal
+from app.models.animal.animal import Animal
 from app.models.province import Province
 
 class ShelterAdmin(ModelView, model=Shelter):

@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 class LabelValue extends StatelessWidget {
   final String label;
   final String value;
+  final double? spacing;
 
-  const LabelValue({super.key, required this.label, required this.value});
+  const LabelValue({
+    super.key,
+    required this.label,
+    required this.value,
+    this.spacing,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +27,7 @@ class LabelValue extends StatelessWidget {
             ),
           ),
         ),
+        SizedBox(width: spacing ?? 2),
         Expanded(
           child: Text(
             value,

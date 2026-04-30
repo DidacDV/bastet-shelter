@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.repositories.user_repo import UserRepository
+from app.core.exceptions import NotFoundError
 
 
 class UserService:
@@ -11,5 +12,5 @@ class UserService:
     def get_user(self, email: str) -> User:
         user = self.repository.get_by_email(self.db, email)
         if not user:
-            raise ValueError(f"User with email {email} not found")
+            raise NotFoundError(f"User with email {email} not found")
         return user

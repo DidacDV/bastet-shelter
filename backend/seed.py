@@ -10,7 +10,7 @@ from app.models.refuge import Refuge
 from app.models.shelter_member import ShelterMember
 from app.models.user import User
 from app.models.shelter import Shelter
-from app.models.animal import Animal, AnimalTypeEnum
+from app.models.animal.animal import Animal, AnimalTypeEnum
 from app.models.shift.shift import Shift
 from app.models.shift.shift_participant import ShiftParticipant
 from app.models.task.task import Task

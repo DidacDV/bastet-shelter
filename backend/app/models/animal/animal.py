@@ -8,6 +8,11 @@ from app.database import Base
 from app.models import trait
 from app.models.medical.medical_treatment import AnimalTreatment
 from app.models.medical.vet_visit import VetVisit
+from app.models.animal.animal_image import AnimalImage
+from app.models.adoption.adoption_process import AdoptionProcess
+from app.models.task.shift_task import ShiftTask
+from app.models.refuge import Refuge
+from app.models.shelter_member import ShelterMember
 
 class AnimalTypeEnum(str, enum.Enum):
     CAT = "CAT"
@@ -38,3 +43,5 @@ class Animal(Base):
     traits = relationship("Trait", secondary=animal_trait_association, backref="animals")
     treatments = relationship("AnimalTreatment", back_populates="animal", cascade="all, delete-orphan")
     vet_visits = relationship("VetVisit", back_populates="animal", cascade="all, delete-orphan")
+    images = relationship("AnimalImage", back_populates="animal", cascade="all, delete-orphan")
+    adoption_processes = relationship("AdoptionProcess", back_populates="animal", cascade="all, delete-orphan")

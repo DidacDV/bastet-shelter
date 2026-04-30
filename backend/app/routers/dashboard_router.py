@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.core.dependencies import require_volunteer
+from app.core.dependencies.role_dependencies import require_volunteer
 from app.database import get_db
 from app.models.user import AuthenticatedUser
 from app.schemas.dashboard_schema import ShelterDashboardResponse

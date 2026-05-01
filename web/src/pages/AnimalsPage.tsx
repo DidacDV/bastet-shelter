@@ -19,7 +19,7 @@ export default function AnimalsPage() {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-full">
       <Stack align="center">
         <Text>{response}</Text>
         <Button onClick={handleTest} loading={loading}>

@@ -50,6 +50,19 @@ class AnimalShortInfo(BaseModel):
 class AnimalSummaryInfoList(BaseModel):
     animals: list[AnimalShortInfo]
 
+class AnimalPublicShortInfo(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    age: int
+    refuge_name: str
+    shelter_name: str  # Added this
+    image_url: str | None = None
+
+class AnimalPublicSummaryList(BaseModel):
+    animals: list[AnimalPublicShortInfo]
+
 class AnimalUpdate(BaseModel):
     name: Optional[str] = None
     birth_date: Optional[date] = None

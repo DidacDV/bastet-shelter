@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 from app.core.dependencies.role_dependencies import get_db, get_current_user, require_manager
 from app.models.user import AuthenticatedUser
 from app.schemas.animals_schema.animals_image_schema import AnimalImageResponse
-from app.schemas.animals_schema.animals_schema import AnimalCreate, AnimalResponse, AnimalSummaryInfoList, AnimalUpdate
+from app.schemas.animals_schema.animals_schema import AnimalCreate, AnimalResponse, AnimalSummaryInfoList, AnimalUpdate, \
+    AnimalPublicSummaryList
 from app.services.animal_service import AnimalService
 
 router = APIRouter(prefix="/animals", tags=["animals"])
@@ -35,6 +36,16 @@ def get_short_infos(
     service: AnimalService = Depends(get_animal_service)
 ):
     animals = service.get_all_animals_short_info(auth.shelter_id)
+    return {"animals": animals}
+
+@router.get("/short_info_portal", response_model=AnimalPublicSummaryList)
+def get_short_infos_portal(
+    province_id: str,
+    service: AnimalService = Depends(get_animal_service)
+):
+    if not province_id:
+        return {"animals": []}
+    animals = service.get_portal_animals_short_info(province_id)
     return {"animals": animals}
 
 @router.get("/{animal_id}", response_model=AnimalResponse)

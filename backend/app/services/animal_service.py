@@ -12,7 +12,8 @@ from app.repositories.animal_repo import AnimalRepository
 from app.repositories.refuge_repo import RefugeRepository
 from app.repositories.trait_repo import TraitRepository
 from app.schemas.animals_schema.animals_image_schema import AnimalImageResponse
-from app.schemas.animals_schema.animals_schema import AnimalCreate, AnimalResponse, AnimalShortInfo, AnimalUpdate
+from app.schemas.animals_schema.animals_schema import AnimalCreate, AnimalResponse, AnimalShortInfo, AnimalUpdate, \
+    AnimalPublicShortInfo
 
 import cloudinary
 import cloudinary.uploader as cloudinary_uploader
@@ -122,11 +123,37 @@ class AnimalService:
 
     def get_all_animals_short_info(self, shelter_id: int) -> list[AnimalShortInfo]:
         results = self.animal_repo.get_all_short_info(self.db, shelter_id)
+        return self.create_short_info_list(results)
+
+    def get_portal_animals_short_info(self, province_id: str) -> list[AnimalPublicShortInfo]:
+        results = self.animal_repo.get_portal_short_info(self.db, province_id)
 
         short_info_list = []
         today = date.today()
 
         for row in results:
+            age = today.year - row.birth_date.year - (
+                    (today.month, today.day) < (row.birth_date.month, row.birth_date.day)
+            )
+
+            short_info_list.append(
+                AnimalPublicShortInfo(
+                    id=row.id,
+                    name=row.name,
+                    age=age,
+                    refuge_name=row.refuge_name,
+                    shelter_name=row.shelter_name,
+                    image_url=row.image_url
+                )
+            )
+
+        return short_info_list
+
+    def create_short_info_list(self, short_info) -> list[AnimalShortInfo]:
+        short_info_list = []
+        today = date.today()
+
+        for row in short_info:
             age = today.year - row.birth_date.year - (
                     (today.month, today.day) < (row.birth_date.month, row.birth_date.day)
             )
@@ -142,7 +169,6 @@ class AnimalService:
                     image_url=row.image_url
                 )
             )
-
         return short_info_list
 
     def update_animal(self, animal_id: int, data: AnimalUpdate, shelter_id: int) -> AnimalResponse:

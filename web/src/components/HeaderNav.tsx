@@ -1,7 +1,8 @@
-import { Group, Text, Box, UnstyledButton, Title } from "@mantine/core";
+import { Group, Box, UnstyledButton, Title } from "@mantine/core";
 import { Link, useLocation } from "react-router-dom";
 import { AppColors } from "../theme/constants";
 import logo from "../../public/logo.png";
+import { useAuth } from "../context/authContext";
 
 const ArrowIcon = () => (
   <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -17,37 +18,24 @@ const ArrowIcon = () => (
 
 export default function HeaderNav() {
   const location = useLocation();
+  const { isLoggedIn, logout } = useAuth();
 
   const NavItem = ({ to, label }: { to: string; label: string }) => {
     const isActive = location.pathname === to;
     return (
-      <Text
-        component={Link}
+      <Link
         to={to}
-        size="sm"
-        fw={500}
-        style={{
-          textDecoration: "none",
-          color: isActive ? AppColors.textDark : AppColors.textSecondary,
-          position: "relative",
-          paddingBottom: 2,
-          letterSpacing: "0.01em",
-          "&::after": {
-            content: '""',
-            position: "absolute",
-            bottom: -2,
-            left: 0,
-            width: isActive ? "100%" : "0%",
-            height: 1.5,
-            background: AppColors.primary,
-            transition: "width 0.25s cubic-bezier(.4,0,.2,1)",
-          },
-          "&:hover": { color: AppColors.textDark },
-          "&:hover::after": { width: "100%" },
-        }}
+        className={`
+          relative text-sm font-medium tracking-wide no-underline pb-0.5
+          transition-colors duration-200
+          ${isActive ? "text-text-dark" : "text-text-secondary hover:text-text-dark"}
+          after:content-[''] after:absolute after:-bottom-0.5 after:left-0 
+          after:h-[1.5px] after:bg-primary after:transition-all after:duration-250
+          ${isActive ? "after:w-full" : "after:w-0 hover:after:w-full"}
+        `}
       >
         {label}
-      </Text>
+      </Link>
     );
   };
 
@@ -55,66 +43,58 @@ export default function HeaderNav() {
     <Box
       component="header"
       bg={AppColors.surface}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 2rem",
-        height: 64,
-      }}
+      className="flex items-center justify-between px-8 h-16"
     >
       <UnstyledButton
         component={Link}
         to="/"
-        style={{ display: "flex", alignItems: "center", gap: 10 }}
+        className="flex items-center gap-2.5"
       >
         <img
           src={logo}
           alt="BastetShelter logo"
-          style={{ height: 54, width: "auto", display: "block" }}
+          className="h-[54px] w-auto block"
         />
         <Title
-          style={{
-            textDecoration: "none",
-            color: AppColors.textPrimary,
-            letterSpacing: "0.01em",
-            fontSize: "1rem",
-          }}
+          order={3}
+          className="no-underline text-text-primary tracking-wide text-base"
         >
           BastetShelter
         </Title>
       </UnstyledButton>
 
       <Group gap="xl" visibleFrom="sm">
-        <NavItem to="/" label="Provinces" />
         <NavItem to="/animals" label="Find a Pet" />
-        <NavItem to="/adoption" label="My Adoptions" />
+        
+        {isLoggedIn && <NavItem to="/adoption" label="My Adoptions" />}
       </Group>
 
-      <UnstyledButton
-        component={Link}
-        to="/login"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          fontSize: 13,
-          fontWeight: 500,
-          letterSpacing: "0.04em",
-          color: AppColors.primary,
-          background: "transparent",
-          border: `1.5px solid ${AppColors.primary}`,
-          borderRadius: 2,
-          padding: "7px 18px",
-          transition: "background 0.18s, color 0.18s",
-          "&:hover": {
-            background: AppColors.primary,
-            color: "#fff",
-          },
-        }}
-      >
-        Log In <ArrowIcon />
-      </UnstyledButton>
+      {!isLoggedIn ? (
+        <UnstyledButton
+          component={Link}
+          to="/login"
+          className="
+            flex items-center gap-1.5 text-[13px] font-medium tracking-wider
+            text-primary bg-transparent border-[1.5px] border-primary rounded-sm
+            px-[18px] py-[7px] transition-all duration-200
+            hover:bg-primary hover:text-white
+          "
+        >
+          Log In <ArrowIcon />
+        </UnstyledButton>
+      ) : (
+        <UnstyledButton
+          onClick={logout}
+          className="
+            flex items-center gap-1.5 text-[13px] font-medium tracking-wider
+            text-error bg-transparent border-[1.5px] border-error rounded-sm
+            px-[18px] py-[7px] transition-all duration-200
+            hover:bg-error hover:text-white
+          "
+        >
+          Log Out
+        </UnstyledButton>
+      )}
     </Box>
   );
 }

@@ -5,7 +5,10 @@ import { AppColors } from "./constants";
 export const theme = createTheme({
   primaryColor: "primary",
   white: AppColors.surface,
-  fontFamily: "Inter, system-ui, Avenir, Helvetica, Arial, sans-serif",
+  fontFamily: '"Nunito", sans-serif',
+  headings: {
+    fontFamily: '"Nunito", sans-serif',
+  },
 
   colors: {
     primary: generateColors(AppColors.primary),

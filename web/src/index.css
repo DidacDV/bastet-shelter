@@ -2,6 +2,7 @@
 @import "@mantine/core/styles.css";
 
 @theme {
+  --font-sans: "Nunito", sans-serif;
   --color-primary: #3b3686;
   --color-secondary: #767ae6;
   --color-accent: #edba40;

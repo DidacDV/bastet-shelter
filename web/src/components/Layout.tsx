@@ -7,7 +7,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <AppShell header={{ height: 70 }} className="bg-background">
+    <AppShell header={{ height: 48 }} className="bg-background">
       <AppShell.Header>
         <HeaderNav />
       </AppShell.Header>

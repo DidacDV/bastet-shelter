@@ -43,29 +43,26 @@ export default function HeaderNav() {
     <Box
       component="header"
       bg={AppColors.surface}
-      className="flex items-center justify-between px-8 h-16"
+      px={32}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
     >
       <UnstyledButton
         component={Link}
         to="/"
-        className="flex items-center gap-2.5"
+        style={{ display: "flex", alignItems: "center", gap: 10 }}
       >
-        <img
-          src={logo}
-          alt="BastetShelter logo"
-          className="h-[54px] w-auto block"
-        />
-        <Title
-          order={3}
-          className="no-underline text-text-primary tracking-wide text-base"
-        >
+        <img src={logo} alt="BastetShelter logo" style={{ height: 54, width: "auto", display: "block" }} />
+        <Title order={3} style={{ color: AppColors.textPrimary, fontWeight: 600, fontSize: "1rem", letterSpacing: "0.02em" }}>
           BastetShelter
         </Title>
       </UnstyledButton>
 
-      <Group gap="xl" visibleFrom="sm">
+      <Group gap="xl" visibleFrom="sm" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
         <NavItem to="/animals" label="Find a Pet" />
-        
         {isLoggedIn && <NavItem to="/adoption" label="My Adoptions" />}
       </Group>
 

@@ -7,6 +7,7 @@ export interface AnimalPublicShortInfo {
   refuge_name: string;
   shelter_name: string;
   image_url: string | null;
+  animal_type: "CAT" | "DOG" | "OTHER";
 }
 
 export interface AnimalPublicSummaryList {

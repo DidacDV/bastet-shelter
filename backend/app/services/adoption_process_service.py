@@ -145,6 +145,7 @@ class AdoptionProcessService:
         """marks the entire adoption process as completed (its steps too)"""
         process = self._get_process_or_raise(process_id)
         self.process_repo.mark_completed(self.db, process)
+        process.animal.in_adoption = False
         # todo: NOTIFY ADOPTANT
 
     def get_adoption_process_details(self, process_id: int) -> AdoptionProcessDetailResponse:

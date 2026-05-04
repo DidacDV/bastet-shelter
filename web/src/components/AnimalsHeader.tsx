@@ -1,5 +1,19 @@
-import { Container, Group, Title, Text, TextInput, SegmentedControl, Center } from "@mantine/core";
-import { IconCat, IconClipboardCheck, IconDog, IconDots, IconSearch } from "@tabler/icons-react";
+import {
+  Container,
+  Group,
+  Title,
+  Text,
+  TextInput,
+  SegmentedControl,
+  Center,
+} from "@mantine/core";
+import {
+  IconCat,
+  IconClipboardCheck,
+  IconDog,
+  IconDots,
+  IconSearch,
+} from "@tabler/icons-react";
 import { AppColors } from "../theme/constants";
 import { useNavigate } from "react-router-dom";
 import ProvinceSelect from "./ProvinceSelect";
@@ -30,11 +44,19 @@ export default function AnimalsHeader({
   };
 
   return (
-    <div style={{ borderBottom: `1px solid ${AppColors.divider}`, background: AppColors.pureWhite }}>
+    <div
+      style={{
+        borderBottom: `1px solid ${AppColors.divider}`,
+        background: AppColors.pureWhite,
+      }}
+    >
       <Container size="lg" py="xl">
         <Group justify="space-between" align="flex-start" mb="xs">
           <div>
-            <Title order={2} style={{ color: AppColors.textDark, marginBottom: 4 }}>
+            <Title
+              order={2}
+              style={{ color: AppColors.textDark, marginBottom: 4 }}
+            >
               Available Animals
             </Title>
             <Text c="dimmed">
@@ -113,7 +135,10 @@ export default function AnimalsHeader({
               },
             ]}
             styles={{
-              root: { background: AppColors.tintedBg, border: `1px solid ${AppColors.outline}` },
+              root: {
+                background: AppColors.tintedBg,
+                border: `1px solid ${AppColors.outline}`,
+              },
             }}
           />
         </Group>
@@ -122,8 +147,8 @@ export default function AnimalsHeader({
           {totalResults === 0
             ? "No animals found"
             : totalResults === 1
-            ? "1 animal found"
-            : `${totalResults} animals found`}
+              ? "1 animal found"
+              : `${totalResults} animals found`}
         </Text>
       </Container>
     </div>

@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Select, type SelectProps, Loader } from "@mantine/core";
 import { IconMapPin } from "@tabler/icons-react";
-import { geoRepository, type Province } from "../features/locations/locationRepository";
+import {
+  geoRepository,
+  type Province,
+} from "../features/locations/locationRepository";
 import { AppColors } from "../theme/constants";
 
 interface ProvinceSelectProps extends Omit<SelectProps, "data"> {}
@@ -14,11 +17,14 @@ export default function ProvinceSelect(props: ProvinceSelectProps) {
     geoRepository
       .getProvinces()
       .then((res) => setProvinces(res ? res.provinces : []))
-      .catch(() => {}) 
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
-  const provinceOptions = provinces.map((p) => ({ value: p.id, label: p.name }));
+  const provinceOptions = provinces.map((p) => ({
+    value: p.id,
+    label: p.name,
+  }));
 
   return (
     <Select
@@ -29,7 +35,10 @@ export default function ProvinceSelect(props: ProvinceSelectProps) {
         loading ? (
           <Loader size="xs" color="primary" />
         ) : (
-          <IconMapPin size={props.size === "sm" ? 14 : 16} color={AppColors.textHint} />
+          <IconMapPin
+            size={props.size === "sm" ? 14 : 16}
+            color={AppColors.textHint}
+          />
         )
       }
       {...props}

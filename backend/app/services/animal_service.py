@@ -13,7 +13,7 @@ from app.repositories.refuge_repo import RefugeRepository
 from app.repositories.trait_repo import TraitRepository
 from app.schemas.animals_schema.animals_image_schema import AnimalImageResponse
 from app.schemas.animals_schema.animals_schema import AnimalCreate, AnimalResponse, AnimalShortInfo, AnimalUpdate, \
-    AnimalPublicShortInfo
+    AnimalPublicShortInfo, AnimalPublicDetail
 
 import cloudinary
 import cloudinary.uploader as cloudinary_uploader
@@ -52,6 +52,30 @@ class AnimalService:
             refuge_name=animal.refuge.name,
             traits=animal.traits,
             adoption_processes=process_ids,
+            images=[
+                AnimalImageResponse(
+                    id=img.id,
+                    url=img.url,
+                    cloudinary_public_id=img.cloudinary_public_id,
+                    order=img.order
+                )
+                for img in sorted(animal.images, key=lambda x: x.order)
+            ],
+        )
+
+    def _to_public_detail(self, animal: Animal) -> AnimalPublicDetail:
+        return AnimalPublicDetail(
+            id=animal.id,
+            name=animal.name,
+            shelter_name=animal.refuge.shelter.name,
+            birth_date=animal.birth_date,
+            arrival_date=animal.arrival_date,
+            description=animal.description,
+            breed=animal.breed,
+            animal_type=animal.animal_type,
+            in_adoption=animal.in_adoption,
+            refuge_name=animal.refuge.name,
+            traits=animal.traits,
             images=[
                 AnimalImageResponse(
                     id=img.id,
@@ -114,6 +138,12 @@ class AnimalService:
 
         updated_animal = self.animal_repo.update_adoption_status(self.db, animal_id, new_status)
         return self._to_response(updated_animal)
+
+    def get_animal_public_detail(self, animal_id: int) -> AnimalPublicDetail:
+        animal = self.animal_repo.get_by_id(self.db, animal_id)
+        if not animal:
+            raise NotFoundError("Animal not found")
+        return self._to_public_detail(animal)
 
     def get_animal_by_id(self, animal_id: int) -> AnimalResponse:
         animal = self.animal_repo.get_by_id(self.db, animal_id)

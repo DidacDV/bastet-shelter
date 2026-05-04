@@ -6,7 +6,7 @@ from app.core.dependencies.role_dependencies import get_db, get_current_user, re
 from app.models.user import AuthenticatedUser
 from app.schemas.animals_schema.animals_image_schema import AnimalImageResponse
 from app.schemas.animals_schema.animals_schema import AnimalCreate, AnimalResponse, AnimalSummaryInfoList, AnimalUpdate, \
-    AnimalPublicSummaryList
+    AnimalPublicSummaryList, AnimalPublicDetail
 from app.services.animal_service import AnimalService
 
 router = APIRouter(prefix="/animals", tags=["animals"])
@@ -47,6 +47,13 @@ def get_short_infos_portal(
         return {"animals": []}
     animals = service.get_portal_animals_short_info(province_id)
     return {"animals": animals}
+
+@router.get("/public/{animal_id}", response_model=AnimalPublicDetail)
+def get_animal_public_detail(
+    animal_id: int,
+    service: AnimalService = Depends(get_animal_service)
+):
+    return service.get_animal_public_detail(animal_id)
 
 @router.get("/{animal_id}", response_model=AnimalResponse)
 def get_animal_detail(

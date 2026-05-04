@@ -36,6 +36,22 @@ class AnimalResponse(BaseModel):
     images: list[AnimalImageResponse] = []
     adoption_processes: list[int] = []
 
+class AnimalPublicDetail(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    birth_date: date
+    arrival_date: date | None
+    description: str
+    breed: str
+    animal_type: str
+    in_adoption: bool
+    shelter_name: str
+    refuge_name: str
+    traits: list[TraitResponse] = []
+    images: list[AnimalImageResponse] = []
+
 class AnimalShortInfo(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

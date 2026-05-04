@@ -1,14 +1,26 @@
 import apiClient from "../../core/network/apiClient";
-
-export interface AdoptionProcessShort {
-  id: string | number;
-  animal_name: string;
-  animal_photo: string;
-  status: "pending" | "interview" | "approved" | "rejected" | "completed";
-  start_date: string;
-}
+import type {
+  AdoptionFormSubmit,
+  AdoptionProcessDetail,
+  AdoptionProcessShort,
+  ContractStep,
+} from "./adoptionTypes";
 
 export const adoptionsRepository = {
   getMyAdoptions: () =>
-    apiClient.get<AdoptionProcessShort[]>("/adoptant/processes"),
+    apiClient.get<{ processes: AdoptionProcessShort[] }>("/adoptant/processes"),
+
+  getAdoptionDetail: (processId: number) =>
+    apiClient.get<AdoptionProcessDetail>(`/adoptant/processes/${processId}`),
+
+  startAdoption: (animalId: number, formData: AdoptionFormSubmit) =>
+    apiClient.post<AdoptionProcessDetail>(
+      `/adoption/start/${animalId}`,
+      formData,
+    ),
+
+  signContract: (processId: number) =>
+    apiClient.patch<ContractStep>(
+      `/adoption/${processId}/steps/contract/adoptant-signature`,
+    ),
 };

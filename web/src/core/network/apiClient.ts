@@ -73,7 +73,16 @@ const apiClient = {
       method: "PUT",
       body: JSON.stringify(body),
     }),
-
+  patch: <T>(
+    endpoint: string,
+    body?: unknown,
+    customConfig?: RequestInit,
+  ): Promise<T | null> =>
+    fetchClient<T>(endpoint, {
+      ...customConfig,
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
   delete: <T>(
     endpoint: string,
     customConfig?: RequestInit,

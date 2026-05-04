@@ -23,8 +23,20 @@ import AnimalsHeader, {
 import AnimalCard from "../components/AnimalCard";
 
 export default function AnimalsPage() {
-  const [searchParams] = useSearchParams();
-  const provinceId = searchParams.get("province");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlProvinceId = searchParams.get("province");
+
+  //store province in localStorage to persist selection across sessions and page reloads
+  useEffect(() => {
+    const savedProvince = localStorage.getItem("bastet_province");
+
+    if (!urlProvinceId && savedProvince) {
+      setSearchParams({ province: savedProvince }, { replace: true });
+    } else if (urlProvinceId) {
+      localStorage.setItem("bastet_province", urlProvinceId);
+    }
+  }, [urlProvinceId, setSearchParams]);
+  const provinceId = urlProvinceId || localStorage.getItem("bastet_province");
 
   const [animals, setAnimals] = useState<AnimalPublicShortInfo[]>([]);
   const [loading, setLoading] = useState(true);

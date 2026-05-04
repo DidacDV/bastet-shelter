@@ -15,6 +15,9 @@ import AnimalDetailHeader from "../components/AnimalDetailsHeader";
 import AnimalAboutCard from "../components/AnimalAboutCard";
 import AnimalDetailsCard from "../components/AnimalDetailsCard";
 import ImageViewerModal from "../components/ImageViewerModal";
+import AdoptionFormModal from "../components/AdoptionFormModal";
+import { adoptionsRepository } from "../features/adoptions/adoptionRepository";
+import type { AdoptionFormSubmit } from "../features/adoptions/adoptionTypes";
 
 export default function AnimalDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +28,7 @@ export default function AnimalDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [viewerImage, setViewerImage] = useState<string | null>(null);
+  const [adoptionModalOpen, setAdoptionModalOpen] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -39,7 +43,7 @@ export default function AnimalDetailPage() {
     if (!isLoggedIn) {
       navigate(`/login?redirect=/animals/${animal?.id}`);
     } else {
-      //TODO: open adoption form modal
+      setAdoptionModalOpen(true);
     }
   };
 
@@ -69,7 +73,10 @@ export default function AnimalDetailPage() {
       </Center>
     );
   }
-
+  const handleAdoptionSubmit = async (data: AdoptionFormSubmit) => {
+    await adoptionsRepository.startAdoption(animal.id, data);
+    navigate("/my-adoptions");
+  };
   return (
     <>
       <div
@@ -136,6 +143,12 @@ export default function AnimalDetailPage() {
       <ImageViewerModal
         imageUrl={viewerImage}
         onClose={() => setViewerImage(null)}
+      />
+      <AdoptionFormModal
+        opened={adoptionModalOpen}
+        onClose={() => setAdoptionModalOpen(false)}
+        animalName={animal.name}
+        onSubmit={handleAdoptionSubmit}
       />
     </>
   );

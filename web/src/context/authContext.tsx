@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 import { STORAGE_TOKEN_KEY, STORAGE_NAME_KEY } from "../core/constants";
 
@@ -32,6 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(STORAGE_NAME_KEY);
     setToken(null);
     setAdoptantName(null);
+    window.location.href = "/animals";
   };
 
   return (

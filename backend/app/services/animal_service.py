@@ -143,7 +143,8 @@ class AnimalService:
                     age=age,
                     refuge_name=row.refuge_name,
                     shelter_name=row.shelter_name,
-                    image_url=row.image_url
+                    image_url=row.image_url,
+                    animal_type=row.animal_type.value.upper()
                 )
             )
 

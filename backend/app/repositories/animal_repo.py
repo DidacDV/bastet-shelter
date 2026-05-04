@@ -65,6 +65,7 @@ class AnimalRepository(BaseRepository[Animal]):
                 Animal.id,
                 Animal.name,
                 Animal.birth_date,
+                Animal.animal_type,
                 Refuge.name.label("refuge_name"),
                 Shelter.name.label("shelter_name"),
                 primary_image.label("image_url"),

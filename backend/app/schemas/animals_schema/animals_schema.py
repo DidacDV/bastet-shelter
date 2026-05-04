@@ -58,6 +58,7 @@ class AnimalPublicShortInfo(BaseModel):
     age: int
     refuge_name: str
     shelter_name: str
+    animal_type: str
     image_url: str | None = None
 
 class AnimalPublicSummaryList(BaseModel):

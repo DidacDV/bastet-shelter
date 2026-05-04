@@ -17,6 +17,7 @@ from app.models.shelter_member import ShelterMember
 class AnimalTypeEnum(str, enum.Enum):
     CAT = "CAT"
     DOG = "DOG"
+    OTHER= "OTHER"
 
 animal_trait_association = Table(
     "animal_trait",

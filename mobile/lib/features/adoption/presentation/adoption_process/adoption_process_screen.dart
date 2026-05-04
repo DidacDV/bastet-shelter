@@ -49,7 +49,7 @@ class AdoptionProcessScreen extends ConsumerWidget {
               AdoptionProcessHeader(
                 process: data.process,
                 animalName: data.animal.name,
-                adoptantName: data.adoptant.name,
+                adoptantEmail: data.adoptant.email,
                 animalImageUrl: data.animal.primaryImageUrl,
               ),
               if (isRejected)

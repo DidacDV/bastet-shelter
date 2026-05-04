@@ -9,13 +9,13 @@ class AdoptionProcessHeader extends StatelessWidget {
     super.key,
     required this.process,
     required this.animalName,
-    required this.adoptantName,
+    required this.adoptantEmail,
     this.animalImageUrl,
   });
 
   final AdoptionProcessDetails process;
   final String animalName;
-  final String adoptantName;
+  final String adoptantEmail;
   final String? animalImageUrl;
 
   @override
@@ -71,7 +71,7 @@ class AdoptionProcessHeader extends StatelessWidget {
                       const SizedBox(height: 16),
                       _InfoItem(
                         label: 'Adoptant',
-                        value: adoptantName,
+                        value: adoptantEmail,
                         alignment: CrossAxisAlignment.start,
                       ),
                     ],

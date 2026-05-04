@@ -5,6 +5,7 @@ from datetime import date
 from app.models.adoption.adoption_process import AdoptionProcessStatusEnum
 from app.schemas.adoption_schema.adoption_step_schema import (
     AdoptionStepResponse,
+    AdoptionStepAdoptantSummary,
     AdoptionFormResponse,
     InterviewResponse,
     ShelterVisitResponse,
@@ -36,6 +37,19 @@ class AdoptionProcessResponseList(BaseModel):
 
 class AdoptionProcessDetailResponse(AdoptionProcessResponse):
     steps: list[AnyStepDetailResponse] = []
+
+class AdoptionProcessAdoptantResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    animal_id: int
+    animal_name: str
+    animal_image_url: str | None = None
+    start_date: date
+    end_date: date | None = None
+    status: AdoptionProcessStatusEnum
+    rejection_reason: str | None = None
+    current_step: Optional[AnyStepDetailResponse] = None
+    steps: list[AdoptionStepAdoptantSummary] = []
 
 class RejectionRequest(BaseModel):
     reason: str

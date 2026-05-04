@@ -8,6 +8,7 @@ from app.models.adoption.adoptant import Adoptant
 from app.schemas.adoption_schema.adoption_form_schema import AdoptionFormSubmit
 from app.schemas.adoption_schema.adoption_process_schema import (
     AdoptionProcessResponse,
+    AdoptionProcessAdoptantResponse,
     RejectionRequest,
     AdoptionProcessDetailResponse, AdoptionProcessResponseList
 )

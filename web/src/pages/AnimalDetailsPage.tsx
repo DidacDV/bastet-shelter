@@ -31,10 +31,8 @@ export default function AnimalDetailPage() {
   const [viewerImage, setViewerImage] = useState<string | null>(null);
   const [adoptionModalOpen, setAdoptionModalOpen] = useState(false);
 
-  // NEW: State to track if they already have an active process
   const [hasExistingProcess, setHasExistingProcess] = useState(false);
 
-  // Fetch Animal Data
   useEffect(() => {
     if (!id) return;
     animalRepository

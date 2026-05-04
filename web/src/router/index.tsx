@@ -5,6 +5,7 @@ import LoginPage from "../pages/LoginPage";
 import AdoptionPage from "../pages/AdoptionPage";
 import LocationPage from "../pages/LocationPage";
 import AuthCallbackPage from "../pages/AuthCallbackPage";
+import AnimalDetailPage from "../pages/AnimalDetailsPage";
 
 export default function Router() {
   return (
@@ -13,6 +14,7 @@ export default function Router() {
         <Routes>
           <Route path="/" element={<LocationPage />} />
           <Route path="/animals" element={<AnimalsPage />} />
+          <Route path="/animals/:id" element={<AnimalDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/adoption" element={<AdoptionPage />} />
           <Route path="/verify" element={<AuthCallbackPage />} />

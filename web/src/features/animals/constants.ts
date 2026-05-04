@@ -1,0 +1,19 @@
+export const LAYOUT_CONSTANTS = {
+  HEADER_OFFSET: "70px",
+  PAGE_BOTTOM_PADDING: 80,
+  GRID_GAP: 24,
+  CARD_PADDING: 24,
+  CARD_RADIUS: 12,
+  PHOTO_GRID_MAX_IMAGES: 4,
+  PHOTO_GRID_MAX_WIDTH: 720,
+  PHOTO_GRID_ITEM_MAX_WIDTH: 180,
+  PHOTO_GRID_GAP: 12,
+  PHOTO_GRID_EMPTY_HEIGHT: 100,
+  HERO_NAME_SIZE: "2rem",
+};
+
+export const ANIMAL_TYPE_LABEL: Record<string, string> = {
+  DOG: "Dog",
+  CAT: "Cat",
+  OTHER: "Other",
+};

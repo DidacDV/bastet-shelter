@@ -1,5 +1,5 @@
 import { Group, Title, Badge, Text, Button } from "@mantine/core";
-import { IconMapPin, IconHeart } from "@tabler/icons-react";
+import { IconMapPin, IconHeart, IconEye } from "@tabler/icons-react";
 import { AppColors } from "../theme/constants";
 import { type AnimalPublicDetails } from "../features/animals/animalsRepository";
 import {
@@ -7,17 +7,19 @@ import {
   ANIMAL_TYPE_LABEL,
 } from "../features/animals/constants";
 
-interface AnimalDetailHeaderProps {
+interface AnimalHeaderProps {
   animal: AnimalPublicDetails;
-  onAdopt: () => void;
+  onAdoptClick: () => void;
   isLoggedIn: boolean;
+  hasExistingProcess: boolean;
 }
 
 export default function AnimalDetailHeader({
   animal,
-  onAdopt,
+  onAdoptClick,
   isLoggedIn,
-}: AnimalDetailHeaderProps) {
+  hasExistingProcess,
+}: AnimalHeaderProps) {
   return (
     <Group justify="space-between" align="flex-start" mb="xl" wrap="nowrap">
       <div>
@@ -48,14 +50,18 @@ export default function AnimalDetailHeader({
           size="md"
           radius="md"
           color="primary"
-          leftSection={<IconHeart size={16} />}
-          onClick={onAdopt}
+          leftSection={
+            hasExistingProcess ? <IconEye size={16} /> : <IconHeart size={16} />
+          }
+          onClick={onAdoptClick}
           style={{ flexShrink: 0 }}
           visibleFrom="sm"
         >
-          {isLoggedIn
-            ? `Adopt ${animal.name}`
-            : `Quickly log in to adopt ${animal.name}`}
+          {hasExistingProcess
+            ? `View your adoption process with ${animal.name}`
+            : isLoggedIn
+              ? `Adopt ${animal.name}`
+              : `Quickly log in to adopt ${animal.name}`}
         </Button>
       )}
     </Group>

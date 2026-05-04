@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Loader, Center, Button, Box, Text } from "@mantine/core";
-import { IconArrowLeft, IconHeart } from "@tabler/icons-react";
+import { IconArrowLeft, IconHeart, IconEye } from "@tabler/icons-react";
 import {
   animalRepository,
   type AnimalPublicDetails,
@@ -27,9 +27,14 @@ export default function AnimalDetailPage() {
   const [animal, setAnimal] = useState<AnimalPublicDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
   const [viewerImage, setViewerImage] = useState<string | null>(null);
   const [adoptionModalOpen, setAdoptionModalOpen] = useState(false);
 
+  // NEW: State to track if they already have an active process
+  const [hasExistingProcess, setHasExistingProcess] = useState(false);
+
+  // Fetch Animal Data
   useEffect(() => {
     if (!id) return;
     animalRepository
@@ -39,12 +44,38 @@ export default function AnimalDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  const handleAdopt = () => {
-    if (!isLoggedIn) {
+  useEffect(() => {
+    if (isLoggedIn && animal) {
+      adoptionsRepository.getMyAdoptions().then((res) => {
+        if (res) {
+          const adoptionsList = Array.isArray(res) ? res : res.processes || [];
+
+          const activeProcess = adoptionsList.find(
+            (p) =>
+              p.animal_id === animal.id &&
+              p.status !== "REJECTED" &&
+              p.status !== "CANCELLED",
+          );
+
+          setHasExistingProcess(!!activeProcess);
+        }
+      });
+    }
+  }, [isLoggedIn, animal]);
+
+  const handleActionClick = () => {
+    if (hasExistingProcess) {
+      navigate("/adoption");
+    } else if (!isLoggedIn) {
       navigate(`/login?redirect=/animals/${animal?.id}`);
     } else {
       setAdoptionModalOpen(true);
     }
+  };
+
+  const handleAdoptionSubmit = async (data: AdoptionFormSubmit) => {
+    await adoptionsRepository.startAdoption(animal!.id, data);
+    navigate("/my-adoptions");
   };
 
   if (loading) {
@@ -73,10 +104,7 @@ export default function AnimalDetailPage() {
       </Center>
     );
   }
-  const handleAdoptionSubmit = async (data: AdoptionFormSubmit) => {
-    await adoptionsRepository.startAdoption(animal.id, data);
-    navigate("/my-adoptions");
-  };
+
   return (
     <>
       <div
@@ -106,8 +134,9 @@ export default function AnimalDetailPage() {
 
           <AnimalDetailHeader
             animal={animal}
-            onAdopt={handleAdopt}
+            onAdoptClick={handleActionClick}
             isLoggedIn={isLoggedIn}
+            hasExistingProcess={hasExistingProcess}
           />
 
           <div
@@ -129,12 +158,20 @@ export default function AnimalDetailPage() {
                 size="md"
                 radius="md"
                 color="primary"
-                leftSection={<IconHeart size={16} />}
-                onClick={handleAdopt}
+                leftSection={
+                  hasExistingProcess ? (
+                    <IconEye size={16} />
+                  ) : (
+                    <IconHeart size={16} />
+                  )
+                }
+                onClick={handleActionClick}
               >
-                {isLoggedIn
-                  ? `Adopt ${animal.name}`
-                  : `Quickly log in to adopt ${animal.name}`}
+                {hasExistingProcess
+                  ? `View your adoption process with ${animal.name}`
+                  : isLoggedIn
+                    ? `Adopt ${animal.name}`
+                    : `Quickly log in to adopt ${animal.name}`}
               </Button>
             </Box>
           )}

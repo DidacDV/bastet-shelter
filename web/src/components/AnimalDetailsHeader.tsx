@@ -7,15 +7,17 @@ import {
   ANIMAL_TYPE_LABEL,
 } from "../features/animals/constants";
 
-interface AnimalDetailsHeaderProps {
+interface AnimalDetailHeaderProps {
   animal: AnimalPublicDetails;
   onAdopt: () => void;
+  isLoggedIn: boolean;
 }
 
-export default function AnimalDetailsHeader({
+export default function AnimalDetailHeader({
   animal,
   onAdopt,
-}: AnimalDetailsHeaderProps) {
+  isLoggedIn,
+}: AnimalDetailHeaderProps) {
   return (
     <Group justify="space-between" align="flex-start" mb="xl" wrap="nowrap">
       <div>
@@ -41,17 +43,21 @@ export default function AnimalDetailsHeader({
         </Group>
       </div>
 
-      <Button
-        size="md"
-        radius="md"
-        color="primary"
-        leftSection={<IconHeart size={16} />}
-        onClick={onAdopt}
-        style={{ flexShrink: 0 }}
-        visibleFrom="sm"
-      >
-        Adopt {animal.name}
-      </Button>
+      {animal.in_adoption && (
+        <Button
+          size="md"
+          radius="md"
+          color="primary"
+          leftSection={<IconHeart size={16} />}
+          onClick={onAdopt}
+          style={{ flexShrink: 0 }}
+          visibleFrom="sm"
+        >
+          {isLoggedIn
+            ? `Adopt ${animal.name}`
+            : `Quickly log in to adopt ${animal.name}`}
+        </Button>
+      )}
     </Group>
   );
 }

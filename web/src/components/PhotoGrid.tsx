@@ -7,9 +7,14 @@ import { LAYOUT_CONSTANTS } from "../features/animals/constants";
 interface PhotoGridProps {
   images: AnimalImageResponse[];
   name: string;
+  onImageClick: (url: string) => void;
 }
 
-export default function PhotoGrid({ images, name }: PhotoGridProps) {
+export default function PhotoGrid({
+  images,
+  name,
+  onImageClick,
+}: PhotoGridProps) {
   const sorted = [...images]
     .sort((a, b) => a.order - b.order)
     .slice(0, LAYOUT_CONSTANTS.PHOTO_GRID_MAX_IMAGES);
@@ -55,6 +60,7 @@ export default function PhotoGrid({ images, name }: PhotoGridProps) {
           return (
             <div
               key={img.id}
+              onClick={() => onImageClick(img.url)}
               style={{
                 flex: `0 0 ${flexBasis}`,
                 maxWidth: LAYOUT_CONSTANTS.PHOTO_GRID_ITEM_MAX_WIDTH,
@@ -62,11 +68,14 @@ export default function PhotoGrid({ images, name }: PhotoGridProps) {
                 overflow: "hidden",
                 border: `1px solid ${AppColors.divider}`,
                 aspectRatio: "3 / 3",
+                cursor: "pointer",
               }}
+              className="group"
             >
               <img
                 src={img.url}
                 alt={name}
+                className="transition-transform duration-300 ease-out group-hover:scale-105" //zoom
                 style={{
                   width: "100%",
                   height: "100%",

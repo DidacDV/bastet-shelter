@@ -1,9 +1,9 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:flutter/material.dart';
 
-///RN USING STRIP PATTERN, TODO: make STRIP pattern OPTIONAL
 class ManageListCard extends StatelessWidget {
   final String title;
+  final Widget? titleTrailing;
   final Widget? subtitle;
   final IconData leadingIcon;
   final bool isEven;
@@ -13,6 +13,7 @@ class ManageListCard extends StatelessWidget {
   const ManageListCard({
     super.key,
     required this.title,
+    this.titleTrailing,
     this.subtitle,
     required this.leadingIcon,
     this.isEven = true,
@@ -49,7 +50,18 @@ class ManageListCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: theme.textTheme.titleMedium),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(title, style: theme.textTheme.titleMedium),
+                      ),
+                      if (titleTrailing != null) ...[
+                        const SizedBox(width: 8),
+                        titleTrailing!,
+                      ],
+                    ],
+                  ),
                   if (subtitle != null) ...[
                     const SizedBox(height: 4),
                     subtitle!,

@@ -1,14 +1,20 @@
-import { Card, Image, Stack, Group, Text, Badge } from "@mantine/core";
+import { Card, Image, Stack, Group, Text, Badge, Center } from "@mantine/core";
 import { IconMapPin } from "@tabler/icons-react";
 import { type AnimalPublicShortInfo } from "../features/animals/animalsRepository";
 import { AppColors } from "../theme/constants";
 import { Link } from "react-router-dom";
+import catPlaceholder from "../assets/images/Illustration-8.svg";
+import dogPlaceholder from "../assets/images/Illustration-1.svg";
 
 export default function AnimalCard({
   animal,
 }: {
   animal: AnimalPublicShortInfo;
 }) {
+  const fallbackImg =
+    animal.animal_type === "CAT" ? catPlaceholder : dogPlaceholder;
+  const isPlaceholder = !animal.image_url;
+
   return (
     <Link to={`/animals/${animal.id}`}>
       <Card
@@ -19,16 +25,32 @@ export default function AnimalCard({
           border: `1px solid ${AppColors.divider}`,
         }}
       >
-        <Card.Section className="overflow-hidden">
-          <Image
-            src={
-              animal.image_url || "https://placehold.co/600x400?text=No+Photo"
-            }
-            height={220}
-            alt={animal.name}
-            fallbackSrc="https://placehold.co/600x400?text=No+Photo"
-            className="transition-transform duration-500 ease-out group-hover:scale-120"
-          />
+        <Card.Section
+          className="overflow-hidden"
+          h={340}
+          bg={isPlaceholder ? AppColors.primaryTint : "transparent"}
+        >
+          {isPlaceholder ? (
+            <Center h="100%">
+              <Image
+                src={fallbackImg}
+                h={220}
+                w="auto"
+                fit="contain"
+                alt="No photo available"
+                className="transition-transform duration-500 ease-out group-hover:scale-110"
+              />
+            </Center>
+          ) : (
+            <Image
+              src={animal.image_url}
+              fallbackSrc={fallbackImg}
+              height={220}
+              fit="cover"
+              alt={animal.name}
+              className="transition-transform duration-500 ease-out group-hover:scale-120"
+            />
+          )}
         </Card.Section>
 
         <Stack p="md" gap="xs">

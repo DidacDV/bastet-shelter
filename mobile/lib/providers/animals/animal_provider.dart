@@ -138,7 +138,6 @@ class Animals extends _$Animals {
       await ref.read(animalRepositoryProvider).toggleAnimalAdoption(id);
       ref.invalidate(animalDetailProvider(id));
       ref.invalidate(adoptionListProvider);
-      ref.invalidate(animalsProvider);
       ref.invalidate(dashboardProvider);
       ref.invalidateSelf();
     });

@@ -3,6 +3,7 @@ import { IconCalendar } from "@tabler/icons-react";
 import { type AdoptionProcessShort } from "../features/adoptions/adoptionTypes";
 import { AppColors } from "../theme/constants";
 import { Link } from "react-router-dom";
+import placeholder from "../assets/images/paws/paw-cat-pet-svgrepo-com.svg";
 
 const STATUS_COLORS: Record<string, string> = {
   PENDING: AppColors.deepOrange,
@@ -27,6 +28,7 @@ export default function AdoptionCard({
 }: {
   adoption: AdoptionProcessShort;
 }) {
+  const fallbackImg = adoption.animal_image_url || placeholder;
   return (
     <Link to={`/adoptions/${adoption.id}`} style={{ textDecoration: "none" }}>
       <Card
@@ -39,13 +41,10 @@ export default function AdoptionCard({
       >
         <Card.Section className="overflow-hidden">
           <Image
-            src={
-              adoption.animal_image_url ||
-              "https://placehold.co/600x400?text=No+Photo"
-            }
+            src={adoption.animal_image_url || fallbackImg}
             height={220}
             alt={adoption.animal_name}
-            fallbackSrc="https://placehold.co/600x400?text=No+Photo"
+            fallbackSrc={fallbackImg}
             className="transition-transform duration-500 ease-out group-hover:scale-110" //zoom on hover
           />
         </Card.Section>

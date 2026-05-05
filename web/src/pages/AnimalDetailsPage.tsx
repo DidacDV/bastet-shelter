@@ -32,6 +32,9 @@ export default function AnimalDetailPage() {
   const [adoptionModalOpen, setAdoptionModalOpen] = useState(false);
 
   const [hasExistingProcess, setHasExistingProcess] = useState(false);
+  const [existingProcessId, setExistingProcessId] = useState<number | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!id) return;
@@ -56,6 +59,7 @@ export default function AnimalDetailPage() {
           );
 
           setHasExistingProcess(!!activeProcess);
+          setExistingProcessId(activeProcess?.id || null);
         }
       });
     }
@@ -63,7 +67,7 @@ export default function AnimalDetailPage() {
 
   const handleActionClick = () => {
     if (hasExistingProcess) {
-      navigate("/adoption");
+      navigate(`/adoptions/${existingProcessId}`);
     } else if (!isLoggedIn) {
       navigate(`/login?redirect=/animals/${animal?.id}`);
     } else {
@@ -73,7 +77,7 @@ export default function AnimalDetailPage() {
 
   const handleAdoptionSubmit = async (data: AdoptionFormSubmit) => {
     await adoptionsRepository.startAdoption(animal!.id, data);
-    navigate("/my-adoptions");
+    navigate("/adoptions");
   };
 
   if (loading) {

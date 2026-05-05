@@ -31,10 +31,16 @@ class ShelterRepository {
     String name,
     String location,
     String refugeName,
+    String? email,
   ) async {
     final data = await _client.post(
       '/shelters/',
-      body: {'name': name, 'province_id': location, 'refuge_name': refugeName},
+      body: {
+        'name': name,
+        'province_id': location,
+        'refuge_name': refugeName,
+        'shelter_email': email,
+      },
     );
     final token = data['access_token'];
     _client.setToken(token);

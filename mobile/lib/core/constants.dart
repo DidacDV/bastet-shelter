@@ -6,6 +6,10 @@ class AppConstants {
   static const int maxRefuges = 10;
   static const int timeoutDuration = 20; //seconds
   static const tabsPadding = EdgeInsets.fromLTRB(24, 12, 24, 16);
+  static const int animalsTab = 1;
+  static const int shiftsTab = 2;
+  static const int tasksTab = 3;
+  static const int communityTab = 4;
 }
 
 //color palette from https://es.pinterest.com/pin/492649954302676/

@@ -2,6 +2,7 @@ import io
 from datetime import date
 from sqlalchemy.orm import Session
 
+from app.core.email.email_sender import send_email
 from app.core.exceptions import NotFoundError, BusinessLogicError, AuthorizationError
 from app.models.adoption.adoption_process import AdoptionProcess, AdoptionProcessStatusEnum
 from app.models.adoption.adoption_steps.adoption_step import AdoptionStep, StepStatusEnum, StepTypeEnum, STEP_ORDER
@@ -22,6 +23,7 @@ from app.schemas.adoption_schema.adoption_process_schema import AdoptionProcessR
 from app.services.pdf import pdf_service
 
 import cloudinary.uploader as cloudinary_uploader
+from fastapi import BackgroundTasks
 
 
 UNTOGGLE_ADOPTION_REASON = "This adoption process has been rejected because the animal is no longer in adoption."
@@ -106,7 +108,7 @@ class AdoptionProcessService:
         self.db.refresh(process)
         return process_to_response(process, steps)
 
-    def _cancel_process(self, process: AdoptionProcess, reason: str = UNTOGGLE_ADOPTION_REASON) -> None:
+    def _cancel_process(self, process: AdoptionProcess, background_tasks: BackgroundTasks, reason: str = UNTOGGLE_ADOPTION_REASON) -> None:
         """rejects all pending steps, marks process rejected, and notifies adoptant."""
         if reason:
             current_step = self.step_repo.get_current_step(self.db, process.id)
@@ -115,38 +117,45 @@ class AdoptionProcessService:
 
         self.step_repo.mark_all_rejected(self.db, process.id)
         self.process_repo.mark_rejected(self.db, process)
-        # TODO: notify adoptant (process.adoptant_id)
+        send_email(subject="Your Bastet Shelter Access Link",
+                   recipients=[str(process.adoptant.email)],
+                   body=f"Your adoption process for {process.animal.name} has been rejected. Reason: {reason}",
+                   background_tasks=background_tasks)
 
-    def cancel_adoption(self, process_id: int, adoptant_id: int) -> None:
+    def cancel_adoption(self, process_id: int, adoptant_id: int, background_tasks: BackgroundTasks) -> None:
         """done by ADOPTANT"""
         process = self._get_process_or_raise(process_id)
         if process.adoptant_id != adoptant_id:
             raise AuthorizationError("Not authorized to cancel this adoption process")
         self.check_is_process_active(process_id)
 
-        self._cancel_process(process)
+        self._cancel_process(process, background_tasks)
 
-    def reject_adoption(self, process_id: int, shelter_id: int, reason: str) -> None:
+    def reject_adoption(self, process_id: int, shelter_id: int, reason: str, background_tasks: BackgroundTasks) -> None:
         """rejected by a shelter MANAGER"""
         process = self._get_process_or_raise(process_id)
 
         self._check_belongs_to_shelter(process, shelter_id)
         self.check_is_process_active(process_id)
 
-        self._cancel_process(process, reason=reason)
+        self._cancel_process(process, reason=reason, background_tasks=background_tasks)
 
-    def cancel_all_active_for_animal(self, animal_id: int) -> None:
+    def cancel_all_active_for_animal(self, animal_id: int, background_tasks: BackgroundTasks) -> None:
         """vancel all active adoption processes for an animal"""
         active_processes = self.process_repo.get_all_active_processes_for_animal(self.db, animal_id)
         for process in active_processes:
-            self._cancel_process(process)
+            self._cancel_process(process, background_tasks=background_tasks)
 
-    def mark_process_completed(self, process_id: int) -> None:
+    def mark_process_completed(self, process_id: int, background_tasks: BackgroundTasks) -> None:
         """marks the entire adoption process as completed (its steps too)"""
         process = self._get_process_or_raise(process_id)
         self.process_repo.mark_completed(self.db, process)
         process.animal.in_adoption = False
-        # todo: NOTIFY ADOPTANT
+        send_email(subject="Your Bastet Shelter Access Link",
+                   recipients=[str(process.adoptant.email)],
+                   body=f"Your adoption process for {process.animal.name} has been completed!",
+                   background_tasks=background_tasks)
+
 
     def get_adoption_process_details(self, process_id: int) -> AdoptionProcessDetailResponse:
         """full details"""

@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from app.core.dependencies.role_dependencies import get_db, require_manager, get_current_adoptant
@@ -41,20 +41,22 @@ def start_adoption(
 @router.post("/{process_id}/cancel", status_code=status.HTTP_204_NO_CONTENT)
 def cancel_adoption(
         process_id: int,
+        background_tasks: BackgroundTasks,
         adoptant: Adoptant = Depends(get_current_adoptant),
-        process_service: AdoptionProcessService = Depends(get_process_service)
+        process_service: AdoptionProcessService = Depends(get_process_service),
 ):
-    process_service.cancel_adoption(process_id, adoptant.id)
+    process_service.cancel_adoption(process_id, adoptant.id, background_tasks)
 
 # MANAGER REGION
 @router.post("/{process_id}/reject", status_code=status.HTTP_204_NO_CONTENT)
 def reject_adoption_process(
         process_id: int,
+        background_tasks: BackgroundTasks,
         request: RejectionRequest,
         auth: AuthenticatedUser = Depends(require_manager),
         process_service: AdoptionProcessService = Depends(get_process_service)
 ):
-    process_service.reject_adoption(process_id, auth.shelter_id, request.reason)
+    process_service.reject_adoption(process_id, auth.shelter_id, request.reason, background_tasks)
 
 
 @router.get("/shelter", response_model=AdoptionProcessResponseList)
@@ -88,6 +90,7 @@ def get_adoption_process_details(
 def advance_current_step(
         process_id: int,
         request: AdvanceStepRequest,
+        background_tasks: BackgroundTasks,
         auth: AuthenticatedUser = Depends(require_manager),
         process_service: AdoptionProcessService = Depends(get_process_service),
         step_service: AdoptionStepsService = Depends(get_step_service)
@@ -96,7 +99,7 @@ def advance_current_step(
     step_service.advance_current_step(process_id, request)
 
     if not step_service.has_pending_steps(process_id):
-        process_service.mark_process_completed(process_id)
+        process_service.mark_process_completed(process_id, background_tasks=background_tasks)
 
     return process_service.get_adoption_process_steps_manager(process_id, auth.shelter_id)
 
@@ -104,6 +107,7 @@ def advance_current_step(
 @router.post("/{process_id}/skip", response_model=AdoptionProcessDetailResponse)
 def skip_step(
         process_id: int,
+        background_tasks: BackgroundTasks,
         auth: AuthenticatedUser = Depends(require_manager),
         process_service: AdoptionProcessService = Depends(get_process_service),
         step_service: AdoptionStepsService = Depends(get_step_service)
@@ -112,7 +116,7 @@ def skip_step(
     step_service.skip_step(process_id)
 
     if not step_service.has_pending_steps(process_id):
-        process_service.mark_process_completed(process_id)
+        process_service.mark_process_completed(process_id, background_tasks)
 
     return process_service.get_adoption_process_steps_manager(process_id, auth.shelter_id)
 

@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from app.core.dependencies.role_dependencies import get_db, get_current_user, require_manager
@@ -83,10 +83,11 @@ def delete_animal(
 @router.patch("/{animal_id}/adoption", response_model=AnimalResponse)
 def toggle_adoption(
     animal_id: int,
+    background_tasks: BackgroundTasks,
     auth: AuthenticatedUser = Depends(require_manager),
     service: AnimalService = Depends(get_animal_service)
 ):
-    return service.set_in_adoption(animal_id)
+    return service.set_in_adoption(animal_id, background_tasks)
 
 @router.post("/{animal_id}/images", response_model=AnimalImageResponse)
 def upload_animal_image(

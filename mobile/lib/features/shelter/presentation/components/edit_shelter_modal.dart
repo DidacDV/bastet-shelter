@@ -9,11 +9,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class EditShelterModal extends ConsumerStatefulWidget {
   final String currentName;
   final String currentProvinceId;
+  final String? currentEmail;
 
   const EditShelterModal({
     super.key,
     required this.currentName,
     required this.currentProvinceId,
+    this.currentEmail,
   });
 
   @override
@@ -22,6 +24,7 @@ class EditShelterModal extends ConsumerStatefulWidget {
 
 class _EditShelterModalState extends ConsumerState<EditShelterModal> {
   late final TextEditingController _nameController;
+  late final TextEditingController _emailController;
   late String _selectedProvinceId;
   final _formKey = GlobalKey<FormState>();
 
@@ -29,12 +32,14 @@ class _EditShelterModalState extends ConsumerState<EditShelterModal> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.currentName);
+    _emailController = TextEditingController(text: widget.currentEmail);
     _selectedProvinceId = widget.currentProvinceId;
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -42,11 +47,16 @@ class _EditShelterModalState extends ConsumerState<EditShelterModal> {
     if (!_formKey.currentState!.validate()) return;
 
     final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
     if (name.isEmpty) return;
 
     ref
         .read(shelterProvider.notifier)
-        .updateShelter(name: name, provinceId: _selectedProvinceId);
+        .updateShelter(
+          name: name,
+          provinceId: _selectedProvinceId,
+          email: email.isNotEmpty ? email : null,
+        );
 
     Navigator.pop(context);
   }
@@ -79,6 +89,13 @@ class _EditShelterModalState extends ConsumerState<EditShelterModal> {
               keyboardType: TextInputType.text,
               validator: (value) =>
                   Validators.validateRequired(value, 'Shelter Name'),
+            ),
+            const SizedBox(height: 16),
+            AppTextField(
+              controller: _emailController,
+              label: 'Shelter email',
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) => Validators.validateEmailNoRequired(value),
             ),
             const SizedBox(height: 16),
             const Text(

@@ -1,13 +1,24 @@
 class Validators {
+  static String? validEmail(String val) {
+    final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegExp.hasMatch(val)) {
+      return 'Please enter a valid email address';
+    }
+    return null;
+  }
+
   static String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter your email';
     }
-    final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegExp.hasMatch(value)) {
-      return 'Please enter a valid email address';
+    return validEmail(value);
+  }
+
+  static String? validateEmailNoRequired(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return null;
     }
-    return null;
+    return validEmail(value);
   }
 
   static String? validatePassword(String? value) {

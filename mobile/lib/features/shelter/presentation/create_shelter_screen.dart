@@ -23,6 +23,7 @@ class CreateShelterScreen extends ConsumerStatefulWidget {
 class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _emailController = TextEditingController(); // Added email controller
   final _refugeNameController = TextEditingController();
   final _shelterRepository = getIt<ShelterRepository>();
 
@@ -32,6 +33,7 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _emailController.dispose();
     _refugeNameController.dispose();
     super.dispose();
   }
@@ -47,6 +49,9 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
         _nameController.text,
         _selectedLocationId!,
         _refugeNameController.text,
+        _emailController.text.trim().isEmpty
+            ? null
+            : _emailController.text.trim(),
       );
       if (mounted) Navigator.pushReplacementNamed(context, '/home');
     });
@@ -102,6 +107,17 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
                         keyboardType: TextInputType.name,
                         validator: (v) =>
                             Validators.validateRequired(v, "shelter's name"),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      _FormLabel(label: 'Shelter email (optional)', tt: tt),
+                      const SizedBox(height: 6),
+                      AppTextField(
+                        controller: _emailController,
+                        label: 'contact@myshelter.com',
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (v) => Validators.validateEmailNoRequired(v),
                       ),
 
                       const SizedBox(height: 20),

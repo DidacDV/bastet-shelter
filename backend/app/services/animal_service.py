@@ -1,5 +1,5 @@
 from datetime import date
-from fastapi import UploadFile
+from fastapi import UploadFile, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -127,14 +127,14 @@ class AnimalService:
         animals = self.animal_repo.get_by_refuge(self.db, refuge_id)
         return [self._to_response(a) for a in animals]
 
-    def set_in_adoption(self, animal_id: int) -> AnimalResponse:
+    def set_in_adoption(self, animal_id: int, background_tasks: BackgroundTasks) -> AnimalResponse:
         animal = self.animal_repo.get_by_id(self.db, animal_id)
         if not animal:
             raise NotFoundError("Animal not found")
 
         new_status = not animal.in_adoption
         if not new_status:
-            self.adoption_process_service.cancel_all_active_for_animal(animal_id)
+            self.adoption_process_service.cancel_all_active_for_animal(animal_id, background_tasks)
 
         updated_animal = self.animal_repo.update_adoption_status(self.db, animal_id, new_status)
         return self._to_response(updated_animal)

@@ -26,7 +26,7 @@ class ShelterService:
         self.trait_repo = TraitRepository(db)
 
     def create_shelter(self, data: ShelterCreate, user_id: int, user_email: str) -> dict:
-        new_shelter = Shelter(name=data.name, province_id=data.province_id)
+        new_shelter = Shelter(name=data.name, province_id=data.province_id, email=data.shelter_email)
         created_shelter = self.shelter_repo.create(self.db, new_shelter)
 
         first_refuge = Refuge(name=data.refuge_name, province_id=new_shelter.province_id, shelter_id=created_shelter.id)

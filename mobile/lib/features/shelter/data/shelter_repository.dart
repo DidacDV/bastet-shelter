@@ -91,10 +91,18 @@ class ShelterRepository {
     return Refuge.fromJson(response);
   }
 
-  Future<Shelter> updateShelter(String shelterName, String locationId) async {
+  Future<Shelter> updateShelter(
+    String shelterName,
+    String locationId,
+    String? email,
+  ) async {
     final response = await _client.put(
       '/shelters/',
-      body: {'name': shelterName, 'province_id': locationId},
+      body: {
+        'name': shelterName,
+        'province_id': locationId,
+        'email': email ?? '',
+      },
     );
     return Shelter.fromJson(response);
   }

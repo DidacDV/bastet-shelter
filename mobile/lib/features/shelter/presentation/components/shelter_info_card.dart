@@ -25,6 +25,7 @@ class ShelterInfoCard extends ConsumerWidget {
           builder: (_) => EditShelterModal(
             currentName: shelter.name,
             currentProvinceId: shelter.province.id,
+            currentEmail: shelter.email,
           ),
         ),
       ),
@@ -32,6 +33,8 @@ class ShelterInfoCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           LabelValue(label: 'Name', value: shelter.name),
+          const SizedBox(height: 12),
+          LabelValue(label: 'Email', value: shelter.email ?? 'Not provided'),
           const SizedBox(height: 12),
           LabelValue(label: 'Location', value: shelter.province.name),
           const Divider(height: 32),

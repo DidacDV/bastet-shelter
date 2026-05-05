@@ -13,6 +13,7 @@ class ShelterCreate(BaseModel):
     name: str
     province_id: str
     refuge_name: str
+    shelter_email: str | None = None
 
 
 class ShelterUpdate(BaseModel):

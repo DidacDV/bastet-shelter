@@ -1,7 +1,7 @@
 import { Group, Box, UnstyledButton, Title } from "@mantine/core";
 import { Link, useLocation } from "react-router-dom";
 import { AppColors } from "../theme/constants";
-import logo from "../../public/logo.png";
+import logo from "../assets/images/logo.png";
 import { useAuth } from "../context/authContext";
 
 const ArrowIcon = () => (
@@ -55,15 +55,35 @@ export default function HeaderNav() {
         to="/"
         style={{ display: "flex", alignItems: "center", gap: 10 }}
       >
-        <img src={logo} alt="BastetShelter logo" style={{ height: 54, width: "auto", display: "block" }} />
-        <Title order={3} style={{ color: AppColors.textPrimary, fontWeight: 600, fontSize: "1rem", letterSpacing: "0.02em" }}>
+        <img
+          src={logo}
+          alt="BastetShelter logo"
+          style={{ height: 54, width: "auto", display: "block" }}
+        />
+        <Title
+          order={3}
+          style={{
+            color: AppColors.textPrimary,
+            fontWeight: 600,
+            fontSize: "1rem",
+            letterSpacing: "0.02em",
+          }}
+        >
           BastetShelter
         </Title>
       </UnstyledButton>
 
-      <Group gap="xl" visibleFrom="sm" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
+      <Group
+        gap="xl"
+        visibleFrom="sm"
+        style={{
+          position: "absolute",
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
+      >
         <NavItem to="/animals" label="Find a Pet" />
-        {isLoggedIn && <NavItem to="/adoption" label="My Adoptions" />}
+        {isLoggedIn && <NavItem to="/adoptions" label="My Adoptions" />}
       </Group>
 
       {!isLoggedIn ? (

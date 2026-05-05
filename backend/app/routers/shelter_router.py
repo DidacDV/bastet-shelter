@@ -22,24 +22,13 @@ def create_shelter(
 ):
     return service.create_shelter(data, auth.user.id, auth.user.login.email)
 
-@router.get("/", response_model=ShelterResponse, status_code=status.HTTP_200_OK)
-def get_shelter_info(
-        shelter_id: int,
-        service: ShelterService = Depends(get_shelter_service),
-        auth: AuthenticatedUser = Depends(require_shelter_manager)
-):
-    return service.get_shelter_by_id(shelter_id)
-
-@router.put("/{shelter_id}", response_model=ShelterResponse, status_code=status.HTTP_200_OK)
+@router.put("/", response_model=ShelterResponse, status_code=status.HTTP_200_OK)
 def update_shelter(
-        shelter_id: int,
         data: ShelterUpdate,
         service: ShelterService = Depends(get_shelter_service),
         auth: AuthenticatedUser = Depends(require_shelter_manager)
 ):
-    if auth.shelter_id != shelter_id:
-        raise HTTPException(status_code=403, detail="You can only update your own shelter")
-    return service.update_shelter(shelter_id, data)
+    return service.update_shelter(auth.shelter_id, data)
 
 @router.get("/info", status_code=status.HTTP_200_OK)
 def get_shelter_basic_info(

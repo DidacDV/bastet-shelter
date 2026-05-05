@@ -1,7 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
-
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.refuge_schema import RefugeResponse
 
@@ -19,6 +18,7 @@ class ShelterCreate(BaseModel):
 class ShelterUpdate(BaseModel):
     name: Optional[str] = None
     province_id: Optional[str] = None
+    email: Optional[str] = None
 
 
 class ShelterResponse(BaseModel):
@@ -26,6 +26,7 @@ class ShelterResponse(BaseModel):
 
     id: int
     name: str
+    shelter_email: str | None = Field(validation_alias="email", default=None)
     province: ProvinceResponse
     volunteer_code: str
     manager_code: str

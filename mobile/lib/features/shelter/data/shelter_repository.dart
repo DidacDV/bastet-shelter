@@ -92,11 +92,8 @@ class ShelterRepository {
   }
 
   Future<Shelter> updateShelter(String shelterName, String locationId) async {
-    final shelterId = _client.getTokenClaim<int>('shelter_id');
-    if (shelterId == null) throw ApiException(401, 'No shelter in token');
-
     final response = await _client.put(
-      '/shelters/$shelterId',
+      '/shelters/',
       body: {'name': shelterName, 'province_id': locationId},
     );
     return Shelter.fromJson(response);

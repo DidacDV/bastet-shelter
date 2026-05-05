@@ -6,6 +6,7 @@ import 'package:bastetshelter/features/geo/data/geo_repository.dart';
 import 'package:bastetshelter/features/medicine/data/medicine_repository.dart';
 import 'package:bastetshelter/features/medicine/data/vet_visit_repository.dart';
 import 'package:bastetshelter/features/medical_treatments/data/medical_treatment_repository.dart';
+import 'package:bastetshelter/features/tasks/data/task_repository.dart';
 import 'package:bastetshelter/features/traits/data/trait_repository.dart';
 import 'package:get_it/get_it.dart';
 
@@ -52,4 +53,5 @@ void configureDependencies() {
   getIt.registerSingleton<AdoptantRepository>(
     AdoptantRepository(getIt<ApiClient>()),
   );
+  getIt.registerSingleton<TaskRepository>(TaskRepository(getIt<ApiClient>()));
 }

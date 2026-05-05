@@ -1,7 +1,7 @@
 import apiClient from "../../core/network/apiClient";
 import type {
   AdoptionFormSubmit,
-  AdoptionProcessDetail,
+  AdoptionProcessAdoptantResponse,
   AdoptionProcessShort,
   ContractStep,
 } from "./adoptionTypes";
@@ -11,10 +11,12 @@ export const adoptionsRepository = {
     apiClient.get<{ processes: AdoptionProcessShort[] }>("/adoptant/processes"),
 
   getAdoptionDetail: (processId: number) =>
-    apiClient.get<AdoptionProcessDetail>(`/adoptant/processes/${processId}`),
+    apiClient.get<AdoptionProcessAdoptantResponse>(
+      `/adoptant/processes/${processId}`,
+    ),
 
   startAdoption: (animalId: number, formData: AdoptionFormSubmit) =>
-    apiClient.post<AdoptionProcessDetail>(
+    apiClient.post<AdoptionProcessAdoptantResponse>(
       `/adoption/start/${animalId}`,
       formData,
     ),

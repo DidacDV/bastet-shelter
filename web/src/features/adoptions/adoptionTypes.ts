@@ -1,6 +1,7 @@
 export type AdoptionProcessStatus =
   | "PENDING"
   | "IN_PROGRESS"
+  | "ACTIVE"
   | "APPROVED"
   | "REJECTED"
   | "CANCELLED";
@@ -14,6 +15,14 @@ export type StepType =
   | "CONTRACT"
   | "ANIMAL_PICKUP";
 
+//returned in the stepsarray (simple info for the timeline)
+export interface AdoptionStepSummary {
+  type: StepType;
+  order: number;
+  status: StepStatus;
+}
+
+//returned for current_step
 interface AdoptionStepBase {
   id: number;
   status: StepStatus;
@@ -59,21 +68,22 @@ export type AdoptionStep =
   | ContractStep
   | AnimalPickupStep;
 
+//used in the list view
 export interface AdoptionProcessShort {
   id: number;
   animal_id: number;
   animal_name: string;
   animal_image_url: string | null;
-  adoptant_id: number;
-  adoptant_name: string;
   start_date: string;
   end_date: string | null;
   status: AdoptionProcessStatus;
   rejection_reason: string | null;
 }
 
-export interface AdoptionProcessDetail extends AdoptionProcessShort {
-  steps: AdoptionStep[];
+//returned by GET /adoptant/processes/:id
+export interface AdoptionProcessAdoptantResponse extends AdoptionProcessShort {
+  current_step: AdoptionStep | null;
+  steps: AdoptionStepSummary[];
 }
 
 export interface AdoptionFormSubmit {

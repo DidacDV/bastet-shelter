@@ -105,7 +105,7 @@ class _AnimalRegisterScreenState extends ConsumerState<AnimalRegisterScreen> {
     if (mounted) setState(() => _isLoading = false);
 
     if (newAnimalId != null && mounted) {
-      Navigator.of(context, rootNavigator: true).push(
+      Navigator.of(context, rootNavigator: true).pushReplacement(
         MaterialPageRoute(
           builder: (context) => UploadAnimalImagesScreen(animalId: newAnimalId),
         ),

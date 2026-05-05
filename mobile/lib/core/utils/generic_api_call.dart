@@ -7,7 +7,8 @@ Future<T?> genericApiCall<T>(Future<T> Function() externalCall) async {
   } on ApiException catch (e) {
     NavigationService.instance.showSnackBar(e.message, isError: true);
     return null;
-  } catch (_) {
+  } catch (e) {
+    print('Error: $e');
     NavigationService.instance.showSnackBar(
       'Something went wrong',
       isError: true,

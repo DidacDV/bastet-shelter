@@ -53,3 +53,10 @@ class AnimalPickupResponse(AdoptionStepBaseResponse):
     type: Literal[StepTypeEnum.ANIMAL_PICKUP] = StepTypeEnum.ANIMAL_PICKUP
     scheduled_at: Optional[datetime] = None
     actual_pickup_at: Optional[datetime] = None
+
+
+class AdoptionStepAdoptantSummary(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    type: StepTypeEnum
+    order: int
+    status: StepStatusEnum

@@ -17,8 +17,8 @@ from app.repositories.animal_repo import AnimalRepository
 from app.schemas.adoption_schema.adoptant_schema import AdoptantResponse
 from app.schemas.adoption_schema.adoption_form_schema import AdoptionFormSubmit
 
-from app.schemas.adoption_schema.adoption_mappers import process_to_response, process_to_detail_response
-from app.schemas.adoption_schema.adoption_process_schema import AdoptionProcessResponse, AdoptionProcessDetailResponse
+from app.schemas.adoption_schema.adoption_mappers import process_to_response, process_to_detail_response, process_to_adoptant_response
+from app.schemas.adoption_schema.adoption_process_schema import AdoptionProcessResponse, AdoptionProcessDetailResponse, AdoptionProcessAdoptantResponse
 from app.services.pdf import pdf_service
 
 import cloudinary.uploader as cloudinary_uploader
@@ -145,6 +145,7 @@ class AdoptionProcessService:
         """marks the entire adoption process as completed (its steps too)"""
         process = self._get_process_or_raise(process_id)
         self.process_repo.mark_completed(self.db, process)
+        process.animal.in_adoption = False
         # todo: NOTIFY ADOPTANT
 
     def get_adoption_process_details(self, process_id: int) -> AdoptionProcessDetailResponse:
@@ -160,13 +161,13 @@ class AdoptionProcessService:
         steps = self.step_repo.get_steps_for_process(self.db, process.id)
         return process_to_detail_response(process, steps)
 
-    def get_adoption_process_steps_adoptant(self, process_id: int, adoptant_id: int) -> AdoptionProcessResponse:
-        """adoptant views their own adoption process (which has less info)"""
+    def get_adoption_process_steps_adoptant(self, process_id: int, adoptant_id: int) -> AdoptionProcessAdoptantResponse:
+        """adoptant views their own adoption process: current step with full detail, others as summary"""
         process = self._get_process_or_raise(process_id)
         if process.adoptant_id != adoptant_id:
             raise AuthorizationError("Not authorized to view this adoption process")
         steps = self.step_repo.get_steps_for_process(self.db, process.id)
-        return process_to_response(process, steps)
+        return process_to_adoptant_response(process, steps)
 
     def get_all_processes_for_shelter(self, shelter_id: int) -> list[AdoptionProcessResponse]:
         processes = self.process_repo.get_processes_for_shelter(self.db, shelter_id)

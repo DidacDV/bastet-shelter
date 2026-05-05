@@ -87,77 +87,111 @@ class _UploadAnimalImagesScreenState
     if (mounted) setState(() => _isLoading = false);
   }
 
+  void _skipOrFinish() {
+    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) =>
+            const HomeScreen(initialIndex: AppConstants.animalsTab),
+      ),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Animal Photos'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Upload Photos',
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Add up to $_maxImages clear photos of the animal to help them get adopted faster.',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  //grid that contains images (TODO: center it?)
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          childAspectRatio: 1.0,
-                        ),
-                    itemCount: _selectedImages.length < _maxImages
-                        ? _selectedImages.length + 1
-                        : _maxImages,
-                    itemBuilder: (context, index) {
-                      if (index == _selectedImages.length) {
-                        return _buildAddImageButton();
-                      }
-
-                      return _buildImagePreview(index);
-                    },
-                  ),
-                ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        _skipOrFinish();
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: const Text('Animal Photos'),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+            onPressed: _skipOrFinish,
+          ),
+          actions: [
+            TextButton(
+              onPressed: _skipOrFinish,
+              child: const Text(
+                'Skip',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
+            const SizedBox(width: 8),
+          ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Upload Photos',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Add up to $_maxImages clear photos of the animal to help them get adopted faster.',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
 
-          Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: PrimaryButton(
-              label: 'Upload Images',
-              isLoading: _isLoading,
-              onPressed: _selectedImages.isEmpty ? null : _uploadImages,
+                    //grid that contains images (TODO: center it?)
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                            childAspectRatio: 1.0,
+                          ),
+                      itemCount: _selectedImages.length < _maxImages
+                          ? _selectedImages.length + 1
+                          : _maxImages,
+                      itemBuilder: (context, index) {
+                        if (index == _selectedImages.length) {
+                          return _buildAddImageButton();
+                        }
+
+                        return _buildImagePreview(index);
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: PrimaryButton(
+                label: 'Upload Images',
+                isLoading: _isLoading,
+                onPressed: _selectedImages.isEmpty ? null : _uploadImages,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

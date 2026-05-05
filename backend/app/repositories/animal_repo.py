@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.models.animal.animal import Animal
 from app.models.animal.animal_image import AnimalImage
 from app.models.refuge import Refuge
+from app.models.shelter import Shelter
 from app.models.task.shift_task import ShiftTask
 from app.models.task.task import TaskStatusEnum
 from app.repositories.generic_repo import BaseRepository
@@ -57,3 +58,23 @@ class AnimalRepository(BaseRepository[Animal]):
             .group_by(Animal.id, Refuge.name)
             .all()
         )
+
+    def get_portal_short_info(self, db: Session, province_id: str):
+        query = (
+            db.query(
+                Animal.id,
+                Animal.name,
+                Animal.birth_date,
+                Animal.animal_type,
+                Refuge.name.label("refuge_name"),
+                Shelter.name.label("shelter_name"),
+                primary_image.label("image_url"),
+            )
+            .join(Refuge, Animal.refuge_id == Refuge.id)
+            .join(Shelter, Refuge.shelter_id == Shelter.id)
+            .filter(Animal.in_adoption == True)
+        )
+
+        query = query.filter(Refuge.province_id == province_id)
+
+        return query.group_by(Animal.id, Refuge.name, Shelter.name).all()

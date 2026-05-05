@@ -158,7 +158,7 @@ class ApiClient {
   dynamic _handleResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       if (response.statusCode == 204 || response.body.isEmpty) {
-        return null;
+        return <String, dynamic>{};
       }
       return jsonDecode(response.body);
     }

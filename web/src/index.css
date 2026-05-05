@@ -1,2 +1,18 @@
 @import "tailwindcss";
 @import "@mantine/core/styles.css";
+
+@theme {
+  --font-sans: "Nunito", sans-serif;
+  --color-primary: #3b3686;
+  --color-secondary: #767ae6;
+  --color-accent: #edba40;
+  --color-warning: #e28c33;
+  --color-error: #e0652b;
+
+  --color-background: #f4f5ff;
+  --color-surface: #ffffff;
+
+  --color-textDark: #1f1d45;
+  --color-textSecondary: #5a587a;
+  --color-divider: #e8e8f5;
+}

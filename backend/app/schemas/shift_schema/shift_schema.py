@@ -16,3 +16,6 @@ class ShiftResponse(BaseModel):
     end_time: datetime
     day: date
     refuge_id: int
+
+class ListShiftResponse(BaseModel):
+    shifts: list[ShiftResponse]

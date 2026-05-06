@@ -179,3 +179,19 @@ class ShiftService:
             created.append(ShiftResponse.model_validate(created_shift))
 
         return created
+
+    def delete_shift(self, shift_id: int, shelter_id: int) -> None:
+        shift = self.shift_repo.get_by_id(self.db, shift_id)
+        if not shift:
+            raise NotFoundError("Shift not found")
+        if shift.shelter_id != shelter_id:
+            raise AuthorizationError("Shift does not belong to this shelter")
+        self.shift_repo.delete_shift(self.db, shift)
+
+    def clear_day(self, refuge_id: int, shelter_id: int, day: date) -> int:
+        self._verify_refuge_access(refuge_id, shelter_id)
+        return self.shift_repo.delete_by_refuge_and_day(self.db, refuge_id, day)
+
+    def clear_week(self, refuge_id: int, shelter_id: int, week_start: date) -> int:
+        self._verify_refuge_access(refuge_id, shelter_id)
+        return self.shift_repo.delete_by_refuge_and_week(self.db, refuge_id, week_start)

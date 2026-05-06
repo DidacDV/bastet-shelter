@@ -15,8 +15,8 @@ class Shift(Base):
     end_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     day: Mapped[date] = mapped_column(Date, nullable=False)
     shelter_id: Mapped[int] = mapped_column(ForeignKey("shelter.id"), nullable=False)
-    refuge_id: Mapped[int] = mapped_column(ForeignKey("refuge.id"), nullable=False)  # was shelter_id
+    refuge_id: Mapped[int] = mapped_column(ForeignKey("refuge.id"), nullable=False)
 
     refuge = relationship("Refuge", back_populates="shifts")
-    participants = relationship("ShiftParticipant", back_populates="shift")
-    shift_tasks = relationship("ShiftTask", back_populates="shift")
+    participants = relationship("ShiftParticipant", back_populates="shift", cascade="all, delete-orphan")
+    shift_tasks = relationship("ShiftTask", back_populates="shift", cascade="all, delete-orphan")

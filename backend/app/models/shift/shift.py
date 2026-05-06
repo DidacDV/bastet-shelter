@@ -16,6 +16,7 @@ class Shift(Base):
     day: Mapped[date] = mapped_column(Date, nullable=False)
     shelter_id: Mapped[int] = mapped_column(ForeignKey("shelter.id"), nullable=False)
     refuge_id: Mapped[int] = mapped_column(ForeignKey("refuge.id"), nullable=False)
+    max_participants: Mapped[int] = mapped_column(Integer, nullable=True)
 
     refuge = relationship("Refuge", back_populates="shifts")
     participants = relationship("ShiftParticipant", back_populates="shift", cascade="all, delete-orphan")

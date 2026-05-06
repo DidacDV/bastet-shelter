@@ -1,7 +1,6 @@
-import 'package:bastetshelter/core/constants.dart'; // Ensure AppColors is imported
+import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/community/presentation/community_screen.dart';
 import 'package:bastetshelter/features/shifts/presentation/shifts_gateway_screen.dart';
-import 'package:bastetshelter/features/shifts/presentation/shifts_screen.dart';
 import 'package:bastetshelter/features/tasks/presentation/tasks_screen.dart';
 import 'package:bastetshelter/providers/geo/geo_provider.dart';
 import 'package:bastetshelter/features/animals/presentation/animals_screen.dart';

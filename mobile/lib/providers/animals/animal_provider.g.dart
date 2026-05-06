@@ -79,7 +79,7 @@ final class AnimalsProvider
   Animals create() => Animals();
 }
 
-String _$animalsHash() => r'29146367ccfc4d6925fa209ea4711ae33e39fcdc';
+String _$animalsHash() => r'd7f1ae7b0fafbe38d715514fdefa4c2058f1564b';
 
 abstract class _$Animals extends $AsyncNotifier<List<AnimalSummary>> {
   FutureOr<List<AnimalSummary>> build();

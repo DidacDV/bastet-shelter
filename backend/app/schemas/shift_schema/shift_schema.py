@@ -6,7 +6,7 @@ class ShiftCreate(BaseModel):
     start_time: datetime
     end_time: datetime
     day: date
-
+    max_participants: int | None = None
 
 class ShiftResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -16,3 +16,7 @@ class ShiftResponse(BaseModel):
     end_time: datetime
     day: date
     refuge_id: int
+    max_participants: int | None = None
+
+class ListShiftResponse(BaseModel):
+    shifts: list[ShiftResponse]

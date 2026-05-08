@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "../components/Layout";
-import AnimalsPage from "../pages/AnimalsPage";
-import LoginPage from "../pages/LoginPage";
-import AdoptionPage from "../pages/AdoptionPage";
-import LocationPage from "../pages/LocationPage";
-import AuthCallbackPage from "../pages/AuthCallbackPage";
-import AnimalDetailPage from "../pages/AnimalDetailsPage";
-import AdoptionDetailPage from "../pages/AdoptionDetailsPage";
+import AnimalsPage from "../features/animals/AnimalsPage";
+import LoginPage from "../features/adoptantAuth/LoginPage";
+import AdoptionPage from "../features/adoptions/AdoptionPage";
+import LocationPage from "../features/locations/LocationPage";
+import AuthCallbackPage from "../features/adoptantAuth/AuthCallbackPage";
+import AnimalDetailPage from "../features/animals/AnimalDetailsPage";
+import AdoptionDetailPage from "../features/adoptions/AdoptionDetailsPage";
 
 export default function Router() {
   return (

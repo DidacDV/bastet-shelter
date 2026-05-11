@@ -15,7 +15,7 @@ from app.repositories.shift_task_repo import ShiftTaskRepository
 from app.repositories.task_repo import TaskRepository
 from app.repositories.animal_repo import AnimalRepository
 from app.repositories.refuge_repo import RefugeRepository
-from app.schemas.shift_schema.shift_schema import ShiftCreate, ShiftResponse, ShiftDetailResponse
+from app.schemas.shift_schema.shift_schema import ShiftCreate, ShiftResponse, ShiftDetailResponse, ShiftUpdate
 from app.schemas.shift_schema.shift_participant_schema import ShiftParticipantResponse
 from app.schemas.task_schema.shift_task_schema import ShiftTaskResponse
 
@@ -220,6 +220,24 @@ class ShiftService:
             refuge_id=refuge_id,
             shelter_id=shelter_id,
         )
+
+    def update_shift(self, shift_id: int, shelter_id: int, data: ShiftUpdate) -> ShiftDetailResponse:
+        shift = self._get_shift_or_raise(shift_id)
+
+        if shift.shelter_id != shelter_id:
+            raise AuthorizationError("Shift does not belong to this shelter")
+
+        if data.refuge_id is not None and data.refuge_id != shift.refuge_id:
+            self._verify_refuge_access(data.refuge_id, shelter_id)
+
+        update_data = data.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(shift, key, value)
+
+        self.db.commit()
+        self.db.refresh(shift)
+
+        return ShiftDetailResponse.model_validate(shift)
 
     def _verify_refuge_access(self, refuge_id: int, shelter_id: int) -> None:
         refuge = self.refuge_repo.get_by_id(self.db, refuge_id)

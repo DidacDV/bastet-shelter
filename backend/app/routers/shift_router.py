@@ -6,7 +6,8 @@ from starlette import status
 
 from app.core.dependencies.role_dependencies import get_db, get_current_user, require_manager, require_volunteer
 from app.models.user import AuthenticatedUser
-from app.schemas.shift_schema.shift_schema import ShiftCreate, ShiftResponse, ListShiftResponse, ShiftDetailResponse
+from app.schemas.shift_schema.shift_schema import ShiftCreate, ShiftResponse, ListShiftResponse, ShiftDetailResponse, \
+    ShiftUpdate
 from app.schemas.shift_schema.shift_participant_schema import ShiftParticipantResponse
 from app.schemas.task_schema.shift_task_schema import ShiftTaskResponse
 from app.services.shift_service import ShiftService
@@ -77,6 +78,15 @@ def remove_task_from_shift(
     service: ShiftService = Depends(get_shift_service),
 ):
     service.remove_task_from_shift(shift_task_id, auth.shelter_id)
+
+@router.patch("/{shift_id}", response_model=ShiftDetailResponse)
+def update_shift(
+    shift_id: int,
+    data: ShiftUpdate,
+    auth: AuthenticatedUser = Depends(require_manager),
+    service: ShiftService = Depends(get_shift_service)
+):
+    return service.update_shift(shift_id, auth.shelter_id, data)
 
 @router.patch("/tasks/{shift_task_id}/assign", response_model=ShiftTaskResponse)
 def assign_task(

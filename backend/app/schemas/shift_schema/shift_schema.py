@@ -28,3 +28,9 @@ class ShiftDetailResponse(ShiftResponse):
 
 class ListShiftResponse(BaseModel):
     shifts: list[ShiftResponse]
+
+class ShiftUpdate(BaseModel):
+    start_time: datetime | None = None
+    end_time: datetime | None = None
+    refuge_id: int | None = None
+    max_participants: int | None = None

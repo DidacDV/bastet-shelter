@@ -17,6 +17,7 @@ class ShiftResponse(BaseModel):
     day: date
     refuge_id: int
     max_participants: int | None = None
+    current_participants: int = 0
 
 class ListShiftResponse(BaseModel):
     shifts: list[ShiftResponse]

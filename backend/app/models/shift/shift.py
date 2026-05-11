@@ -21,3 +21,7 @@ class Shift(Base):
     refuge = relationship("Refuge", back_populates="shifts")
     participants = relationship("ShiftParticipant", back_populates="shift", cascade="all, delete-orphan")
     shift_tasks = relationship("ShiftTask", back_populates="shift", cascade="all, delete-orphan")
+
+    @property
+    def current_participants(self) -> int:
+        return len(self.participants)

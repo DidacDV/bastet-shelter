@@ -57,6 +57,13 @@ class ShiftService:
         return [ShiftResponse.model_validate(s) for s in shifts]
 
     def join_shift(self, shift_id: int, user_id: int) -> ShiftParticipantResponse:
+        shift = self.shift_repo.get_by_id(self.db, shift_id)
+        if not shift:
+            raise NotFoundError("Shift not found")
+
+        if shift.max_participants is not None and shift.current_participants >= shift.max_participants:
+            raise BusinessLogicError("This shift has reached its maximum capacity.")
+
         volunteer = self.member_repo.get_by_user(user_id)
         if not volunteer:
             raise NotFoundError("Volunteer record not found")

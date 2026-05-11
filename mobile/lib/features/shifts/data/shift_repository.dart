@@ -64,6 +64,25 @@ class ShiftRepository {
     await _apiClient.delete('/shifts/$shiftId');
   }
 
+  Future<ShiftDetail> updateShift(
+    int shiftId, {
+    DateTime? startTime,
+    DateTime? endTime,
+    int? maxParticipants,
+  }) async {
+    final body = <String, dynamic>{};
+    if (startTime != null) body['start_time'] = startTime.toIso8601String();
+    if (endTime != null) body['end_time'] = endTime.toIso8601String();
+    if (maxParticipants != null) body['max_participants'] = maxParticipants;
+
+    final response = await _apiClient.patch('/shifts/$shiftId', body: body);
+    return ShiftDetail.fromJson(response);
+  }
+
+  Future<void> removeTask(int shiftTaskId) async {
+    await _apiClient.delete('/shifts/tasks/$shiftTaskId');
+  }
+
   Future<List<Shift>> copyWeek({
     required int refugeId,
     required DateTime sourceWeekStart,

@@ -117,4 +117,38 @@ class ShiftDetailNotifier extends _$ShiftDetailNotifier {
     ref.invalidateSelf();
     await future;
   }
+
+  Future<void> updateShift({
+    DateTime? startTime,
+    DateTime? endTime,
+    DateTime? day,
+    int? maxParticipants,
+  }) async {
+    await genericApiCall(() async {
+      final updated = await ref
+          .read(shiftRepositoryProvider)
+          .updateShift(
+            shiftId,
+            startTime: startTime,
+            endTime: endTime,
+            maxParticipants: maxParticipants,
+          );
+      state = AsyncData(updated);
+      ref.invalidate(shiftsProvider);
+    });
+  }
+
+  Future<void> removeTask(int shiftTaskId) async {
+    await genericApiCall(() async {
+      await ref.read(shiftRepositoryProvider).removeTask(shiftTaskId);
+      ref.invalidateSelf();
+    });
+  }
+
+  Future<void> deleteThisShift() async {
+    await genericApiCall(() async {
+      await ref.read(shiftRepositoryProvider).deleteShift(shiftId);
+      ref.invalidate(shiftsProvider);
+    });
+  }
 }

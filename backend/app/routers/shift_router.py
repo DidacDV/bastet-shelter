@@ -60,7 +60,15 @@ def add_task_to_shift(
     auth: AuthenticatedUser = Depends(require_manager),
     service: ShiftService = Depends(get_shift_service)
 ):
-    return service.add_task_to_shift(shift_id, task_id, animal_id)
+    return service.add_task_to_shift(shift_id, task_id, auth.shelter_id, animal_id)
+
+@router.delete("/tasks/{shift_task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def remove_task_from_shift(
+    shift_task_id: int,
+    auth: AuthenticatedUser = Depends(require_manager),
+    service: ShiftService = Depends(get_shift_service),
+):
+    service.remove_task_from_shift(shift_task_id, auth.shelter_id)
 
 @router.patch("/tasks/{shift_task_id}/assign", response_model=ShiftTaskResponse)
 def assign_task(
@@ -69,7 +77,7 @@ def assign_task(
     auth: AuthenticatedUser = Depends(require_manager),
     service: ShiftService = Depends(get_shift_service)
 ):
-    return service.assign_task(shift_task_id, participant_id)
+    return service.assign_task(shift_task_id, participant_id, auth.shelter_id)
 
 @router.patch("/tasks/{shift_task_id}/complete", response_model=ShiftTaskResponse)
 def complete_task(
@@ -77,7 +85,15 @@ def complete_task(
     auth: AuthenticatedUser = Depends(require_volunteer),
     service: ShiftService = Depends(get_shift_service)
 ):
-    return service.complete_task(shift_task_id)
+    return service.complete_task(shift_task_id, auth.user.id)
+
+@router.patch("/tasks/{shift_task_id}/uncomplete", response_model=ShiftTaskResponse)
+def uncomplete_task(
+    shift_task_id: int,
+    auth: AuthenticatedUser = Depends(require_volunteer),
+    service: ShiftService = Depends(get_shift_service),
+):
+    return service.uncomplete_task(shift_task_id, auth.user.id)
 
 @router.post("/copy-week", response_model=list[ShiftResponse])
 def copy_week(

@@ -15,7 +15,7 @@ from app.repositories.shift_task_repo import ShiftTaskRepository
 from app.repositories.task_repo import TaskRepository
 from app.repositories.animal_repo import AnimalRepository
 from app.repositories.refuge_repo import RefugeRepository
-from app.schemas.shift_schema.shift_schema import ShiftCreate, ShiftResponse
+from app.schemas.shift_schema.shift_schema import ShiftCreate, ShiftResponse, ShiftDetailResponse
 from app.schemas.shift_schema.shift_participant_schema import ShiftParticipantResponse
 from app.schemas.task_schema.shift_task_schema import ShiftTaskResponse
 
@@ -74,6 +74,14 @@ class ShiftService:
                 shifts = [s for s in shifts if s.day == day]
 
         return [ShiftResponse.model_validate(s) for s in shifts]
+
+    def get_shift_detail(self, shift_id: int, shelter_id: int) -> ShiftDetailResponse:
+        shift = self._get_shift_or_raise(shift_id)
+
+        if shift.shelter_id != shelter_id:
+            raise AuthorizationError("Shift does not belong to this shelter")
+
+        return ShiftDetailResponse.model_validate(shift)
 
     def delete_shift(self, shift_id: int, shelter_id: int) -> None:
         shift = self._get_shift_or_raise(shift_id)

@@ -5,7 +5,6 @@ from pydantic import BaseModel, ConfigDict
 
 from app.schemas.task_schema.shift_task_schema import ShiftTaskResponse
 
-
 class ShiftCreate(BaseModel):
     start_time: datetime
     end_time: datetime
@@ -23,6 +22,8 @@ class ShiftResponse(BaseModel):
     refuge_id: int
     max_participants: int | None = None
     current_participants: int = 0
+
+class ShiftDetailResponse(ShiftResponse):
     shift_tasks: List[ShiftTaskResponse] = []
 
 class ListShiftResponse(BaseModel):

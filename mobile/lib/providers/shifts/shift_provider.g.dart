@@ -91,7 +91,7 @@ final class ShiftsProvider extends $AsyncNotifierProvider<Shifts, List<Shift>> {
   }
 }
 
-String _$shiftsHash() => r'78b68c736bfbe7760ecd7344a15c40e3f35905e7';
+String _$shiftsHash() => r'cef5f58cd29b67695be7db351867b099ea0039c0';
 
 final class ShiftsFamily extends $Family
     with
@@ -137,5 +137,95 @@ abstract class _$Shifts extends $AsyncNotifier<List<Shift>> {
               Object?
             >;
     element.handleCreate(ref, () => build(_$args.$1, _$args.$2));
+  }
+}
+
+@ProviderFor(ShiftDetailNotifier)
+final shiftDetailProvider = ShiftDetailNotifierFamily._();
+
+final class ShiftDetailNotifierProvider
+    extends $AsyncNotifierProvider<ShiftDetailNotifier, ShiftDetail> {
+  ShiftDetailNotifierProvider._({
+    required ShiftDetailNotifierFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'shiftDetailProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$shiftDetailNotifierHash();
+
+  @override
+  String toString() {
+    return r'shiftDetailProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  ShiftDetailNotifier create() => ShiftDetailNotifier();
+
+  @override
+  bool operator ==(Object other) {
+    return other is ShiftDetailNotifierProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$shiftDetailNotifierHash() =>
+    r'52a02c131f417bbf745c0a7cd472b0b083b672c6';
+
+final class ShiftDetailNotifierFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          ShiftDetailNotifier,
+          AsyncValue<ShiftDetail>,
+          ShiftDetail,
+          FutureOr<ShiftDetail>,
+          int
+        > {
+  ShiftDetailNotifierFamily._()
+    : super(
+        retry: null,
+        name: r'shiftDetailProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  ShiftDetailNotifierProvider call(int shiftId) =>
+      ShiftDetailNotifierProvider._(argument: shiftId, from: this);
+
+  @override
+  String toString() => r'shiftDetailProvider';
+}
+
+abstract class _$ShiftDetailNotifier extends $AsyncNotifier<ShiftDetail> {
+  late final _$args = ref.$arg as int;
+  int get shiftId => _$args;
+
+  FutureOr<ShiftDetail> build(int shiftId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<ShiftDetail>, ShiftDetail>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<ShiftDetail>, ShiftDetail>,
+              AsyncValue<ShiftDetail>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, () => build(_$args));
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 class AppTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
+  final String? hintText;
   final bool obscure;
   final String? Function(String?)? validator;
   final TextInputType? keyboardType;
@@ -14,10 +15,17 @@ class AppTextField extends StatelessWidget {
   final ValueChanged<String>? onFieldSubmitted;
   final TextInputAction? textInputAction;
 
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
+  final bool readOnly;
+  final VoidCallback? onTap;
+  final int? maxLines;
+
   const AppTextField({
     super.key,
     required this.controller,
     required this.label,
+    this.hintText,
     this.obscure = false,
     this.validator,
     this.keyboardType,
@@ -27,6 +35,11 @@ class AppTextField extends StatelessWidget {
     this.style,
     this.onFieldSubmitted,
     this.textInputAction,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.readOnly = false,
+    this.onTap,
+    this.maxLines = 1,
   });
 
   @override
@@ -39,7 +52,15 @@ class AppTextField extends StatelessWidget {
       textCapitalization: textCapitalization,
       inputFormatters: inputFormatters,
       style: style,
-      decoration: InputDecoration(labelText: label),
+      readOnly: readOnly,
+      onTap: onTap,
+      maxLines: obscure ? 1 : maxLines,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hintText,
+        prefixIcon: prefixIcon,
+        suffixIcon: suffixIcon,
+      ),
       validator: validator,
       onFieldSubmitted: onFieldSubmitted,
       textInputAction:

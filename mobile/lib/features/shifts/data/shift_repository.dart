@@ -14,8 +14,9 @@ class ShiftRepository {
   }) async {
     final queryParams = <String, String>{'refuge_id': refugeId.toString()};
     if (day != null) queryParams['day'] = day.toIso8601String().split('T')[0];
-    if (weekStart != null)
+    if (weekStart != null) {
       queryParams['week_start'] = weekStart.toIso8601String().split('T')[0];
+    }
 
     final queryString = Uri(queryParameters: queryParams).query;
     final response = await _apiClient.get('/shifts/?$queryString');
@@ -24,20 +25,27 @@ class ShiftRepository {
     return Shift.listFromJson(shiftsList);
   }
 
+  Future<ShiftDetail> getShiftDetail(int shiftId) async {
+    final response = await _apiClient.get('/shifts/$shiftId');
+    return ShiftDetail.fromJson(response);
+  }
+
   Future<Shift> createShift({
     required int refugeId,
     required DateTime startTime,
     required DateTime endTime,
     required DateTime day,
     int? maxParticipants,
+    List<int> taskIds = const [],
   }) async {
     final response = await _apiClient.post(
       '/shifts/?refuge_id=$refugeId',
       body: {
-        'start_time': startTime.toIso8601String(), //datetime expects full ISO
+        'start_time': startTime.toIso8601String(),
         'end_time': endTime.toIso8601String(),
-        'day': day.toIso8601String().split('T')[0], //date expects YYYY-MM-DD
-        'max_participants': ?maxParticipants,
+        'day': day.toIso8601String().split('T')[0],
+        'max_participants': maxParticipants,
+        'task_ids': taskIds,
       },
     );
     return Shift.fromJson(response);

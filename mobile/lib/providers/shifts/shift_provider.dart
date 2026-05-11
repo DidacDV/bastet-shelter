@@ -33,6 +33,7 @@ class Shifts extends _$Shifts {
     required DateTime endTime,
     required DateTime day,
     int? maxParticipants,
+    List<int> taskIds = const [],
   }) async {
     await genericApiCall(() async {
       await ref
@@ -43,8 +44,8 @@ class Shifts extends _$Shifts {
             endTime: endTime,
             day: day,
             maxParticipants: maxParticipants,
+            taskIds: taskIds,
           );
-      //invalidate only the current week, not the entire shiftsProvider
       ref.invalidateSelf();
     });
   }
@@ -102,5 +103,18 @@ class Shifts extends _$Shifts {
           .clearWeek(refugeId: refugeId, weekStart: targetWeekStart);
       ref.invalidateSelf(); //no need to invalidate all weeks
     });
+  }
+}
+
+@riverpod
+class ShiftDetailNotifier extends _$ShiftDetailNotifier {
+  @override
+  Future<ShiftDetail> build(int shiftId) async {
+    return ref.read(shiftRepositoryProvider).getShiftDetail(shiftId);
+  }
+
+  Future<void> refresh() async {
+    ref.invalidateSelf();
+    await future;
   }
 }

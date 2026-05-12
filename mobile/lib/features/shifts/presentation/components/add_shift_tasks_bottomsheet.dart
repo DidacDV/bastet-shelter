@@ -121,7 +121,7 @@ class _AddShiftTasksBottomSheetState
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: tasks.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              separatorBuilder: (_, _) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
                 final task = tasks[index];
                 final isSelected = _selectedTaskIds.contains(task.id);

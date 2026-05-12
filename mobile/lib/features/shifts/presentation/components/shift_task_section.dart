@@ -105,7 +105,17 @@ class ShiftTasksSection extends ConsumerWidget {
                                     : null,
                               ),
                             ),
-                            if (shiftTask.animal?.id != null) ...[
+                            if (shiftTask.participant != null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                'Assigned to: ${shiftTask.participant?.name} ${shiftTask.participant?.lastName1}',
+                                style: tt.bodySmall?.copyWith(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                            if (shiftTask.animal != null) ...[
                               const SizedBox(height: 4),
                               Text(
                                 'Animal: ${shiftTask.animal?.name}',

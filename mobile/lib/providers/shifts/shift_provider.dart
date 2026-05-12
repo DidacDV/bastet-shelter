@@ -157,6 +157,8 @@ class ShiftDetailNotifier extends _$ShiftDetailNotifier {
     await genericApiCall(() async {
       await ref.read(shiftRepositoryProvider).joinShift(shiftId);
       ref.invalidateSelf();
+      ref.invalidate(shiftsProvider);
+      await future;
     });
   }
 
@@ -164,6 +166,8 @@ class ShiftDetailNotifier extends _$ShiftDetailNotifier {
     await genericApiCall(() async {
       await ref.read(shiftRepositoryProvider).leaveShift(shiftId);
       ref.invalidateSelf();
+      ref.invalidate(shiftsProvider);
+      await future;
     });
   }
 }

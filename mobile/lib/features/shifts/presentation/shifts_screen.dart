@@ -2,8 +2,12 @@ import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/common/components/fields/date_chip.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/common/components/layout/app_tab_bar.dart';
+import 'package:bastetshelter/features/shifts/presentation/components/create_shift_bottomsheet.dart';
+import 'package:bastetshelter/features/shifts/presentation/components/shift_card.dart';
+import 'package:bastetshelter/features/shifts/presentation/shift_details_screen.dart';
 import 'package:bastetshelter/providers/picked_refuge/current_refuge_provider.dart';
 import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
+import 'package:bastetshelter/providers/shifts/shift_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,7 +24,7 @@ class ShiftsScreen extends ConsumerStatefulWidget {
 
 class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
   late DateTime _weekStart;
-  final int _initialTabIndex = DateTime.now().weekday - 1;
+  final int _initialTabIndex = DateTime.now().weekday - 1; //mon=0 … Sun=6
 
   @override
   void initState() {
@@ -45,7 +49,6 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
   Widget build(BuildContext context) {
     final shelterAsync = ref.watch(shelterProvider);
     final selectedRefugeId = ref.watch(currentRefugeProvider);
-
     return shelterAsync.when(
       loading: () => const Scaffold(
         backgroundColor: AppColors.background,
@@ -74,7 +77,11 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
 
         final dayViews = List.generate(7, (i) {
           final day = _weekStart.add(Duration(days: i));
-          return _DayShiftsTab(refugeId: activeRefugeId, day: day);
+          return _DayShiftsTab(
+            refugeId: activeRefugeId,
+            day: day,
+            weekStart: _weekStart,
+          );
         });
 
         return Scaffold(
@@ -84,6 +91,18 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
             showLogout: false,
             showBackButton: true,
           ),
+
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.surface,
+            onPressed: () => showCreateShiftBottomSheet(
+              context: context,
+              refugeId: activeRefugeId,
+              weekStart: _weekStart,
+            ),
+            child: const Icon(Icons.add_rounded),
+          ),
+
           body: AppTabLayout(
             initialIndex: _initialTabIndex,
             header: Padding(
@@ -107,23 +126,64 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
   }
 }
 
-class _DayShiftsTab extends StatelessWidget {
-  const _DayShiftsTab({required this.refugeId, required this.day});
+class _DayShiftsTab extends ConsumerWidget {
+  const _DayShiftsTab({
+    required this.refugeId,
+    required this.weekStart,
+    required this.day,
+  });
 
   final int refugeId;
+  final DateTime weekStart;
   final DateTime day;
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Center(
-      child: Text(
-        'Shifts for ${day.day}/${day.month}/${day.year}\nRefuge $refugeId',
-        textAlign: TextAlign.center,
-        style: theme.textTheme.bodyLarge?.copyWith(
-          color: AppColors.textSecondary,
-        ),
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final shiftsAsync = ref.watch(shiftsProvider(refugeId, weekStart));
+
+    return shiftsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, _) => Center(child: Text('Error loading shifts: $e')),
+      data: (allShifts) {
+        //this tab days only
+        final dayShifts = allShifts
+            .where(
+              (s) =>
+                  s.day.year == day.year &&
+                  s.day.month == day.month &&
+                  s.day.day == day.day,
+            )
+            .toList();
+
+        if (dayShifts.isEmpty) {
+          return Center(
+            child: Text(
+              'No shifts for this day.',
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
+            ),
+          );
+        }
+
+        return ListView.separated(
+          padding: const EdgeInsets.all(16),
+          itemCount: dayShifts.length,
+          separatorBuilder: (_, _) => const SizedBox(height: 8),
+          itemBuilder: (_, i) => ShiftCard(
+            shift: dayShifts[i],
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ShiftDetailScreen(
+                  shiftId: dayShifts[i].id,
+                  refugeName: 'Shelter Name',
+                  isManager: true,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

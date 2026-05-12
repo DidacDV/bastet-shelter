@@ -119,4 +119,18 @@ class ShiftRepository {
     final queryString = Uri(queryParameters: queryParams).query;
     await _apiClient.delete('/shifts/clear-week?$queryString');
   }
+
+  Future<void> addTaskToShift({
+    required int shiftId,
+    required int taskId,
+    int? animalId,
+  }) async {
+    final queryParams = <String, String>{
+      'task_id': taskId.toString(),
+      if (animalId != null) 'animal_id': animalId.toString(),
+    };
+    final queryString = Uri(queryParameters: queryParams).query;
+
+    await _apiClient.post('/shifts/$shiftId/tasks?$queryString');
+  }
 }

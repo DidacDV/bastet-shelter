@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/common/components/animal_avatar.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';
 import 'package:flutter/material.dart';
@@ -54,15 +55,7 @@ class AnimalPickerBottomSheet extends ConsumerWidget {
                     side: const BorderSide(color: AppColors.outline),
                   ),
                   tileColor: AppColors.surface,
-                  leading: CircleAvatar(
-                    backgroundColor: AppColors.primaryTint,
-                    backgroundImage: animal.imageUrl != null
-                        ? NetworkImage(animal.imageUrl!)
-                        : null,
-                    child: animal.imageUrl == null
-                        ? const Icon(Icons.pets, color: AppColors.primary)
-                        : null,
-                  ),
+                  leading: AnimalAvatar(imageUrl: animal.imageUrl),
                   title: Text(
                     animal.name,
                     style: theme.textTheme.titleSmall?.copyWith(

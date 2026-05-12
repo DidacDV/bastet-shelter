@@ -74,6 +74,7 @@ class ShiftService:
             if day:
                 shifts = [s for s in shifts if s.day == day]
 
+        shifts.sort(key=lambda s: s.start_time)
         return [ShiftResponse.model_validate(s) for s in shifts]
 
     def get_shift_detail(self, shift_id: int, shelter_id: int, user_id: int) -> ShiftDetailResponse:

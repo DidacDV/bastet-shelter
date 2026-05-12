@@ -85,12 +85,19 @@ class ShiftService:
             raise AuthorizationError("Shift does not belong to this shelter")
 
         member = self.member_repo.get_by_user(user_id)
-        is_joined = False
-        if member and shift.participants:
-            is_joined = any(p.member_id == member.id for p in shift.participants)
+        my_participant_id = None
+
+        if member:
+            my_participant_id = next(
+                (p.id for p in shift.participants if p.member_id == member.id),
+                None  #default to none if not found
+            )
+
+        is_joined = my_participant_id is not None
 
         response = ShiftDetailResponse.model_validate(shift)
         response.is_joined = is_joined
+        response.my_participant_id = my_participant_id
         print(response)
         return response
 

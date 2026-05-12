@@ -26,6 +26,7 @@ class ShiftResponse(BaseModel):
 class ShiftDetailResponse(ShiftResponse):
     shift_tasks: List[ShiftTaskResponse] = []
     is_joined: bool = False
+    my_participant_id: int | None = None
 
 class ListShiftResponse(BaseModel):
     shifts: list[ShiftResponse]

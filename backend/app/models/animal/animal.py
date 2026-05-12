@@ -65,3 +65,9 @@ class Animal(Base):
     @property
     def refuge_name(self) -> str | None:
         return self.refuge.name if self.refuge else None
+
+    @property
+    def image_url(self) -> str | None:
+        if self.images:
+            return self.images[0].url
+        return None

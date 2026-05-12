@@ -98,7 +98,20 @@ class ShiftService:
         response = ShiftDetailResponse.model_validate(shift)
         response.is_joined = is_joined
         response.my_participant_id = my_participant_id
-        print(response)
+
+        def task_sort_priority(task):
+            if task.participant is None:
+                return 1
+            elif task.participant.id == my_participant_id:
+                return 0  #1st priority: assigned to me
+            elif task.participant.id is None:
+                return 1  #2nd priority: unassigned
+            else:
+                return 2  #3rd priority: assigned to someone else
+
+        if response.shift_tasks:
+            response.shift_tasks.sort(key=task_sort_priority)
+
         return response
 
     def delete_shift(self, shift_id: int, shelter_id: int) -> None:

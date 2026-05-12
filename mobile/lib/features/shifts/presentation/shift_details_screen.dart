@@ -1,5 +1,7 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
+import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:bastetshelter/features/shifts/presentation/components/shift_task_section.dart';
 import 'package:bastetshelter/providers/shifts/shift_provider.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +37,7 @@ class ShiftDetailScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (shiftDetail) {
+          final notifier = ref.read(shiftDetailProvider(shiftId).notifier);
           return SingleChildScrollView(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -59,6 +62,38 @@ class ShiftDetailScreen extends ConsumerWidget {
                   shiftId: shiftId,
                   shiftDetail: shiftDetail,
                   isManager: isManager,
+                ),
+
+                const SizedBox(height: 32),
+
+                PrimaryButton(
+                  label: shiftDetail.isJoined ? 'Leave Shift' : 'Join Shift',
+                  backgroundColor: shiftDetail.isJoined
+                      ? AppColors.error.withValues(alpha: 0.1)
+                      : AppColors.primary,
+                  textColor: shiftDetail.isJoined
+                      ? AppColors.error
+                      : AppColors.surface,
+
+                  isLoading: false,
+                  onPressed: () async {
+                    if (shiftDetail.isJoined) {
+                      final confirm = await ConfirmationDialog.show(
+                        context: context,
+                        title: 'Leave Shift?',
+                        message:
+                            'Are you sure you want to leave this shift? You will be unassigned from any tasks.',
+                        confirmText: 'Leave',
+                        isDestructive: true,
+                      );
+
+                      if (confirm) {
+                        await notifier.leaveShift(shiftId);
+                      }
+                    } else {
+                      await notifier.joinShift(shiftId);
+                    }
+                  },
                 ),
               ],
             ),

@@ -57,20 +57,6 @@ class Shifts extends _$Shifts {
     });
   }
 
-  Future<void> joinShift(int shiftId) async {
-    await genericApiCall(() async {
-      await ref.read(shiftRepositoryProvider).joinShift(shiftId);
-      ref.invalidateSelf();
-    });
-  }
-
-  Future<void> leaveShift(int shiftId) async {
-    await genericApiCall(() async {
-      await ref.read(shiftRepositoryProvider).leaveShift(shiftId);
-      ref.invalidateSelf();
-    });
-  }
-
   Future<void> copyWeek({
     required DateTime sourceWeekStart,
     required DateTime targetWeekStart,
@@ -159,6 +145,20 @@ class ShiftDetailNotifier extends _$ShiftDetailNotifier {
       for (final taskId in taskIds) {
         await repo.addTaskToShift(shiftId: shiftId, taskId: taskId);
       }
+      ref.invalidateSelf();
+    });
+  }
+
+  Future<void> joinShift(int shiftId) async {
+    await genericApiCall(() async {
+      await ref.read(shiftRepositoryProvider).joinShift(shiftId);
+      ref.invalidateSelf();
+    });
+  }
+
+  Future<void> leaveShift(int shiftId) async {
+    await genericApiCall(() async {
+      await ref.read(shiftRepositoryProvider).leaveShift(shiftId);
       ref.invalidateSelf();
     });
   }

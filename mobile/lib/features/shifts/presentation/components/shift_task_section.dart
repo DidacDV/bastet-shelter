@@ -66,69 +66,82 @@ class ShiftTasksSection extends ConsumerWidget {
             ),
           )
         else
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.zero,
-            itemCount: shiftDetail.shiftTasks.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 0),
-            itemBuilder: (context, index) {
-              final shiftTask = shiftDetail.shiftTasks[index];
-              final isCompleted = shiftTask.status == ShiftTaskStatus.completed;
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 210),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.outline),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Scrollbar(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(8),
+                    itemCount: shiftDetail.shiftTasks.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 8),
+                    itemBuilder: (context, index) {
+                      final shiftTask = shiftDetail.shiftTasks[index];
+                      final isCompleted =
+                          shiftTask.status == ShiftTaskStatus.completed;
 
-              return ManageListCard(
-                title: shiftTask.task.title,
-                leadingIcon: isCompleted
-                    ? Icons.check_circle_rounded
-                    : Icons.radio_button_unchecked_rounded,
-                isEven: index.isEven,
-
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      shiftTask.task.description,
-                      style: tt.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                        decoration: isCompleted
-                            ? TextDecoration.lineThrough
-                            : null,
-                      ),
-                    ),
-                    if (shiftTask.animal?.id != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        'Animal ID: ${shiftTask.animal?.id}',
-                        style: tt.bodySmall?.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
+                      return ManageListCard(
+                        title: shiftTask.task.title,
+                        leadingIcon: isCompleted
+                            ? Icons.check_circle_rounded
+                            : Icons.radio_button_unchecked_rounded,
+                        isEven: index.isEven,
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              shiftTask.task.description,
+                              style: tt.bodySmall?.copyWith(
+                                color: AppColors.textSecondary,
+                                decoration: isCompleted
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                              ),
+                            ),
+                            if (shiftTask.animal?.id != null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                'Animal ID: ${shiftTask.animal?.id}',
+                                style: tt.bodySmall?.copyWith(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
-                      ),
-                    ],
-                  ],
+                        onTap: () {
+                          // TODO: Handle what happens when tapping the task
+                        },
+                        onEdit: null,
+                        onDelete: isManager
+                            ? () async {
+                                final confirm = await ConfirmationDialog.show(
+                                  context: context,
+                                  title: 'Remove Task?',
+                                  message:
+                                      'Are you sure you want to remove this task from the shift?',
+                                  confirmText: 'Remove',
+                                  isDestructive: true,
+                                );
+                                if (confirm) {
+                                  notifier.removeTask(shiftTask.id);
+                                }
+                              }
+                            : null,
+                      );
+                    },
+                  ),
                 ),
-
-                onTap: () {
-                  // TODO: Handle what happens when tapping the task
-                },
-                onEdit: null,
-                onDelete: isManager
-                    ? () async {
-                        final confirm = await ConfirmationDialog.show(
-                          context: context,
-                          title: 'Remove Task?',
-                          message:
-                              'Are you sure you want to remove this task from the shift?',
-                          confirmText: 'Remove',
-                          isDestructive: true,
-                        );
-                        if (confirm) {
-                          notifier.removeTask(shiftTask.id);
-                        }
-                      }
-                    : null,
-              );
-            },
+              ),
+            ),
           ),
       ],
     );

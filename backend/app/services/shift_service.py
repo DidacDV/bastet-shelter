@@ -128,19 +128,19 @@ class ShiftService:
         created_participant = self.participant_repo.create(self.db, participant)
         return ShiftParticipantResponse.model_validate(created_participant)
 
-    def leave_shift(self, shift_id: int, user_id: int) -> None:
-        volunteer = self._get_volunteer_or_raise(user_id)
-        participants = self.participant_repo.get_by_shift(self.db, shift_id)
-        participant = next((p for p in participants if p.member_id == volunteer.id), None)
+    def leave_shift(self, shift_id: int, auth: AuthenticatedUser) -> None:
+        """Removes a user from a shift and unassigns their tasks."""
+        member = self._get_member_or_raise(auth.user.id)
+        participant = self.participant_repo.get_by_shift_and_member(self.db, shift_id, member.id)
+        if not participant:
+            raise BusinessLogicError("You are not participating in this shift.")
 
-        if participant:
-            for task in participant.shift_tasks:
-                task.participant_id = None
-                task.status = TaskStatusEnum.NOT_COMPLETED
+        for task in participant.shift_tasks:
+            task.participant_id = None
+            task.status = TaskStatusEnum.NOT_COMPLETED
 
-            self.db.commit()
-
-            self.participant_repo.delete(self.db, participant.id)
+        self.participant_repo.delete(self.db, participant.id)
+        self.db.commit()
 
     def add_task_to_shift(
         self,
@@ -211,26 +211,36 @@ class ShiftService:
 
         return ShiftTaskResponse.model_validate(updated_task)
 
-    def complete_task(self, shift_task_id: int, user_id: int) -> ShiftTaskResponse:
-        """marks a ShiftTask as COMPLETED"""
+    def complete_task(self, shift_task_id: int, auth: AuthenticatedUser) -> ShiftTaskResponse:
+        """Marks a ShiftTask as COMPLETED"""
         shift_task = self._get_shift_task_or_raise(shift_task_id)
-        volunteer = self._get_volunteer_or_raise(user_id)
+        shift = self._get_shift_or_raise(shift_task.shift_id)
 
-        if shift_task.participant_id != volunteer.id:
-            raise AuthorizationError("You are not assigned to this task")
+        if shift.shelter_id != auth.shelter_id:
+            raise AuthorizationError("Shift does not belong to this shelter")
+
+        if shift_task.participant_id is None:
+            raise BusinessLogicError("Cannot complete a task that is not assigned to anyone")
+
+        self._verify_task_ownership(shift_task, auth)
 
         updated_task = self.shift_task_repo.update_status(
             self.db, shift_task_id, TaskStatusEnum.COMPLETED
         )
         return ShiftTaskResponse.model_validate(updated_task)
 
-    def uncomplete_task(self, shift_task_id: int, user_id: int) -> ShiftTaskResponse:
-        """reverts a ShiftTask back to NOT_COMPLETED"""
+    def uncomplete_task(self, shift_task_id: int, auth: AuthenticatedUser) -> ShiftTaskResponse:
+        """Reverts a ShiftTask back to NOT_COMPLETED"""
         shift_task = self._get_shift_task_or_raise(shift_task_id)
-        volunteer = self._get_volunteer_or_raise(user_id)
+        shift = self._get_shift_or_raise(shift_task.shift_id)
 
-        if shift_task.participant_id != volunteer.id:
-            raise AuthorizationError("You are not assigned to this task")
+        if shift.shelter_id != auth.shelter_id:
+            raise AuthorizationError("Shift does not belong to this shelter")
+
+        if shift_task.participant_id is None:
+            raise BusinessLogicError("Cannot uncomplete a task that is not assigned to anyone")
+
+        self._verify_task_ownership(shift_task, auth)
 
         updated_task = self.shift_task_repo.update_status(
             self.db, shift_task_id, TaskStatusEnum.NOT_COMPLETED
@@ -327,11 +337,12 @@ class ShiftService:
             raise NotFoundError("ShiftTask not found")
         return shift_task
 
-    def _get_volunteer_or_raise(self, user_id: int):
-        volunteer = self.member_repo.get_by_user(user_id)
-        if not volunteer:
-            raise NotFoundError("Volunteer record not found")
-        return volunteer
+    def _get_member_or_raise(self, user_id: int):
+        """Fetches a member by user_id or raises a NotFoundError"""
+        member = self.member_repo.get_by_user(user_id)
+        if not member:
+            raise NotFoundError("Member record not found")
+        return member
 
     def _get_source_shifts(self, refuge_id: int, source_week_start: date):
         source_shifts = self.shift_repo.get_by_refuge_and_week(self.db, refuge_id, source_week_start)

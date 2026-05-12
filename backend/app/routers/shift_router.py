@@ -58,7 +58,7 @@ def leave_shift(
     auth: AuthenticatedUser = Depends(require_volunteer),
     service: ShiftService = Depends(get_shift_service)
 ):
-    service.leave_shift(shift_id, auth.user.id)
+    service.leave_shift(shift_id, auth)
     return {"message": "Left shift successfully"}
 
 @router.post("/{shift_id}/tasks", response_model=ShiftTaskResponse)
@@ -111,7 +111,7 @@ def complete_task(
     auth: AuthenticatedUser = Depends(require_volunteer),
     service: ShiftService = Depends(get_shift_service)
 ):
-    return service.complete_task(shift_task_id, auth.user.id)
+    return service.complete_task(shift_task_id, auth)
 
 @router.patch("/tasks/{shift_task_id}/uncomplete", response_model=ShiftTaskResponse)
 def uncomplete_task(
@@ -119,7 +119,7 @@ def uncomplete_task(
     auth: AuthenticatedUser = Depends(require_volunteer),
     service: ShiftService = Depends(get_shift_service),
 ):
-    return service.uncomplete_task(shift_task_id, auth.user.id)
+    return service.uncomplete_task(shift_task_id, auth)
 
 @router.post("/copy-week", response_model=list[ShiftResponse])
 def copy_week(

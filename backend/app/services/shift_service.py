@@ -76,7 +76,7 @@ class ShiftService:
 
         return [ShiftResponse.model_validate(s) for s in shifts]
 
-    def get_shift_detail(self, shift_id: int, shelter_id: int) -> ShiftDetailResponse:
+    def get_shift_detail(self, shift_id: int, shelter_id: int, user_id: int) -> ShiftDetailResponse:
         shift = self.shift_repo.get_detail_with_relations(self.db, shift_id)
 
         if not shift:
@@ -84,7 +84,15 @@ class ShiftService:
         if shift.shelter_id != shelter_id:
             raise AuthorizationError("Shift does not belong to this shelter")
 
-        return ShiftDetailResponse.model_validate(shift)
+        member = self.member_repo.get_by_user(user_id)
+        is_joined = False
+        if member and shift.participants:
+            is_joined = any(p.member_id == member.id for p in shift.participants)
+
+        response = ShiftDetailResponse.model_validate(shift)
+        response.is_joined = is_joined
+        print(response)
+        return response
 
     def delete_shift(self, shift_id: int, shelter_id: int) -> None:
         shift = self._get_shift_or_raise(shift_id)
@@ -239,7 +247,7 @@ class ShiftService:
             shelter_id=shelter_id,
         )
 
-    def update_shift(self, shift_id: int, shelter_id: int, data: ShiftUpdate) -> ShiftDetailResponse:
+    def update_shift(self, shift_id: int, shelter_id: int, data: ShiftUpdate, user_id: int) -> ShiftDetailResponse:
         shift = self._get_shift_or_raise(shift_id)
 
         if shift.shelter_id != shelter_id:
@@ -254,7 +262,7 @@ class ShiftService:
 
         self.db.commit()
 
-        return self.get_shift_detail(shift_id, shelter_id)
+        return self.get_shift_detail(shift_id, shelter_id, user_id)
 
     def _verify_refuge_access(self, refuge_id: int, shelter_id: int) -> None:
         refuge = self.refuge_repo.get_by_id(self.db, refuge_id)

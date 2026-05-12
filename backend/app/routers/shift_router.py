@@ -42,7 +42,7 @@ def get_shift_detail(
     auth: AuthenticatedUser = Depends(get_current_user),
     service: ShiftService = Depends(get_shift_service)
 ):
-    return service.get_shift_detail(shift_id, auth.shelter_id)
+    return service.get_shift_detail(shift_id, auth.shelter_id, user_id=auth.user.id)
 
 @router.post("/{shift_id}/join", response_model=ShiftParticipantResponse)
 def join_shift(
@@ -86,7 +86,7 @@ def update_shift(
     auth: AuthenticatedUser = Depends(require_manager),
     service: ShiftService = Depends(get_shift_service)
 ):
-    return service.update_shift(shift_id, auth.shelter_id, data)
+    return service.update_shift(shift_id, auth.shelter_id, data, user_id=auth.user.id)
 
 @router.patch("/tasks/{shift_task_id}/assign", response_model=ShiftTaskResponse)
 def assign_task(

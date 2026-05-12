@@ -18,3 +18,15 @@ class ShiftParticipant(Base):
     shift = relationship("Shift", back_populates="participants")
     volunteer = relationship("Volunteer")
     shift_tasks = relationship("ShiftTask", back_populates="participant")
+
+    @property
+    def name(self) -> str | None:
+        if self.volunteer and self.volunteer.user:
+            return self.volunteer.user.name
+        return None
+
+    @property
+    def last_name_1(self) -> str | None:
+        if self.volunteer and self.volunteer.user:
+            return self.volunteer.user.last_name_1
+        return None

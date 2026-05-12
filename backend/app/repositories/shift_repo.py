@@ -1,6 +1,11 @@
 from datetime import date, timedelta
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.orm import Session, selectinload, joinedload
+
+from app.models.animal.animal import Animal
+from app.models.shelter_member import Volunteer
 from app.models.shift.shift import Shift
+from app.models.shift.shift_participant import ShiftParticipant
+from app.models.task.shift_task import ShiftTask
 from app.repositories.generic_repo import BaseRepository
 
 class ShiftRepository(BaseRepository[Shift]):
@@ -57,3 +62,21 @@ class ShiftRepository(BaseRepository[Shift]):
             db.delete(shift)
         db.commit()
         return len(shifts)
+
+    def get_detail_with_relations(self, db: Session, shift_id: int) -> type[Shift] | None:
+        return (
+            db.query(Shift)
+            .options(
+                joinedload(Shift.shift_tasks).joinedload(ShiftTask.animal).joinedload(Animal.refuge),
+                joinedload(Shift.shift_tasks).joinedload(ShiftTask.animal).joinedload(Animal.shift_tasks),
+
+                joinedload(Shift.shift_tasks)
+                .joinedload(ShiftTask.participant)
+                .joinedload(ShiftParticipant.volunteer)
+                .joinedload(Volunteer.user),
+
+                joinedload(Shift.shift_tasks).joinedload(ShiftTask.task)
+            )
+            .filter(Shift.id == shift_id)
+            .first()
+        )

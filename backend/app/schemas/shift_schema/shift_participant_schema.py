@@ -9,3 +9,6 @@ class ShiftParticipantResponse(BaseModel):
     id: int
     shift_id: int
     volunteer_id: Optional[int]
+
+    name: Optional[str] = None
+    last_name_1: Optional[str] = None

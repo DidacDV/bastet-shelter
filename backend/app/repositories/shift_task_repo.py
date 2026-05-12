@@ -1,4 +1,6 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
+
+from app.models.shift.shift import Shift
 from app.models.task.shift_task import ShiftTask
 from app.models.task.task import TaskStatusEnum
 from app.repositories.generic_repo import BaseRepository

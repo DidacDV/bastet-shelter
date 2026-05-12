@@ -46,3 +46,22 @@ class Animal(Base):
     vet_visits = relationship("VetVisit", back_populates="animal", cascade="all, delete-orphan")
     images = relationship("AnimalImage", back_populates="animal", cascade="all, delete-orphan")
     adoption_processes = relationship("AdoptionProcess", back_populates="animal", cascade="all, delete-orphan")
+
+    @property
+    def age(self) -> int:
+        if not self.birth_date:
+            return 0
+        today = date.today()
+        return today.year - self.birth_date.year - (
+                (today.month, today.day) < (self.birth_date.month, self.birth_date.day)
+        )
+
+    @property
+    def pending_shift_tasks(self) -> int:
+        if not self.shift_tasks:
+            return 0
+        return sum(1 for t in self.shift_tasks if t.status.name == "NOT_COMPLETED")
+
+    @property
+    def refuge_name(self) -> str | None:
+        return self.refuge.name if self.refuge else None

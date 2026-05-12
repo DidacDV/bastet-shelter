@@ -76,7 +76,7 @@ class ShiftService:
 
         return [ShiftResponse.model_validate(s) for s in shifts]
 
-    def get_shift_detail(self, shift_id: int, shelter_id: int, user_id: int) -> ShiftDetailResponse:
+    def get_shift_detail(self, shift_id: int, shelter_id: int) -> ShiftDetailResponse:
         shift = self.shift_repo.get_detail_with_relations(self.db, shift_id)
 
         if not shift:
@@ -84,36 +84,7 @@ class ShiftService:
         if shift.shelter_id != shelter_id:
             raise AuthorizationError("Shift does not belong to this shelter")
 
-        member = self.member_repo.get_by_user(user_id=user_id)
-        is_joined = any(p.member_id == member.id for p in shift.participants) if member else False
-
-        shift_dict = ShiftDetailResponse.model_validate(shift).model_dump()
-        today = date.today()
-
-        for i, task_model in enumerate(shift.shift_tasks):
-            if task_model.animal:
-                db_animal = task_model.animal
-
-                age = today.year - db_animal.birth_date.year - (
-                        (today.month, today.day) < (db_animal.birth_date.month, db_animal.birth_date.day)
-                )
-
-                pending = sum(1 for t in db_animal.shift_tasks if t.status.value == "NOT_COMPLETED")
-
-                animal_info = AnimalShortInfo(
-                    id=db_animal.id,
-                    name=db_animal.name,
-                    age=age,
-                    in_adoption=db_animal.in_adoption,
-                    pending_shift_tasks=pending,
-                    refuge_name=db_animal.refuge.name,
-                    image_url=db_animal.image_url
-                )
-
-                shift_dict["shift_tasks"][i]["animal"] = animal_info
-
-        shift_dict["is_joined"] = is_joined
-        return ShiftDetailResponse(**shift_dict)
+        return ShiftDetailResponse.model_validate(shift)
 
     def delete_shift(self, shift_id: int, shelter_id: int) -> None:
         shift = self._get_shift_or_raise(shift_id)

@@ -76,13 +76,16 @@ class ShiftService:
 
         return [ShiftResponse.model_validate(s) for s in shifts]
 
-    def get_shift_detail(self, shift_id: int, shelter_id: int) -> ShiftDetailResponse:
+    def get_shift_detail(self, shift_id: int, shelter_id: int, user_id: int) -> ShiftDetailResponse:
         shift = self.shift_repo.get_detail_with_relations(self.db, shift_id)
 
         if not shift:
             raise NotFoundError("Shift not found")
         if shift.shelter_id != shelter_id:
             raise AuthorizationError("Shift does not belong to this shelter")
+
+        member = self.member_repo.get_by_user(user_id=user_id)
+        is_joined = any(p.member_id == member.id for p in shift.participants) if member else False
 
         shift_dict = ShiftDetailResponse.model_validate(shift).model_dump()
         today = date.today()
@@ -108,7 +111,8 @@ class ShiftService:
                 )
 
                 shift_dict["shift_tasks"][i]["animal"] = animal_info
-        print(shift_dict)
+
+        shift_dict["is_joined"] = is_joined
         return ShiftDetailResponse(**shift_dict)
 
     def delete_shift(self, shift_id: int, shelter_id: int) -> None:

@@ -133,4 +133,25 @@ class ShiftRepository {
 
     await _apiClient.post('/shifts/$shiftId/tasks?$queryString');
   }
+
+  Future<void> assignTask(int shiftTaskId, int participantId) async {
+    final queryParams = <String, String>{
+      'participant_id': participantId.toString(),
+    };
+    final queryString = Uri(queryParameters: queryParams).query;
+
+    await _apiClient.patch('/shifts/tasks/$shiftTaskId/assign?$queryString');
+  }
+
+  Future<void> unassignTask(int shiftTaskId) async {
+    await _apiClient.patch('/shifts/tasks/$shiftTaskId/unassign');
+  }
+
+  Future<void> completeTask(int shiftTaskId) async {
+    await _apiClient.patch('/shifts/tasks/$shiftTaskId/complete');
+  }
+
+  Future<void> uncompleteTask(int shiftTaskId) async {
+    await _apiClient.patch('/shifts/tasks/$shiftTaskId/uncomplete');
+  }
 }

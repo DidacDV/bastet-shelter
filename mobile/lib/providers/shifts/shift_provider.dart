@@ -170,4 +170,34 @@ class ShiftDetailNotifier extends _$ShiftDetailNotifier {
       await future;
     });
   }
+
+  Future<void> assignTask(int shiftTaskId, int participantId) async {
+    await genericApiCall(() async {
+      await ref
+          .read(shiftRepositoryProvider)
+          .assignTask(shiftTaskId, participantId);
+      ref.invalidateSelf();
+    });
+  }
+
+  Future<void> unassignTask(int shiftTaskId) async {
+    await genericApiCall(() async {
+      await ref.read(shiftRepositoryProvider).unassignTask(shiftTaskId);
+      ref.invalidateSelf();
+    });
+  }
+
+  Future<void> completeTask(int shiftTaskId) async {
+    await genericApiCall(() async {
+      await ref.read(shiftRepositoryProvider).completeTask(shiftTaskId);
+      ref.invalidateSelf();
+    });
+  }
+
+  Future<void> uncompleteTask(int shiftTaskId) async {
+    await genericApiCall(() async {
+      await ref.read(shiftRepositoryProvider).uncompleteTask(shiftTaskId);
+      ref.invalidateSelf();
+    });
+  }
 }

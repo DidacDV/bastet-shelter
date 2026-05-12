@@ -1,14 +1,14 @@
 class ShiftParticipant {
   final int id;
   final int shiftId;
-  final int? volunteerId;
+  final int? memberId;
   final String? name;
   final String? lastName1;
 
   const ShiftParticipant({
     required this.id,
     required this.shiftId,
-    this.volunteerId,
+    this.memberId,
     this.name,
     this.lastName1,
   });
@@ -22,7 +22,7 @@ class ShiftParticipant {
     return ShiftParticipant(
       id: json['id'] as int,
       shiftId: json['shift_id'] as int,
-      volunteerId: json['volunteer_id'] as int?,
+      memberId: json['volunteer_id'] as int?,
       name: json['name'] as String?,
       lastName1: json['last_name_1'] as String?,
     );

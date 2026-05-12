@@ -37,6 +37,7 @@ class Shift {
 
 class ShiftDetail extends Shift {
   final List<ShiftTask> shiftTasks;
+  final bool isJoined;
 
   const ShiftDetail({
     required super.id,
@@ -47,6 +48,7 @@ class ShiftDetail extends Shift {
     required super.currentParticipants,
     super.maxParticipants,
     this.shiftTasks = const [],
+    this.isJoined = false,
   });
 
   factory ShiftDetail.fromJson(Map<String, dynamic> json) {
@@ -61,6 +63,7 @@ class ShiftDetail extends Shift {
       shiftTasks: json['shift_tasks'] != null
           ? ShiftTask.listFromJson(json['shift_tasks'] as List<dynamic>)
           : [],
+      isJoined: json['is_joined'] as bool? ?? false,
     );
   }
 }

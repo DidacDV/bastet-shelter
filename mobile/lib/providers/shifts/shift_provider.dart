@@ -60,6 +60,7 @@ class Shifts extends _$Shifts {
   Future<void> copyWeek({
     required DateTime sourceWeekStart,
     required DateTime targetWeekStart,
+    bool copyTasks = false,
   }) async {
     await genericApiCall(() async {
       await ref
@@ -68,6 +69,7 @@ class Shifts extends _$Shifts {
             refugeId: refugeId,
             sourceWeekStart: sourceWeekStart,
             targetWeekStart: targetWeekStart,
+            copyTasks: copyTasks,
           );
       ref.invalidate(shiftsProvider);
     });

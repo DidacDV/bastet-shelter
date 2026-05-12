@@ -87,11 +87,13 @@ class ShiftRepository {
     required int refugeId,
     required DateTime sourceWeekStart,
     required DateTime targetWeekStart,
+    bool copyTasks = false,
   }) async {
     final queryParams = <String, String>{
       'refuge_id': refugeId.toString(),
       'source_week_start': sourceWeekStart.toIso8601String().split('T')[0],
       'target_week_start': targetWeekStart.toIso8601String().split('T')[0],
+      'copy_tasks': copyTasks.toString(),
     };
     final queryString = Uri(queryParameters: queryParams).query;
     final response = await _apiClient.post('/shifts/copy-week?$queryString');

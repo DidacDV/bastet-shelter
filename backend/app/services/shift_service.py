@@ -269,9 +269,8 @@ class ShiftService:
             setattr(shift, key, value)
 
         self.db.commit()
-        self.db.refresh(shift)
 
-        return ShiftDetailResponse.model_validate(shift)
+        return self.get_shift_detail(shift_id, shelter_id)
 
     def _verify_refuge_access(self, refuge_id: int, shelter_id: int) -> None:
         refuge = self.refuge_repo.get_by_id(self.db, refuge_id)

@@ -95,10 +95,10 @@ class ShiftTasksSection extends ConsumerWidget {
                             : null,
                       ),
                     ),
-                    if (shiftTask.animalId != null) ...[
+                    if (shiftTask.animal?.id != null) ...[
                       const SizedBox(height: 4),
                       Text(
-                        'Animal ID: ${shiftTask.animalId}',
+                        'Animal ID: ${shiftTask.animal?.id}',
                         style: tt.bodySmall?.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w600,

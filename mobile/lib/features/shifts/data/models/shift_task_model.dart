@@ -1,3 +1,5 @@
+import 'package:bastetshelter/features/animals/data/models/animal_summary_model.dart';
+import 'package:bastetshelter/features/shifts/data/models/shift_participant_model.dart';
 import 'package:bastetshelter/features/tasks/data/task_model.dart';
 
 enum ShiftTaskStatus { notCompleted, completed }
@@ -14,8 +16,8 @@ class ShiftTask {
   final int shiftId;
   final int taskId;
   final Task task;
-  final int? participantId;
-  final int? animalId;
+  final ShiftParticipant? participant;
+  final AnimalSummary? animal;
 
   const ShiftTask({
     required this.id,
@@ -24,8 +26,8 @@ class ShiftTask {
     required this.shiftId,
     required this.taskId,
     required this.task,
-    this.participantId,
-    this.animalId,
+    this.participant,
+    this.animal,
   });
 
   factory ShiftTask.fromJson(Map<String, dynamic> json) {
@@ -36,8 +38,12 @@ class ShiftTask {
       shiftId: json['shift_id'] as int,
       taskId: json['task_id'] as int,
       task: Task.fromJson(json['task'] as Map<String, dynamic>),
-      participantId: json['participant_id'] as int?,
-      animalId: json['animal_id'] as int?,
+      participant: json['participant'] != null
+          ? ShiftParticipant.fromJson(json['participant'])
+          : null,
+      animal: json['animal'] != null
+          ? AnimalSummary.fromJson(json['animal'])
+          : null,
     );
   }
 

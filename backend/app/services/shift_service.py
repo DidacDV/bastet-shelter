@@ -262,19 +262,20 @@ class ShiftService:
         return ShiftTaskResponse.model_validate(updated_task)
 
 
-    def copy_shifts_week_without_task(
+    def copy_shifts_week(
         self,
         refuge_id: int,
         shelter_id: int,
         source_week_start: date,
         target_week_start: date,
+        copy_tasks: bool = False,
     ) -> list[ShiftResponse]:
         """
         Copies all shifts from source_week into target_week for a given refuge.
         Preserves time slots (start_time, end_time) but moves each shift's day
         forward or backwards by the difference between the two week starts.
         Days that already have shifts are skipped.
-        Tasks are not copied
+        Tasks are coppied or not depending on copy task param
         """
         if source_week_start.weekday() != 0:
             raise BusinessLogicError("week_start must be a Monday")
@@ -290,6 +291,7 @@ class ShiftService:
             day_diff=day_diff,
             refuge_id=refuge_id,
             shelter_id=shelter_id,
+            copy_tasks = copy_tasks,
         )
 
     def update_shift(self, shift_id: int, shelter_id: int, data: ShiftUpdate, user_id: int) -> ShiftDetailResponse:
@@ -369,18 +371,22 @@ class ShiftService:
         return {s.day for s in existing_target}
 
     def _create_copied_shifts(
-        self,
-        source_shifts: list,
-        existing_days: set[date],
-        day_diff,
-        refuge_id: int,
-        shelter_id: int,
+            self,
+            source_shifts: list,
+            existing_days: set[date],
+            day_diff,
+            refuge_id: int,
+            shelter_id: int,
+            copy_tasks: bool = False,
     ) -> list[ShiftResponse]:
         created = []
+
         for shift in source_shifts:
             new_day = shift.day + day_diff
+
             if new_day in existing_days:
                 continue
+
             new_shift = Shift(
                 start_time=shift.start_time + day_diff,
                 end_time=shift.end_time + day_diff,
@@ -389,5 +395,19 @@ class ShiftService:
                 shelter_id=shelter_id,
             )
             created_shift = self.shift_repo.create(self.db, new_shift)
+
+            #create tasks and add them to new shift
+            if copy_tasks:
+                for task in shift.shift_tasks:
+                    new_task = ShiftTask(
+                        shift_id=created_shift.id,
+                        task_id=task.task_id,
+                        animal_id=task.animal_id,
+                        status=TaskStatusEnum.NOT_COMPLETED,
+                    )
+                    self.shift_task_repo.create(self.db, new_task)
+
+            self.db.refresh(created_shift)
             created.append(ShiftResponse.model_validate(created_shift))
+
         return created

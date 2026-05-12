@@ -126,15 +126,11 @@ def copy_week(
     refuge_id: int,
     source_week_start: date,
     target_week_start: date,
+    copy_tasks: bool = False,
     auth: AuthenticatedUser = Depends(require_manager),
     service: ShiftService = Depends(get_shift_service),
 ):
-    return service.copy_shifts_week_without_task(
-        refuge_id=refuge_id,
-        shelter_id=auth.shelter_id,
-        source_week_start=source_week_start,
-        target_week_start=target_week_start,
-    )
+    return service.copy_shifts_week(refuge_id, auth.shelter_id, source_week_start, target_week_start, copy_tasks)
 
 @router.delete("/clear-day", status_code=status.HTTP_200_OK)
 def clear_day(

@@ -404,6 +404,7 @@ class ShiftService:
                         task_id=task.task_id,
                         animal_id=task.animal_id,
                         status=TaskStatusEnum.NOT_COMPLETED,
+                        assigned_date=new_day,
                     )
                     self.shift_task_repo.create(self.db, new_task)
 

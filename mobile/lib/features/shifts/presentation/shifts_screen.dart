@@ -24,7 +24,7 @@ class ShiftsScreen extends ConsumerStatefulWidget {
 
 class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
   late DateTime _weekStart;
-  final int _initialTabIndex = DateTime.now().weekday - 1; //mon=0 … Sun=6
+  int _currentTabIndex = DateTime.now().weekday - 1; //mon=0 … Sun=6
 
   @override
   void initState() {
@@ -95,16 +95,28 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
           floatingActionButton: FloatingActionButton(
             backgroundColor: AppColors.primary,
             foregroundColor: AppColors.surface,
-            onPressed: () => showCreateShiftBottomSheet(
-              context: context,
-              refugeId: activeRefugeId,
-              weekStart: _weekStart,
-            ),
+            onPressed: () {
+              final activeDay = _weekStart.add(
+                Duration(days: _currentTabIndex),
+              );
+
+              showCreateShiftBottomSheet(
+                context: context,
+                refugeId: activeRefugeId,
+                weekStart: _weekStart,
+                initialDate: activeDay,
+              );
+            },
             child: const Icon(Icons.add_rounded),
           ),
 
           body: AppTabLayout(
-            initialIndex: _initialTabIndex,
+            initialIndex: _currentTabIndex,
+            onTabChanged: (index) {
+              setState(() {
+                _currentTabIndex = index;
+              });
+            },
             header: Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Center(

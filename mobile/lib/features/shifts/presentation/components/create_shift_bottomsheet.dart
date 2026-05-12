@@ -11,11 +11,13 @@ import 'package:intl/intl.dart';
 class CreateShiftBottomSheet extends ConsumerStatefulWidget {
   final int refugeId;
   final DateTime weekStart;
+  final DateTime initialDate;
 
   const CreateShiftBottomSheet({
     super.key,
     required this.refugeId,
     required this.weekStart,
+    required this.initialDate,
   });
 
   @override
@@ -38,13 +40,7 @@ class _CreateShiftBottomSheetState
   void initState() {
     super.initState();
     //default to today or to monday if past week
-    final now = DateTime.now();
-    if (now.isAfter(widget.weekStart) &&
-        now.isBefore(widget.weekStart.add(const Duration(days: 7)))) {
-      _selectedDay = now;
-    } else {
-      _selectedDay = widget.weekStart;
-    }
+    _selectedDay = widget.initialDate;
   }
 
   @override
@@ -221,6 +217,7 @@ void showCreateShiftBottomSheet({
   required BuildContext context,
   required int refugeId,
   required DateTime weekStart,
+  required DateTime initialDate,
 }) {
   showModalBottomSheet(
     context: context,
@@ -229,7 +226,10 @@ void showCreateShiftBottomSheet({
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    builder: (_) =>
-        CreateShiftBottomSheet(refugeId: refugeId, weekStart: weekStart),
+    builder: (_) => CreateShiftBottomSheet(
+      refugeId: refugeId,
+      weekStart: weekStart,
+      initialDate: initialDate,
+    ),
   );
 }

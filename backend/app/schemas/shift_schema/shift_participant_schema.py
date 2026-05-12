@@ -8,7 +8,6 @@ class ShiftParticipantResponse(BaseModel):
 
     id: int
     shift_id: int
-    volunteer_id: Optional[int]
-
+    member_id: Optional[int] = None
     name: Optional[str] = None
     last_name_1: Optional[str] = None

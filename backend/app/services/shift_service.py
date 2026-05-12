@@ -131,15 +131,17 @@ class ShiftService:
         if shift.max_participants is not None and shift.current_participants >= shift.max_participants:
             raise BusinessLogicError("This shift has reached its maximum capacity.")
 
-        volunteer = self._get_volunteer_or_raise(user_id)
-        participant = ShiftParticipant(shift_id=shift_id, volunteer_id=volunteer.id)
+        member = self.member_repo.get_by_user(user_id)
+        if not member:
+            raise NotFoundError("Member record not found")
+        participant = ShiftParticipant(shift_id=shift_id, member_id=member.id)
         created_participant = self.participant_repo.create(self.db, participant)
         return ShiftParticipantResponse.model_validate(created_participant)
 
     def leave_shift(self, shift_id: int, user_id: int) -> None:
         volunteer = self._get_volunteer_or_raise(user_id)
         participants = self.participant_repo.get_by_shift(self.db, shift_id)
-        participant = next((p for p in participants if p.volunteer_id == volunteer.id), None)
+        participant = next((p for p in participants if p.member_id == volunteer.id), None)
         if participant:
             self.participant_repo.delete(self.db, participant.id)
 

@@ -1,8 +1,8 @@
 from datetime import date, timedelta
-from sqlalchemy.orm import Session, selectinload, joinedload
+from sqlalchemy.orm import Session, selectinload, joinedload, selectin_polymorphic
 
 from app.models.animal.animal import Animal
-from app.models.shelter_member import Volunteer
+from app.models.shelter_member import Volunteer, ShelterMember, Manager
 from app.models.shift.shift import Shift
 from app.models.shift.shift_participant import ShiftParticipant
 from app.models.task.shift_task import ShiftTask
@@ -63,19 +63,20 @@ class ShiftRepository(BaseRepository[Shift]):
         db.commit()
         return len(shifts)
 
-    def get_detail_with_relations(self, db: Session, shift_id: int) -> type[Shift] | None:
+    def get_detail_with_relations(self, db: Session, shift_id: int):
         return (
             db.query(Shift)
             .options(
+                joinedload(Shift.shift_tasks).joinedload(ShiftTask.task),
                 joinedload(Shift.shift_tasks).joinedload(ShiftTask.animal).joinedload(Animal.refuge),
                 joinedload(Shift.shift_tasks).joinedload(ShiftTask.animal).joinedload(Animal.shift_tasks),
-
                 joinedload(Shift.shift_tasks)
                 .joinedload(ShiftTask.participant)
-                .joinedload(ShiftParticipant.volunteer)
-                .joinedload(Volunteer.user),
-
-                joinedload(Shift.shift_tasks).joinedload(ShiftTask.task)
+                .joinedload(ShiftParticipant.member)
+                .options(
+                    selectin_polymorphic(ShelterMember, [Volunteer, Manager]),
+                    joinedload(ShelterMember.user),
+                ),
             )
             .filter(Shift.id == shift_id)
             .first()

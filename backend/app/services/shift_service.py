@@ -146,7 +146,14 @@ class ShiftService:
         volunteer = self._get_volunteer_or_raise(user_id)
         participants = self.participant_repo.get_by_shift(self.db, shift_id)
         participant = next((p for p in participants if p.member_id == volunteer.id), None)
+
         if participant:
+            for task in participant.shift_tasks:
+                task.participant_id = None
+                task.status = TaskStatusEnum.NOT_COMPLETED
+
+            self.db.commit()
+
             self.participant_repo.delete(self.db, participant.id)
 
     def add_task_to_shift(

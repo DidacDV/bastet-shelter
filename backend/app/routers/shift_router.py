@@ -97,6 +97,14 @@ def assign_task(
 ):
     return service.assign_task(shift_task_id, participant_id, auth.shelter_id)
 
+@router.patch("/tasks/{shift_task_id}/unassign", response_model=ShiftTaskResponse)
+def unassign_task(
+    shift_task_id: int,
+    auth: AuthenticatedUser = Depends(require_manager),
+    service: ShiftService = Depends(get_shift_service)
+):
+    return service.unassign_task(shift_task_id, auth)
+
 @router.patch("/tasks/{shift_task_id}/complete", response_model=ShiftTaskResponse)
 def complete_task(
     shift_task_id: int,

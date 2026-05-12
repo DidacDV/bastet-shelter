@@ -1,13 +1,14 @@
 from datetime import date
 from typing import Optional, List
 
-from sqlalchemy.orm import Session, InstrumentedAttribute
+from sqlalchemy.orm import Session
 
 from app.core.exceptions import NotFoundError, AuthorizationError, BusinessLogicError
 from app.models.shift.shift import Shift
 from app.models.shift.shift_participant import ShiftParticipant
 from app.models.task.shift_task import ShiftTask
 from app.models.task.task import TaskStatusEnum
+from app.models.user import AuthenticatedUser
 from app.repositories.shelter_member_repo import ShelterMemberRepository
 from app.repositories.shift_repo import ShiftRepository
 from app.repositories.shift_participant_repo import ShiftParticipantRepository
@@ -15,7 +16,6 @@ from app.repositories.shift_task_repo import ShiftTaskRepository
 from app.repositories.task_repo import TaskRepository
 from app.repositories.animal_repo import AnimalRepository
 from app.repositories.refuge_repo import RefugeRepository
-from app.schemas.animals_schema.animals_schema import AnimalShortInfo
 from app.schemas.shift_schema.shift_schema import ShiftCreate, ShiftResponse, ShiftDetailResponse, ShiftUpdate
 from app.schemas.shift_schema.shift_participant_schema import ShiftParticipantResponse
 from app.schemas.task_schema.shift_task_schema import ShiftTaskResponse
@@ -197,6 +197,20 @@ class ShiftService:
         updated_task = self.shift_task_repo.assign_participant(self.db, shift_task_id, participant_id)
         return ShiftTaskResponse.model_validate(updated_task)
 
+    def unassign_task(self, shift_task_id: int, auth: AuthenticatedUser) -> ShiftTaskResponse:
+        shift_task = self._get_shift_task_or_raise(shift_task_id)
+        shift = self._get_shift_or_raise(shift_task.shift_id)
+
+        if shift.shelter_id != auth.shelter_id:
+            raise AuthorizationError("Shift does not belong to this shelter")
+        if shift_task.participant_id is None:
+            raise BusinessLogicError("Task is already unassigned")
+        self._verify_task_ownership(shift_task, auth)
+
+        updated_task = self.shift_task_repo.unassign_participant(self.db, shift_task.id)
+
+        return ShiftTaskResponse.model_validate(updated_task)
+
     def complete_task(self, shift_task_id: int, user_id: int) -> ShiftTaskResponse:
         """marks a ShiftTask as COMPLETED"""
         shift_task = self._get_shift_task_or_raise(shift_task_id)
@@ -285,6 +299,21 @@ class ShiftService:
             raise NotFoundError(f"Task {task_id} not found")
         if task.shelter_id != shelter_id:
             raise AuthorizationError(f"Task {task_id} does not belong to this shelter")
+
+    def _verify_task_ownership(self, shift_task, auth: AuthenticatedUser) -> None:
+        """
+        Ensures the user has permission to modify this task assignment, volunteers must own the task
+        """
+        if getattr(auth, "is_manager", False):
+            return
+
+        member = self.member_repo.get_by_user(auth.user.id)
+        if not member:
+            raise AuthorizationError("Member record not found")
+
+        #check if the task participant links back to this specific volunteer
+        if shift_task.participant.member_id != member.id:
+            raise AuthorizationError("You cannot modify a task assigned to someone else.")
 
     def _get_shift_or_raise(self, shift_id: int) -> Shift:
         shift = self.shift_repo.get_by_id(self.db, shift_id)

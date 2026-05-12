@@ -31,3 +31,11 @@ class ShiftTaskRepository(BaseRepository[ShiftTask]):
             db.commit()
             db.refresh(shift_task)
         return shift_task
+
+    def unassign_participant(self, db: Session, shift_task_id: int) -> ShiftTask | None:
+        shift_task = self.get_by_id(db, shift_task_id)
+        if shift_task:
+            shift_task.participant_id = None
+            db.commit()
+            db.refresh(shift_task)
+        return shift_task

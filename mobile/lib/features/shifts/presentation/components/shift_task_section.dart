@@ -39,8 +39,8 @@ class ShiftTasksSection extends ConsumerWidget {
                   onPressed: () {
                     showAddShiftTasksBottomSheet(
                       context: context,
-                      onSave: (selectedIds) async {
-                        await notifier.addTasksToShift(selectedIds);
+                      onSave: (selectedIds, animalId) async {
+                        await notifier.addTasksToShift(selectedIds, animalId);
                       },
                     );
                   },
@@ -108,7 +108,7 @@ class ShiftTasksSection extends ConsumerWidget {
                             if (shiftTask.animal?.id != null) ...[
                               const SizedBox(height: 4),
                               Text(
-                                'Animal ID: ${shiftTask.animal?.id}',
+                                'Animal: ${shiftTask.animal?.name}',
                                 style: tt.bodySmall?.copyWith(
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.w600,

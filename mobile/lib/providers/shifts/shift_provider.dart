@@ -138,12 +138,16 @@ class ShiftDetailNotifier extends _$ShiftDetailNotifier {
     });
   }
 
-  Future<void> addTasksToShift(List<int> taskIds) async {
+  Future<void> addTasksToShift(List<int> taskIds, int? animalId) async {
     await genericApiCall(() async {
       final repo = ref.read(shiftRepositoryProvider);
 
       for (final taskId in taskIds) {
-        await repo.addTaskToShift(shiftId: shiftId, taskId: taskId);
+        await repo.addTaskToShift(
+          shiftId: shiftId,
+          taskId: taskId,
+          animalId: animalId,
+        );
       }
       ref.invalidateSelf();
     });

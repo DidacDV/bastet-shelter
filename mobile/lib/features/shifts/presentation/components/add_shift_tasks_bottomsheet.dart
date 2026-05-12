@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/common/components/animal_picker_bottomsheet.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:bastetshelter/providers/tasks/task_provider.dart';
@@ -6,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AddShiftTasksBottomSheet extends ConsumerStatefulWidget {
-  final Future<void> Function(List<int> selectedTaskIds) onSave;
+  final Future<void> Function(List<int> selectedTaskIds, int? animalId) onSave;
 
   const AddShiftTasksBottomSheet({super.key, required this.onSave});
 
@@ -18,6 +19,8 @@ class AddShiftTasksBottomSheet extends ConsumerStatefulWidget {
 class _AddShiftTasksBottomSheetState
     extends ConsumerState<AddShiftTasksBottomSheet> {
   final Set<int> _selectedTaskIds = {};
+
+  dynamic _selectedAnimal;
   bool _loading = false;
 
   Future<void> _submit() async {
@@ -27,7 +30,7 @@ class _AddShiftTasksBottomSheetState
     }
 
     setState(() => _loading = true);
-    await widget.onSave(_selectedTaskIds.toList());
+    await widget.onSave(_selectedTaskIds.toList(), _selectedAnimal?.id);
 
     if (mounted) {
       setState(() => _loading = false);
@@ -43,6 +46,42 @@ class _AddShiftTasksBottomSheetState
     return FormBottomSheet(
       title: 'Add Tasks to Shift',
       actions: [
+        if (_selectedTaskIds.isNotEmpty) ...[
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: OutlinedButton.icon(
+              icon: Icon(
+                _selectedAnimal == null ? Icons.pets : Icons.check_circle,
+                color: AppColors.primary,
+              ),
+              label: Text(
+                _selectedAnimal == null
+                    ? 'Link with animal'
+                    : 'Linked to ${_selectedAnimal.name}',
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primary,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.primary),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () async {
+                final pickedAnimal = await showAnimalPickerBottomSheet(context);
+                if (pickedAnimal != null && mounted) {
+                  setState(() => _selectedAnimal = pickedAnimal);
+                }
+              },
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
+
         PrimaryButton(
           label: _selectedTaskIds.isEmpty
               ? 'Cancel'
@@ -140,7 +179,8 @@ class _AddShiftTasksBottomSheetState
 
 void showAddShiftTasksBottomSheet({
   required BuildContext context,
-  required Future<void> Function(List<int>) onSave,
+  required Future<void> Function(List<int> selectedTaskIds, int? animalId)
+  onSave,
 }) {
   showModalBottomSheet(
     context: context,

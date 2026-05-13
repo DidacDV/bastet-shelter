@@ -269,12 +269,13 @@ class ShiftService:
         source_week_start: date,
         target_week_start: date,
         copy_tasks: bool = False,
+        skipDaysWithShifts: bool = False,
     ) -> list[ShiftResponse]:
         """
         Copies all shifts from source_week into target_week for a given refuge.
         Preserves time slots (start_time, end_time) but moves each shift's day
         forward or backwards by the difference between the two week starts.
-        Days that already have shifts are skipped.
+        Days that already have shifts are skipped unless dont_skip_days_with_shifts is True.
         Tasks are coppied or not depending on copy task param
         """
         if source_week_start.weekday() != 0:
@@ -284,14 +285,17 @@ class ShiftService:
         source_shifts = self._get_source_shifts(refuge_id, source_week_start)
         existing_days = self._get_existing_target_days(refuge_id, target_week_start)
         day_diff = target_week_start - source_week_start
+        existing_target_shifts = self._get_existing_target_shifts(refuge_id, target_week_start)
 
         return self._create_copied_shifts(
             source_shifts=source_shifts,
             existing_days=existing_days,
+            existing_target_shifts = existing_target_shifts,
             day_diff=day_diff,
             refuge_id=refuge_id,
             shelter_id=shelter_id,
             copy_tasks = copy_tasks,
+            skipDaysWithShifts = skipDaysWithShifts,
         )
 
     def update_shift(self, shift_id: int, shelter_id: int, data: ShiftUpdate, user_id: int) -> ShiftDetailResponse:
@@ -370,21 +374,39 @@ class ShiftService:
         existing_target = self.shift_repo.get_by_refuge_and_week(self.db, refuge_id, target_week_start)
         return {s.day for s in existing_target}
 
+    def _get_existing_target_shifts(self, refuge_id: int, target_week_start: date) -> list:
+        return self.shift_repo.get_by_refuge_and_week(self.db, refuge_id, target_week_start)
+
+    def _overlaps_with_existing(self, new_start_time, new_end_time, existing_shifts: list) -> bool:
+        for existing in existing_shifts:
+            if existing.start_time < new_end_time and existing.end_time > new_start_time:
+                return True
+        return False
+
     def _create_copied_shifts(
             self,
             source_shifts: list,
             existing_days: set[date],
+            existing_target_shifts: list,
             day_diff,
             refuge_id: int,
             shelter_id: int,
             copy_tasks: bool = False,
+            skipDaysWithShifts: bool = False,
     ) -> list[ShiftResponse]:
         created = []
 
         for shift in source_shifts:
             new_day = shift.day + day_diff
+            new_start_time = shift.start_time + day_diff
+            new_end_time = shift.end_time + day_diff
 
-            if new_day in existing_days:
+            if skipDaysWithShifts and new_day in existing_days:
+                continue
+
+            if not skipDaysWithShifts and self._overlaps_with_existing(
+                    new_start_time, new_end_time, existing_target_shifts
+            ):
                 continue
 
             new_shift = Shift(

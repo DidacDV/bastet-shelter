@@ -121,16 +121,17 @@ def uncomplete_task(
 ):
     return service.uncomplete_task(shift_task_id, auth)
 
-@router.post("/copy-week", response_model=list[ShiftResponse])
+@router.post("/copy-week", response_model=ListShiftResponse)
 def copy_week(
     refuge_id: int,
     source_week_start: date,
     target_week_start: date,
     copy_tasks: bool = False,
+    skip_days_with_shifts: bool = False,
     auth: AuthenticatedUser = Depends(require_manager),
     service: ShiftService = Depends(get_shift_service),
 ):
-    return service.copy_shifts_week(refuge_id, auth.shelter_id, source_week_start, target_week_start, copy_tasks)
+    return {"shifts":service.copy_shifts_week(refuge_id, auth.shelter_id, source_week_start, target_week_start, copy_tasks, skip_days_with_shifts)}
 
 @router.delete("/clear-day", status_code=status.HTTP_200_OK)
 def clear_day(

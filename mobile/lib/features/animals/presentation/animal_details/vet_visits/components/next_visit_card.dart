@@ -6,20 +6,23 @@ import 'package:intl/intl.dart';
 
 class NextVisitCard extends StatelessWidget {
   final VetVisit visit;
+  final bool canEdit;
 
-  const NextVisitCard({super.key, required this.visit});
+  const NextVisitCard({super.key, required this.visit, this.canEdit = false});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return GestureDetector(
-      onTap: () => VetVisitBottomSheet.show(
-        context: context,
-        visit: visit,
-        animalId: visit.animalId,
-        isManager: true,
-      ),
+      onTap: canEdit
+          ? () => VetVisitBottomSheet.show(
+              context: context,
+              visit: visit,
+              animalId: visit.animalId,
+              isManager: true,
+            )
+          : null,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(

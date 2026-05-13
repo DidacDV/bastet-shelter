@@ -5,6 +5,7 @@ import 'package:bastetshelter/providers/animals/animal_filter_provider.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';
 import 'package:bastetshelter/features/animals/presentation/components/animal_card.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
+import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bastetshelter/core/constants.dart';
@@ -17,6 +18,7 @@ class AnimalsScreen extends ConsumerWidget {
     final animalsAsync = ref.watch(filteredAnimalsProvider);
     final animalsFilterNotifier = ref.read(animalFilterProvider.notifier);
     final tt = Theme.of(context).textTheme;
+    final isManager = ref.watch(isManagerProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -89,24 +91,26 @@ class AnimalsScreen extends ConsumerWidget {
               ),
             ],
           ),
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute(
-                    builder: (context) => const AnimalRegisterScreen(),
-                  ),
-                );
-              },
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              elevation: 4,
-              icon: const Icon(Icons.add),
-              label: const Text('Add Animal'),
+
+          if (isManager)
+            Positioned(
+              bottom: 16,
+              right: 16,
+              child: FloatingActionButton.extended(
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => const AnimalRegisterScreen(),
+                    ),
+                  );
+                },
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                elevation: 4,
+                icon: const Icon(Icons.add),
+                label: const Text('Add Animal'),
+              ),
             ),
-          ),
         ],
       ),
     );

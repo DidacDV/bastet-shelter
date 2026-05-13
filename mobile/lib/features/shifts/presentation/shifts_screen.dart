@@ -6,6 +6,7 @@ import 'package:bastetshelter/features/shifts/presentation/components/copy_week_
 import 'package:bastetshelter/features/shifts/presentation/components/create_shift_bottomsheet.dart';
 import 'package:bastetshelter/features/shifts/presentation/components/shift_card.dart';
 import 'package:bastetshelter/features/shifts/presentation/shift_details_screen.dart';
+import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:bastetshelter/providers/picked_refuge/current_refuge_provider.dart';
 import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
 import 'package:bastetshelter/providers/shifts/shift_provider.dart';
@@ -26,6 +27,7 @@ class ShiftsScreen extends ConsumerStatefulWidget {
 class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
   late DateTime _weekStart;
   int _currentTabIndex = DateTime.now().weekday - 1; //mon=0 … Sun=6
+  late final isManager = ref.watch(isManagerProvider);
 
   @override
   void initState() {
@@ -35,8 +37,10 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isManager = ref.watch(isManagerProvider);
     final shelterAsync = ref.watch(shelterProvider);
     final selectedRefugeId = ref.watch(currentRefugeProvider);
+
     return shelterAsync.when(
       loading: () => const Scaffold(
         backgroundColor: AppColors.background,
@@ -69,6 +73,7 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
             refugeId: activeRefugeId,
             day: day,
             weekStart: _weekStart,
+            isManager: isManager,
           );
         });
 
@@ -80,23 +85,25 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
             showBackButton: true,
           ),
 
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: AppColors.primary,
-            foregroundColor: AppColors.surface,
-            onPressed: () {
-              final activeDay = _weekStart.add(
-                Duration(days: _currentTabIndex),
-              );
+          floatingActionButton: isManager
+              ? FloatingActionButton(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.surface,
+                  onPressed: () {
+                    final activeDay = _weekStart.add(
+                      Duration(days: _currentTabIndex),
+                    );
 
-              showCreateShiftBottomSheet(
-                context: context,
-                refugeId: activeRefugeId,
-                weekStart: _weekStart,
-                initialDate: activeDay,
-              );
-            },
-            child: const Icon(Icons.add_rounded),
-          ),
+                    showCreateShiftBottomSheet(
+                      context: context,
+                      refugeId: activeRefugeId,
+                      weekStart: _weekStart,
+                      initialDate: activeDay,
+                    );
+                  },
+                  child: const Icon(Icons.add_rounded),
+                )
+              : null,
 
           body: AppTabLayout(
             initialIndex: _currentTabIndex,
@@ -119,27 +126,28 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                   ),
                   const SizedBox(width: 8),
 
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.outline),
-                    ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.copy_all_rounded,
-                        color: AppColors.reddish,
+                  if (isManager)
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.outline),
                       ),
-                      tooltip: 'Copy shifts from past week',
-                      onPressed: () {
-                        showCopyWeekBottomSheet(
-                          context: context,
-                          refugeId: activeRefugeId,
-                          targetWeekStart: _weekStart,
-                        );
-                      },
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.copy_all_rounded,
+                          color: AppColors.reddish,
+                        ),
+                        tooltip: 'Copy shifts from past week',
+                        onPressed: () {
+                          showCopyWeekBottomSheet(
+                            context: context,
+                            refugeId: activeRefugeId,
+                            targetWeekStart: _weekStart,
+                          );
+                        },
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -157,11 +165,13 @@ class _DayShiftsTab extends ConsumerWidget {
     required this.refugeId,
     required this.weekStart,
     required this.day,
+    required this.isManager,
   });
 
   final int refugeId;
   final DateTime weekStart;
   final DateTime day;
+  final bool isManager;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -203,7 +213,7 @@ class _DayShiftsTab extends ConsumerWidget {
                 builder: (context) => ShiftDetailScreen(
                   shiftId: dayShifts[i].id,
                   refugeName: 'Shelter Name',
-                  isManager: true,
+                  isManager: isManager,
                 ),
               ),
             ),

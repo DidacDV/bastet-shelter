@@ -122,6 +122,7 @@ class BasicInfoTab extends ConsumerWidget {
                     .updateAnimal(animalId: animalId, refugeId: v);
                 ref.invalidate(animalDetailProvider(animalId));
               },
+              canEdit: isManager,
             ),
           ),
           if (isManager) ...[

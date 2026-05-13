@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 class AdoptionCard extends StatelessWidget {
   final AdoptionProcessSummary process;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const AdoptionCard({super.key, required this.process, required this.onTap});
 

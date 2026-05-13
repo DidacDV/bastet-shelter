@@ -1,9 +1,9 @@
-import 'package:bastetshelter/core/auth/auth_service.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
 import 'package:bastetshelter/features/shelter/presentation/configuration_screen.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';
+import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
 import 'package:bastetshelter/providers/traits/trait_provider.dart';
 import 'package:bastetshelter/providers/vet_visits/vet_visit_provider.dart';
@@ -27,7 +27,7 @@ class BastetAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final shelterAsync = ref.watch(shelterProvider);
-    final authService = getIt<AuthService>();
+    final isManager = ref.watch(isManagerProvider);
 
     return AppBar(
       title: customTitle != null
@@ -41,7 +41,7 @@ class BastetAppBar extends ConsumerWidget implements PreferredSizeWidget {
       elevation: 0,
       automaticallyImplyLeading: showBackButton,
       actions: [
-        if (authService.isManager && showConfig)
+        if (isManager && showConfig)
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () => Navigator.of(

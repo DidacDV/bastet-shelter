@@ -15,11 +15,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class TreatmentDetailBottomSheet extends ConsumerStatefulWidget {
   final MedicalTreatment treatment;
   final int animalId;
+  final bool canEdit;
 
   const TreatmentDetailBottomSheet({
     super.key,
     required this.treatment,
     required this.animalId,
+    this.canEdit = false,
   });
 
   @override
@@ -100,32 +102,39 @@ class TreatmentDetailBottomSheetState
 
     return FormBottomSheet(
       title: widget.treatment.medicineName,
-      actions: [
-        PrimaryButton(
-          label: 'Save changes',
-          isLoading: _loading,
-          onPressed: _save,
-        ),
-        const SizedBox(height: 12),
-        TextButton(
-          onPressed: _deleting ? null : _delete,
-          style: TextButton.styleFrom(foregroundColor: AppColors.error),
-          child: _deleting
-              ? const SizedBox(
-                  height: 16,
-                  width: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Delete treatment'),
-        ),
-      ],
+      actions: widget.canEdit
+          ? [
+              PrimaryButton(
+                label: 'Save changes',
+                isLoading: _loading,
+                onPressed: _save,
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: _deleting ? null : _delete,
+                style: TextButton.styleFrom(foregroundColor: AppColors.error),
+                child: _deleting
+                    ? const SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Delete treatment'),
+              ),
+            ]
+          : [
+              PrimaryButton(
+                label: 'Close',
+                onPressed: () => Navigator.of(context).pop(),
+                isLoading: _loading,
+              ),
+            ],
       children: [
         Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Dosage row — text field + unit selector together
               Text(
                 'Dosage',
                 style: theme.textTheme.labelMedium?.copyWith(
@@ -140,6 +149,7 @@ class TreatmentDetailBottomSheetState
                     child: AppTextField(
                       controller: _dosageController,
                       label: 'Amount',
+                      readOnly: !widget.canEdit,
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
@@ -156,10 +166,17 @@ class TreatmentDetailBottomSheetState
                     ),
                   ),
                   const SizedBox(width: 12),
-                  DosageUnitDropdown(
-                    initialItem: _dosageUnit,
-                    onChanged: (u) =>
-                        setState(() => _dosageUnit = u ?? _dosageUnit),
+
+                  IgnorePointer(
+                    ignoring: !widget.canEdit,
+                    child: Opacity(
+                      opacity: widget.canEdit ? 1.0 : 0.6,
+                      child: DosageUnitDropdown(
+                        initialItem: _dosageUnit,
+                        onChanged: (u) =>
+                            setState(() => _dosageUnit = u ?? _dosageUnit),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -172,9 +189,17 @@ class TreatmentDetailBottomSheetState
                 ),
               ),
               const SizedBox(height: 8),
-              FrequencyDropdown(
-                initialItem: _frequency,
-                onChanged: (f) => setState(() => _frequency = f ?? _frequency),
+
+              IgnorePointer(
+                ignoring: !widget.canEdit,
+                child: Opacity(
+                  opacity: widget.canEdit ? 1.0 : 0.6,
+                  child: FrequencyDropdown(
+                    initialItem: _frequency,
+                    onChanged: (f) =>
+                        setState(() => _frequency = f ?? _frequency),
+                  ),
+                ),
               ),
 
               const SizedBox(height: 20),
@@ -208,11 +233,11 @@ class TreatmentDetailBottomSheetState
       '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
 }
 
-//helper to open it
 Future<void> showTreatmentDetailBottomSheet({
   required BuildContext context,
   required MedicalTreatment treatment,
   required int animalId,
+  bool canEdit = false,
 }) {
   return showModalBottomSheet(
     context: context,
@@ -221,7 +246,10 @@ Future<void> showTreatmentDetailBottomSheet({
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    builder: (_) =>
-        TreatmentDetailBottomSheet(treatment: treatment, animalId: animalId),
+    builder: (_) => TreatmentDetailBottomSheet(
+      treatment: treatment,
+      animalId: animalId,
+      canEdit: canEdit,
+    ),
   );
 }

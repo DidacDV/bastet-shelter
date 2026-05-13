@@ -1,6 +1,7 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/shifts/presentation/shifts_screen.dart';
+import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:bastetshelter/providers/picked_refuge/current_refuge_provider.dart';
 import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class ShiftsGatewayScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final shelterAsync = ref.watch(shelterProvider);
     final theme = Theme.of(context);
+    final isManager = ref.watch(isManagerProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -48,13 +50,22 @@ class ShiftsGatewayScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'Where are you managing shifts today?',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                  if (isManager)
+                    Text(
+                      'Where are you managing shifts today?',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    )
+                  else
+                    Text(
+                      'Where are you today?',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 8),
                   Text(
                     'Select a refuge to continue to the shift planner.',

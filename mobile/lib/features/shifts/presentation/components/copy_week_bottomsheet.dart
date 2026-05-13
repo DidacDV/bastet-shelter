@@ -25,6 +25,7 @@ class CopyWeekBottomSheet extends ConsumerStatefulWidget {
 class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
   late DateTime _sourceWeekStart;
   bool _copyTasks = false;
+  bool _skipDaysWithShifts = false;
   bool _loading = false;
 
   @override
@@ -46,6 +47,7 @@ class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
             sourceWeekStart: _sourceWeekStart,
             targetWeekStart: widget.targetWeekStart,
             copyTasks: _copyTasks,
+            skipDaysWithShifts: _skipDaysWithShifts,
           );
 
       if (mounted) Navigator.pop(context);
@@ -63,7 +65,7 @@ class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
-    const double _arrowAreaWidth = 24 + 12 * 2;
+    const double arrowAreaWidth = 24 + 12 * 2;
 
     return FormBottomSheet(
       title: 'Copy Previous Shifts',
@@ -93,7 +95,7 @@ class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Select a past week to duplicate. Time slots and max participants will be copied. Days that already have shifts will be safely skipped.',
+                  'Select a past week to duplicate. Time slots and max participants will be copied.',
                   style: tt.bodySmall?.copyWith(color: AppColors.textPrimary),
                 ),
               ),
@@ -105,7 +107,7 @@ class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
         Row(
           children: [
             Expanded(child: Text('From (Source)', style: tt.labelLarge)),
-            const SizedBox(width: _arrowAreaWidth),
+            const SizedBox(width: arrowAreaWidth),
             Expanded(child: Text('To (Target)', style: tt.labelLarge)),
           ],
         ),
@@ -167,6 +169,36 @@ class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
             ),
             onChanged: (val) {
               setState(() => _copyTasks = val ?? false);
+            },
+          ),
+        ),
+        Card(
+          elevation: 0,
+          color: _skipDaysWithShifts
+              ? AppColors.primaryTint
+              : AppColors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: _skipDaysWithShifts
+                  ? AppColors.primary
+                  : AppColors.outline,
+              width: _skipDaysWithShifts ? 1.5 : 1,
+            ),
+          ),
+          child: CheckboxListTile(
+            value: _skipDaysWithShifts,
+            activeColor: AppColors.primary,
+            title: Text(
+              'Skip days with shifts',
+              style: tt.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(
+              'Days from the target week that have shifts wont have any shifts added to them',
+              style: tt.bodySmall?.copyWith(color: AppColors.textSecondary),
+            ),
+            onChanged: (val) {
+              setState(() => _skipDaysWithShifts = val ?? false);
             },
           ),
         ),

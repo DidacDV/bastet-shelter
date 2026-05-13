@@ -61,6 +61,7 @@ class Shifts extends _$Shifts {
     required DateTime sourceWeekStart,
     required DateTime targetWeekStart,
     bool copyTasks = false,
+    bool skipDaysWithShifts = false,
   }) async {
     await genericApiCall(() async {
       await ref
@@ -70,6 +71,7 @@ class Shifts extends _$Shifts {
             sourceWeekStart: sourceWeekStart,
             targetWeekStart: targetWeekStart,
             copyTasks: copyTasks,
+            skipDaysWithShifts: skipDaysWithShifts,
           );
       ref.invalidate(shiftsProvider);
     });

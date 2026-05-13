@@ -1,7 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
-import 'package:bastetshelter/features/shelter/presentation/configuration_screen.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';
 import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
@@ -47,7 +46,7 @@ class BastetAppBar extends ConsumerWidget implements PreferredSizeWidget {
             onPressed: () => Navigator.of(
               context,
               rootNavigator: true,
-            ).push(MaterialPageRoute(builder: (_) => const ConfigScreen())),
+            ).pushNamed('/shelter/config'),
           ),
 
         if (showLogout)
@@ -58,6 +57,7 @@ class BastetAppBar extends ConsumerWidget implements PreferredSizeWidget {
               ref.invalidate(animalsProvider);
               ref.invalidate(traitsProvider);
               ref.invalidate(vetVisitsProvider);
+              ref.invalidate(isManagerProvider);
               await getIt<AuthRepository>().logout();
               if (context.mounted) {
                 Navigator.pushNamedAndRemoveUntil(

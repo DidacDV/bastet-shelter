@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/guard/manager_guard.dart' show ManagerGuard;
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/theme.dart';
 import 'package:bastetshelter/features/shelter/presentation/configuration_screen.dart';
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
             const CodeEntryScreen(mode: CodeScreenMode.manager),
         '/role/manager-picker': (_) => const ManagerPickerScreen(),
         '/role/create-shelter': (_) => const CreateShelterScreen(),
-        '/shelter/config': (_) => const ConfigScreen(),
+        '/shelter/config': (_) => const ManagerGuard(child: ConfigScreen()),
       },
     );
   }

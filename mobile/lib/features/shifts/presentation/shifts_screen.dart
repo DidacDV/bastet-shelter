@@ -112,6 +112,7 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                 children: [
                   WeekPickerChip(
                     date: _weekStart,
+                    showArrows: true,
                     onWeekSelected: (newDate) {
                       setState(() => _weekStart = newDate);
                     },

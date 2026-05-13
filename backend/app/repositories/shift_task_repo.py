@@ -1,4 +1,6 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
+
+from app.models.shift.shift import Shift
 from app.models.task.shift_task import ShiftTask
 from app.models.task.task import TaskStatusEnum
 from app.repositories.generic_repo import BaseRepository
@@ -26,6 +28,14 @@ class ShiftTaskRepository(BaseRepository[ShiftTask]):
         shift_task = self.get_by_id(db, shift_task_id)
         if shift_task:
             shift_task.participant_id = participant_id
+            db.commit()
+            db.refresh(shift_task)
+        return shift_task
+
+    def unassign_participant(self, db: Session, shift_task_id: int) -> ShiftTask | None:
+        shift_task = self.get_by_id(db, shift_task_id)
+        if shift_task:
+            shift_task.participant_id = None
             db.commit()
             db.refresh(shift_task)
         return shift_task

@@ -20,7 +20,7 @@ final class CurrentRefugeProvider
         argument: null,
         retry: null,
         name: r'currentRefugeProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -41,7 +41,7 @@ final class CurrentRefugeProvider
   }
 }
 
-String _$currentRefugeHash() => r'3b613a130ec77d69493eb1d4a41a70cb65d3842c';
+String _$currentRefugeHash() => r'033d015417b589b86711cec2c48e3714e9988ba6';
 
 abstract class _$CurrentRefuge extends $Notifier<int?> {
   int? build();

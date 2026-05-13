@@ -1,0 +1,140 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Stack, Title, Text, Loader, Alert } from "@mantine/core";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { adoptionsRepository } from "./data/adoptionRepository";
+import type {
+  AdoptionProcessAdoptantResponse,
+  ContractStep,
+} from "./data/adoptionTypes";
+import { AppColors } from "../../theme/constants";
+
+import StepTimeline from "./components/StepLine";
+import CurrentStepView from "./components/CurrentStep";
+
+export default function AdoptionDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const processId = Number(id);
+
+  const [process, setProcess] =
+    useState<AdoptionProcessAdoptantResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const data = await adoptionsRepository.getAdoptionDetail(processId);
+        setProcess(data);
+      } catch {
+        setError("Failed to load the adoption process. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetch();
+  }, [processId]);
+
+  const handleContractSigned = (updated: ContractStep) => {
+    if (!process) return;
+    setProcess({ ...process, current_step: updated });
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader color={AppColors.primary} type="dots" />
+      </div>
+    );
+  }
+
+  if (error || !process) {
+    return (
+      <div className="max-w-2xl mx-auto py-8 px-4">
+        <Alert
+          icon={<IconAlertCircle size={16} />}
+          color={AppColors.error}
+          variant="light"
+        >
+          {error ?? "Adoption process not found."}
+        </Alert>
+      </div>
+    );
+  }
+
+  const isRejected =
+    process.status === "REJECTED" || process.status === "CANCELLED";
+
+  return (
+    <div className="max-w-2xl mx-auto py-8 px-4">
+      <Stack gap="xl">
+        <Stack gap={4}>
+          <Title order={2} style={{ color: AppColors.textDark }}>
+            {process.animal_name}
+          </Title>
+          <Text size="sm" style={{ color: AppColors.textSecondary }}>
+            Adoption process · Started on{" "}
+            {new Date(process.start_date).toLocaleDateString(undefined, {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </Text>
+        </Stack>
+
+        {isRejected && (
+          <Alert
+            icon={<IconAlertCircle size={16} />}
+            color={AppColors.error}
+            variant="light"
+            title={
+              process.status === "CANCELLED"
+                ? "Process cancelled"
+                : "Application rejected"
+            }
+          >
+            {process.rejection_reason ??
+              "This adoption process was closed. Please contact the shelter for more information."}
+          </Alert>
+        )}
+
+        {process.steps.length > 0 && (
+          <StepTimeline
+            steps={process.steps}
+            currentOrder={process.current_step?.order ?? null}
+          />
+        )}
+
+        {!isRejected && process.current_step ? (
+          <Stack gap="xs">
+            <Text
+              size="xs"
+              fw={600}
+              tt="uppercase"
+              style={{ color: AppColors.textHint, letterSpacing: "0.08em" }}
+            >
+              Current step
+            </Text>
+            <CurrentStepView
+              step={process.current_step}
+              processId={processId}
+              onContractSigned={handleContractSigned}
+            />
+            <Text
+              size="sm"
+              mt="sm"
+              fs="italic"
+              style={{ color: AppColors.textSecondary }}
+            >
+              * More information will be provided by the shelter through email.
+            </Text>
+          </Stack>
+        ) : !isRejected ? (
+          <Text size="sm" style={{ color: AppColors.textSecondary }}>
+            All steps have been completed.
+          </Text>
+        ) : null}
+      </Stack>
+    </div>
+  );
+}

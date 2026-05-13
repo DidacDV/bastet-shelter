@@ -4,6 +4,8 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict
 
 from app.models.task.task import TaskStatusEnum
+from app.schemas.animals_schema.animals_schema import AnimalShortInfo
+from app.schemas.shift_schema.shift_participant_schema import ShiftParticipantResponse
 from app.schemas.task_schema.task_schema import TaskResponse
 
 
@@ -24,5 +26,5 @@ class ShiftTaskResponse(BaseModel):
     shift_id: int
     task_id: int
     task: TaskResponse
-    participant_id: Optional[int]
-    animal_id: Optional[int]
+    participant: Optional[ShiftParticipantResponse] = None
+    animal: Optional[AnimalShortInfo] = None

@@ -2,7 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'current_refuge_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class CurrentRefuge extends _$CurrentRefuge {
   @override
   int? build() {

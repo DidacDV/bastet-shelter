@@ -4,12 +4,16 @@ class PrimaryButton extends StatelessWidget {
   final String label;
   final bool isLoading;
   final VoidCallback? onPressed;
+  final Color? backgroundColor;
+  final Color? textColor;
 
   const PrimaryButton({
     super.key,
     required this.label,
     required this.isLoading,
     required this.onPressed,
+    this.backgroundColor,
+    this.textColor,
   });
 
   @override
@@ -20,27 +24,29 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
+          backgroundColor: backgroundColor,
+          foregroundColor: textColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
         ),
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.5,
-                  color: Colors.white,
+                  color: textColor ?? Colors.white,
                 ),
               )
             : FittedBox(
-                //scales text instead of wrapping it to multiple lines
                 fit: BoxFit.scaleDown,
                 child: Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
+                    color: textColor,
                   ),
                 ),
               ),

@@ -8,6 +8,6 @@ class AuthService {
   int? get shelterId => _client.getTokenClaim<int>('shelter_id');
 
   bool get isManager => role == 'MANAGER' || role == 'ADMIN';
-  bool get isVolunteer => role == 'VOLUNTEER';
+  bool get isVolunteer => role == 'VOLUNTEER' || role == 'MANAGER';
   bool get hasNoRole => role == null;
 }

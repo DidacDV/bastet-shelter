@@ -91,7 +91,7 @@ final class ShiftsProvider extends $AsyncNotifierProvider<Shifts, List<Shift>> {
   }
 }
 
-String _$shiftsHash() => r'cef5f58cd29b67695be7db351867b099ea0039c0';
+String _$shiftsHash() => r'a9a969fc4d92dcc0cdf15dfe06fab575f8bfabb9';
 
 final class ShiftsFamily extends $Family
     with
@@ -182,7 +182,7 @@ final class ShiftDetailNotifierProvider
 }
 
 String _$shiftDetailNotifierHash() =>
-    r'52a02c131f417bbf745c0a7cd472b0b083b672c6';
+    r'f05deb02607ef61f4f9bb19ffc96030825738f0c';
 
 final class ShiftDetailNotifierFamily extends $Family
     with

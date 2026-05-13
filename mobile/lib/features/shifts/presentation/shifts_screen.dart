@@ -1,7 +1,8 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/common/components/fields/date_chip.dart';
+import 'package:bastetshelter/features/common/components/fields/week_picker_chip.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/common/components/layout/app_tab_bar.dart';
+import 'package:bastetshelter/features/shifts/presentation/components/copy_week_bottomsheet.dart';
 import 'package:bastetshelter/features/shifts/presentation/components/create_shift_bottomsheet.dart';
 import 'package:bastetshelter/features/shifts/presentation/components/shift_card.dart';
 import 'package:bastetshelter/features/shifts/presentation/shift_details_screen.dart';
@@ -30,19 +31,6 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
   void initState() {
     super.initState();
     _weekStart = _mondayOf(DateTime.now());
-  }
-
-  Future<void> _pickWeek(BuildContext context) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _weekStart,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
-      helpText: 'Select any day in the week',
-    );
-    if (picked != null) {
-      setState(() => _weekStart = _mondayOf(picked));
-    }
   }
 
   @override
@@ -119,14 +107,39 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
             },
             header: Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Center(
-                child: DateChip(
-                  label: 'Week of',
-                  date: _weekStart,
-                  backgroundColor: AppColors.surface,
-                  canEdit: true,
-                  onEdit: () => _pickWeek(context),
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  WeekPickerChip(
+                    date: _weekStart,
+                    onWeekSelected: (newDate) {
+                      setState(() => _weekStart = newDate);
+                    },
+                  ),
+                  const SizedBox(width: 8),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.outline),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.copy_all_rounded,
+                        color: AppColors.reddish,
+                      ),
+                      tooltip: 'Copy shifts from past week',
+                      onPressed: () {
+                        showCopyWeekBottomSheet(
+                          context: context,
+                          refugeId: activeRefugeId,
+                          targetWeekStart: _weekStart,
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
             tabs: List.generate(7, (i) => Tab(text: _dayLabels[i])),

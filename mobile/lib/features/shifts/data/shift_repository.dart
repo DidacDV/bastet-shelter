@@ -98,7 +98,7 @@ class ShiftRepository {
     final queryString = Uri(queryParameters: queryParams).query;
     final response = await _apiClient.post('/shifts/copy-week?$queryString');
 
-    return Shift.listFromJson(response as List<dynamic>);
+    return Shift.listFromJson(response['shifts'] as List<dynamic>);
   }
 
   Future<void> clearDay({required int refugeId, required DateTime day}) async {

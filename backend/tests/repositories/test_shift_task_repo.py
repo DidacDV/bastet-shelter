@@ -92,7 +92,7 @@ class TestShiftTaskRepository:
         db.commit()
         db.refresh(volunteer)
 
-        participant = ShiftParticipant(shift_id=shift.id, volunteer_id=volunteer.id)
+        participant = ShiftParticipant(shift_id=shift.id, member_id=volunteer.id)
         db.add(participant)
         db.commit()
         db.refresh(participant)

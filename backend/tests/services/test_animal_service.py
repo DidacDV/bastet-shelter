@@ -139,7 +139,7 @@ def test_set_in_adoption(service):
 
     service.animal_repo.update_adoption_status.return_value = mock_updated
 
-    result = service.set_in_adoption(animal_id)
+    result = service.set_in_adoption(animal_id, background_tasks= MagicMock())
 
     assert result.in_adoption is True
     service.animal_repo.update_adoption_status.assert_called_once_with(service.db, animal_id, True)

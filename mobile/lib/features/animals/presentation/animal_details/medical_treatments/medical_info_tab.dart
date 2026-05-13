@@ -55,21 +55,22 @@ class MedicalTreatmentsTab extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  FilledButton.icon(
-                    onPressed: () => showAddTreatmentBottomSheet(
-                      context: context,
-                      animalId: animalId,
-                    ),
-                    icon: const Icon(Icons.add_rounded, size: 18),
-                    label: const Text('Add'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.surface,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  if (isManager)
+                    FilledButton.icon(
+                      onPressed: () => showAddTreatmentBottomSheet(
+                        context: context,
+                        animalId: animalId,
+                      ),
+                      icon: const Icon(Icons.add_rounded, size: 18),
+                      label: const Text('Add'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.surface,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
               const SizedBox(height: 4),

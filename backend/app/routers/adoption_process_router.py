@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, status, BackgroundTasks
 from sqlalchemy.orm import Session
 
-from app.core.dependencies.role_dependencies import get_db, require_manager, get_current_adoptant
+from app.core.dependencies.role_dependencies import get_db, require_manager, get_current_adoptant, require_volunteer
 from app.models.user import AuthenticatedUser
 from app.models.adoption.adoptant import Adoptant
 from app.schemas.adoption_schema.adoption_form_schema import AdoptionFormSubmit
@@ -61,7 +61,7 @@ def reject_adoption_process(
 
 @router.get("/shelter", response_model=AdoptionProcessResponseList)
 def get_all_processes_for_shelter(
-        auth: AuthenticatedUser = Depends(require_manager),
+        auth: AuthenticatedUser = Depends(require_volunteer),
         process_service: AdoptionProcessService = Depends(get_process_service)
 ):
     return {"processes": process_service.get_all_processes_for_shelter(auth.shelter_id)}

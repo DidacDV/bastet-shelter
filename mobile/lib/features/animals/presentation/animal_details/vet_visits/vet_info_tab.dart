@@ -21,32 +21,39 @@ class VetInfoTab extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (isManager)
-          Expanded(
-            child: vetVisitsAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(
-                child: Text(
-                  'Could not load vet visits.',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.error,
-                  ),
+        Expanded(
+          child: vetVisitsAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (e, _) => Center(
+              child: Text(
+                'Could not load vet visits.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: AppColors.error,
                 ),
               ),
-              data: (visits) =>
-                  _VetVisitsContent(visits: visits, animalId: animalId),
+            ),
+            data: (visits) => _VetVisitsContent(
+              visits: visits,
+              animalId: animalId,
+              canEdit: isManager,
             ),
           ),
+        ),
       ],
     );
   }
 }
 
 class _VetVisitsContent extends StatelessWidget {
-  const _VetVisitsContent({required this.visits, required this.animalId});
+  const _VetVisitsContent({
+    required this.visits,
+    required this.animalId,
+    this.canEdit = false,
+  });
 
   final List<VetVisit> visits;
   final int animalId;
+  final bool canEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -73,30 +80,31 @@ class _VetVisitsContent extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _SectionHeader(
+                  const _SectionHeader(
                     icon: Icons.next_plan_outlined,
                     label: 'Next visit',
                   ),
-                  FilledButton.icon(
-                    onPressed: () => showAddVetVisitBottomSheet(
-                      context: context,
-                      animalId: animalId,
-                    ),
-                    icon: const Icon(Icons.add_rounded, size: 18),
-                    label: const Text('Plan visit'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.surface,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  if (canEdit)
+                    FilledButton.icon(
+                      onPressed: () => showAddVetVisitBottomSheet(
+                        context: context,
+                        animalId: animalId,
+                      ),
+                      icon: const Icon(Icons.add_rounded, size: 18),
+                      label: const Text('Plan visit'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.surface,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
               const SizedBox(height: 8),
               if (nextVisit != null)
-                NextVisitCard(visit: nextVisit)
+                NextVisitCard(visit: nextVisit, canEdit: canEdit)
               else
                 Padding(
                   padding: const EdgeInsets.only(left: 6, bottom: 4),
@@ -110,23 +118,25 @@ class _VetVisitsContent extends StatelessWidget {
                 ),
               const SizedBox(height: 24),
 
-              _SectionHeader(
+              const _SectionHeader(
                 icon: Icons.history_rounded,
                 label: 'Vet Visits History',
               ),
               const SizedBox(height: 4),
-              Row(
-                children: [
-                  const SizedBox(width: 6),
-                  Text(
-                    'Tap on a visit to view details or edit.',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: AppColors.textSecondary,
-                      fontStyle: FontStyle.italic,
+
+              if (canEdit)
+                Row(
+                  children: [
+                    const SizedBox(width: 6),
+                    Text(
+                      'Tap on a visit to view details or edit.',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
             ],
           ),
         ),

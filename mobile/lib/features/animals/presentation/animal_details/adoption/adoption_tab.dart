@@ -9,8 +9,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AdoptionTab extends ConsumerWidget {
   final int animalId;
+  final bool isManager;
 
-  const AdoptionTab({super.key, required this.animalId});
+  const AdoptionTab({
+    super.key,
+    required this.animalId,
+    this.isManager = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -77,10 +82,11 @@ class AdoptionTab extends ConsumerWidget {
                       Text('Adoption', style: tt.titleLarge),
                     ],
                   ),
-                  AdoptionToggle(
-                    inAdoption: animal.inAdoption,
-                    onToggle: () => onToggleAdoptionStatus(animal.inAdoption),
-                  ),
+                  if (isManager)
+                    AdoptionToggle(
+                      inAdoption: animal.inAdoption,
+                      onToggle: () => onToggleAdoptionStatus(animal.inAdoption),
+                    ),
                 ],
               ),
 

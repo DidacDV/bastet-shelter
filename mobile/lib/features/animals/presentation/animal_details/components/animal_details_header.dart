@@ -80,7 +80,7 @@ class AnimalDetailsHeader extends StatelessWidget {
                   filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 0,
+                      horizontal: 24,
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
@@ -92,6 +92,7 @@ class AnimalDetailsHeader extends StatelessWidget {
                       value: animal.name,
                       isTitle: true,
                       canEdit: canEdit,
+                      alignment: CrossAxisAlignment.center,
                       onEdit: () => showEditBottomSheet(
                         context: context,
                         label: "Name",

@@ -4,17 +4,27 @@ import 'package:bastetshelter/features/adoption/presentation/adoption_process/ad
 import 'package:bastetshelter/features/common/components/bastet_search_bar.dart'; // Import your search bar
 import 'package:bastetshelter/providers/adoption/adoption_list_provider.dart';
 import 'package:bastetshelter/providers/adoption/adoption_list_search_provider.dart';
+import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AdoptionList extends ConsumerWidget {
   const AdoptionList({super.key});
 
+  void _openProcess(BuildContext context, int id) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => AdoptionProcessScreen(adoptionProcessId: id),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final listAsync = ref.watch(filteredAdoptionListProvider);
     final theme = Theme.of(context);
     final tt = theme.textTheme;
+    final isManager = ref.watch(isManagerProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -132,13 +142,9 @@ class AdoptionList extends ConsumerWidget {
                       padding: const EdgeInsets.only(bottom: 12.0),
                       child: AdoptionCard(
                         process: processes[i],
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => AdoptionProcessScreen(
-                              adoptionProcessId: processes[i].id,
-                            ),
-                          ),
-                        ),
+                        onTap: isManager
+                            ? () => _openProcess(context, processes[i].id)
+                            : null,
                       ),
                     ),
                   ),

@@ -3,7 +3,6 @@ import 'package:bastetshelter/features/common/components/confirmation_dialog.dar
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:bastetshelter/features/shifts/presentation/components/shift_task_section.dart';
-import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:bastetshelter/providers/shifts/shift_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,7 +25,6 @@ class ShiftDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final detailAsync = ref.watch(shiftDetailProvider(shiftId));
-    final isManager = ref.watch(isManagerProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,

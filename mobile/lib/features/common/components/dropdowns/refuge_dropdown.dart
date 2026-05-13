@@ -11,6 +11,7 @@ class RefugeDropdown extends StatefulWidget {
   final int? initialItem;
   final ValueChanged<int?> onChanged;
   final bool showLabel;
+  final bool canEdit; // new
 
   const RefugeDropdown({
     super.key,
@@ -18,6 +19,7 @@ class RefugeDropdown extends StatefulWidget {
     this.initialItem,
     required this.onChanged,
     this.showLabel = true,
+    this.canEdit = true, // optional, on by default
   });
 
   @override
@@ -35,6 +37,16 @@ class _RefugeDropdownState extends State<RefugeDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.canEdit) {
+      final name = widget.items
+          .firstWhere(
+            (r) => r.id == _selected,
+            orElse: () => RefugeItem(id: -1, name: '—'),
+          )
+          .name;
+      return Text(name, style: Theme.of(context).textTheme.bodyMedium);
+    }
+
     return DropdownButtonFormField<int>(
       initialValue: _selected,
       decoration: InputDecoration(

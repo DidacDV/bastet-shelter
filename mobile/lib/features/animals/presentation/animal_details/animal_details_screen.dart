@@ -8,6 +8,7 @@ import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/common/components/layout/app_tab_bar.dart';
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';
+import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,6 +20,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final detailAsync = ref.watch(animalDetailProvider(animalId));
+    final isManager = ref.watch(isManagerProvider);
 
     return detailAsync.when(
       loading: () =>
@@ -37,7 +39,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
             height: MediaQuery.of(context).size.height * 0.30,
             child: AnimalDetailsHeader(
               animal: animalDetails,
-              canEdit: true,
+              canEdit: isManager,
               onArrivalDateSave: (newDate) async {
                 await ref
                     .read(animalsProvider.notifier)
@@ -64,11 +66,11 @@ class AnimalDetailsScreen extends ConsumerWidget {
             Tab(icon: Icon(Icons.home_outlined), text: "Adopt"),
           ],
           tabViews: [
-            BasicInfoTab(animalId: animalId),
-            VetInfoTab(animalId: animalId),
-            MedicalTreatmentsTab(animalId: animalId),
+            BasicInfoTab(animalId: animalId, isManager: isManager),
+            VetInfoTab(animalId: animalId, isManager: isManager),
+            MedicalTreatmentsTab(animalId: animalId, isManager: isManager),
             const Icon(Icons.directions_bike),
-            AdoptionTab(animalId: animalId),
+            AdoptionTab(animalId: animalId, isManager: isManager),
           ],
         ),
       ),

@@ -171,6 +171,14 @@ class ApiClient {
       );
       throw ApiException(401, 'Session expired');
     }
+    if (response.statusCode == 403) {
+      NavigationService.instance.showSnackBar(
+        "You don't have permission to perform this action",
+        isError: true,
+      );
+      throw ApiException(403, 'Insufficient permissions');
+    }
+
     String message;
     try {
       final body = jsonDecode(response.body);

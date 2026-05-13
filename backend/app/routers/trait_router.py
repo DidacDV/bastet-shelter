@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.core.dependencies.role_dependencies import get_db, require_manager
+from app.core.dependencies.role_dependencies import get_db, require_manager, get_current_user
 from app.models.user import AuthenticatedUser
 from app.schemas.trait_schema import TraitCreate, TraitResponse, TraitResponseList
 from app.services.trait_service import TraitService
@@ -15,7 +15,7 @@ def get_trait_service(db: Session = Depends(get_db)) -> TraitService:
 
 @router.get("/", response_model=TraitResponseList)
 def get_traits(
-    auth: AuthenticatedUser = Depends(require_manager),
+    auth: AuthenticatedUser = Depends(get_current_user),
     service: TraitService = Depends(get_trait_service)
 ):
     return {"traits": service.get_traits(auth.shelter_id)}

@@ -1,6 +1,7 @@
 import 'package:bastetshelter/core/network/api_client.dart';
 import 'package:bastetshelter/features/shifts/data/models/shift_model.dart';
 import 'package:bastetshelter/features/shifts/data/models/shift_participant_model.dart';
+import 'package:bastetshelter/features/tasks/data/my_shift_tasks_group.dart';
 
 class ShiftRepository {
   final ApiClient _apiClient;
@@ -157,5 +158,10 @@ class ShiftRepository {
 
   Future<void> uncompleteTask(int shiftTaskId) async {
     await _apiClient.patch('/shifts/tasks/$shiftTaskId/uncomplete');
+  }
+
+  Future<List<MyShiftTasksGroup>> getMyTasks() async {
+    final response = await _apiClient.get('/tasks/me');
+    return MyShiftTasksGroup.listFromJson(response);
   }
 }

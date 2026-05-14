@@ -1,6 +1,7 @@
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/shifts/data/models/shift_model.dart';
+import 'package:bastetshelter/providers/tasks/my_tasks_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:bastetshelter/features/shifts/data/shift_repository.dart';
 
@@ -181,6 +182,7 @@ class ShiftDetailNotifier extends _$ShiftDetailNotifier {
           .read(shiftRepositoryProvider)
           .assignTask(shiftTaskId, participantId);
       ref.invalidateSelf();
+      ref.invalidate(myTasksProvider);
     });
   }
 
@@ -188,6 +190,7 @@ class ShiftDetailNotifier extends _$ShiftDetailNotifier {
     await genericApiCall(() async {
       await ref.read(shiftRepositoryProvider).unassignTask(shiftTaskId);
       ref.invalidateSelf();
+      ref.invalidate(myTasksProvider);
     });
   }
 

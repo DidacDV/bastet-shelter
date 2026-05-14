@@ -30,6 +30,7 @@ from app.routers.shift_router import router as shift_router
 from app.routers.geo_router import router as geo_router
 from app.routers.trait_router import router as trait_router
 from app.routers.medical_router import router as medical_router
+from app.routers.advertisement_router import router as advertisement_router
 
 from app.services.geo_service import GeoService
 import app.models as models
@@ -107,6 +108,7 @@ app.include_router(adoption_steps_router)
 app.include_router(adoption_process_router)
 app.include_router(adoption_auth_router)
 app.include_router(adoptant_router)
+app.include_router(advertisement_router)
 
 # create SQLAdmin page
 admin = Admin(app, engine, authentication_backend=authentication_backend)

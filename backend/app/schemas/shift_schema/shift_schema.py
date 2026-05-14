@@ -1,8 +1,6 @@
 from datetime import datetime, date
 from typing import List
-
 from pydantic import BaseModel, ConfigDict
-
 from app.schemas.task_schema.shift_task_schema import ShiftTaskResponse
 
 class ShiftCreate(BaseModel):
@@ -36,3 +34,10 @@ class ShiftUpdate(BaseModel):
     end_time: datetime | None = None
     refuge_id: int | None = None
     max_participants: int | None = None
+
+class MyShiftTasksGroup(BaseModel):
+    shift: ShiftResponse
+    tasks: List[ShiftTaskResponse]
+
+class ListMyShiftTaskGroupResponse(BaseModel):
+    my_shift_tasks: List[MyShiftTasksGroup]

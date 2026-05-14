@@ -1,7 +1,9 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/community/presentation/community_screen.dart';
 import 'package:bastetshelter/features/shifts/presentation/shifts_gateway_screen.dart';
+import 'package:bastetshelter/features/tasks/presentation/my_tasks_screen.dart';
 import 'package:bastetshelter/features/tasks/presentation/tasks_screen.dart';
+import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:bastetshelter/providers/geo/geo_provider.dart';
 import 'package:bastetshelter/features/animals/presentation/animals_screen.dart';
 import 'package:bastetshelter/features/common/components/layout/app_shell.dart';
@@ -19,6 +21,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late int _selectedIndex;
+  late final isManager = ref.watch(isManagerProvider);
 
   @override
   void initState() {
@@ -35,12 +38,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     GlobalKey<NavigatorState>(),
   ];
 
-  final List<Widget> _tabs = const [
-    HomeTab(),
-    AnimalsScreen(),
-    ShiftsGatewayScreen(),
-    TasksScreen(),
-    CommunityScreen(),
+  late final List<Widget> _tabs = [
+    const HomeTab(),
+    const AnimalsScreen(),
+    const ShiftsGatewayScreen(),
+    isManager ? const TasksScreen() : MyTasksScreen(),
+    const CommunityScreen(),
   ];
 
   @override

@@ -1,6 +1,9 @@
-from sqlalchemy.orm import Session, joinedload
+from datetime import date
+
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.models.shift.shift import Shift
+from app.models.shift.shift_participant import ShiftParticipant
 from app.models.task.shift_task import ShiftTask
 from app.models.task.task import TaskStatusEnum
 from app.repositories.generic_repo import BaseRepository
@@ -39,3 +42,31 @@ class ShiftTaskRepository(BaseRepository[ShiftTask]):
             db.commit()
             db.refresh(shift_task)
         return shift_task
+
+    def get_by_member(
+            self,
+            db: Session,
+            member_id: int,
+            from_date: date = None
+    ) -> list[type[ShiftTask]]:
+
+        query = (
+            db.query(ShiftTask)
+            .join(ShiftParticipant, ShiftTask.participant_id == ShiftParticipant.id)
+            .join(Shift, ShiftTask.shift_id == Shift.id)
+            .filter(ShiftParticipant.member_id == member_id)
+        )
+
+        #ignore past shifts
+        if from_date:
+            query = query.filter(Shift.day >= from_date)
+
+        return (
+            query.options(
+                selectinload(ShiftTask.shift),
+                selectinload(ShiftTask.task),
+                selectinload(ShiftTask.animal),
+                selectinload(ShiftTask.participant)
+            )
+            .all()
+        )

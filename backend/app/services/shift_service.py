@@ -16,7 +16,8 @@ from app.repositories.shift_task_repo import ShiftTaskRepository
 from app.repositories.task_repo import TaskRepository
 from app.repositories.animal_repo import AnimalRepository
 from app.repositories.refuge_repo import RefugeRepository
-from app.schemas.shift_schema.shift_schema import ShiftCreate, ShiftResponse, ShiftDetailResponse, ShiftUpdate
+from app.schemas.shift_schema.shift_schema import ShiftCreate, ShiftResponse, ShiftDetailResponse, ShiftUpdate, \
+    MyShiftTasksGroup
 from app.schemas.shift_schema.shift_participant_schema import ShiftParticipantResponse
 from app.schemas.task_schema.shift_task_schema import ShiftTaskResponse
 
@@ -314,6 +315,35 @@ class ShiftService:
         self.db.commit()
 
         return self.get_shift_detail(shift_id, shelter_id, user_id)
+
+    def get_my_tasks(self, user_id: int) -> list[MyShiftTasksGroup]:
+        """fetches all upcoming tasks assigned to a user and groups them by shift (and returns them sorted)"""
+        member = self._get_member_or_raise(user_id)
+
+        #ignore past shifts
+        today = date.today()
+        shift_tasks = self.shift_task_repo.get_by_member(self.db, member.id, from_date=today)
+
+        #grouped by shift id
+        grouped_tasks = {}
+        for task in shift_tasks:
+            shift_id = task.shift_id
+            if shift_id not in grouped_tasks:
+                grouped_tasks[shift_id] = {
+                    "shift": task.shift,
+                    "tasks": []
+                }
+            grouped_tasks[shift_id]["tasks"].append(task)
+
+        sorted_groups = sorted(grouped_tasks.values(), key=lambda g: g["shift"].start_time)
+
+        return [
+            MyShiftTasksGroup(
+                shift=ShiftResponse.model_validate(g["shift"]),
+                tasks=[ShiftTaskResponse.model_validate(t) for t in g["tasks"]]
+            )
+            for g in sorted_groups
+        ]
 
     def _verify_refuge_access(self, refuge_id: int, shelter_id: int) -> None:
         refuge = self.refuge_repo.get_by_id(self.db, refuge_id)

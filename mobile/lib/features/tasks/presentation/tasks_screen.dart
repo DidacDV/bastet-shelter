@@ -1,11 +1,12 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/common/components/app_info_banner.dart'; // ADDED IMPORT
+import 'package:bastetshelter/features/common/components/app_info_banner.dart';
 import 'package:bastetshelter/features/common/components/app_statuses/empty_state.dart';
 import 'package:bastetshelter/features/common/components/app_statuses/error_state.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/common/components/manage_list_card.dart';
 import 'package:bastetshelter/features/tasks/presentation/components/task_form_bottomsheet.dart';
+import 'package:bastetshelter/features/tasks/presentation/my_tasks_screen.dart';
 import 'package:bastetshelter/providers/tasks/task_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,6 +36,27 @@ class TasksScreen extends ConsumerWidget {
             message:
                 'These tasks can then be used and assigned when creating volunteer shifts.',
             margin: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+            ).copyWith(bottom: 8),
+            child: OutlinedButton.icon(
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const MyTasksScreen())),
+              icon: const Icon(Icons.assignment_ind_rounded),
+              label: const Text('View My Assigned Tasks'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.primary,
+                side: const BorderSide(color: AppColors.primary),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
           ),
 
           Expanded(

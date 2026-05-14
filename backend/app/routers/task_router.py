@@ -6,7 +6,9 @@ from starlette import status
 
 from app.core.dependencies.role_dependencies import get_db, get_current_user, require_manager, require_shelter_manager
 from app.models.user import AuthenticatedUser
+from app.schemas.shift_schema.shift_schema import ListMyShiftTaskGroupResponse
 from app.schemas.task_schema.task_schema import TaskCreate, TaskResponse, TaskResponseList, TaskUpdate
+from app.services.shift_service import ShiftService
 from app.services.task_service import TaskService
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
@@ -14,6 +16,8 @@ router = APIRouter(prefix="/tasks", tags=["tasks"])
 def get_task_service(db: Session = Depends(get_db)) -> TaskService:
     return TaskService(db)
 
+def get_shift_service(db: Session = Depends(get_db)) -> ShiftService:
+    return ShiftService(db)
 
 @router.post("/", response_model=TaskResponse)
 def create_task(
@@ -47,3 +51,10 @@ def update_shelter(
         service: TaskService = Depends(get_task_service)
 ):
     return service.update_task(auth.shelter_id, task_id, data)
+
+@router.get("/me", response_model=ListMyShiftTaskGroupResponse)
+def get_my_tasks(
+    auth: AuthenticatedUser = Depends(get_current_user),
+    service: ShiftService = Depends(get_shift_service)
+):
+    return {"my_shift_tasks":service.get_my_tasks(auth.user.id)}

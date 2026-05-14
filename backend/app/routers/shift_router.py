@@ -92,7 +92,7 @@ def update_shift(
 def assign_task(
     shift_task_id: int,
     participant_id: int,
-    auth: AuthenticatedUser = Depends(require_manager),
+    auth: AuthenticatedUser = Depends(get_current_user),
     service: ShiftService = Depends(get_shift_service)
 ):
     return service.assign_task(shift_task_id, participant_id, auth.shelter_id)
@@ -100,7 +100,7 @@ def assign_task(
 @router.patch("/tasks/{shift_task_id}/unassign", response_model=ShiftTaskResponse)
 def unassign_task(
     shift_task_id: int,
-    auth: AuthenticatedUser = Depends(require_manager),
+    auth: AuthenticatedUser = Depends(get_current_user),
     service: ShiftService = Depends(get_shift_service)
 ):
     return service.unassign_task(shift_task_id, auth)

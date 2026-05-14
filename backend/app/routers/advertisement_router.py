@@ -8,7 +8,7 @@ from app.models.advertisement import AdCategoryEnum
 from app.schemas.advertisement_schema import (
     AdvertisementCreate,
     AdvertisementSummary,
-    AdvertisementDetail
+    AdvertisementDetail, AdvertisementSummaryList
 )
 from app.services.advertisement_service import AdvertisementService
 
@@ -25,21 +25,21 @@ def create_advertisement(
 ):
     return service.create_advertisement(data, auth.shelter_id)
 
-@router.get("/me", response_model=List[AdvertisementSummary])
+@router.get("/me", response_model=AdvertisementSummaryList)
 def get_my_advertisements(
     auth: AuthenticatedUser = Depends(get_current_user),
     service: AdvertisementService = Depends(get_advertisement_service)
 ):
-    return service.get_my_advertisements(auth.shelter_id)
+    return {"advertisements":service.get_my_advertisements(auth.shelter_id)}
 
-@router.get("/", response_model=List[AdvertisementSummary])
+@router.get("/", response_model=AdvertisementSummaryList)
 def get_advertisements(
     province_name: Optional[str] = Query(None, description="Filter by province name"),
     category: Optional[AdCategoryEnum] = Query(None, description="Filter by Ad Category"),
     auth: AuthenticatedUser = Depends(get_current_user),
     service: AdvertisementService = Depends(get_advertisement_service)
 ):
-    return service.get_advertisements(province_name=province_name, category=category, shelter_id=auth.shelter_id)
+    return {"advertisements":service.get_advertisements(province_name=province_name, category=category, shelter_id=auth.shelter_id)}
 
 @router.get("/{ad_id}", response_model=AdvertisementDetail)
 def get_advertisement_detail(

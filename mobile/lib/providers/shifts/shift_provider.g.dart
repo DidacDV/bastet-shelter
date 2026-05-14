@@ -182,7 +182,7 @@ final class ShiftDetailNotifierProvider
 }
 
 String _$shiftDetailNotifierHash() =>
-    r'f05deb02607ef61f4f9bb19ffc96030825738f0c';
+    r'7893bab3ce4fc67d31a23da581cb83ed19b72e72';
 
 final class ShiftDetailNotifierFamily extends $Family
     with

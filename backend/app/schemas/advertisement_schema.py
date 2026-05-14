@@ -20,6 +20,9 @@ class AdvertisementSummary(BaseModel):
     province_name: str
     image_url: Optional[str] = None
 
+class AdvertisementSummaryList(BaseModel):
+    advertisements: list[AdvertisementSummary]
+
 class AdvertisementDetail(AdvertisementSummary):
     description: str
     published_on: datetime

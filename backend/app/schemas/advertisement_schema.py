@@ -19,6 +19,7 @@ class AdvertisementSummary(BaseModel):
     category: AdCategoryEnum
     province_name: str
     image_url: Optional[str] = None
+    is_active: bool = True
 
 class AdvertisementSummaryList(BaseModel):
     advertisements: list[AdvertisementSummary]

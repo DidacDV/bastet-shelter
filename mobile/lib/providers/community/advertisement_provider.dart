@@ -2,6 +2,8 @@ import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/community/data/advertisement_model.dart';
 import 'package:bastetshelter/features/community/data/advertisement_repository.dart';
+import 'package:bastetshelter/providers/community/advertisement_detail_provider.dart';
+import 'package:bastetshelter/providers/community/my_advertisements_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -78,10 +80,24 @@ class Advertisements extends _$Advertisements {
 
       if (state.hasValue) {
         state = AsyncValue.data(
-          state.value!.where((ad) => ad.id != adId).toList(),
+          state.value!.map((ad) {
+            if (ad.id == adId) {
+              return AdvertisementSummary(
+                id: ad.id,
+                title: ad.title,
+                category: ad.category,
+                provinceName: ad.provinceName,
+                isActive: false,
+                imageUrl: ad.imageUrl,
+              );
+            }
+            return ad;
+          }).toList(),
         );
       }
-      // ref.invalidate(advertisementDetailProvider(adId));
+      ref.invalidate(advertisementDetailControllerProvider);
+
+      ref.invalidate(myAdvertisementsProvider);
     });
   }
 

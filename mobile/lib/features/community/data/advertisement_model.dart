@@ -22,12 +22,14 @@ class AdvertisementSummary {
   final AdCategory category;
   final String provinceName;
   final String? imageUrl;
+  final bool isActive;
 
   const AdvertisementSummary({
     required this.id,
     required this.title,
     required this.category,
     required this.provinceName,
+    required this.isActive,
     this.imageUrl,
   });
 
@@ -37,6 +39,7 @@ class AdvertisementSummary {
       title: json['title'] as String,
       category: _categoryFromJson(json['category'] as String),
       provinceName: json['province_name'] as String,
+      isActive: json['is_active'] as bool,
       imageUrl: json['image_url'] as String?,
     );
   }
@@ -49,7 +52,6 @@ class AdvertisementSummary {
 class AdvertisementDetail extends AdvertisementSummary {
   final String description;
   final DateTime publishedOn;
-  final bool isActive;
   final int shelterId;
   final String shelterName;
   final String shelterEmail;
@@ -59,10 +61,10 @@ class AdvertisementDetail extends AdvertisementSummary {
     required super.title,
     required super.category,
     required super.provinceName,
+    required super.isActive,
     super.imageUrl,
     required this.description,
     required this.publishedOn,
-    required this.isActive,
     required this.shelterId,
     required this.shelterName,
     required this.shelterEmail,

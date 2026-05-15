@@ -1,8 +1,9 @@
-import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/community/data/advertisement_model.dart';
 import 'package:bastetshelter/features/community/presentation/components/advertisement_card.dart';
+import 'package:bastetshelter/features/community/presentation/components/advertisement_detail_bottomsheet.dart';
 import 'package:bastetshelter/features/community/presentation/my_advertisements_screen.dart';
+import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:bastetshelter/providers/community/advertisement_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,32 +22,13 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
   @override
   Widget build(BuildContext context) {
     final adsAsync = ref.watch(advertisementsProvider);
-
-    final isManager = true;
+    final isManager = ref.watch(isManagerProvider);
 
     return Scaffold(
       appBar: BastetAppBar(
         customTitle: 'Community Marketplace',
         showLogout: false,
       ),
-
-      floatingActionButton: isManager
-          ? FloatingActionButton.extended(
-              heroTag: 'community_fab',
-              onPressed: () {},
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.surface,
-              elevation: 2,
-              icon: const Icon(Icons.add_rounded),
-              label: const Text(
-                'New Ad',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            )
-          : null,
 
       body: Column(
         children: [
@@ -63,7 +45,11 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                     ),
                   );
                 },
-                child: const Text('See your shelter advertisements'),
+                child: Text(
+                  isManager
+                      ? 'Manage your shelter advertisements'
+                      : 'See your shelter advertisements',
+                ),
               ),
             ),
           ),
@@ -152,7 +138,10 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                   itemCount: filteredAds.length,
                   itemBuilder: (context, index) {
                     final ad = filteredAds[index];
-                    return AdvertisementCard(advertisement: ad, onTap: () {});
+                    return AdvertisementCard(
+                      advertisement: ad,
+                      onTap: () => showAdvertisementDetailSheet(context, ad.id),
+                    );
                   },
                 );
               },

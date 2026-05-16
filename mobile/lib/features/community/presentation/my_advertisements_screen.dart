@@ -1,6 +1,7 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/community/presentation/components/advertisement_card.dart';
+import 'package:bastetshelter/features/community/presentation/components/create_advertisement_bottomsheet.dart';
 import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:bastetshelter/providers/community/my_advertisements_provider.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,9 @@ class _MyAdvertisementsScreenState
       floatingActionButton: isManager
           ? FloatingActionButton.extended(
               heroTag: 'community_fab',
-              onPressed: () {},
+              onPressed: () {
+                showCreateAdvertisementSheet(context);
+              },
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.surface,
               elevation: 2,

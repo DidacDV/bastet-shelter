@@ -61,7 +61,7 @@ class NavigationService {
             ],
           ),
           backgroundColor: isError
-              ? theme.colorScheme.error
+              ? theme.colorScheme.secondary
               : theme.colorScheme.primary,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(

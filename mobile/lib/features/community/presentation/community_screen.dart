@@ -62,7 +62,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                   flex: 2,
                   child: TextField(
                     decoration: const InputDecoration(
-                      hintText: 'Search title...',
+                      hintText: 'Search by title, province...',
                       border: OutlineInputBorder(),
                       contentPadding: EdgeInsets.symmetric(horizontal: 12),
                     ),
@@ -111,9 +111,13 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
               error: (err, stack) => Center(child: Text('Error: $err')),
               data: (ads) {
                 final filteredAds = ads.where((ad) {
-                  final matchesSearch = ad.title.toLowerCase().contains(
-                    _searchQuery.toLowerCase(),
-                  );
+                  final matchesSearch =
+                      ad.provinceName.toLowerCase().contains(
+                        _searchQuery.toLowerCase(),
+                      ) ||
+                      ad.title.toLowerCase().contains(
+                        _searchQuery.toLowerCase(),
+                      );
                   final matchesCategory =
                       _selectedCategory == null ||
                       ad.category == _selectedCategory;

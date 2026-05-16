@@ -2,6 +2,7 @@ import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:bastetshelter/features/adoption/data/adoptant_repository.dart';
 import 'package:bastetshelter/features/adoption/data/adoption_repository.dart';
 import 'package:bastetshelter/features/animals/data/animal_repository.dart';
+import 'package:bastetshelter/features/community/data/advertisement_repository.dart';
 import 'package:bastetshelter/features/geo/data/geo_repository.dart';
 import 'package:bastetshelter/features/medicine/data/medicine_repository.dart';
 import 'package:bastetshelter/features/medicine/data/vet_visit_repository.dart';
@@ -56,4 +57,5 @@ void configureDependencies() {
   );
   getIt.registerSingleton<TaskRepository>(TaskRepository(getIt<ApiClient>()));
   getIt.registerSingleton(ShiftRepository(getIt<ApiClient>()));
+  getIt.registerSingleton(AdvertisementRepository(getIt<ApiClient>()));
 }

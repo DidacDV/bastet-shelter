@@ -155,7 +155,6 @@ class _UploadAnimalImagesScreenState
                     ),
                     const SizedBox(height: 32),
 
-                    //grid that contains images (TODO: center it?)
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),

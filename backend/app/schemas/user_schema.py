@@ -10,14 +10,14 @@ class UserCreate(BaseModel):
     last_name_1: str
     last_name_2: Optional[str] = None
 
-class UserResponse(BaseModel):
+class UserProfileResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     name: str
     last_name_1: str
     last_name_2: Optional[str] = None
-    active: bool
+    email: str
 
 class LoginRequest(BaseModel):
     email: EmailStr

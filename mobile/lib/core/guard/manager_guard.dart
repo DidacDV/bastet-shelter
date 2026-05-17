@@ -18,7 +18,6 @@ class _ManagerGuardState extends ConsumerState<ManagerGuard> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final isManager = ref.read(isManagerProvider);
-      print(isManager);
       if (!isManager) {
         //if not manager, redirect to home
         ScaffoldMessenger.of(context).showSnackBar(

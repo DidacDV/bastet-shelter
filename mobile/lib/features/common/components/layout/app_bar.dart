@@ -1,6 +1,7 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
+import 'package:bastetshelter/features/user/presentation/user_profile_screen.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';
 import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
@@ -14,6 +15,7 @@ class BastetAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final bool showBackButton;
   final bool showConfig;
   final bool showLogout;
+  final bool showProfile;
 
   const BastetAppBar({
     super.key,
@@ -21,6 +23,7 @@ class BastetAppBar extends ConsumerWidget implements PreferredSizeWidget {
     this.showBackButton = false,
     this.showConfig = true,
     this.showLogout = true,
+    this.showProfile = false,
   });
 
   @override
@@ -47,6 +50,16 @@ class BastetAppBar extends ConsumerWidget implements PreferredSizeWidget {
               context,
               rootNavigator: true,
             ).pushNamed('/shelter/config'),
+          ),
+
+        if (showProfile)
+          IconButton(
+            icon: const Icon(Icons.account_circle_outlined),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const UserProfileScreen(),
+              ),
+            ),
           ),
 
         if (showLogout)

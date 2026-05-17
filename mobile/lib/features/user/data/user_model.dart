@@ -23,6 +23,5 @@ class UserProfile {
     );
   }
 
-  String get fullName =>
-      [name, lastName1, if (lastName2 != null) lastName2!].join(' ');
+  String get fullName => [name, lastName1, ?lastName2].join(' ');
 }

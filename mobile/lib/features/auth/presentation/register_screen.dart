@@ -6,6 +6,7 @@ import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
 import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,6 +16,9 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  static const _privacyPolicyUrl =
+      'https://www.privacypolicies.com/live/75468d8c-1322-4ce6-9a85-696c1015c3f4';
+
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _lastname1Controller = TextEditingController();
@@ -23,6 +27,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _repository = getIt<AuthRepository>();
   bool _isLoading = false;
+  bool _acceptedGdpr = false;
+  bool _showGdprError = false;
 
   @override
   void dispose() {
@@ -34,11 +40,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  Future<void> _openPrivacyPolicy() async {
+    final uri = Uri.parse(_privacyPolicyUrl);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   Future<void> _register() async {
+    if (!_acceptedGdpr) {
+      setState(() => _showGdprError = true);
+      return;
+    }
+
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+      setState(() => _isLoading = true);
 
       await genericApiCall(() async {
         await _repository.register(
@@ -114,7 +130,88 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   obscure: true,
                   validator: Validators.validatePassword,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 28),
+
+                GestureDetector(
+                  onTap: () => setState(() {
+                    _acceptedGdpr = !_acceptedGdpr;
+                    if (_acceptedGdpr) _showGdprError = false;
+                  }),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: Checkbox(
+                          value: _acceptedGdpr,
+                          onChanged: (v) => setState(() {
+                            _acceptedGdpr = v ?? false;
+                            if (_acceptedGdpr) _showGdprError = false;
+                          }),
+                          activeColor: AppColors.primary,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                          side: BorderSide(
+                            color: _showGdprError
+                                ? AppColors.error
+                                : AppColors.outline,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text.rich(
+                          TextSpan(
+                            style: tt.bodySmall?.copyWith(
+                              color: AppColors.textSecondary,
+                              height: 1.5,
+                            ),
+                            children: [
+                              const TextSpan(
+                                text: 'I have read and accept the ',
+                              ),
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.baseline,
+                                baseline: TextBaseline.alphabetic,
+                                child: GestureDetector(
+                                  onTap: _openPrivacyPolicy,
+                                  child: Text(
+                                    'Privacy Policy',
+                                    style: tt.bodySmall?.copyWith(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.w600,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const TextSpan(
+                                text:
+                                    ' and consent to the processing of my personal data (name, surnames and email address) in accordance with the GDPR and LOPDGDD.',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                if (_showGdprError) ...[
+                  const SizedBox(height: 6),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 34),
+                    child: Text(
+                      'You must accept the Privacy Policy to continue.',
+                      style: tt.bodySmall?.copyWith(color: AppColors.error),
+                    ),
+                  ),
+                ],
+
+                const SizedBox(height: 28),
                 PrimaryButton(
                   label: 'Register',
                   isLoading: _isLoading,

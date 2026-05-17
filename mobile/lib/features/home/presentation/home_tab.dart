@@ -17,7 +17,7 @@ class HomeTab extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      appBar: const BastetAppBar(),
+      appBar: const BastetAppBar(showProfile: true),
 
       body: dashboardAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),

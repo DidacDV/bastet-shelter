@@ -5,6 +5,7 @@ from fastapi import BackgroundTasks
 from sqlalchemy.orm import Session
 
 from app.core.email.email_sender import send_email
+from app.core.email.templates import magic_link_email
 from app.core.exceptions import AuthorizationError
 from app.core.security import create_access_token
 from app.models.adoption.adoptant import Adoptant
@@ -39,7 +40,13 @@ class AdoptantAuthService:
         self.token_repo.create(self.db, magic_link)
 
         frontend_magic_link_url = f"http://localhost:5173/verify?token={raw_token}"
-        send_email(subject="Your Bastet Shelter Access Link", recipients=[str(adoptant.email)], body=f"Your magic link is: {frontend_magic_link_url}", background_tasks=background_tasks)
+
+        send_email(
+            subject="Your access link to Bastet Shelter",
+            recipients=[str(adoptant.email)],
+            body=magic_link_email(name=str(adoptant.name), magic_link_url=frontend_magic_link_url),
+            background_tasks=background_tasks,
+        )
 
         return {"message": "If the details are correct, a magic link has been sent to your email."}
 

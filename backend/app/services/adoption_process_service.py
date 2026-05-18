@@ -3,6 +3,7 @@ from datetime import date
 from sqlalchemy.orm import Session
 
 from app.core.email.email_sender import send_email
+from app.core.email.templates import adoption_completed_email, adoption_rejected_email
 from app.core.exceptions import NotFoundError, BusinessLogicError, AuthorizationError
 from app.models.adoption.adoption_process import AdoptionProcess, AdoptionProcessStatusEnum
 from app.models.adoption.adoption_steps.adoption_step import AdoptionStep, StepStatusEnum, StepTypeEnum, STEP_ORDER
@@ -117,10 +118,18 @@ class AdoptionProcessService:
 
         self.step_repo.mark_all_rejected(self.db, process.id)
         self.process_repo.mark_rejected(self.db, process)
-        send_email(subject="Your Bastet Shelter Access Link",
-                   recipients=[str(process.adoptant.email)],
-                   body=f"Your adoption process for {process.animal.name} has been rejected. Reason: {reason}",
-                   background_tasks=background_tasks)
+        html_body = adoption_rejected_email(
+            adoptant_name=process.adoptant.name,
+            animal_name=process.animal.name,
+            reason=reason
+        )
+
+        send_email(
+            subject=f"Update regarding your adoption application for {process.animal.name}",
+            recipients=[str(process.adoptant.email)],
+            body=html_body,
+            background_tasks=background_tasks
+        )
 
     def cancel_adoption(self, process_id: int, adoptant_id: int, background_tasks: BackgroundTasks) -> None:
         """done by ADOPTANT"""
@@ -151,11 +160,17 @@ class AdoptionProcessService:
         process = self._get_process_or_raise(process_id)
         self.process_repo.mark_completed(self.db, process)
         process.animal.in_adoption = False
-        send_email(subject="Your Bastet Shelter Access Link",
-                   recipients=[str(process.adoptant.email)],
-                   body=f"Your adoption process for {process.animal.name} has been completed!",
-                   background_tasks=background_tasks)
+        html_body = adoption_completed_email(
+            adoptant_name=process.adoptant.name,
+            animal_name=process.animal.name
+        )
 
+        send_email(
+            subject=f"Great news! Your adoption process for {process.animal.name} is complete 🐾",
+            recipients=[str(process.adoptant.email)],
+            body=html_body,
+            background_tasks=background_tasks
+        )
 
     def get_adoption_process_details(self, process_id: int) -> AdoptionProcessDetailResponse:
         """full details"""

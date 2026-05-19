@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/rejection_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
@@ -26,11 +27,10 @@ class _AdoptionProcessFooterState extends State<AdoptionProcessFooter> {
   Future<void> _handleApprove() async {
     final confirm = await ConfirmationDialog.show(
       context: context,
-      title: 'Approve',
-      message:
-          'Are you sure you want to approve this step? Make sure to add some notes!',
+      title: context.l10n.t('adoption.approve'),
+      message: context.l10n.t('adoption.approveMessage'),
       isDestructive: false,
-      confirmText: 'Approve',
+      confirmText: context.l10n.t('adoption.approve'),
     );
 
     if (!confirm) {
@@ -74,11 +74,11 @@ class _AdoptionProcessFooterState extends State<AdoptionProcessFooter> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const FittedBox(
+                  child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      'Reject & Notify',
-                      style: TextStyle(
+                      context.l10n.t('adoption.rejectNotify'),
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
@@ -92,7 +92,7 @@ class _AdoptionProcessFooterState extends State<AdoptionProcessFooter> {
 
             Expanded(
               child: PrimaryButton(
-                label: 'Approve & Continue',
+                label: context.l10n.t('adoption.approveContinue'),
                 isLoading: _isApproving,
                 onPressed: widget.canApprove ? _handleApprove : null,
               ),

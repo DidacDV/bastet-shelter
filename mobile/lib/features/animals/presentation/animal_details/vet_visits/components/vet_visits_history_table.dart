@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/vet_visit_row.dart';
 import 'package:bastetshelter/features/common/components/app_statuses/empty_state.dart';
 import 'package:bastetshelter/features/common/components/table/app_table.dart';
@@ -13,11 +14,11 @@ class VetVisitsHistoryTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (pastVisits.isEmpty) {
-      return const Expanded(
+      return Expanded(
         child: AppEmptyState(
           icon: Icons.hourglass_empty,
-          title: "No past vet visits",
-          message: "You have not done any vet visits yet.",
+          title: context.l10n.t('vet.noPastVisits'),
+          message: context.l10n.t('vet.noPastVisitsMessage'),
         ),
       );
     }
@@ -25,16 +26,20 @@ class VetVisitsHistoryTable extends StatelessWidget {
     return Expanded(
       child: AppTable(
         itemCount: pastVisits.length,
-        header: const AppTableHeader(
+        header: AppTableHeader(
           columns: [
-            AppTableColumn(label: 'DATE', flex: 4, textAlign: TextAlign.center),
             AppTableColumn(
-              label: 'REASON',
+              label: context.l10n.t('common.date').toUpperCase(),
               flex: 4,
               textAlign: TextAlign.center,
             ),
             AppTableColumn(
-              label: 'CLINIC',
+              label: context.l10n.t('vet.reason').toUpperCase(),
+              flex: 4,
+              textAlign: TextAlign.center,
+            ),
+            AppTableColumn(
+              label: context.l10n.t('vet.clinic').toUpperCase(),
               flex: 4,
               textAlign: TextAlign.center,
             ),

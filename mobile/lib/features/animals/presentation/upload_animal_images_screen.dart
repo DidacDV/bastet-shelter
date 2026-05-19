@@ -63,10 +63,12 @@ class _UploadAnimalImagesScreenState
         });
       }
     } catch (e) {
-      NavigationService.instance.showSnackBar(
-        context.l10n.t('animals.pickImagesError'),
-        isError: true,
-      );
+      if (mounted) {
+        NavigationService.instance.showSnackBar(
+          context.l10n.t('animals.pickImagesError'),
+          isError: true,
+        );
+      }
     }
   }
 

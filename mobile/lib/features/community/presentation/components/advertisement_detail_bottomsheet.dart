@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/community/data/advertisement_model.dart';
@@ -54,7 +55,7 @@ class _AdvertisementDetailSheet extends ConsumerWidget {
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Center(
               child: Text(
-                'Could not load details.',
+                context.l10n.t('community.detailsLoadError'),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -93,10 +94,11 @@ class _SheetContentState extends ConsumerState<_SheetContent> {
   Future<void> _handleDeactivate() async {
     final confirm = await ConfirmationDialog.show(
       context: context,
-      title: 'Deactivate ad',
-      message:
-          'Are you sure you want to deactivate "${widget.ad.title}"? It will no longer be visible to others and you wont be able to restore it.',
-      confirmText: 'Deactivate',
+      title: context.l10n.t('community.deactivateAd'),
+      message: context.l10n
+          .t('community.deactivateAdMessage')
+          .replaceAll('{ad}', widget.ad.title),
+      confirmText: context.l10n.t('community.deactivate'),
       isDestructive: true,
     );
 
@@ -171,7 +173,7 @@ class _SheetContentState extends ConsumerState<_SheetContent> {
                                 borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
-                                'Inactive',
+                                context.l10n.t('community.inactive'),
                                 style: theme.textTheme.labelSmall?.copyWith(
                                   color: AppColors.error,
                                   fontWeight: FontWeight.w600,
@@ -225,7 +227,7 @@ class _SheetContentState extends ConsumerState<_SheetContent> {
                       const SizedBox(height: 16),
 
                       Text(
-                        'Description',
+                        context.l10n.t('common.description'),
                         style: theme.textTheme.labelMedium?.copyWith(
                           color: AppColors.textHint,
                           letterSpacing: 0.5,
@@ -245,7 +247,7 @@ class _SheetContentState extends ConsumerState<_SheetContent> {
                       const SizedBox(height: 16),
 
                       Text(
-                        'Posted by',
+                        context.l10n.t('community.postedBy'),
                         style: theme.textTheme.labelMedium?.copyWith(
                           color: AppColors.textHint,
                           letterSpacing: 0.5,
@@ -314,9 +316,9 @@ class _SheetContentState extends ConsumerState<_SheetContent> {
                 ),
               ),
               icon: const Icon(Icons.mail_outline_rounded, size: 18),
-              label: const Text(
-                'Contact shelter',
-                style: TextStyle(fontWeight: FontWeight.w600),
+              label: Text(
+                context.l10n.t('community.contactShelter'),
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
             AdSheetMode.myAds =>
@@ -342,7 +344,9 @@ class _SheetContentState extends ConsumerState<_SheetContent> {
                             )
                           : const Icon(Icons.visibility_off_outlined, size: 18),
                       label: Text(
-                        _deactivating ? 'Deactivating...' : 'Deactivate ad',
+                        _deactivating
+                            ? context.l10n.t('community.deactivating')
+                            : context.l10n.t('community.deactivateAd'),
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     )
@@ -352,10 +356,10 @@ class _SheetContentState extends ConsumerState<_SheetContent> {
                         color: AppColors.divider,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          'This ad is already inactive',
-                          style: TextStyle(
+                          context.l10n.t('community.adAlreadyInactive'),
+                          style: const TextStyle(
                             color: AppColors.textHint,
                             fontWeight: FontWeight.w500,
                           ),
@@ -408,7 +412,7 @@ class _CategoryChip extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           Text(
-            category.value,
+            _localizedCategory(context, category),
             style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -420,4 +424,13 @@ class _CategoryChip extends StatelessWidget {
       ),
     );
   }
+
+  String _localizedCategory(BuildContext context, AdCategory category) =>
+      switch (category) {
+        AdCategory.food => context.l10n.t('community.categoryFood'),
+        AdCategory.medicine => context.l10n.t('community.categoryMedicine'),
+        AdCategory.equipment => context.l10n.t('community.categoryEquipment'),
+        AdCategory.toys => context.l10n.t('community.categoryToys'),
+        AdCategory.other => context.l10n.t('community.categoryOther'),
+      };
 }

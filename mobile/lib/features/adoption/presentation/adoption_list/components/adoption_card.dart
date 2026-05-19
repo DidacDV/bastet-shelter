@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/adoption/data/adoption_enums.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_process/adoption_process_summary.dart';
 import 'package:bastetshelter/features/common/components/section_badge.dart';
@@ -68,7 +69,7 @@ class AdoptionCard extends StatelessWidget {
                           ),
                         ),
                         SectionBadge(
-                          label: process.status.value,
+                          label: _localizedStatus(context, process.status),
                           color: process.statusColor,
                         ),
                       ],
@@ -89,7 +90,12 @@ class AdoptionCard extends StatelessWidget {
                       children: [
                         //current step
                         if (process.currentStep != null)
-                          _StepPill(label: process.currentStep!.type.label),
+                          _StepPill(
+                            label: _localizedStep(
+                              context,
+                              process.currentStep!.type,
+                            ),
+                          ),
 
                         const Spacer(),
 
@@ -112,6 +118,28 @@ class AdoptionCard extends StatelessWidget {
       ),
     );
   }
+
+  String _localizedStatus(
+    BuildContext context,
+    AdoptionProcessStatus status,
+  ) => switch (status) {
+    AdoptionProcessStatus.pending => context.l10n.t('adoption.statusPending'),
+    AdoptionProcessStatus.completed => context.l10n.t(
+      'adoption.statusCompleted',
+    ),
+    AdoptionProcessStatus.cancelled => context.l10n.t(
+      'adoption.statusCancelled',
+    ),
+    AdoptionProcessStatus.rejected => context.l10n.t('adoption.statusRejected'),
+  };
+
+  String _localizedStep(BuildContext context, StepType type) => switch (type) {
+    StepType.form => context.l10n.t('adoption.stepForm'),
+    StepType.interview => context.l10n.t('adoption.stepInterview'),
+    StepType.shelterVisit => context.l10n.t('adoption.stepShelterVisit'),
+    StepType.contract => context.l10n.t('adoption.stepContract'),
+    StepType.animalPickup => context.l10n.t('adoption.stepAnimalPickupShort'),
+  };
 }
 
 class _StepPill extends StatelessWidget {

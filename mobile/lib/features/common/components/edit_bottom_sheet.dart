@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -86,7 +87,9 @@ class _EditBottomSheetState extends State<EditBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Edit ${widget.label}',
+                  context.l10n
+                      .t('common.editField')
+                      .replaceAll('{field}', widget.label),
                   style: tt.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppColors.textPrimary,
@@ -115,7 +118,7 @@ class _EditBottomSheetState extends State<EditBottomSheet> {
             const SizedBox(height: 28),
 
             PrimaryButton(
-              label: 'Save',
+              label: context.l10n.t('common.save'),
               isLoading: _loading,
               onPressed: _submit,
             ),

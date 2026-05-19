@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/app_statuses/empty_state.dart';
 import 'package:bastetshelter/features/common/components/app_statuses/error_state.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
@@ -24,10 +25,10 @@ class ManageMedicinesScreen extends ConsumerWidget {
     return AppColors.accentTint;
   }
 
-  String _stockLabel(int stock) {
-    if (stock == 0) return 'Out of stock';
-    if (stock <= 5) return 'Low stock';
-    return 'In stock';
+  String _stockLabel(BuildContext context, int stock) {
+    if (stock == 0) return context.l10n.t('medicine.outOfStock');
+    if (stock <= 5) return context.l10n.t('medicine.lowStock');
+    return context.l10n.t('medicine.inStock');
   }
 
   @override
@@ -36,7 +37,7 @@ class ManageMedicinesScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Medicines')),
+      appBar: AppBar(title: Text(context.l10n.t('medicine.title'))),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showMedicineDialog(context, ref),
         backgroundColor: AppColors.primary,
@@ -48,10 +49,10 @@ class ManageMedicinesScreen extends ConsumerWidget {
         error: (error, _) => AppErrorState(message: error.toString()),
         data: (medicines) {
           if (medicines.isEmpty) {
-            return const AppEmptyState(
+            return AppEmptyState(
               icon: Icons.medical_information_outlined,
-              title: 'No medicines yet',
-              message: 'Tap "Add" to add your first medicine.',
+              title: context.l10n.t('medicine.emptyTitle'),
+              message: context.l10n.t('medicine.emptyMessage'),
             );
           }
 
@@ -78,14 +79,19 @@ class ManageMedicinesScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        _stockLabel(stock),
+                        _stockLabel(context, stock),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: _stockColor(stock),
                         ),
                       ),
                     ),
                     const SizedBox(width: 6),
-                    Text('$stock units', style: theme.textTheme.bodySmall),
+                    Text(
+                      context.l10n
+                          .t('medicine.unitsCount')
+                          .replaceAll('{count}', '$stock'),
+                      style: theme.textTheme.bodySmall,
+                    ),
                   ],
                 ),
                 onEdit: () => _showMedicineDialog(
@@ -96,11 +102,12 @@ class ManageMedicinesScreen extends ConsumerWidget {
                 onDelete: () async {
                   final confirm = await ConfirmationDialog.show(
                     context: context,
-                    title: 'Delete medicine',
-                    message:
-                        'Are you sure you want to delete "${medicine.name}"?',
+                    title: context.l10n.t('medicine.deleteMedicine'),
+                    message: context.l10n
+                        .t('medicine.deleteMedicineMessage')
+                        .replaceAll('{medicine}', medicine.name),
                     isDestructive: true,
-                    confirmText: 'Delete',
+                    confirmText: context.l10n.t('profile.delete'),
                   );
                   if (confirm) {
                     await ref
@@ -152,7 +159,9 @@ class ManageMedicinesScreen extends ConsumerWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    isEditing ? 'Edit Medicine' : 'New Medicine',
+                    isEditing
+                        ? context.l10n.t('medicine.editMedicine')
+                        : context.l10n.t('medicine.newMedicine'),
                     style: theme.textTheme.titleLarge,
                   ),
                 ],
@@ -160,10 +169,13 @@ class ManageMedicinesScreen extends ConsumerWidget {
               const SizedBox(height: 24),
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Medicine name',
-                  hintText: 'e.g. Amoxicillin',
-                  prefixIcon: Icon(Icons.medication_liquid_rounded, size: 20),
+                decoration: InputDecoration(
+                  labelText: context.l10n.t('medicine.name'),
+                  hintText: context.l10n.t('medicine.nameHint'),
+                  prefixIcon: const Icon(
+                    Icons.medication_liquid_rounded,
+                    size: 20,
+                  ),
                 ),
                 autofocus: true,
                 textCapitalization: TextCapitalization.words,
@@ -171,10 +183,10 @@ class ManageMedicinesScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               TextField(
                 controller: stockController,
-                decoration: const InputDecoration(
-                  labelText: 'Current stock',
-                  hintText: '0',
-                  prefixIcon: Icon(Icons.inventory_2_rounded, size: 20),
+                decoration: InputDecoration(
+                  labelText: context.l10n.t('medicine.currentStock'),
+                  hintText: context.l10n.t('medicine.stockHint'),
+                  prefixIcon: const Icon(Icons.inventory_2_rounded, size: 20),
                 ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -185,7 +197,7 @@ class ManageMedicinesScreen extends ConsumerWidget {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
+                      child: Text(context.l10n.t('common.cancel')),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -212,7 +224,11 @@ class ManageMedicinesScreen extends ConsumerWidget {
                           Navigator.pop(context);
                         }
                       },
-                      child: Text(isEditing ? 'Save' : 'Add'),
+                      child: Text(
+                        isEditing
+                            ? context.l10n.t('common.save')
+                            : context.l10n.t('common.add'),
+                      ),
                     ),
                   ),
                 ],

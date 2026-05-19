@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/medical_treatments/data/models/medical_treatment_model.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +27,10 @@ class _DosageUnitDropdownState extends State<DosageUnitDropdown> {
       initialSelection: _selected,
       requestFocusOnTap: false,
       dropdownMenuEntries: DosageUnit.values
-          .map((u) => DropdownMenuEntry(value: u, label: u.label))
+          .map(
+            (u) =>
+                DropdownMenuEntry(value: u, label: _localizedUnit(context, u)),
+          )
           .toList(),
       onSelected: (DosageUnit? newValue) {
         setState(() => _selected = newValue);
@@ -34,4 +38,12 @@ class _DosageUnitDropdownState extends State<DosageUnitDropdown> {
       },
     );
   }
+
+  String _localizedUnit(BuildContext context, DosageUnit unit) =>
+      switch (unit) {
+        DosageUnit.mg => context.l10n.t('medical.unitMg'),
+        DosageUnit.ml => context.l10n.t('medical.unitMl'),
+        DosageUnit.drops => context.l10n.t('medical.unitDrops'),
+        DosageUnit.units => context.l10n.t('medical.unitUnits'),
+      };
 }

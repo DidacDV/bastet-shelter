@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/theme.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/components/view_treatment_bottom_sheet.dart';
@@ -50,7 +51,7 @@ class MedicalTreatmentsTab extends ConsumerWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Active Treatments',
+                        context.l10n.t('medical.activeTreatments'),
                         style: theme.textTheme.titleLarge,
                       ),
                     ],
@@ -62,7 +63,7 @@ class MedicalTreatmentsTab extends ConsumerWidget {
                         animalId: animalId,
                       ),
                       icon: const Icon(Icons.add_rounded, size: 18),
-                      label: const Text('Add'),
+                      label: Text(context.l10n.t('common.add')),
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.surface,
@@ -77,7 +78,7 @@ class MedicalTreatmentsTab extends ConsumerWidget {
               Row(
                 children: [
                   Text(
-                    'Double tap a row to toggle status\nTap once to view details and edit',
+                    context.l10n.t('medical.tableHint'),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: AppColors.textSecondary,
                       fontStyle: FontStyle.italic,
@@ -94,7 +95,7 @@ class MedicalTreatmentsTab extends ConsumerWidget {
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Center(
               child: Text(
-                'Could not load treatments.',
+                context.l10n.t('medical.loadTreatmentsError'),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: AppColors.error,
                 ),
@@ -102,22 +103,27 @@ class MedicalTreatmentsTab extends ConsumerWidget {
             ),
             data: (treatments) {
               if (treatments.isEmpty) {
-                return const AppEmptyState(
+                return AppEmptyState(
                   icon: Icons.medication_rounded,
-                  title: "No active treatments",
-                  message:
-                      "This animal does not have any active medical treatments.",
+                  title: context.l10n.t('medical.noActiveTreatments'),
+                  message: context.l10n.t('medical.noActiveTreatmentsMessage'),
                 );
               }
 
               return AppTable(
                 itemCount: treatments.length,
-                header: const AppTableHeader(
+                header: AppTableHeader(
                   columns: [
-                    AppTableColumn(label: 'MEDICINE', flex: 4),
-                    AppTableColumn(label: 'DOSAGE', flex: 3),
                     AppTableColumn(
-                      label: 'STATUS',
+                      label: context.l10n.t('medical.medicineColumn'),
+                      flex: 4,
+                    ),
+                    AppTableColumn(
+                      label: context.l10n.t('medical.dosageColumn'),
+                      flex: 3,
+                    ),
+                    AppTableColumn(
+                      label: context.l10n.t('medical.statusColumn'),
                       flex: 3,
                       textAlign: TextAlign.center,
                     ),
@@ -142,9 +148,9 @@ class _TreatmentRow extends ConsumerWidget {
 
   const _TreatmentRow({required this.treatment, required this.animalId});
 
-  String getDosageString() =>
+  String getDosageString(BuildContext context) =>
       '${treatment.dosage.toStringAsFixed(treatment.dosage.truncateToDouble() == treatment.dosage ? 0 : 1)}'
-      ' ${treatment.dosageUnit.label}';
+      ' ${_localizedUnit(context, treatment.dosageUnit)}';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -186,7 +192,7 @@ class _TreatmentRow extends ConsumerWidget {
             Expanded(
               flex: 3,
               child: Text(
-                getDosageString(),
+                getDosageString(context),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -198,7 +204,10 @@ class _TreatmentRow extends ConsumerWidget {
               child: Align(
                 alignment: Alignment.center,
                 child: SectionBadge(
-                  label: treatment.status.label.toUpperCase(),
+                  label: _localizedStatus(
+                    context,
+                    treatment.status,
+                  ).toUpperCase(),
                   color: treatment.status == MedicineStatus.given
                       ? AppColors.primary
                       : theme.colorScheme.warning,
@@ -210,4 +219,18 @@ class _TreatmentRow extends ConsumerWidget {
       ),
     );
   }
+
+  String _localizedStatus(BuildContext context, MedicineStatus status) =>
+      switch (status) {
+        MedicineStatus.given => context.l10n.t('medical.statusGiven'),
+        MedicineStatus.pending => context.l10n.t('medical.statusPending'),
+      };
+
+  String _localizedUnit(BuildContext context, DosageUnit unit) =>
+      switch (unit) {
+        DosageUnit.mg => context.l10n.t('medical.unitMg'),
+        DosageUnit.ml => context.l10n.t('medical.unitMl'),
+        DosageUnit.drops => context.l10n.t('medical.unitDrops'),
+        DosageUnit.units => context.l10n.t('medical.unitUnits'),
+      };
 }

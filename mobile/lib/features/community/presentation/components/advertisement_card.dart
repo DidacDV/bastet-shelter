@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/community/data/advertisement_model.dart';
 import 'package:flutter/material.dart';
 
@@ -11,12 +12,12 @@ class AdvertisementCard extends StatelessWidget {
     required this.onTap,
   });
 
-  Widget _buildNoImage(ThemeData theme) {
+  Widget _buildNoImage(BuildContext context, ThemeData theme) {
     return Container(
       color: theme.colorScheme.surfaceContainerHighest,
       child: Center(
         child: Text(
-          'No Image',
+          context.l10n.t('community.noImage'),
           style: theme.textTheme.labelSmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -53,10 +54,10 @@ class AdvertisementCard extends StatelessWidget {
                             advertisement.imageUrl!,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
-                              return _buildNoImage(theme);
+                              return _buildNoImage(context, theme);
                             },
                           )
-                        : _buildNoImage(theme),
+                        : _buildNoImage(context, theme),
 
                     if (!advertisement.isActive)
                       Positioned(
@@ -72,7 +73,7 @@ class AdvertisementCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            'INACTIVE',
+                            context.l10n.t('community.inactive').toUpperCase(),
                             style: theme.textTheme.labelSmall?.copyWith(
                               color: theme.colorScheme.onError,
                               fontWeight: FontWeight.bold,
@@ -100,7 +101,10 @@ class AdvertisementCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      advertisement.category.name.toUpperCase(),
+                      _localizedCategory(
+                        context,
+                        advertisement.category,
+                      ).toUpperCase(),
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: theme.colorScheme.primary,
                         letterSpacing: 1.2,
@@ -109,7 +113,7 @@ class AdvertisementCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       advertisement.provinceName.isEmpty
-                          ? 'Unknown Location'
+                          ? context.l10n.t('community.unknownLocation')
                           : advertisement.provinceName,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
@@ -126,4 +130,13 @@ class AdvertisementCard extends StatelessWidget {
       ),
     );
   }
+
+  String _localizedCategory(BuildContext context, AdCategory category) =>
+      switch (category) {
+        AdCategory.food => context.l10n.t('community.categoryFood'),
+        AdCategory.medicine => context.l10n.t('community.categoryMedicine'),
+        AdCategory.equipment => context.l10n.t('community.categoryEquipment'),
+        AdCategory.toys => context.l10n.t('community.categoryToys'),
+        AdCategory.other => context.l10n.t('community.categoryOther'),
+      };
 }

@@ -1,4 +1,6 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/features/adoption/data/adoption_enums.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/adoption_step_details.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/step_notes_bottomsheet.dart';
 import 'package:bastetshelter/providers/adoption/adoption_detail_provider.dart';
@@ -32,7 +34,7 @@ class StepCommonInfo extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          step.getStepName(),
+          _localizedStepName(context, step.type),
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
@@ -43,10 +45,9 @@ class StepCommonInfo extends ConsumerWidget {
           children: [
             Expanded(
               child: _InfoBlock(
-                label: 'Status',
+                label: context.l10n.t('adoption.status'),
                 child: Text(
-                  step.status.name[0].toUpperCase() +
-                      step.status.name.substring(1),
+                  _localizedStepStatus(context, step.status),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
@@ -56,14 +57,14 @@ class StepCommonInfo extends ConsumerWidget {
             ),
             Expanded(
               child: _InfoBlock(
-                label: 'Finish date',
+                label: context.l10n.t('adoption.finishDate'),
                 child: step.finishDate != null
                     ? Text(
                         fmt.format(step.finishDate!),
                         style: theme.textTheme.bodyMedium,
                       )
                     : Text(
-                        'Not finished yet',
+                        context.l10n.t('adoption.notFinishedYet'),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.textHint,
                           fontStyle: FontStyle.italic,
@@ -78,7 +79,7 @@ class StepCommonInfo extends ConsumerWidget {
         //nOTES SECTION
         if (hasNotes)
           _InfoBlock(
-            label: 'Notes',
+            label: context.l10n.t('common.notes'),
             trailing: InkWell(
               onTap: () => showStepNotesBottomSheet(
                 context: context,
@@ -109,7 +110,7 @@ class StepCommonInfo extends ConsumerWidget {
           )
         else
           _InfoBlock(
-            label: 'Notes',
+            label: context.l10n.t('common.notes'),
             child: IconButton(
               onPressed: () => showStepNotesBottomSheet(
                 context: context,
@@ -128,6 +129,23 @@ class StepCommonInfo extends ConsumerWidget {
       ],
     );
   }
+
+  String _localizedStepName(BuildContext context, StepType type) =>
+      switch (type) {
+        StepType.form => context.l10n.t('adoption.stepForm'),
+        StepType.interview => context.l10n.t('adoption.stepInterview'),
+        StepType.shelterVisit => context.l10n.t('adoption.stepShelterVisit'),
+        StepType.contract => context.l10n.t('adoption.stepContract'),
+        StepType.animalPickup => context.l10n.t('adoption.stepAnimalPickup'),
+      };
+
+  String _localizedStepStatus(BuildContext context, StepStatus status) =>
+      switch (status) {
+        StepStatus.pending => context.l10n.t('adoption.statusPending'),
+        StepStatus.completed => context.l10n.t('adoption.statusCompleted'),
+        StepStatus.rejected => context.l10n.t('adoption.statusRejected'),
+        StepStatus.skipped => context.l10n.t('adoption.statusSkipped'),
+      };
 }
 
 class _InfoBlock extends StatelessWidget {

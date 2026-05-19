@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
 import 'package:bastetshelter/features/animals/data/animal_type_enum.dart';
@@ -52,7 +53,7 @@ class _AnimalRegisterScreenState extends ConsumerState<AnimalRegisterScreen> {
 
     if (_birthDate == null) {
       NavigationService.instance.showSnackBar(
-        'Please select a birth date',
+        context.l10n.t('animals.selectBirthDate'),
         isError: true,
       );
       return;
@@ -63,7 +64,7 @@ class _AnimalRegisterScreenState extends ConsumerState<AnimalRegisterScreen> {
           _birthDate!,
         ).isAfter(DateUtils.dateOnly(_arrivalDate!))) {
       NavigationService.instance.showSnackBar(
-        'Arrival date cannot be before birth date',
+        context.l10n.t('animals.arrivalBeforeBirth'),
         isError: true,
       );
       return;
@@ -81,7 +82,7 @@ class _AnimalRegisterScreenState extends ConsumerState<AnimalRegisterScreen> {
 
     if (finalRefugeId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please wait for shelter data to load')),
+        SnackBar(content: Text(context.l10n.t('animals.waitShelterData'))),
       );
       return;
     }
@@ -140,26 +141,25 @@ class _AnimalRegisterScreenState extends ConsumerState<AnimalRegisterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       IllustratedHeader(
-                        badgeLabel: 'NEW ANIMAL',
-                        title: 'Register\nan animal',
-                        subtitle:
-                            'Fill in the details to add a new animal to the shelter.',
+                        badgeLabel: context.l10n.t('animals.newAnimalBadge'),
+                        title: context.l10n.t('animals.registerTitle'),
+                        subtitle: context.l10n.t('animals.registerSubtitle'),
                         imageWidget: SvgPicture.asset(
                           'assets/images/Illustration-22.svg',
                           height: 160,
                         ),
                       ),
                       const SizedBox(height: 32),
-                      const SectionHeader(label: 'Basic info'),
+                      SectionHeader(label: context.l10n.t('animals.basicInfo')),
                       const SizedBox(height: 12),
                       AppTextField(
                         controller: _nameController,
-                        label: 'Name',
+                        label: context.l10n.t('common.name'),
                         validator: (value) =>
                             Validators.validateRequired(value?.trim(), "name"),
                       ),
                       const SizedBox(height: 16),
-                      const FormLabel(label: 'Type'),
+                      FormLabel(label: context.l10n.t('animals.type')),
                       const SizedBox(height: 8),
                       AnimalTypeSelector(
                         selected: _animalType,
@@ -168,24 +168,26 @@ class _AnimalRegisterScreenState extends ConsumerState<AnimalRegisterScreen> {
                       const SizedBox(height: 16),
                       AppTextField(
                         controller: _breedController,
-                        label: 'Breed',
+                        label: context.l10n.t('animals.breed'),
                         validator: (value) =>
                             Validators.validateRequired(value?.trim(), "breed"),
                       ),
                       const SizedBox(height: 16),
                       DateField(
-                        label: 'Birth date',
+                        label: context.l10n.t('animals.birthDate'),
                         value: _birthDate,
                         lastDate: DateTime.now(),
                         onChanged: (d) => setState(() => _birthDate = d),
                       ),
                       const SizedBox(height: 28),
-                      const SectionHeader(label: 'Shelter info'),
+                      SectionHeader(
+                        label: context.l10n.t('animals.shelterInfo'),
+                      ),
                       const SizedBox(height: 12),
                       _buildRefugeSelector(shelterAsync),
                       const SizedBox(height: 16),
                       DateField(
-                        label: 'Arrival date',
+                        label: context.l10n.t('animals.arrivalDate'),
                         value: _arrivalDate,
                         lastDate: DateTime.now(),
                         required: false,
@@ -197,18 +199,18 @@ class _AnimalRegisterScreenState extends ConsumerState<AnimalRegisterScreen> {
                         onChanged: (v) => setState(() => _inAdoption = v),
                       ),
                       const SizedBox(height: 28),
-                      const SectionHeader(label: 'About'),
+                      SectionHeader(label: context.l10n.t('animals.about')),
                       const SizedBox(height: 12),
                       AppTextField(
                         controller: _descriptionController,
-                        label: 'Description',
+                        label: context.l10n.t('common.description'),
                         validator: (value) => Validators.validateRequired(
                           value?.trim(),
                           "description",
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const FormLabel(label: 'Traits'),
+                      FormLabel(label: context.l10n.t('traits.title')),
                       const SizedBox(height: 8),
                       TraitsChipSelector(
                         selectedTraitIds: _selectedTraitIds,
@@ -227,7 +229,7 @@ class _AnimalRegisterScreenState extends ConsumerState<AnimalRegisterScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(28, 8, 28, 20),
               child: PrimaryButton(
-                label: 'Register Animal And Continue',
+                label: context.l10n.t('animals.registerAndContinue'),
                 isLoading: _isLoading,
                 onPressed: _submit,
               ),
@@ -246,13 +248,13 @@ class _AnimalRegisterScreenState extends ConsumerState<AnimalRegisterScreen> {
           child: CircularProgressIndicator(strokeWidth: 2),
         ),
       ),
-      error: (_, _) => const Text(
-        'Could not load refuges.',
+      error: (_, _) => Text(
+        context.l10n.t('animals.refugesLoadError'),
         style: TextStyle(color: AppColors.error),
       ),
       data: (shelter) {
         if (shelter.refuges.isEmpty) {
-          return const Text('No refuges available.');
+          return Text(context.l10n.t('shelter.noRefuges'));
         }
         return RefugeDropdown(
           items: shelter.refuges

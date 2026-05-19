@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/providers/traits/trait_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +29,7 @@ class AnimalTraitsDisplay extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'TRAITS',
+              context.l10n.t('traits.title').toUpperCase(),
               style: tt.labelSmall?.copyWith(
                 color: AppColors.textSecondary,
                 letterSpacing: 0.5,
@@ -48,8 +49,8 @@ class AnimalTraitsDisplay extends ConsumerWidget {
         allTraitsAsync.when(
           loading: () => const CircularProgressIndicator(strokeWidth: 2),
           error: (_, _) => Text(
-            'Failed to load traits',
-            style: TextStyle(color: AppColors.error),
+            context.l10n.t('traits.failedToLoad'),
+            style: const TextStyle(color: AppColors.error),
           ),
           data: (allTraits) {
             final myTraits = allTraits
@@ -58,7 +59,7 @@ class AnimalTraitsDisplay extends ConsumerWidget {
 
             if (myTraits.isEmpty) {
               return Text(
-                'No traits assigned.',
+                context.l10n.t('traits.noneAssigned'),
                 style: tt.bodyMedium?.copyWith(
                   color: AppColors.textSecondary,
                   fontStyle: FontStyle.italic,

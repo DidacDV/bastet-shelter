@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class ManageListCard extends StatelessWidget {
@@ -88,7 +89,7 @@ class ManageListCard extends StatelessWidget {
                     color: theme.colorScheme.primary,
                   ),
                   onPressed: onEdit,
-                  tooltip: 'Edit',
+                  tooltip: context.l10n.t('common.edit'),
                   visualDensity: VisualDensity.compact,
                 ),
 
@@ -100,7 +101,7 @@ class ManageListCard extends StatelessWidget {
                     color: theme.colorScheme.error,
                   ),
                   onPressed: onDelete,
-                  tooltip: 'Delete',
+                  tooltip: context.l10n.t('profile.delete'),
                   visualDensity: VisualDensity.compact,
                 ),
             ],

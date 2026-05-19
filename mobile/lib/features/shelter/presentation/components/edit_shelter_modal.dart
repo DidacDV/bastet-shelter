@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
 import 'package:bastetshelter/providers/geo/geo_provider.dart';
 import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
@@ -78,29 +79,34 @@ class _EditShelterModalState extends ConsumerState<EditShelterModal> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Edit Shelter',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              context.l10n.t('shelter.editShelter'),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             AppTextField(
               controller: _nameController,
-              label: 'Shelter name',
+              label: context.l10n.t('shelter.name'),
               keyboardType: TextInputType.text,
-              validator: (value) =>
-                  Validators.validateRequired(value, 'Shelter Name'),
+              validator: (value) => Validators.validateRequired(
+                value,
+                context.l10n.t('shelter.name'),
+              ),
             ),
             const SizedBox(height: 16),
             AppTextField(
               controller: _emailController,
-              label: 'Shelter email',
+              label: context.l10n.t('shelter.email'),
               keyboardType: TextInputType.emailAddress,
               validator: (value) => Validators.validateEmailNoRequired(value),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Select Province',
-              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
+            Text(
+              context.l10n.t('shelter.selectProvince'),
+              style: const TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(height: 8),
             provincesAsync.when(
@@ -113,7 +119,9 @@ class _EditShelterModalState extends ConsumerState<EditShelterModal> {
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Text(
-                'Error loading provinces: $e',
+                context.l10n
+                    .t('shelter.provincesLoadError')
+                    .replaceAll('{error}', '$e'),
                 style: const TextStyle(color: Colors.red),
               ),
             ),
@@ -123,7 +131,7 @@ class _EditShelterModalState extends ConsumerState<EditShelterModal> {
               height: 48,
               child: FilledButton(
                 onPressed: _saveShelter,
-                child: const Text('Save Changes'),
+                child: Text(context.l10n.t('common.saveChanges')),
               ),
             ),
           ],

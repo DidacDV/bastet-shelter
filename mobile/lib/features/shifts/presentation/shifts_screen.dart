@@ -16,8 +16,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 DateTime _mondayOf(DateTime d) => d.subtract(Duration(days: d.weekday - 1));
 
-const _dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
 class ShiftsScreen extends ConsumerStatefulWidget {
   const ShiftsScreen({super.key});
 
@@ -81,6 +79,7 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
           final day = _weekStart.add(Duration(days: i));
           return _DayShiftsTab(
             refugeId: activeRefugeId,
+            refugeName: activeRefugeName,
             day: day,
             weekStart: _weekStart,
             isManager: isManager,
@@ -163,7 +162,15 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                 ],
               ),
             ),
-            tabs: List.generate(7, (i) => Tab(text: _dayLabels[i])),
+            tabs: [
+              Tab(text: context.l10n.t('weekdays.mon')),
+              Tab(text: context.l10n.t('weekdays.tue')),
+              Tab(text: context.l10n.t('weekdays.wed')),
+              Tab(text: context.l10n.t('weekdays.thu')),
+              Tab(text: context.l10n.t('weekdays.fri')),
+              Tab(text: context.l10n.t('weekdays.sat')),
+              Tab(text: context.l10n.t('weekdays.sun')),
+            ],
             tabViews: dayViews,
           ),
         );
@@ -175,12 +182,14 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
 class _DayShiftsTab extends ConsumerWidget {
   const _DayShiftsTab({
     required this.refugeId,
+    required this.refugeName,
     required this.weekStart,
     required this.day,
     required this.isManager,
   });
 
   final int refugeId;
+  final String refugeName;
   final DateTime weekStart;
   final DateTime day;
   final bool isManager;
@@ -228,7 +237,7 @@ class _DayShiftsTab extends ConsumerWidget {
               MaterialPageRoute(
                 builder: (context) => ShiftDetailScreen(
                   shiftId: dayShifts[i].id,
-                  refugeName: 'Shelter Name',
+                  refugeName: refugeName,
                   isManager: isManager,
                 ),
               ),

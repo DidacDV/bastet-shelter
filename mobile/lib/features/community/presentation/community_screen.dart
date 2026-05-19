@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/community/data/advertisement_model.dart';
 import 'package:bastetshelter/features/community/presentation/components/advertisement_card.dart';
@@ -26,7 +27,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
 
     return Scaffold(
       appBar: BastetAppBar(
-        customTitle: 'Community Marketplace',
+        customTitle: context.l10n.t('community.marketplace'),
         showLogout: false,
       ),
 
@@ -47,8 +48,8 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                 },
                 child: Text(
                   isManager
-                      ? 'Manage your shelter advertisements'
-                      : 'See your shelter advertisements',
+                      ? context.l10n.t('community.manageShelterAds')
+                      : context.l10n.t('community.seeShelterAds'),
                 ),
               ),
             ),
@@ -61,10 +62,12 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                 Expanded(
                   flex: 2,
                   child: TextField(
-                    decoration: const InputDecoration(
-                      hintText: 'Search by title, province...',
+                    decoration: InputDecoration(
+                      hintText: context.l10n.t('community.searchHint'),
                       border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                      ),
                     ),
                     onChanged: (value) {
                       setState(() {
@@ -82,14 +85,17 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                       contentPadding: EdgeInsets.symmetric(horizontal: 12),
                     ),
                     initialValue: _selectedCategory,
-                    hint: const Text('Category'),
+                    hint: Text(context.l10n.t('community.category')),
                     isExpanded: true,
                     items: [
-                      const DropdownMenuItem(value: null, child: Text('All')),
+                      DropdownMenuItem(
+                        value: null,
+                        child: Text(context.l10n.t('community.all')),
+                      ),
                       ...AdCategory.values.map(
                         (cat) => DropdownMenuItem(
                           value: cat,
-                          child: Text(cat.name.toUpperCase()),
+                          child: Text(_localizedCategory(context, cat)),
                         ),
                       ),
                     ],
@@ -108,7 +114,13 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
           Expanded(
             child: adsAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, stack) => Center(child: Text('Error: $err')),
+              error: (err, stack) => Center(
+                child: Text(
+                  context.l10n
+                      .t('common.errorWithMessage')
+                      .replaceAll('{error}', '$err'),
+                ),
+              ),
               data: (ads) {
                 final filteredAds = ads.where((ad) {
                   final matchesSearch =
@@ -125,7 +137,9 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                 }).toList();
 
                 if (filteredAds.isEmpty) {
-                  return const Center(child: Text('No advertisements found.'));
+                  return Center(
+                    child: Text(context.l10n.t('community.noAdsFound')),
+                  );
                 }
 
                 return GridView.builder(
@@ -155,4 +169,13 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
       ),
     );
   }
+
+  String _localizedCategory(BuildContext context, AdCategory category) =>
+      switch (category) {
+        AdCategory.food => context.l10n.t('community.categoryFood'),
+        AdCategory.medicine => context.l10n.t('community.categoryMedicine'),
+        AdCategory.equipment => context.l10n.t('community.categoryEquipment'),
+        AdCategory.toys => context.l10n.t('community.categoryToys'),
+        AdCategory.other => context.l10n.t('community.categoryOther'),
+      };
 }

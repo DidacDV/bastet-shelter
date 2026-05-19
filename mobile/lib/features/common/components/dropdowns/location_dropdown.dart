@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../../../geo/data/province_model.dart';
@@ -26,7 +27,7 @@ class _LocationDropdownState extends State<LocationDropdown> {
     return SizedBox(
       width: double.infinity,
       child: DropdownMenu<String>(
-        hintText: 'Type a province here',
+        hintText: context.l10n.t('common.typeProvinceHere'),
         initialSelection: widget.initialItem,
         enableFilter: true,
         requestFocusOnTap: true,

@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/fields/date_chip.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +25,7 @@ class WeekPickerChip extends StatelessWidget {
       initialDate: date,
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
-      helpText: 'Select any day in the week',
+      helpText: context.l10n.t('common.selectAnyDayInWeek'),
     );
     if (picked != null) {
       onWeekSelected(mondayOf(picked));
@@ -38,7 +39,7 @@ class WeekPickerChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chip = DateChip(
-      label: label,
+      label: label == 'Week of' ? context.l10n.t('shifts.weekOf') : label,
       date: date,
       backgroundColor: AppColors.surface,
       canEdit: true,

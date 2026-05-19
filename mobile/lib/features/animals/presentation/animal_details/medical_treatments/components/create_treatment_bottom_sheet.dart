@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/components/dosage_unit_dropdown.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/components/medicine_dropdown.dart';
@@ -48,9 +49,9 @@ class _AddTreatmentBottomSheetState
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     if (_selectedMedicine == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Please select a medicine')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.t('medical.selectMedicine'))),
+      );
       return;
     }
 
@@ -91,10 +92,10 @@ class _AddTreatmentBottomSheetState
     final medicinesAsync = ref.watch(medicinesProvider);
 
     return FormBottomSheet(
-      title: 'New Treatment',
+      title: context.l10n.t('medical.newTreatment'),
       actions: [
         PrimaryButton(
-          label: 'Add treatment',
+          label: context.l10n.t('medical.addTreatment'),
           isLoading: _loading,
           onPressed: _save,
         ),
@@ -115,7 +116,7 @@ class _AddTreatmentBottomSheetState
                       children: [
                         // which MEDICNIE section
                         Text(
-                          'Medicine',
+                          context.l10n.t('medicine.titleSingular'),
                           style: theme.textTheme.labelMedium?.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -150,7 +151,7 @@ class _AddTreatmentBottomSheetState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Frequency',
+                          context.l10n.t('medical.frequency'),
                           style: theme.textTheme.labelMedium?.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -170,7 +171,7 @@ class _AddTreatmentBottomSheetState
 
               //DOSAGE Section
               Text(
-                'Dosage',
+                context.l10n.t('medical.dosage'),
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -182,7 +183,7 @@ class _AddTreatmentBottomSheetState
                   Expanded(
                     child: AppTextField(
                       controller: _dosageController,
-                      label: 'Amount',
+                      label: context.l10n.t('medical.amount'),
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
@@ -209,7 +210,7 @@ class _AddTreatmentBottomSheetState
 
               // Dates
               Text(
-                'Duration',
+                context.l10n.t('medical.duration'),
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -219,7 +220,7 @@ class _AddTreatmentBottomSheetState
                 children: [
                   Expanded(
                     child: DateField(
-                      label: 'Start date',
+                      label: context.l10n.t('medical.startDate'),
                       value: _startDate,
                       lastDate: DateTime.now().add(
                         const Duration(days: 365 * 5),
@@ -232,7 +233,7 @@ class _AddTreatmentBottomSheetState
                   const SizedBox(width: 12),
                   Expanded(
                     child: DateField(
-                      label: 'End date',
+                      label: context.l10n.t('medical.endDate'),
                       value: _endDate,
                       required: false,
                       firstDate: _startDate,

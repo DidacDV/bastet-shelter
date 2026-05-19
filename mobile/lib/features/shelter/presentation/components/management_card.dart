@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/section_card.dart';
 import 'package:bastetshelter/features/medicine/presentation/manage_medicines_screen.dart';
 import 'package:bastetshelter/features/traits/presentation/manage_traits_screen.dart';
@@ -10,13 +11,13 @@ class ManagementCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SectionCard(
-      title: 'Management',
+      title: context.l10n.t('shelter.management'),
       icon: Icons.admin_panel_settings_rounded,
       child: Column(
         children: [
           _NavTile(
             icon: Icons.medication_rounded,
-            label: 'Medicines',
+            label: context.l10n.t('medicine.title'),
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const ManageMedicinesScreen()),
@@ -28,7 +29,7 @@ class ManagementCard extends StatelessWidget {
           ),
           _NavTile(
             icon: Icons.label_rounded,
-            label: 'Traits',
+            label: context.l10n.t('traits.title'),
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const TraitsScreen()),

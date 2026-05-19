@@ -118,7 +118,7 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
                       const SizedBox(height: 6),
                       AppTextField(
                         controller: _emailController,
-                        label: 'contact@myshelter.com',
+                        label: context.l10n.t('shelter.emailExample'),
                         keyboardType: TextInputType.emailAddress,
                         validator: (v) => Validators.validateEmailNoRequired(v),
                       ),

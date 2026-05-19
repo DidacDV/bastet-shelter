@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/adoption_process_screen.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/adoption/components/adoption_toggle.dart';
@@ -26,10 +27,8 @@ class AdoptionTab extends ConsumerWidget {
       if (isInAdoption) {
         final confirm = await ConfirmationDialog.show(
           context: context,
-          title:
-              "Are you sure you want to take out this animal from the adoption pool?",
-          message:
-              "If the animal has any active adoption process, it will be cancelled and the adoptant will be notified.",
+          title: context.l10n.t('animals.removeFromAdoptionTitle'),
+          message: context.l10n.t('animals.removeFromAdoptionMessage'),
           isDestructive: true,
         );
         if (!confirm) return;
@@ -37,10 +36,8 @@ class AdoptionTab extends ConsumerWidget {
       } else {
         final confirm = await ConfirmationDialog.show(
           context: context,
-          title:
-              "Are you sure you want to put this animal in the adoption pool?",
-          message:
-              "The animal will be seen by adoptants on the portal and they will be able to submit an adoption request.",
+          title: context.l10n.t('animals.addToAdoptionTitle'),
+          message: context.l10n.t('animals.addToAdoptionMessage'),
           isDestructive: false,
         );
         if (!confirm) return;
@@ -52,7 +49,7 @@ class AdoptionTab extends ConsumerWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(
         child: Text(
-          'Could not load adoption info.',
+          context.l10n.t('animals.adoptionInfoLoadError'),
           style: tt.bodyMedium?.copyWith(color: AppColors.error),
         ),
       ),
@@ -79,7 +76,10 @@ class AdoptionTab extends ConsumerWidget {
                         color: AppColors.primary,
                       ),
                       const SizedBox(width: 8),
-                      Text('Adoption', style: tt.titleLarge),
+                      Text(
+                        context.l10n.t('animals.adoption'),
+                        style: tt.titleLarge,
+                      ),
                     ],
                   ),
                   if (isManager)
@@ -94,8 +94,8 @@ class AdoptionTab extends ConsumerWidget {
 
               Text(
                 animal.inAdoption
-                    ? 'This animal is available for adoption.'
-                    : 'This animal is not available for adoption.',
+                    ? context.l10n.t('animals.availableForAdoption')
+                    : context.l10n.t('animals.notAvailableForAdoption'),
                 style: tt.bodySmall?.copyWith(
                   color: AppColors.textSecondary,
                   fontStyle: FontStyle.italic,
@@ -105,7 +105,10 @@ class AdoptionTab extends ConsumerWidget {
               const Divider(height: 40),
 
               if (hasProcess) ...[
-                Text('Active process', style: tt.titleMedium),
+                Text(
+                  context.l10n.t('animals.activeProcess'),
+                  style: tt.titleMedium,
+                ),
                 const SizedBox(height: 12),
                 OutlinedButton.icon(
                   onPressed: () => Navigator.of(context).push(
@@ -116,7 +119,7 @@ class AdoptionTab extends ConsumerWidget {
                     ),
                   ),
                   icon: const Icon(Icons.arrow_forward_rounded, size: 18),
-                  label: const Text('Go to the active adoption process'),
+                  label: Text(context.l10n.t('animals.goToActiveAdoption')),
                 ),
               ] else if (animal.inAdoption) ...[
                 Row(
@@ -129,7 +132,7 @@ class AdoptionTab extends ConsumerWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'You will be notified when an adoptant wants to adopt this animal.',
+                        context.l10n.t('animals.adoptionNotificationHint'),
                         style: tt.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
                         ),

@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/app_statuses/empty_state.dart';
 import 'package:bastetshelter/features/common/components/app_statuses/error_state.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
@@ -16,7 +17,7 @@ class TraitsScreen extends ConsumerWidget {
     final traitsAsync = ref.watch(traitsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Traits')),
+      appBar: AppBar(title: Text(context.l10n.t('traits.title'))),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showTraitDialog(context, ref),
         backgroundColor: AppColors.primary,
@@ -28,10 +29,10 @@ class TraitsScreen extends ConsumerWidget {
         error: (error, _) => AppErrorState(message: error.toString()),
         data: (traits) {
           if (traits.isEmpty) {
-            return const AppEmptyState(
+            return AppEmptyState(
               icon: Icons.pets_rounded,
-              title: 'No traits yet',
-              message: 'Tap "Add" to create your first trait.',
+              title: context.l10n.t('traits.emptyTitle'),
+              message: context.l10n.t('traits.emptyMessage'),
             );
           }
 
@@ -50,11 +51,12 @@ class TraitsScreen extends ConsumerWidget {
                 onDelete: () async {
                   final confirm = await ConfirmationDialog.show(
                     context: context,
-                    title: 'Delete trait',
-                    message:
-                        'Are you sure you want to delete the "${trait.name}" trait?',
+                    title: context.l10n.t('traits.deleteTrait'),
+                    message: context.l10n
+                        .t('traits.deleteTraitMessage')
+                        .replaceAll('{trait}', trait.name),
                     isDestructive: true,
-                    confirmText: 'Delete',
+                    confirmText: context.l10n.t('profile.delete'),
                   );
                   if (confirm) {
                     await ref
@@ -104,7 +106,9 @@ class TraitsScreen extends ConsumerWidget {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      isEditing ? 'Edit Trait' : 'New Trait',
+                      isEditing
+                          ? context.l10n.t('traits.editTrait')
+                          : context.l10n.t('traits.newTrait'),
                       style: theme.textTheme.titleLarge,
                     ),
                   ],
@@ -112,10 +116,10 @@ class TraitsScreen extends ConsumerWidget {
                 const SizedBox(height: 24),
                 TextField(
                   controller: textController,
-                  decoration: const InputDecoration(
-                    labelText: 'Trait name',
-                    hintText: 'e.g. Playful, Shy...',
-                    prefixIcon: Icon(Icons.edit_note_rounded, size: 20),
+                  decoration: InputDecoration(
+                    labelText: context.l10n.t('traits.traitName'),
+                    hintText: context.l10n.t('traits.traitNameHint'),
+                    prefixIcon: const Icon(Icons.edit_note_rounded, size: 20),
                   ),
                   autofocus: true,
                   textCapitalization: TextCapitalization.words,
@@ -126,7 +130,7 @@ class TraitsScreen extends ConsumerWidget {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancel'),
+                        child: Text(context.l10n.t('common.cancel')),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -145,7 +149,11 @@ class TraitsScreen extends ConsumerWidget {
                             Navigator.pop(context);
                           }
                         },
-                        child: Text(isEditing ? 'Save' : 'Add'),
+                        child: Text(
+                          isEditing
+                              ? context.l10n.t('common.save')
+                              : context.l10n.t('common.add'),
+                        ),
                       ),
                     ),
                   ],

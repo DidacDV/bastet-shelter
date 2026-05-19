@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/animals/data/models/animal_details_model.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/components/animal_image_slider.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/components/manage_animal_images.dart';
@@ -88,14 +89,14 @@ class AnimalDetailsHeader extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: EditableField(
-                      label: 'Name',
+                      label: context.l10n.t('common.name'),
                       value: animal.name,
                       isTitle: true,
                       canEdit: canEdit,
                       alignment: CrossAxisAlignment.center,
                       onEdit: () => showEditBottomSheet(
                         context: context,
-                        label: "Name",
+                        label: context.l10n.t('common.name'),
                         initialValue: animal.name,
                         onSave: (newVal) async {
                           await onNameSave?.call(newVal);
@@ -116,7 +117,7 @@ class AnimalDetailsHeader extends StatelessWidget {
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                         child: DateChip(
-                          label: "Arrival",
+                          label: context.l10n.t('animals.arrival'),
                           date: animal.arrivalDate ?? animal.birthDate,
                           canEdit: canEdit,
                           backgroundColor: Colors.white.withValues(alpha: 0.5),
@@ -143,7 +144,7 @@ class AnimalDetailsHeader extends StatelessWidget {
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                         child: DateChip(
-                          label: "Birthday",
+                          label: context.l10n.t('animals.birthday'),
                           date: animal.birthDate,
                           canEdit: canEdit,
                           backgroundColor: Colors.white.withValues(alpha: 0.5),

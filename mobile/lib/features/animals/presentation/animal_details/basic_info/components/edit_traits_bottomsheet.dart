@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/animals/presentation/components/traits_chip_selector.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:bastetshelter/providers/traits/trait_provider.dart';
@@ -64,7 +65,7 @@ class _EditTraitsBottomSheetState extends ConsumerState<EditTraitsBottomSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Edit Traits',
+                context.l10n.t('traits.editTraits'),
                 style: tt.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
@@ -83,11 +84,13 @@ class _EditTraitsBottomSheetState extends ConsumerState<EditTraitsBottomSheet> {
 
           allTraitsAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (err, _) => Text('Error loading traits: $err'),
+            error: (err, _) => Text(
+              context.l10n.t('traits.loadError').replaceAll('{error}', '$err'),
+            ),
             data: (allTraits) {
               if (allTraits.isEmpty) {
                 return Text(
-                  "You can add traits on the shelter configuration screen",
+                  context.l10n.t('traits.addOnConfigHint'),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.textSecondary,
                     fontStyle: FontStyle.italic,
@@ -111,7 +114,7 @@ class _EditTraitsBottomSheetState extends ConsumerState<EditTraitsBottomSheet> {
           const SizedBox(height: 32),
 
           PrimaryButton(
-            label: 'Save Traits',
+            label: context.l10n.t('traits.saveTraits'),
             isLoading: _loading,
             onPressed: _submit,
           ),

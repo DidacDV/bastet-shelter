@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/layout/api_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -80,21 +81,28 @@ class _RefugeModalState extends ConsumerState<RefugeModal> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              isEditing ? 'Edit Refuge' : 'Add New Refuge',
+              isEditing
+                  ? context.l10n.t('shelter.editRefuge')
+                  : context.l10n.t('shelter.addNewRefuge'),
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             AppTextField(
               controller: _nameController,
-              label: 'Refuge name',
+              label: context.l10n.t('shelter.refugeName'),
               keyboardType: TextInputType.text,
-              validator: (value) =>
-                  Validators.validateRequired(value, 'Refuge Name'),
+              validator: (value) => Validators.validateRequired(
+                value,
+                context.l10n.t('shelter.refugeName'),
+              ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Select Province',
-              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
+            Text(
+              context.l10n.t('shelter.selectProvince'),
+              style: const TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(height: 8),
 
@@ -124,7 +132,11 @@ class _RefugeModalState extends ConsumerState<RefugeModal> {
               height: 48,
               child: FilledButton(
                 onPressed: _saveRefuge,
-                child: Text(isEditing ? 'Update Refuge' : 'Save Refuge'),
+                child: Text(
+                  isEditing
+                      ? context.l10n.t('shelter.updateRefuge')
+                      : context.l10n.t('shelter.saveRefuge'),
+                ),
               ),
             ),
           ],

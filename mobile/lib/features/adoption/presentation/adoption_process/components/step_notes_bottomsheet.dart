@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
@@ -45,10 +46,12 @@ class _StepNotesBottomSheetState extends State<StepNotesBottomSheet> {
       await widget.onSave(_notesController.text.trim());
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
-      NavigationService.instance.showSnackBar(
-        'An error occurred while saving the notes.',
-        isError: true,
-      );
+      if (mounted) {
+        NavigationService.instance.showSnackBar(
+          context.l10n.t('adoption.saveNotesError'),
+          isError: true,
+        );
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -59,10 +62,12 @@ class _StepNotesBottomSheetState extends State<StepNotesBottomSheet> {
     final isEditing = widget.initialNotes?.isNotEmpty == true;
 
     return FormBottomSheet(
-      title: isEditing ? 'Edit Notes' : 'Add Notes',
+      title: isEditing
+          ? context.l10n.t('adoption.editNotes')
+          : context.l10n.t('adoption.addNotes'),
       actions: [
         PrimaryButton(
-          label: 'Save Notes',
+          label: context.l10n.t('adoption.saveNotes'),
           isLoading: _loading,
           onPressed: _submit,
         ),
@@ -72,10 +77,10 @@ class _StepNotesBottomSheetState extends State<StepNotesBottomSheet> {
           key: _formKey,
           child: AppTextField(
             controller: _notesController,
-            label: 'Step Notes',
+            label: context.l10n.t('adoption.stepNotes'),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
-                return 'Please enter some notes.';
+                return context.l10n.t('adoption.notesRequired');
               }
               return null;
             },

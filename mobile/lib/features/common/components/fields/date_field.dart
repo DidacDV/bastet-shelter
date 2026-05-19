@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -32,7 +33,9 @@ class DateField extends StatelessWidget {
         isEmpty: !hasValue,
         decoration: InputDecoration(
           labelText: label,
-          hintText: required ? 'Select date' : 'Optional',
+          hintText: required
+              ? context.l10n.t('common.selectDate')
+              : context.l10n.t('common.optional'),
           suffixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
           isDense: true,
           contentPadding: const EdgeInsets.symmetric(

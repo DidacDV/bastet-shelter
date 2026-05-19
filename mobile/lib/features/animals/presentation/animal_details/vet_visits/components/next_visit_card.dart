@@ -1,5 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/localization/app_localizations.dart';
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/vet_visit_bottom_sheet.dart';
 import 'package:bastetshelter/features/medicine/data/models/vet_visit_model.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +70,7 @@ class NextVisitCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _localizedType(context, visit.visitType),
+                    context.localizedVetVisitType(visit.visitType),
                     style: theme.textTheme.titleMedium,
                   ),
                   const SizedBox(height: 2),
@@ -94,14 +95,4 @@ class NextVisitCard extends StatelessWidget {
       ),
     );
   }
-
-  String _localizedType(BuildContext context, VetVisitType type) =>
-      switch (type) {
-        VetVisitType.generalCheckup => context.l10n.t('vet.typeGeneralCheckup'),
-        VetVisitType.vaccine => context.l10n.t('vet.typeVaccine'),
-        VetVisitType.surgery => context.l10n.t('vet.typeSurgery'),
-        VetVisitType.dental => context.l10n.t('vet.typeDental'),
-        VetVisitType.emergency => context.l10n.t('vet.typeEmergency'),
-        VetVisitType.other => context.l10n.t('vet.typeOther'),
-      };
 }

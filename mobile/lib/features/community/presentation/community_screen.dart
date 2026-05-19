@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/localization/app_localizations.dart';
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/community/data/advertisement_model.dart';
 import 'package:bastetshelter/features/community/presentation/components/advertisement_card.dart';
@@ -95,7 +96,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                       ...AdCategory.values.map(
                         (cat) => DropdownMenuItem(
                           value: cat,
-                          child: Text(_localizedCategory(context, cat)),
+                          child: Text(context.localizedAdCategory(cat)),
                         ),
                       ),
                     ],
@@ -169,13 +170,4 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
       ),
     );
   }
-
-  String _localizedCategory(BuildContext context, AdCategory category) =>
-      switch (category) {
-        AdCategory.food => context.l10n.t('community.categoryFood'),
-        AdCategory.medicine => context.l10n.t('community.categoryMedicine'),
-        AdCategory.equipment => context.l10n.t('community.categoryEquipment'),
-        AdCategory.toys => context.l10n.t('community.categoryToys'),
-        AdCategory.other => context.l10n.t('community.categoryOther'),
-      };
 }

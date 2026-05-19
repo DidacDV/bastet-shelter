@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/localization/app_localizations.dart';
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/community/data/advertisement_model.dart';
@@ -412,7 +413,7 @@ class _CategoryChip extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           Text(
-            _localizedCategory(context, category),
+            context.localizedAdCategory(category),
             style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -424,13 +425,4 @@ class _CategoryChip extends StatelessWidget {
       ),
     );
   }
-
-  String _localizedCategory(BuildContext context, AdCategory category) =>
-      switch (category) {
-        AdCategory.food => context.l10n.t('community.categoryFood'),
-        AdCategory.medicine => context.l10n.t('community.categoryMedicine'),
-        AdCategory.equipment => context.l10n.t('community.categoryEquipment'),
-        AdCategory.toys => context.l10n.t('community.categoryToys'),
-        AdCategory.other => context.l10n.t('community.categoryOther'),
-      };
 }

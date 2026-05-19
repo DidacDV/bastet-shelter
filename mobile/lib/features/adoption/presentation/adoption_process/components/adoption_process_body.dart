@@ -1,5 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/core/localization/app_localizations.dart';
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 import 'package:bastetshelter/features/adoption/data/adoption_enums.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/adoption_step_details.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_content.dart';
@@ -63,7 +63,10 @@ class _AdoptionProcessBodyState extends State<AdoptionProcessBody> {
 
     final stepperItems = sorted.asMap().entries.map((entry) {
       return VerticalStepperItem(
-        label: _localizedStep(context, entry.value.type),
+        label: context.localizedAdoptionStepType(
+          entry.value.type,
+          shortAnimalPickup: true,
+        ),
         icon: entry.value.type.icon,
         state: _stateFor(entry.value, entry.key),
       );
@@ -108,12 +111,4 @@ class _AdoptionProcessBodyState extends State<AdoptionProcessBody> {
       ],
     );
   }
-
-  String _localizedStep(BuildContext context, StepType type) => switch (type) {
-    StepType.form => context.l10n.t('adoption.stepForm'),
-    StepType.interview => context.l10n.t('adoption.stepInterview'),
-    StepType.shelterVisit => context.l10n.t('adoption.stepShelterVisit'),
-    StepType.contract => context.l10n.t('adoption.stepContract'),
-    StepType.animalPickup => context.l10n.t('adoption.stepAnimalPickupShort'),
-  };
 }

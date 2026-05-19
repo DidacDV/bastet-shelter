@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/localization/app_localizations.dart';
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/vet_visit_type_dropdown.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
@@ -201,7 +202,7 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
         ] else
           EditableField(
             label: context.l10n.t('vet.visitType'),
-            value: _localizedType(context, _visitType),
+            value: context.localizedVetVisitType(_visitType),
             canEdit: false,
           ),
         const SizedBox(height: 20),
@@ -244,14 +245,4 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
       ],
     );
   }
-
-  String _localizedType(BuildContext context, VetVisitType type) =>
-      switch (type) {
-        VetVisitType.generalCheckup => context.l10n.t('vet.typeGeneralCheckup'),
-        VetVisitType.vaccine => context.l10n.t('vet.typeVaccine'),
-        VetVisitType.surgery => context.l10n.t('vet.typeSurgery'),
-        VetVisitType.dental => context.l10n.t('vet.typeDental'),
-        VetVisitType.emergency => context.l10n.t('vet.typeEmergency'),
-        VetVisitType.other => context.l10n.t('vet.typeOther'),
-      };
 }

@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/localization/app_localizations.dart';
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/theme.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/components/view_treatment_bottom_sheet.dart';
@@ -150,7 +151,7 @@ class _TreatmentRow extends ConsumerWidget {
 
   String getDosageString(BuildContext context) =>
       '${treatment.dosage.toStringAsFixed(treatment.dosage.truncateToDouble() == treatment.dosage ? 0 : 1)}'
-      ' ${_localizedUnit(context, treatment.dosageUnit)}';
+      ' ${context.localizedDosageUnit(treatment.dosageUnit)}';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -204,10 +205,9 @@ class _TreatmentRow extends ConsumerWidget {
               child: Align(
                 alignment: Alignment.center,
                 child: SectionBadge(
-                  label: _localizedStatus(
-                    context,
-                    treatment.status,
-                  ).toUpperCase(),
+                  label: context
+                      .localizedMedicineStatus(treatment.status)
+                      .toUpperCase(),
                   color: treatment.status == MedicineStatus.given
                       ? AppColors.primary
                       : theme.colorScheme.warning,
@@ -219,18 +219,4 @@ class _TreatmentRow extends ConsumerWidget {
       ),
     );
   }
-
-  String _localizedStatus(BuildContext context, MedicineStatus status) =>
-      switch (status) {
-        MedicineStatus.given => context.l10n.t('medical.statusGiven'),
-        MedicineStatus.pending => context.l10n.t('medical.statusPending'),
-      };
-
-  String _localizedUnit(BuildContext context, DosageUnit unit) =>
-      switch (unit) {
-        DosageUnit.mg => context.l10n.t('medical.unitMg'),
-        DosageUnit.ml => context.l10n.t('medical.unitMl'),
-        DosageUnit.drops => context.l10n.t('medical.unitDrops'),
-        DosageUnit.units => context.l10n.t('medical.unitUnits'),
-      };
 }

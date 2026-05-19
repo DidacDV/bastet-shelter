@@ -27,9 +27,10 @@ def get_all_processes_for_adoptant(
 @router.get("/processes/{process_id}", response_model=AdoptionProcessAdoptantResponse)
 def get_adoption_process_adoptant(
         process_id: int,
+        adoptant: Adoptant = Depends(get_current_adoptant),
         process_service: AdoptionProcessService = Depends(get_process_service)
 ):
-    return process_service.get_adoption_process_steps_adoptant(process_id, 5)
+    return process_service.get_adoption_process_steps_adoptant(process_id, adoptant.id)
 
 @router.get("/{adoptant_id}", response_model=AdoptantResponse)
 def get_adoptant(

@@ -24,6 +24,12 @@ def reset_treatments():
                 continue
 
             last_updated = treatment.status_updated_at
+            if last_updated is None:
+                continue
+
+            if last_updated.tzinfo is None:
+                last_updated = last_updated.replace(tzinfo=timezone.utc)
+
             if (now - last_updated).days >= frequency_days:
                 treatment.status = MedicineStatusEnum.PENDING
                 treatment.status_last_updated_by_id = None

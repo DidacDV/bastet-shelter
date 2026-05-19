@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/app_info_banner.dart';
 import 'package:bastetshelter/features/common/components/app_statuses/empty_state.dart';
 import 'package:bastetshelter/features/common/components/app_statuses/error_state.dart';
@@ -21,7 +22,10 @@ class TasksScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const BastetAppBar(customTitle: 'Tasks', showLogout: false),
+      appBar: BastetAppBar(
+        customTitle: context.l10n.t('tasks.title'),
+        showLogout: false,
+      ),
       floatingActionButton: FloatingActionButton(
         heroTag: "tasks_floatingActBtn",
         onPressed: () => showTaskFormBottomSheet(context: context),
@@ -32,9 +36,8 @@ class TasksScreen extends ConsumerWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const AppInfoBanner(
-            message:
-                'These tasks can then be used and assigned when creating volunteer shifts.',
+          AppInfoBanner(
+            message: context.l10n.t('tasks.infoBanner'),
             margin: EdgeInsets.fromLTRB(16, 16, 16, 8),
           ),
 
@@ -47,7 +50,7 @@ class TasksScreen extends ConsumerWidget {
                 context,
               ).push(MaterialPageRoute(builder: (_) => const MyTasksScreen())),
               icon: const Icon(Icons.assignment_ind_rounded),
-              label: const Text('View My Assigned Tasks'),
+              label: Text(context.l10n.t('tasks.viewMyAssigned')),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.primary,
                 side: const BorderSide(color: AppColors.primary),
@@ -65,10 +68,10 @@ class TasksScreen extends ConsumerWidget {
               error: (error, _) => AppErrorState(message: error.toString()),
               data: (tasks) {
                 if (tasks.isEmpty) {
-                  return const AppEmptyState(
+                  return AppEmptyState(
                     icon: Icons.assignment_rounded,
-                    title: 'No tasks yet',
-                    message: 'Tap "+" to create your first task.',
+                    title: context.l10n.t('tasks.emptyTitle'),
+                    message: context.l10n.t('tasks.emptyMessage'),
                   );
                 }
 
@@ -113,11 +116,12 @@ class TasksScreen extends ConsumerWidget {
                       onDelete: () async {
                         final confirm = await ConfirmationDialog.show(
                           context: context,
-                          title: 'Delete Task',
-                          message:
-                              'Are you sure you want to delete "${task.title}"?',
+                          title: context.l10n.t('tasks.deleteTitle'),
+                          message: context.l10n
+                              .t('tasks.deleteMessage')
+                              .replaceAll('{task}', task.title),
                           isDestructive: true,
-                          confirmText: 'Delete',
+                          confirmText: context.l10n.t('profile.delete'),
                         );
                         if (confirm) {
                           ref.read(tasksProvider.notifier).deleteTask(task.id);

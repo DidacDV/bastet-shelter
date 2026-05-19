@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/manage_list_card.dart';
 import 'package:bastetshelter/features/shifts/data/models/shift_model.dart';
@@ -32,7 +33,7 @@ class ShiftTasksSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SectionHeader(
-          title: 'Tasks',
+          title: context.l10n.t('tasks.title'),
           tt: tt,
           padding: EdgeInsets.zero,
           trailing: isManager
@@ -46,7 +47,7 @@ class ShiftTasksSection extends ConsumerWidget {
                     );
                   },
                   icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Add Task'),
+                  label: Text(context.l10n.t('tasks.addTask')),
                 )
               : null,
         ),
@@ -80,7 +81,7 @@ class _EmptyTasksState extends StatelessWidget {
         border: Border.all(color: AppColors.outline),
       ),
       child: Text(
-        'No tasks assigned to this shift yet.',
+        context.l10n.t('shifts.noAssignedTasks'),
         textAlign: TextAlign.center,
         style: tt.bodyMedium?.copyWith(color: AppColors.textSecondary),
       ),
@@ -176,7 +177,12 @@ class _ShiftTaskItem extends ConsumerWidget {
           if (shiftTask.participant != null) ...[
             const SizedBox(height: 4),
             Text(
-              'Assigned to: ${shiftTask.participant?.name} ${shiftTask.participant?.lastName1}',
+              context.l10n
+                  .t('shifts.assignedToName')
+                  .replaceAll(
+                    '{name}',
+                    '${shiftTask.participant?.name} ${shiftTask.participant?.lastName1}',
+                  ),
               style: tt.bodySmall?.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w600,
@@ -186,7 +192,9 @@ class _ShiftTaskItem extends ConsumerWidget {
           if (shiftTask.animal != null) ...[
             const SizedBox(height: 4),
             Text(
-              'Animal: ${shiftTask.animal?.name}',
+              context.l10n
+                  .t('common.animalName')
+                  .replaceAll('{animal}', shiftTask.animal?.name ?? ''),
               style: tt.bodySmall?.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w600,
@@ -231,10 +239,9 @@ class _ShiftTaskItem extends ConsumerWidget {
           ? () async {
               final confirm = await ConfirmationDialog.show(
                 context: context,
-                title: 'Remove Task?',
-                message:
-                    'Are you sure you want to remove this task from the shift?',
-                confirmText: 'Remove',
+                title: context.l10n.t('shifts.removeTaskTitle'),
+                message: context.l10n.t('shifts.removeTaskMessage'),
+                confirmText: context.l10n.t('shifts.remove'),
                 isDestructive: true,
               );
               if (confirm) {

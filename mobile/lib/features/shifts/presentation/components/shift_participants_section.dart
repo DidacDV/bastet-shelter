@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/shifts/data/models/shift_model.dart';
 import 'package:bastetshelter/providers/shifts/shift_provider.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class ShiftParticipantsSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionHeader(title: 'Participants', tt: tt),
+        SectionHeader(title: context.l10n.t('shifts.participants'), tt: tt),
         Card(
           color: AppColors.surface,
           elevation: 0,
@@ -39,10 +40,15 @@ class ShiftParticipantsSection extends ConsumerWidget {
             padding: const EdgeInsets.all(6),
             child: EditableRow(
               icon: Icons.people_outline,
-              label: 'Capacity',
+              label: context.l10n.t('shifts.capacity'),
               value: shiftDetail.maxParticipants != null
                   ? '${shiftDetail.currentParticipants} / ${shiftDetail.maxParticipants}'
-                  : '${shiftDetail.currentParticipants} (No limit)',
+                  : context.l10n
+                        .t('shifts.currentParticipantsNoLimit')
+                        .replaceAll(
+                          '{count}',
+                          '${shiftDetail.currentParticipants}',
+                        ),
               canEdit: isManager,
               onEdit: () async {
                 final controller = TextEditingController(
@@ -56,13 +62,13 @@ class ShiftParticipantsSection extends ConsumerWidget {
                     titlePadding: const EdgeInsets.fromLTRB(28, 32, 28, 12),
                     contentPadding: const EdgeInsets.fromLTRB(28, 0, 28, 32),
                     actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                    title: const Text('Edit Capacity Limit'),
+                    title: Text(context.l10n.t('shifts.editCapacityLimit')),
                     content: TextField(
                       controller: controller,
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: const InputDecoration(
-                        hintText: "Leave blank for no limit",
+                      decoration: InputDecoration(
+                        hintText: context.l10n.t('shifts.leaveBlankNoLimit'),
                       ),
                     ),
                     actions: [
@@ -76,7 +82,7 @@ class ShiftParticipantsSection extends ConsumerWidget {
                                 ),
                               ),
                               onPressed: () => Navigator.pop(context),
-                              child: const Text('Cancel'),
+                              child: Text(context.l10n.t('common.cancel')),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -91,7 +97,7 @@ class ShiftParticipantsSection extends ConsumerWidget {
                                 context,
                                 int.tryParse(controller.text),
                               ),
-                              child: const Text('Save'),
+                              child: Text(context.l10n.t('common.save')),
                             ),
                           ),
                         ],

@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
 import 'package:bastetshelter/features/user/presentation/user_profile_screen.dart';
@@ -36,8 +37,8 @@ class BastetAppBar extends ConsumerWidget implements PreferredSizeWidget {
           ? Text(customTitle!)
           : shelterAsync.when(
               data: (shelter) => Text(shelter.name),
-              loading: () => const Text('Loading...'),
-              error: (_, _) => const Text('Bastet Shelter'),
+              loading: () => Text(context.l10n.t('common.loading')),
+              error: (_, _) => Text(context.l10n.t('app.title')),
             ),
       backgroundColor: AppColors.background,
       elevation: 0,

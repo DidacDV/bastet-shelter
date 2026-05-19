@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/shifts/presentation/shifts_screen.dart';
 import 'package:bastetshelter/providers/auth/auth_provider.dart';
@@ -20,12 +21,21 @@ class ShiftsGatewayScreen extends ConsumerWidget {
       backgroundColor: AppColors.background,
       body: shelterAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error loading shelter: $e')),
+        error: (e, _) => Center(
+          child: Text(
+            context.l10n
+                .t('shifts.shelterLoadError')
+                .replaceAll('{error}', '$e'),
+          ),
+        ),
         data: (shelter) {
           if (shelter.refuges.isEmpty) {
-            return const Scaffold(
-              appBar: BastetAppBar(customTitle: 'Shifts', showLogout: false),
-              body: Center(child: Text('No refuges available.')),
+            return Scaffold(
+              appBar: BastetAppBar(
+                customTitle: context.l10n.t('shifts.title'),
+                showLogout: false,
+              ),
+              body: Center(child: Text(context.l10n.t('shelter.noRefuges'))),
             );
           }
 
@@ -41,8 +51,8 @@ class ShiftsGatewayScreen extends ConsumerWidget {
 
           //>1 REFUGE CASE: we let the user decide which refuge to view shifts for
           return Scaffold(
-            appBar: const BastetAppBar(
-              customTitle: 'Select Refuge',
+            appBar: BastetAppBar(
+              customTitle: context.l10n.t('shifts.selectRefuge'),
               showLogout: false,
             ),
             body: Padding(
@@ -52,7 +62,7 @@ class ShiftsGatewayScreen extends ConsumerWidget {
                 children: [
                   if (isManager)
                     Text(
-                      'Where are you managing shifts today?',
+                      context.l10n.t('shifts.managerRefugeQuestion'),
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
@@ -60,7 +70,7 @@ class ShiftsGatewayScreen extends ConsumerWidget {
                     )
                   else
                     Text(
-                      'Where are you today?',
+                      context.l10n.t('shifts.volunteerRefugeQuestion'),
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
@@ -68,7 +78,7 @@ class ShiftsGatewayScreen extends ConsumerWidget {
                     ),
                   const SizedBox(height: 8),
                   Text(
-                    'Select a refuge to continue to the shift planner.',
+                    context.l10n.t('shifts.refugePickerSubtitle'),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: AppColors.textSecondary,
                     ),

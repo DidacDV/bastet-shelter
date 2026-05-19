@@ -1,4 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
+import 'package:bastetshelter/core/localization/locale_provider.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
@@ -8,15 +10,16 @@ import 'package:bastetshelter/features/common/components/confirmation_dialog.dar
 import 'package:bastetshelter/features/user/data/user_model.dart';
 import 'package:bastetshelter/features/user/data/user_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class UserProfileScreen extends StatefulWidget {
+class UserProfileScreen extends ConsumerStatefulWidget {
   const UserProfileScreen({super.key});
 
   @override
-  State<UserProfileScreen> createState() => _UserProfileScreenState();
+  ConsumerState<UserProfileScreen> createState() => _UserProfileScreenState();
 }
 
-class _UserProfileScreenState extends State<UserProfileScreen> {
+class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
   final _repository = getIt<UserRepository>();
 
   UserProfile? _profile;
@@ -39,12 +42,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   Future<void> _handleDeleteAccount() async {
+    final l10n = context.l10n;
     final confirm = await ConfirmationDialog.show(
       context: context,
-      title: 'Delete account',
-      message:
-          'This will permanently delete your account and all associated data. This action cannot be undone.',
-      confirmText: 'Delete',
+      title: l10n.t('profile.deleteAccount'),
+      message: l10n.t('profile.deleteAccountMessage'),
+      confirmText: l10n.t('profile.delete'),
       isDestructive: true,
     );
 
@@ -73,24 +76,26 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final l10n = context.l10n;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: Text(l10n.t('profile.title')),
         backgroundColor: AppColors.background,
         elevation: 0,
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _hasError || _profile == null
-          ? const AppErrorState(message: 'Could not load profile.')
+          ? AppErrorState(message: l10n.t('profile.loadError'))
           : _buildContent(tt),
     );
   }
 
   Widget _buildContent(TextTheme tt) {
     final user = _profile!;
+    final l10n = context.l10n;
 
     return ListView(
       padding: const EdgeInsets.all(24),
@@ -139,37 +144,50 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             children: [
               _InfoRow(
                 icon: Icons.person_outline_rounded,
-                label: 'First name',
+                label: l10n.t('profile.firstName'),
                 value: user.name,
               ),
               const Divider(height: 1, indent: 56, color: AppColors.divider),
               _InfoRow(
                 icon: Icons.badge_outlined,
-                label: 'First surname',
+                label: l10n.t('profile.firstSurname'),
                 value: user.lastName1,
               ),
               if (user.lastName2 != null) ...[
                 const Divider(height: 1, indent: 56, color: AppColors.divider),
                 _InfoRow(
                   icon: Icons.badge_outlined,
-                  label: 'Second surname',
+                  label: l10n.t('profile.secondSurname'),
                   value: user.lastName2!,
                 ),
               ],
               const Divider(height: 1, indent: 56, color: AppColors.divider),
               _InfoRow(
                 icon: Icons.mail_outline_rounded,
-                label: 'Email',
+                label: l10n.t('profile.email'),
                 value: user.email,
               ),
             ],
           ),
         ),
 
+        const SizedBox(height: 32),
+
+        Text(
+          l10n.t('profile.preferencesSection'),
+          style: tt.labelSmall?.copyWith(
+            color: AppColors.textHint,
+            letterSpacing: 1.2,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        _LanguageCard(tt: tt),
+
         const SizedBox(height: 40),
 
         Text(
-          'ACCOUNT',
+          l10n.t('profile.accountSection'),
           style: tt.labelSmall?.copyWith(
             color: AppColors.textHint,
             letterSpacing: 1.2,
@@ -199,14 +217,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     color: AppColors.error,
                   ),
             title: Text(
-              'Delete account',
+              l10n.t('profile.deleteAccount'),
               style: tt.bodyMedium?.copyWith(
                 color: AppColors.error,
                 fontWeight: FontWeight.w500,
               ),
             ),
             subtitle: Text(
-              'Permanently remove your account and data.',
+              l10n.t('profile.deleteAccountSubtitle'),
               style: tt.bodySmall?.copyWith(color: AppColors.textHint),
             ),
             trailing: const Icon(
@@ -217,6 +235,59 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _LanguageCard extends ConsumerWidget {
+  final TextTheme tt;
+
+  const _LanguageCard({required this.tt});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final locale = ref.watch(localeProvider);
+
+    return Card(
+      elevation: 0,
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: AppColors.divider),
+      ),
+      child: ListTile(
+        leading: const Icon(Icons.language_rounded, color: AppColors.primary),
+        title: Text(
+          l10n.t('profile.language'),
+          style: tt.bodyMedium?.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        subtitle: Text(
+          l10n.t('profile.languageSubtitle'),
+          style: tt.bodySmall?.copyWith(color: AppColors.textHint),
+        ),
+        trailing: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: locale.languageCode,
+            borderRadius: BorderRadius.circular(12),
+            items: AppLocalizations.supportedLanguages
+                .map(
+                  (language) => DropdownMenuItem(
+                    value: language.locale.languageCode,
+                    child: Text(l10n.t(language.labelKey)),
+                  ),
+                )
+                .toList(),
+            onChanged: (languageCode) {
+              if (languageCode == null) return;
+              ref.read(localeProvider.notifier).setLocale(Locale(languageCode));
+            },
+          ),
+        ),
+      ),
     );
   }
 }

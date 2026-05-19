@@ -1,4 +1,5 @@
 //intended to protect routes that require a manager, redirecting to home if not manager (checked with the provider)
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,7 +22,7 @@ class _ManagerGuardState extends ConsumerState<ManagerGuard> {
       if (!isManager) {
         //if not manager, redirect to home
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Unauthorized: Managers only.')),
+          SnackBar(content: Text(context.l10n.t('common.managersOnly'))),
         );
         Navigator.of(context).pushReplacementNamed('/home');
       }

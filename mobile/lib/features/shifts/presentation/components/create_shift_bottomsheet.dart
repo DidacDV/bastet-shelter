@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
@@ -57,7 +58,7 @@ class _CreateShiftBottomSheetState
       initialDate: _selectedDay,
       firstDate: widget.weekStart,
       lastDate: endOfWeek,
-      helpText: 'Select a day this week',
+      helpText: context.l10n.t('shifts.selectDayThisWeek'),
     );
 
     if (picked != null) setState(() => _selectedDay = picked);
@@ -104,7 +105,7 @@ class _CreateShiftBottomSheetState
       if (endDateTime.isBefore(startDateTime) ||
           endDateTime.isAtSameMomentAs(startDateTime)) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('End time must be after start time')),
+          SnackBar(content: Text(context.l10n.t('shifts.endAfterStart'))),
         );
         setState(() => _loading = false);
         return;
@@ -124,9 +125,15 @@ class _CreateShiftBottomSheetState
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              context.l10n
+                  .t('common.errorWithMessage')
+                  .replaceAll('{error}', '$e'),
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -138,10 +145,10 @@ class _CreateShiftBottomSheetState
     final dateFormat = DateFormat('MMM dd, yyyy');
 
     return FormBottomSheet(
-      title: 'New Shift',
+      title: context.l10n.t('shifts.newShift'),
       actions: [
         PrimaryButton(
-          label: 'Create Shift',
+          label: context.l10n.t('shifts.createShift'),
           isLoading: _loading,
           onPressed: _submit,
         ),
@@ -156,7 +163,7 @@ class _CreateShiftBottomSheetState
                 controller: TextEditingController(
                   text: dateFormat.format(_selectedDay),
                 ),
-                label: 'Shift Date',
+                label: context.l10n.t('shifts.shiftDate'),
                 readOnly: true,
                 onTap: _pickDay,
                 suffixIcon: const Icon(Icons.calendar_today_rounded, size: 20),
@@ -170,7 +177,7 @@ class _CreateShiftBottomSheetState
                       controller: TextEditingController(
                         text: _startTime.format(context),
                       ),
-                      label: 'Start Time',
+                      label: context.l10n.t('shifts.startTime'),
                       readOnly: true,
                       onTap: () => _pickTime(true),
                       suffixIcon: const Icon(
@@ -185,7 +192,7 @@ class _CreateShiftBottomSheetState
                       controller: TextEditingController(
                         text: _endTime.format(context),
                       ),
-                      label: 'End Time',
+                      label: context.l10n.t('shifts.endTime'),
                       readOnly: true,
                       onTap: () => _pickTime(false),
                       suffixIcon: const Icon(
@@ -200,8 +207,8 @@ class _CreateShiftBottomSheetState
 
               AppTextField(
                 controller: _maxParticipantsController,
-                label: 'Max Participants (Optional)',
-                hintText: 'Leave empty for unlimited',
+                label: context.l10n.t('shifts.maxParticipantsOptional'),
+                hintText: context.l10n.t('shifts.leaveEmptyUnlimited'),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),

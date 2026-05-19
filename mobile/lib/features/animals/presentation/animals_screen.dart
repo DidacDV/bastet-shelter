@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/animals/presentation/components/animal_filter_bar.dart';
 import 'package:bastetshelter/features/animals/presentation/register_animal_screen.dart';
 import 'package:bastetshelter/features/common/components/bastet_search_bar.dart';
@@ -52,12 +53,15 @@ class AnimalsScreen extends ConsumerWidget {
                           size: 48,
                         ),
                         const SizedBox(height: 12),
-                        Text('Could not load animals', style: tt.titleMedium),
+                        Text(
+                          context.l10n.t('animals.loadError'),
+                          style: tt.titleMedium,
+                        ),
                         const SizedBox(height: 16),
                         OutlinedButton(
                           onPressed: () =>
                               ref.read(animalsProvider.notifier).refresh(),
-                          child: const Text('Retry'),
+                          child: Text(context.l10n.t('common.retry')),
                         ),
                       ],
                     ),
@@ -67,7 +71,7 @@ class AnimalsScreen extends ConsumerWidget {
                         ref.read(animalsProvider.notifier).refresh(),
                     color: AppColors.primary,
                     child: animals.isEmpty
-                        ? const Center(child: Text('No animals found'))
+                        ? Center(child: Text(context.l10n.t('animals.empty')))
                         : GridView.builder(
                             padding: const EdgeInsets.only(
                               left: AppConstants.defaultPadding,
@@ -108,7 +112,7 @@ class AnimalsScreen extends ConsumerWidget {
                 foregroundColor: Colors.white,
                 elevation: 4,
                 icon: const Icon(Icons.add),
-                label: const Text('Add Animal'),
+                label: Text(context.l10n.t('animals.addAnimal')),
               ),
             ),
         ],

@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/fields/week_picker_chip.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/common/components/layout/app_tab_bar.dart';
@@ -48,14 +49,23 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
       ),
       error: (e, _) => Scaffold(
         backgroundColor: AppColors.background,
-        body: Center(child: Text('Error loading shelter: $e')),
+        body: Center(
+          child: Text(
+            context.l10n
+                .t('shifts.shelterLoadError')
+                .replaceAll('{error}', '$e'),
+          ),
+        ),
       ),
       data: (shelter) {
         if (shelter.refuges.isEmpty) {
-          return const Scaffold(
+          return Scaffold(
             backgroundColor: AppColors.background,
-            appBar: BastetAppBar(customTitle: 'Shifts', showLogout: false),
-            body: Center(child: Text('No refuges available.')),
+            appBar: BastetAppBar(
+              customTitle: context.l10n.t('shifts.title'),
+              showLogout: false,
+            ),
+            body: Center(child: Text(context.l10n.t('shelter.noRefuges'))),
           );
         }
 
@@ -80,7 +90,9 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
         return Scaffold(
           backgroundColor: AppColors.background,
           appBar: BastetAppBar(
-            customTitle: 'Shifts – $activeRefugeName',
+            customTitle: context.l10n
+                .t('shifts.titleWithRefuge')
+                .replaceAll('{refuge}', activeRefugeName),
             showLogout: false,
             showBackButton: true,
           ),
@@ -138,7 +150,7 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                           Icons.copy_all_rounded,
                           color: AppColors.reddish,
                         ),
-                        tooltip: 'Copy shifts from past week',
+                        tooltip: context.l10n.t('shifts.copyPastWeekTooltip'),
                         onPressed: () {
                           showCopyWeekBottomSheet(
                             context: context,
@@ -179,7 +191,11 @@ class _DayShiftsTab extends ConsumerWidget {
 
     return shiftsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('Error loading shifts: $e')),
+      error: (e, _) => Center(
+        child: Text(
+          context.l10n.t('shifts.loadError').replaceAll('{error}', '$e'),
+        ),
+      ),
       data: (allShifts) {
         //this tab days only
         final dayShifts = allShifts
@@ -194,7 +210,7 @@ class _DayShiftsTab extends ConsumerWidget {
         if (dayShifts.isEmpty) {
           return Center(
             child: Text(
-              'No shifts for this day.',
+              context.l10n.t('shifts.noShiftsForDay'),
               style: Theme.of(
                 context,
               ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),

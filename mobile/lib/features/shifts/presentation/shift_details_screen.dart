@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
@@ -28,14 +29,20 @@ class ShiftDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const BastetAppBar(
-        customTitle: 'Shift Details',
+      appBar: BastetAppBar(
+        customTitle: context.l10n.t('shifts.detailsTitle'),
         showBackButton: true,
         showLogout: false,
       ),
       body: detailAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => Center(
+          child: Text(
+            context.l10n
+                .t('common.errorWithMessage')
+                .replaceAll('{error}', '$e'),
+          ),
+        ),
         data: (shiftDetail) {
           final notifier = ref.read(shiftDetailProvider(shiftId).notifier);
           return SingleChildScrollView(
@@ -67,7 +74,9 @@ class ShiftDetailScreen extends ConsumerWidget {
                 const SizedBox(height: 32),
 
                 PrimaryButton(
-                  label: shiftDetail.isJoined ? 'Leave Shift' : 'Join Shift',
+                  label: shiftDetail.isJoined
+                      ? context.l10n.t('shifts.leaveShift')
+                      : context.l10n.t('shifts.joinShift'),
                   backgroundColor: shiftDetail.isJoined
                       ? AppColors.error.withValues(alpha: 0.1)
                       : AppColors.primary,
@@ -80,10 +89,9 @@ class ShiftDetailScreen extends ConsumerWidget {
                     if (shiftDetail.isJoined) {
                       final confirm = await ConfirmationDialog.show(
                         context: context,
-                        title: 'Leave Shift?',
-                        message:
-                            'Are you sure you want to leave this shift? You will be unassigned from any tasks.',
-                        confirmText: 'Leave',
+                        title: context.l10n.t('shifts.leaveShiftTitle'),
+                        message: context.l10n.t('shifts.leaveShiftMessage'),
+                        confirmText: context.l10n.t('shifts.leave'),
                         isDestructive: true,
                       );
 

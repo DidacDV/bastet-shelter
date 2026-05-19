@@ -2,6 +2,7 @@
 // Posted by S.R Keshav
 // Retrieved 2026-03-16, License - CC BY-SA 4.0
 
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class NavigationService {
@@ -71,5 +72,10 @@ class NavigationService {
           duration: const Duration(seconds: 3),
         ),
       );
+  }
+
+  void showSnackBarKey(String key, {bool isError = false}) {
+    final context = navigationKey.currentContext;
+    showSnackBar(context?.l10n.t(key) ?? key, isError: isError);
   }
 }

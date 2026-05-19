@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/shifts/data/models/shift_model.dart';
 import 'package:bastetshelter/features/shifts/presentation/components/shift_time_bubble.dart';
@@ -33,17 +34,16 @@ class ShiftOverviewSection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SectionHeader(
-          title: 'Overview',
+          title: context.l10n.t('shifts.overview'),
           tt: tt,
           trailing: isManager
               ? TextButton.icon(
                   onPressed: () async {
                     final confirm = await ConfirmationDialog.show(
                       context: context,
-                      title: 'Delete Shift?',
-                      message:
-                          'This action cannot be undone. All assigned tasks and participants will be removed.',
-                      confirmText: 'Delete',
+                      title: context.l10n.t('shifts.deleteShiftTitle'),
+                      message: context.l10n.t('shifts.deleteShiftMessage'),
+                      confirmText: context.l10n.t('profile.delete'),
                       isDestructive: true,
                     );
 
@@ -53,7 +53,7 @@ class ShiftOverviewSection extends ConsumerWidget {
                     }
                   },
                   icon: const Icon(Icons.delete_outline_rounded, size: 16),
-                  label: const Text('Delete'),
+                  label: Text(context.l10n.t('profile.delete')),
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.error,
                     visualDensity: VisualDensity.compact,
@@ -79,7 +79,7 @@ class ShiftOverviewSection extends ConsumerWidget {
               children: [
                 EditableRow(
                   icon: Icons.home_work_outlined,
-                  label: 'Refuge',
+                  label: context.l10n.t('common.refuge'),
                   value: refugeName,
                   canEdit: false,
                   onEdit: () {},
@@ -87,7 +87,7 @@ class ShiftOverviewSection extends ConsumerWidget {
                 const Divider(height: 24, color: AppColors.outline),
                 EditableRow(
                   icon: Icons.calendar_today_outlined,
-                  label: 'Date',
+                  label: context.l10n.t('common.date'),
                   value: dateFormat.format(shiftDetail.day),
                   canEdit: false,
                   onEdit: () {},
@@ -95,7 +95,7 @@ class ShiftOverviewSection extends ConsumerWidget {
                 const Divider(height: 24, color: AppColors.outline),
                 EditableRow(
                   icon: Icons.access_time_rounded,
-                  label: 'Time',
+                  label: context.l10n.t('common.time'),
                   valueWidget: ShiftTimeBubble(
                     startTime: shiftDetail.startTime,
                     endTime: shiftDetail.endTime,
@@ -107,14 +107,14 @@ class ShiftOverviewSection extends ConsumerWidget {
                       initialTime: TimeOfDay.fromDateTime(
                         shiftDetail.startTime,
                       ),
-                      helpText: 'Select Start Time',
+                      helpText: context.l10n.t('shifts.selectStartTime'),
                     );
                     if (startTime == null || !context.mounted) return;
 
                     final endTime = await showTimePicker(
                       context: context,
                       initialTime: TimeOfDay.fromDateTime(shiftDetail.endTime),
-                      helpText: 'Select End Time',
+                      helpText: context.l10n.t('shifts.selectEndTime'),
                     );
                     if (endTime == null) return;
 

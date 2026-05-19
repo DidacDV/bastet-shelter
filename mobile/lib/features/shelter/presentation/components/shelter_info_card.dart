@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/fields/label_value.dart';
 import 'package:bastetshelter/features/common/components/section_card.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_model.dart';
@@ -14,7 +15,7 @@ class ShelterInfoCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SectionCard(
-      title: 'Shelter Info',
+      title: context.l10n.t('shelter.info'),
       icon: Icons.pets,
       trailingAction: IconButton(
         icon: const Icon(Icons.edit),
@@ -32,20 +33,27 @@ class ShelterInfoCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          LabelValue(label: 'Name', value: shelter.name),
+          LabelValue(label: context.l10n.t('common.name'), value: shelter.name),
           const SizedBox(height: 12),
-          LabelValue(label: 'Email', value: shelter.email ?? 'Not provided'),
-          const SizedBox(height: 12),
-          LabelValue(label: 'Location', value: shelter.province.name),
-          const Divider(height: 32),
           LabelValue(
-            label: 'Volunteer Code',
-            value: shelter.volunteerCode ?? 'Not available',
+            label: context.l10n.t('auth.email'),
+            value: shelter.email ?? context.l10n.t('common.notProvided'),
           ),
           const SizedBox(height: 12),
           LabelValue(
-            label: 'Manager Code',
-            value: shelter.managerCode ?? 'Not available',
+            label: context.l10n.t('common.location'),
+            value: shelter.province.name,
+          ),
+          const Divider(height: 32),
+          LabelValue(
+            label: context.l10n.t('shelter.volunteerCode'),
+            value:
+                shelter.volunteerCode ?? context.l10n.t('common.notAvailable'),
+          ),
+          const SizedBox(height: 12),
+          LabelValue(
+            label: context.l10n.t('shelter.managerCode'),
+            value: shelter.managerCode ?? context.l10n.t('common.notAvailable'),
           ),
           const SizedBox(height: 24),
           Row(
@@ -54,8 +62,8 @@ class ShelterInfoCard extends ConsumerWidget {
                 child: FilledButton.tonal(
                   onPressed: () =>
                       ref.read(shelterProvider.notifier).resetVolunteerCode(),
-                  child: const Text(
-                    'Reset Vol. Code',
+                  child: Text(
+                    context.l10n.t('shelter.resetVolunteerCode'),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -65,8 +73,8 @@ class ShelterInfoCard extends ConsumerWidget {
                 child: FilledButton.tonal(
                   onPressed: () =>
                       ref.read(shelterProvider.notifier).resetManagerCode(),
-                  child: const Text(
-                    'Reset Mgr. Code',
+                  child: Text(
+                    context.l10n.t('shelter.resetManagerCode'),
                     textAlign: TextAlign.center,
                   ),
                 ),

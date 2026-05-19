@@ -1,18 +1,19 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class ConfirmationDialog extends StatelessWidget {
   final String title;
   final String message;
-  final String confirmText;
-  final String cancelText;
+  final String? confirmText;
+  final String? cancelText;
   final bool isDestructive;
 
   const ConfirmationDialog({
     super.key,
     required this.title,
     required this.message,
-    this.confirmText = 'Confirm',
-    this.cancelText = 'Cancel',
+    this.confirmText,
+    this.cancelText,
     this.isDestructive = false,
   });
 
@@ -20,8 +21,8 @@ class ConfirmationDialog extends StatelessWidget {
     required BuildContext context,
     required String title,
     required String message,
-    String confirmText = 'Confirm',
-    String cancelText = 'Cancel',
+    String? confirmText,
+    String? cancelText,
     bool isDestructive = false,
   }) async {
     final result = await showDialog<bool>(
@@ -39,6 +40,8 @@ class ConfirmationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return AlertDialog(
       titleTextStyle: Theme.of(context).textTheme.titleLarge,
       titlePadding: const EdgeInsets.fromLTRB(28, 32, 28, 12),
@@ -55,7 +58,7 @@ class ConfirmationDialog extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
                 onPressed: () => Navigator.pop(context, false),
-                child: Text(cancelText),
+                child: Text(cancelText ?? l10n.t('common.cancel')),
               ),
             ),
             const SizedBox(width: 12),
@@ -75,7 +78,7 @@ class ConfirmationDialog extends StatelessWidget {
                           ),
                         ),
                 onPressed: () => Navigator.pop(context, true),
-                child: Text(confirmText),
+                child: Text(confirmText ?? l10n.t('common.confirm')),
               ),
             ),
           ],

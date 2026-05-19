@@ -8,8 +8,8 @@ Future<T?> genericApiCall<T>(Future<T> Function() externalCall) async {
     NavigationService.instance.showSnackBar(e.message, isError: true);
     return null;
   } catch (e) {
-    NavigationService.instance.showSnackBar(
-      'Something went wrong',
+    NavigationService.instance.showSnackBarKey(
+      'common.somethingWentWrong',
       isError: true,
     );
     return null;

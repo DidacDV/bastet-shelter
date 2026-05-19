@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:bastetshelter/features/common/components/animal_avatar.dart';
@@ -71,7 +72,9 @@ class _ShiftTaskDetailBottomSheetState
         //CASE 1: Assigned to ME
         if (isAssignedToMe) ...[
           PrimaryButton(
-            label: isCompleted ? 'Mark as Pending' : 'Mark as Completed',
+            label: isCompleted
+                ? context.l10n.t('shifts.markPending')
+                : context.l10n.t('shifts.markCompleted'),
             backgroundColor: isCompleted
                 ? AppColors.surface
                 : AppColors.primary,
@@ -102,9 +105,9 @@ class _ShiftTaskDetailBottomSheetState
                         strokeWidth: 2,
                       ),
                     )
-                  : const Text(
-                      'Unassign Me',
-                      style: TextStyle(
+                  : Text(
+                      context.l10n.t('shifts.unassignMe'),
+                      style: const TextStyle(
                         color: AppColors.error,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -118,7 +121,7 @@ class _ShiftTaskDetailBottomSheetState
         if (isUnassigned) ...[
           if (widget.isJoined)
             PrimaryButton(
-              label: 'Assign to Me',
+              label: context.l10n.t('shifts.assignToMe'),
               isLoading: _loadingPrimary,
               onPressed: () => _handleAction(widget.onAssignToMe, true),
             )
@@ -130,10 +133,10 @@ class _ShiftTaskDetailBottomSheetState
                 color: AppColors.outline.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
-                'Join shift to assign tasks',
+              child: Text(
+                context.l10n.t('shifts.joinToAssign'),
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -150,10 +153,10 @@ class _ShiftTaskDetailBottomSheetState
               color: AppColors.outline.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Text(
-              'Task is already assigned',
+            child: Text(
+              context.l10n.t('shifts.taskAlreadyAssigned'),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.textSecondary,
                 fontWeight: FontWeight.w600,
               ),
@@ -172,7 +175,9 @@ class _ShiftTaskDetailBottomSheetState
             ),
             const SizedBox(width: 6),
             Text(
-              isCompleted ? 'Completed' : 'Pending',
+              isCompleted
+                  ? context.l10n.t('shifts.completed')
+                  : context.l10n.t('shifts.pending'),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: isCompleted
                     ? AppColors.primary
@@ -185,7 +190,7 @@ class _ShiftTaskDetailBottomSheetState
         const SizedBox(height: 20),
 
         Text(
-          'Description',
+          context.l10n.t('common.description'),
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -201,7 +206,7 @@ class _ShiftTaskDetailBottomSheetState
 
         if (task.animal != null) ...[
           Text(
-            'Linked Animal',
+            context.l10n.t('shifts.linkedAnimal'),
             style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -214,13 +219,17 @@ class _ShiftTaskDetailBottomSheetState
               task.animal!.name,
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
-            subtitle: Text('ID: ${task.animal!.id}'),
+            subtitle: Text(
+              context.l10n
+                  .t('common.idValue')
+                  .replaceAll('{id}', '${task.animal!.id}'),
+            ),
           ),
           const Divider(height: 24, color: AppColors.outline),
         ],
 
         Text(
-          'Assigned To',
+          context.l10n.t('shifts.assignedTo'),
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -244,7 +253,7 @@ class _ShiftTaskDetailBottomSheetState
             const SizedBox(width: 12),
             Text(
               isUnassigned
-                  ? 'Unassigned'
+                  ? context.l10n.t('shifts.unassigned')
                   : '${task.participant?.name ?? ''} ${task.participant?.lastName1 ?? ''}'
                         .trim(),
               style: theme.textTheme.bodyMedium?.copyWith(

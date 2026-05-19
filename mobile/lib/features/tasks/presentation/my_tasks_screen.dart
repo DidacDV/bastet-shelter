@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/common/components/manage_list_card.dart';
 import 'package:bastetshelter/features/shifts/data/models/shift_task_model.dart';
@@ -18,19 +19,23 @@ class MyTasksScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const BastetAppBar(
-        customTitle: 'My Assigned Tasks',
+      appBar: BastetAppBar(
+        customTitle: context.l10n.t('tasks.myAssignedTitle'),
         showBackButton: true,
         showConfig: false,
       ),
       body: tasksAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error loading tasks: $e')),
+        error: (e, _) => Center(
+          child: Text(
+            context.l10n.t('tasks.loadError').replaceAll('{error}', '$e'),
+          ),
+        ),
         data: (groups) {
           if (groups.isEmpty) {
             return Center(
               child: Text(
-                'You have no upcoming tasks assigned!',
+                context.l10n.t('tasks.noUpcomingAssigned'),
                 style: tt.bodyLarge?.copyWith(color: AppColors.textSecondary),
               ),
             );
@@ -128,7 +133,9 @@ class _MyTaskItem extends ConsumerWidget {
           if (shiftTask.animal != null) ...[
             const SizedBox(height: 4),
             Text(
-              'Animal: ${shiftTask.animal?.name}',
+              context.l10n
+                  .t('common.animalName')
+                  .replaceAll('{animal}', shiftTask.animal?.name ?? ''),
               style: tt.bodySmall?.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w600,

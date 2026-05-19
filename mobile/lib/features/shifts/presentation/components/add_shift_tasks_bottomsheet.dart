@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/animal_picker_bottomsheet.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
@@ -44,7 +45,7 @@ class _AddShiftTasksBottomSheetState
     final theme = Theme.of(context);
 
     return FormBottomSheet(
-      title: 'Add Tasks to Shift',
+      title: context.l10n.t('shifts.addTasksToShift'),
       actions: [
         if (_selectedTaskIds.isNotEmpty) ...[
           SizedBox(
@@ -57,8 +58,10 @@ class _AddShiftTasksBottomSheetState
               ),
               label: Text(
                 _selectedAnimal == null
-                    ? 'Link with animal'
-                    : 'Linked to ${_selectedAnimal.name}',
+                    ? context.l10n.t('shifts.linkWithAnimal')
+                    : context.l10n
+                          .t('shifts.linkedToAnimal')
+                          .replaceAll('{animal}', _selectedAnimal.name),
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -84,15 +87,17 @@ class _AddShiftTasksBottomSheetState
 
         PrimaryButton(
           label: _selectedTaskIds.isEmpty
-              ? 'Cancel'
-              : 'Add ${_selectedTaskIds.length} Tasks',
+              ? context.l10n.t('common.cancel')
+              : context.l10n
+                    .t('shifts.addTasksCount')
+                    .replaceAll('{count}', '${_selectedTaskIds.length}'),
           isLoading: _loading,
           onPressed: _submit,
         ),
       ],
       children: [
         Text(
-          'Select the tasks you want to assign to this shift.',
+          context.l10n.t('shifts.selectTasksToAssign'),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: AppColors.textSecondary,
           ),
@@ -101,7 +106,13 @@ class _AddShiftTasksBottomSheetState
 
         tasksAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Error: $e')),
+          error: (e, _) => Center(
+            child: Text(
+              context.l10n
+                  .t('common.errorWithMessage')
+                  .replaceAll('{error}', '$e'),
+            ),
+          ),
           data: (tasks) {
             if (tasks.isEmpty) {
               return Container(
@@ -111,9 +122,7 @@ class _AddShiftTasksBottomSheetState
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppColors.outline),
                 ),
-                child: const Text(
-                  'No template tasks found. Create some in the Tasks screen first!',
-                ),
+                child: Text(context.l10n.t('shifts.noTemplateTasks')),
               );
             }
 

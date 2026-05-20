@@ -1,1 +1,16 @@
 backend/.coverage
+*.aux
+*.log
+*.toc
+*.out
+*.lof
+*.lot
+*.bbl
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*synctex(busy)
+*.run.xml
+*.pdf
+main-blx.bib

@@ -80,18 +80,18 @@
 
 %macro for user story tables
 \newcommand{\HU}[9]{%
-\begin{table}[H]\centering\small\renewcommand{\arraystretch}{1.3}%
-\begin{tabular}{|l|p{4.5cm}|p{4.5cm}|}\hline
+\begin{table}[H]\centering\footnotesize\renewcommand{\arraystretch}{1.1}%
+\setlength{\extrarowheight}{0pt}%
+\begin{tabular}{|l|p{4.8cm}|p{4.8cm}|}\hline
 \rowcolor{oceanblue}\textcolor{white}{\textbf{Història d'Usuari}} & \multicolumn{2}{l|}{\textcolor{white}{#2}} \\\hline
 \textbf{Objectiu} & \multicolumn{2}{l|}{#1} \\\hline
-\rowcolor{gray!10}\textbf{Puntuació} & \textbf{Frontend} & \textbf{Backend} \\\cline{2-3}
-& #3 & #4 \\\hline
+\rowcolor{gray!10}\textbf{Puntuació} & \textbf{Frontend: } #3 & \textbf{Backend: } #4 \\\hline
 \textbf{Prioritat} & \multicolumn{2}{l|}{#5} \\\hline
 \rowcolor{oceanblue}\multicolumn{3}{|l|}{\textcolor{white}{\textbf{Descripció}}} \\\hline
-\multicolumn{3}{|p{12.5cm}|}{\textbf{Com a} #6, \newline \textbf{Vull} #7, \newline \textbf{Per tal de} #8.} \\\hline
+\multicolumn{3}{|p{12.5cm}|}{\textbf{Com a} #6, \textbf{vull} #7, \textbf{per tal de} #8.} \\\hline
 \rowcolor{oceanblue}\multicolumn{3}{|l|}{\textcolor{white}{\textbf{Criteris d'Acceptació}}} \\\hline
-\multicolumn{3}{|p{12.5cm}|}{\begin{enumerate}[leftmargin=0.5cm,topsep=2pt,parsep=0pt,itemsep=3pt] #9 \end{enumerate}} \\\hline
-\end{tabular}\caption[Història d'usuari: #2]{Història d'usuari de: #2. Font: Elaboració pròpia}\label{tab:hu_#1}\end{table}%
+\multicolumn{3}{|p{12.5cm}|}{\begin{enumerate}[leftmargin=0.4cm,topsep=0pt,parsep=0pt,itemsep=1pt,partopsep=0pt,after=\vspace{-3pt}] #9 \end{enumerate}} \\\hline
+\end{tabular}\caption[HU: #2]{Història d'usuari de: #2.}\label{tab:hu_#1}\end{table}%
 }
 
 \begin{document}
@@ -255,11 +255,11 @@ En aquest apartat definirem els objectius, subobjectius, requisits no funcionals
 L'objectiu principal d'aquest treball de fi de grau és la creació d'un sistema digital que permeti a les protectores gestionar la feina del seu dia a dia més fàcilment i còmodament, centralitzant les necessitats de cada entitat en una aplicació, a més d'agilitzar els processos d'adopció dels animals a través d'un portal públic d'adopcions. Per assolir aquest objectiu s'han d'assolir els següents subobjectius:
 
 \begin{itemize}
-    \item Registrar gossos i gats de múltiples protectores al sistema de forma independent, incloent-hi informació mèdica, tractaments i l'historial de cada animal, centralitzant tota la informació en un únic lloc.
-    \item Digitalitzar la gestió dels voluntaris mitjançant torns i tasques assignades, permetent que cada protectora organitzi el seu equip de forma autònoma i faci un seguiment de la participació de cada voluntari.
-    \item Gestionar el procés d'adopció complet a través d'un portal públic, des del formulari inicial fins a la signatura del contracte, realitzant un seguiment de cada pas del procés per a totes les protectores registrades al sistema.
-    \item Facilitar la col·laboració entre protectores registrades al sistema mitjançant un ecosistema d'intercanvi d'inventari, reduint costos i aprofitant els recursos disponibles entre entitats.
-    \item Proporcionar un sistema d'alertes configurable basat en els tractaments dels animals i l'estat de les tasques assignades, adaptat a les necessitats específiques de cada protectora.
+    \item \textbf{OBJ1}. Registrar gossos i gats de múltiples protectores al sistema de forma independent, incloent-hi informació mèdica, tractaments i l'historial de cada animal, centralitzant tota la informació en un únic lloc.
+    \item \textbf{OBJ2}. Digitalitzar la gestió dels voluntaris mitjançant torns i tasques assignades, permetent que cada protectora organitzi el seu equip de forma autònoma i faci un seguiment de la participació de cada voluntari.
+    \item \textbf{OBJ3}. Gestionar el procés d'adopció complet a través d'un portal públic, des del formulari inicial fins a la signatura del contracte, realitzant un seguiment de cada pas del procés per a totes les protectores registrades al sistema.
+    \item \textbf{OBJ4}. Facilitar la col·laboració entre protectores registrades al sistema mitjançant un ecosistema d'intercanvi d'inventari, reduint costos i aprofitant els recursos disponibles entre entitats.
+    \item \textbf{OBJ5}. Proporcionar un sistema d'alertes configurable basat en els tractaments dels animals i l'estat de les tasques assignades, adaptat a les necessitats específiques de cada protectora.
 \end{itemize}
 
 \subsection{Requisits no funcionals}
@@ -1097,30 +1097,458 @@ En aquesta secció es detallarà l'especificació del projecte, incloent els req
 Els requisits finals descrits a continuació son fruit de l'estudi de mercat realitzat a la secció~\ref{sec:context}, en conjunt amb l'experiència de l'autor realitzant un voluntariat en una protectora d'animals, i la informació recollida a través de contactar amb una entitat de protecció animal local, concretament Rodamons de Rubí \cite{TODO:rodamons}, a través de correu electrònic.
 
 \subsection{Històries d'usuari}
-A continuació, es detallen les històries d'usuari agrupades per èpiques, seguint la metodologia Agile. Cada història d'usuari inclou l'objectiu al que fa referència, una descripció clara de la funcionalitat desitjada, els criteris d'acceptació, i una estimació en punts d'esforç basada en la escala de Planning Poker \cite{TODO:planning_poker}, adaptada per a un desenvolupador individual.
+A continuació, es detallen les històries d'usuari agrupades per èpiques, seguint la metodologia Agile. Cada història d'usuari inclou l'objectiu al que fa referència (i a quin requisit no funcional, si aplica), una descripció clara de la funcionalitat desitjada, els criteris d'acceptació, i una estimació en punts d'esforç basada en la escala de Planning Poker \cite{TODO:planning_poker}, adaptada per a un desenvolupador individual.
 \subsubsection{Portal d'adopcions}
-Aquesta èpica compren les funcionalitats relacionades amb la pàgina web que actua com a portal d'adopcions per aquells usuaris externs al sistema que volen adoptar un gat. Aquest portal permetrà als usuaris navegar pels gats disponibles per a adopció, veure els seus perfils detallats i iniciar el procés d'adopció.
-\HU{RF1}
-{Autenticació d'usuaris}
-{3}
-{5}
-{Alta}
-{usuari de l'aplicació}
-{registrar-me amb el meu número de telèfon mòbil i correu electrònic}
-{poder accedir de forma segura a l'aplicació i crear el meu perfil inicial}
-{
-    \item L'usuari s'ha de registrar amb telèfon i correu.
-    \item El sistema envia un codi de verificació per SMS i un altre per email.
-    \item L'usuari ha d'introduir ambdós codis per completar el registre.
-    \item aasas
-}
-\subsubsection{Gestió de torns i tasques}
-
-\subsubsection{Procés d'adopció}
-
-\subsubsection{Portal web d'adopcions}
+    Aquesta èpica compren les funcionalitats relacionades amb la pàgina web que actua com a portal d'adopcions per aquells usuaris externs al sistema que volen adoptar un gat. Aquest portal permetrà als usuaris navegar pels gats disponibles per a adopció, veure els seus perfils detallats i iniciar el procés d'adopció.
+    \HU{OBJ3}
+    {Llistat d'animals disponibles per a adopció}
+    {5}
+    {3}
+    {Alta}
+    {potencial adoptant}
+    {poder veure un llistat d'animals en una localització concreta que estiguin en adopció amb informació bàsica}
+    {poder fer-me una idea de quins animals hi ha disponibles a la meva zona i decidir si vull adoptar-ne un}
+    {
+        \item Qualsevol usuari, autenticat o no, pot accedir al llistat.
+        \item El llistat mostra animals disponibles per adopció filtrats per localització.
+        \item Cada animal mostra informació bàsica (nom, localització, edat, foto).
+        \item Si no hi ha animals disponibles a la localització indicada, es mostra un missatge informatiu.
+    }
+    \HU{OBJ3}
+    {Fitxa detallada d'un animal}
+    {3}
+    {2}
+    {Mitjana}
+    {potencial adoptant}
+    {poder veure la fitxa completa d'un animal amb tota la seva informació detallada}
+    {poder conèixer millor l'animal abans de decidir iniciar el procés d'adopció}
+    {
+        \item Qualsevol usuari, autenticat o no, pot accedir a la fitxa.
+        \item La fitxa mostra les fotos de l'animal.
+        \item La fitxa mostra els trets de personalitat definits pel refugi.
+        \item La fitxa mostra la descripció de l'animal.
+        \item La fitxa mostra els detalls de l'animal: espècie, raça, edat i data de naixement.
+        \item La fitxa mostra el refugi al qual pertany l'animal.
+        \item La fitxa inclou un botó per iniciar el procés d'adopció.
+        \item El botó d'adopció només és accessible per a usuaris autenticats.
+        \item Si l'usuari està autenticat i ja té un procés d'adopció, el botó d'adopció es substitueix per un altra que redirigeix a la pàgina del procés d'adopció en curs.
+    }
+    \HU{OBJ3}
+    {Filtratge del llistat d'animals}
+    {3}
+    {0}
+    {Mitjana}
+    {potencial adoptant}
+    {poder buscar i filtrar entre els diferents animals disponibles per a adopció segons diferents criteris}
+    {poder trobar un animal a adoptar segons les meves necessitats i preferències}
+    {
+        \item Qualsevol usuari, autenticat o no, pot aplicar filtres al llistat.
+        \item Es pot filtrar per espècie, localització, nom i protectora.
+        \item Els filtres es poden combinar entre ells.
+        \item El llistat s'actualitza en temps real en aplicar els filtres.
+        \item Si cap animal compleix els criteris, es mostra un missatge informatiu.
+        \item Si no es trobba cap animal, es dona l'opció de netejar els filtres.
+    }
+    \HU{OBJ3}
+    {Iniciar el procés d'adopció d'un animal}
+    {3}
+    {5}
+    {Alta}
+    {adoptant autenticat}
+    {poder iniciar el procés d'adopció d'un animal que m'interessa}
+    {poder formalitzar la meva intenció d'adoptar i que el refugi en sigui notificat}
+    {
+        \item Només un usuari autenticat pot iniciar el procés d'adopció.
+        \item L'usuari ha d'omplir un formulari amb les seves dades personals i informació sobre la seva llar.
+        \item Un usuari no autenticat és redirigit al formulari d'inici de sessió.
+        \item En iniciar el procés, el refugi rep una notificació.
+        \item L'animal queda marcat com a en procés d'adopció i no és accessible per altres adoptants.
+    }
+    \HU{OBJ3}
+    {Veure el procés d'adopció d'un animal}
+    {3}
+    {5}
+    {Mitjana}
+    {adoptant autenticat}
+    {poder veure l'estat actual del meu procés d'adopció i els propers passos}
+    {poder saber en quin punt es troba la meva adopció i quines accions em corresponen}
+    {
+        \item Només l'adoptant autenticat amb un procés actiu pot accedir a aquesta pantalla.
+        \item Es mostren els passos del procés: formulari, entrevista, visita al refugi, contracte i recollida de l'animal.
+        \item Cada pas indica si està pendent, en curs o completat.
+        \item Els passos d'entrevista, visita al refugi i recollida mostren la data acordada quan està disponible.
+        \item Quan el pas actiu és el contracte, l'adoptant pot visualitzar-lo en PDF i signar-lo simbòlicament a través d'un botó.
+        \item Si el procés ha estat rebutjat per la protectora, es mostra un missatge informatiu i el procés queda marcat com a rebutjat.
+    }
+    \HU{OBJ3}
+    {Veure els meus processos d'adopció}
+    {2}
+    {1}
+    {Mitjana}
+    {adoptant autenticat}
+    {poder veure un llistat de tots els meus processos d'adopció actius i passats}
+    {poder fer un seguiment de les meves adopcions i accedir ràpidament a cadascuna d'elles}
+    {
+        \item Només l'adoptant autenticat pot accedir a aquesta pantalla.
+        \item Es mostren tots els processos d'adopció actius i passats de l'usuari.
+        \item Cada procés mostra el nom i la foto de l'animal, la data d'inici i l'estat actual.
+        \item En seleccionar un procés, es redirigeix a la pantalla de detall del procés d'adopció.
+        \item Si l'usuari no té cap procés, es mostra un missatge informatiu.
+    }
 
 \subsubsection{Comunitat}
+    \HU{OBJ4}
+    {Veure anuncis de protectores}
+    {3}
+    {3}
+    {Alta}
+    {usuari autenticat}
+    {poder veure els anuncis publicats per les protectores amb recursos disponibles}
+    {poder contactar amb una protectora si tinc interès en allò que ofereix}
+    {
+        \item Qualsevol usuari autenticat pot veure els anuncis.
+        \item Els anuncis es mostren ordenats per data de publicació, del més recent al més antic.
+        \item Cada anunci mostra el títol, el tipus d'anunci, la localització i la imatge si en té.
+        \item Si es clica a un anunci, es mostra l'informació bàsica a més del correu de la protectora i una descripció més detallada.
+        \item Es pot contactar amb la protectora directament mitjançant el correu electrònic mostrat.
+        \item Es pot filtrar els anuncis per tipus, localització, títol i protectora.
+        \item Si no hi ha anuncis disponibles, es mostra un missatge informatiu.
+    }
+    \HU{OBJ4}
+    {Veure els anuncis de la meva protectora}
+    {2}
+    {0}
+    {Mitjana}
+    {gestor d'una protectora autenticat}
+    {poder veure els anuncis publicats per la meva protectora}
+    {poder gestionar i consultar els recursos que la meva protectora ha publicat}
+    {
+        \item Només els gestors d'una protectora poden accedir a aquesta pantalla.
+        \item Es mostren únicament els anuncis de la protectora de l'usuari.
+        \item Els anuncis es mostren ordenats per data de publicació, del més recent al més antic.
+        \item Cada anunci mostra el títol, el tipus, la localització i la imatge si en té.
+        \item Si es clica a un anunci, es mostra la informació completa incloent la descripció i el correu de contacte.
+        \item Al veure els detalls d'un anunci, es dona l'opció de desactivar-lo, amagant-lo del llistat públic.
+        \item Si la protectora no té anuncis, es mostra un missatge informatiu.
+    }
+    \HU{OBJ4}
+    {Crear un anunci}
+    {3}
+    {3}
+    {Alta}
+    {gestor autenticat}
+    {poder crear un anunci per publicar recursos disponibles de la meva protectora}
+    {poder comunicar a la comunitat que tenim recursos disponibles i facilitar el contacte}
+    {
+        \item Només un gestor autenticat associat a una protectora pot crear anuncis.
+        \item El formulari inclou els camps: títol, descripció, categoria i província.
+        \item La imatge és opcional i es pot adjuntar des del dispositiu.
+        \item Tots els camps obligatoris han d'estar emplenats per poder publicar l'anunci.
+        \item Un cop creat, l'anunci és visible immediatament al llistat de la comunitat.
+    }
+
+\subsubsection{Sistema d'usuaris i seguretat}
+    \HU{OBJ2 / NFR6}
+    {Autenticació dels usuaris de la protectora}
+    {1}
+    {5}
+    {Alta}
+    {gestor o voluntari}
+    {poder iniciar sessió a l'aplicació amb les meves credencials}
+    {poder accedir a les funcionalitats de gestió de la meva protectora segons el meu rol}
+    {
+        \item Un gestor o voluntari pot registrar-se amb nom, cognom, correu electrònic i contrasenya.
+        \item Durant el registre, l'usuari escull si és voluntari o gestor.
+        \item Un cop autenticat, l'usuari accedeix a les funcionalitats segons el seu rol.
+        \item Els gestors tenen accés a funcionalitats d'administració de la protectora.
+        \item Els voluntaris tenen accés a funcionalitats operatives de la protectora.
+    }
+    \HU{OBJ2 / NFR6}
+    {Convidar i donar d'alta nous membres}
+    {2}
+    {3}
+    {Alta}
+    {gestor autenticat}
+    {poder veure i gestionar els codis d'invitació de la meva protectora}
+    {poder incorporar nous gestors i voluntaris a la meva protectora de forma controlada}
+    {
+        \item Només un gestor autenticat pot accedir als codis d'invitació.
+        \item Es mostren dos codis diferenciats: un per a voluntaris i un per a gestors.
+        \item El gestor pot regenerar qualsevol dels dos codis en qualsevol moment.
+        \item En regenerar un codi, l'anterior queda invalidat immediatament.
+        \item El gestor pot copiar qualsevol dels codis per compartir-lo.
+    }
+    \HU{OBJ2 / NFR6}
+    {Registre d'usuaris de la protectora}
+    {5}
+    {5}
+    {Alta}
+    {gestor o voluntari}
+    {poder crear un compte a l'aplicació amb les meves dades personals i el meu rol}
+    {poder accedir a les funcionalitats de la meva protectora un cop verificada la meva identitat}
+    {
+        \item L'usuari s'ha de registrar amb nom, cognom, correu electrònic i contrasenya.
+        \item L'usuari escull durant el registre si és voluntari o gestor.
+        \item Si l'usuari és voluntari, ha d'introduir un codi d'invitació per associar-se a una protectora.
+        \item Si l'usuari és gestor, pot crear una nova protectora o introduir un codi d'invitació per unir-se a una d'existent.
+        \item El sistema valida el codi d'invitació i associa l'usuari a la protectora corresponent.
+        \item Si el codi és invàlid o ha estat regenerat, es mostra un missatge d'error.
+        \item Un cop completat el registre, l'usuari accedeix a l'aplicació amb el seu rol assignat.
+        \item Si l'usuari es queda en un pas intermig del registre, es guarda el seu progrés i pot reprendre-ho més tard.
+    }
+    \HU{OBJ2}
+    {Gestionar perfil de la protectora}
+    {3}
+    {3}
+    {Mitjana}
+    {gestor autenticat}
+    {poder modificar la informació bàsica de la meva protectora}
+    {mantenir les dades de la protectora actualitzades per als usuaris de l'aplicació}
+    {
+        \item Només un gestor autenticat pot modificar el perfil de la protectora.
+        \item El gestor pot modificar el nom i la localització de la protectora.
+        \item Els canvis es reflecteixen immediatament a tota l'aplicació.
+    }
+    \HU{OBJ2}
+    {Gestionar catàlegs de la protectora}
+    {3}
+    {3}
+    {Mitjana}
+    {gestor autenticat}
+    {poder gestionar les medicines i els trets de personalitat disponibles a la meva protectora}
+    {poder personalitzar els catàlegs que s'utilitzen en la gestió dels animals del refugi}
+    {
+        \item Només un gestor autenticat pot gestionar els catàlegs de la protectora.
+        \item El gestor pot afegir, modificar i eliminar medicines del catàleg.
+        \item El gestor pot afegir, modificar i eliminar trets de personalitat del catàleg.
+        \item No es pot eliminar una medicina o tret de personalitat si està en ús per algun animal.
+        \item Els canvis es reflecteixen immediatament als formularis de gestió d'animals.
+    }
+    \HU{OBJ2}
+    {Gestionar refugis de la protectora}
+    {3}
+    {3}
+    {Mitjana}
+    {gestor autenticat}
+    {poder veure, afegir i modificar els refugis associats a la meva protectora}
+    {poder mantenir actualitzada la xarxa de refugis on es troben els animals de la protectora}
+    {
+        \item Només un gestor autenticat pot gestionar els refugis de la protectora.
+        \item Es mostra un llistat de tots els refugis associats a la protectora.
+        \item El gestor pot afegir un nou refugi indicant el nom i la localització.
+        \item El gestor pot modificar el nom i la localització d'un refugi existent.
+        \item Els camps nom i localització són obligatoris.
+        \item Els canvis es reflecteixen immediatament a tota l'aplicació.
+    }
+    \HU{OBJ2}
+    {Panell d'administració}
+    {0}
+    {3}
+    {Baixa}
+    {administrador del sistema}
+    {poder accedir a un panell d'administració per gestionar les dades de l'aplicació directament}
+    {poder mantenir la integritat de les dades i resoldre incidències sense intervenir al codi}
+    {
+        \item Només un usuari amb rol d'administrador pot accedir al panell.
+        \item El panell permet consultar, crear, modificar i eliminar registres de qualsevol entitat del sistema.
+        \item L'accés està protegit per autenticació de credencials.
+    }
+    \HU{OBJ3 / NFR6}
+    {Accés simplificat per a adoptants}
+    {2}
+    {3}
+    {Alta}
+    {adoptant}
+    {poder iniciar sessió a l'aplicació mitjançant un enllaç enviat al meu correu electrònic}
+    {poder accedir a les funcionalitats d'adopció sense haver de recordar cap contrasenya}
+    {
+        \item L'adoptant introdueix el seu correu electrònic per sol·licitar accés.
+        \item El sistema envia un magic link al correu electrònic introduït.
+        \item L'enllaç expira en 30 dies.
+        \item Si l'adoptant no té compte, el sistema el crea automàticament en fer clic a l'enllaç.
+        \item Si l'enllaç ha expirat, l'adoptant pot sol·licitar-ne un de nou.
+        \item Un cop autenticat, l'adoptant és redirigit a la pantalla principal.
+    }
+
+\subsubsection{Procés d'adopció}
+    \HU{OBJ3}
+    {Gestionar la disponibilitat d'un animal per a adopció}
+    {2}
+    {3}
+    {Mitjana}
+    {gestor o voluntari autenticat}
+    {poder activar o desactivar la disponibilitat d'un animal per a adopció}
+    {poder controlar en quins moments un animal és visible i accessible per a potencials adoptants}
+    {
+        \item Només gestors poden modificar la disponibilitat d'un animal.
+        \item La disponibilitat es gestiona mitjançant un toggle a la pantalla de detall de l'animal.
+        \item Quan s'activa, l'animal apareix al portal web i a l'app com a disponible per adopció.
+        \item Quan es desactiva i l'animal té processos d'adopció actius, aquests es cancel·len automàticament.
+        \item Els adoptants afectats per la cancel·lació reben una notificació informativa.
+    }
+    \HU{OBJ3}
+    {Gestió centralitzada de sol·licituds d'adopció}
+    {3}
+    {1}
+    {Alta}
+    {gestor o voluntari autenticat}
+    {poder veure totes les sol·licituds d'adopció de la meva protectora en un sol lloc}
+    {poder fer un seguiment centralitzat de tots els processos d'adopció actius i passats}
+    {
+        \item Només gestors i voluntaris autenticats poden accedir a aquesta pantalla.
+        \item Es mostren totes les sol·licituds d'adopció associades a la protectora.
+        \item Cada sol·licitud mostra la imatge i el nom de l'animal, el nom de l'adoptant, l'estat actual i la data d'inici.
+        \item En seleccionar una sol·licitud, es redirigeix a la pantalla de detall del procés d'adopció.
+        \item Es pot buscar per nom de l'animal i nom de l'adoptant.
+    }
+    \HU{OBJ3}
+    {Gestió centralitzada de sol·licituds d'adopció}
+    {3}
+    {1}
+    {Alta}
+    {gestor o voluntari autenticat}
+    {poder veure totes les sol·licituds d'adopció de la meva protectora en un sol lloc}
+    {poder fer un seguiment centralitzat de tots els processos d'adopció actius i passats}
+    {
+        \item Només gestors i voluntaris autenticats poden accedir a aquesta pantalla.
+        \item Es mostren totes les sol·licituds d'adopció associades a la protectora.
+        \item Cada sol·licitud mostra la imatge i el nom de l'animal, el nom de l'adoptant, l'estat actual i la data d'inici.
+        \item En seleccionar una sol·licitud, es redirigeix a la pantalla de detall del procés d'adopció.
+        \item Es pot buscar per nom de l'animal i nom de l'adoptant.
+    }
+
+    \HU{OBJ3}
+    {Gestionar els passos del procés d'adopció}
+    {8}
+    {5}
+    {Alta}
+    {gestor autenticat}
+    {poder gestionar cada pas del procés d'adopció d'un animal}
+    {poder avançar el procés, afegir notes i realitzar les accions específiques de cada etapa}
+    {
+        \item Només gestors autenticats associats a la protectora poden gestionar el procés.
+        \item Es mostren els passos del procés: formulari, entrevista, visita al refugi, contracte i recollida.
+        \item El gestor pot afegir notes a qualsevol pas del procés.
+        \item Al pas de formulari, es pot consultar la informació enviada per l'adoptant.
+        \item Al pas d'entrevista i visita al refugi, es pot establir la data acordada.
+        \item Al pas de contracte, es pot pujar el document i marcar-lo com a signat.
+        \item Al pas de recollida, es pot establir la data de recollida de l'animal.
+        \item Un cop completades les accions d'un pas, el gestor pot aprovar-lo i avançar al següent.
+    }
+    \HU{OBJ3}
+    {Rebutjar un procés d'adopció}
+    {2}
+    {3}
+    {Alta}
+    {gestor autenticat}
+    {poder rebutjar un procés d'adopció en qualsevol moment amb una justificació}
+    {poder cancel·lar una adopció que no és viable i alliberar l'animal per a nous processos}
+    {
+        \item Només gestors autenticats associats a la protectora poden rebutjar un procés.
+        \item El rebuig es pot realitzar en qualsevol pas del procés.
+        \item El gestor ha d'introduir obligatòriament una nota justificant el rebuig.
+        \item Un cop rebutjat, l'adoptant rep una notificació amb el motiu.
+        \item L'animal queda disponible de nou per a nous processos d'adopció si té la disponibilitat activada.
+    }
+
+    \HU{OBJ3}
+    {Generació automàtica del contracte d'adopció}
+    {0}
+    {5}
+    {Alta}
+    {gestor autenticat}
+    {poder generar automàticament el contracte d'adopció en PDF amb les dades de l'animal i l'adoptant}
+    {estalviar temps i evitar errors omplint el contracte manualment}
+    {
+        \item Només un gestor autenticat pot generar el contracte.
+        \item El contracte es genera automàticament en avançar del pas de visita al refugi al pas de contracte.
+        \item El PDF s'omple automàticament amb les dades de l'animal i les dades personals de l'adoptant.
+        \item El contracte generat queda associat al procés d'adopció i és accessible per al gestor i l'adoptant.
+        \item Si la generació falla, es mostra un missatge d'error i el pas no avança.
+    }
+
+\subsubsection{Gestió de voluntaris i tasques}
+    \HU{OBJ4}
+    {Veure el calendari de torns}
+    {8}
+    {3}
+    {Alta}
+    {gestor o voluntari autenticat}
+    {poder veure els torns de la meva protectora organitzats en un calendari setmanal}
+    {poder planificar la meva participació als torns del refugi}
+    {
+        \item Només gestors i voluntaris autenticats associats a una protectora poden accedir al calendari.
+        \item Si l'usuari té més d'un refugi associat, ha de seleccionar quin vol consultar.
+        \item Es mostra una vista setmanal amb els 7 dies de la setmana.
+        \item Es pot navegar entre setmanes mitjançant dos botons de navegació o un selector de setmana.
+        \item Cada dia mostra els torns disponibles amb informació bàsica.
+        \item En clicar un dia, es mostren els torns d'aquell dia amb hora d'inici, hora de fi i participants màxims.
+        \item En clicar un torn, es redirigeix a la pantalla de detall del torn.
+        \item Des del detall del torn, l'usuari pot unir-se o abandonar el torn.
+    }
+    \HU{OBJ4}
+    {Gestionar torns del calendari}
+    {3}
+    {5}
+    {Alta}
+    {gestor autenticat}
+    {poder crear, editar, eliminar i copiar torns al calendari de la meva protectora}
+    {poder organitzar i planificar els torns del refugi de forma eficient}
+    {
+        \item Només un gestor autenticat pot crear, editar, eliminar i copiar torns.
+        \item En crear un torn, s'ha d'indicar la data, hora d'inici, hora de fi i participants màxims.
+        \item El gestor pot editar l'hora d'inici, hora de fi i participants màxims d'un torn existent.
+        \item El gestor pot eliminar un torn existent.
+        \item El gestor pot copiar els torns d'una setmana a una altra setmana de destí.
+        \item En copiar, es pot escollir si es volen incloure les tasques dels torns copiats.
+        \item En copiar, es pot escollir si es volen sobreescriure els dies de la setmana de destí que ja tenen torns.
+    }
+    \HU{OBJ4}
+    {Gestionar tasques d'un torn}
+    {5}
+    {3}
+    {Alta}
+    {gestor o voluntari autenticat}
+    {poder gestionar les tasques associades a un torn del refugi}
+    {poder organitzar la feina del torn i fer-ne un seguiment en temps real}
+    {
+        \item Només gestors i voluntaris autenticats associats al torn poden gestionar les seves tasques.
+        \item El gestor pot afegir noves tasques a un torn a partir de plantilles de tasques.
+        \item En afegir una tasca, es pot vincular opcionalment a un animal del refugi.
+        \item En clicar una tasca, es mostren els seus detalls: títol, descripció i animal associat amb imatge si en té.
+        \item Qualsevol usuari que s'hagi unit al torn pot assignar-se una tasca.
+        \item Qualsevol usuari que s'hagi unit al torn pot marcar una tasca com a completada o revertir-la.
+    }
+    \HU{OBJ4}
+    {Veure les meves tasques assignades}
+    {2}
+    {2}
+    {Mitjana}
+    {gestor o voluntari autenticat}
+    {poder veure totes les tasques que tinc assignades als torns de la meva protectora}
+    {poder organitzar la meva feina i fer-ne un seguiment sense haver d'entrar a cada torn}
+    {
+        \item Només gestors i voluntaris autenticats poden accedir a aquesta pantalla.
+        \item Es mostren totes les tasques assignades a l'usuari independentment del torn.
+        \item Cada tasca mostra el títol, la descripció, l'animal associat amb imatge si en té, i l'estat.
+        \item L'usuari pot marcar una tasca com a completada o revertir-la des d'aquesta pantalla.
+    }
+    \HU{OBJ4}
+    {Gestionar plantilles de tasques}
+    {3}
+    {1}
+    {Mitjana}
+    {gestor autenticat}
+    {poder crear, editar i eliminar plantilles de tasques reutilitzables per als torns}
+    {poder agilitzar la creació de tasques als torns sense haver de repetir la mateixa informació}
+    {
+        \item Només un gestor autenticat pot gestionar les plantilles de tasques.
+        \item El gestor pot crear una nova plantilla indicant títol i descripció.
+        \item El gestor pot editar el títol i la descripció d'una plantilla existent.
+        \item El gestor pot eliminar una plantilla existent.
+        \item No es pot eliminar una plantilla si està en ús en algun torn actiu.
+        \item Les plantilles creades estan disponibles en afegir tasques a qualsevol torn de la protectora.
+    }
 
 \subsubsection{Gestió del compte}
 

@@ -1670,6 +1670,9 @@ En aquesta secció es descriu el model conceptual que representa tot el sistema,
 
 \subsubsection{Esquema conceptual de classes}
 Com a aclaració prèvia, quan es fa referència a una entitat a diferents llocs del diagrama (per exemple, \textit{Refugi}) es tracta de la mateixa entitat principal que està definida amb atributs a un altra part del diagrama. D'aquesta manera, el diagrama queda millor organitzat i més fàcil de llegir. 
+
+\includegraphics{UML-POSTCHANGES.pdf}
+
 \subsubsection{Restriccions d'integritat}
 \begin{itemize}
     \item \textbf{RT.1} L'atribut \textit{arrival\_date} d'un \textit{Animal} ha de ser posterior o igual a \textit{birth\_date}, si \textit{arrival\_date} no és nul·la.
@@ -1688,7 +1691,21 @@ Com a aclaració prèvia, quan es fa referència a una entitat a diferents llocs
 \end{itemize}
 
 \subsubsection{Descripció de les classes}
+Iniciant per la part esquerra, trobem \textbf{\textit{Login}} i \textbf{\textit{Usuari}}. Un \textit{usuari} és qualsevol persona registrada a l'aplicació que té com a objectiu fer les funcions d'un gestor d'una protectora o d'un voluntari. El \textit{login} es troba separat del concepte d'usuari per extensibilitat a futur.
 
+Relacionat amb l'usuari, trobem el concepte \textbf{\textit{Membre}}, que representa un usuari dins d'una protectora en concret, tot i que l'actual sistema no estigui preparat per a que un usuari pugui formar part de més d'una protectora, es deixa aquesta possibilitat oberta a futur. La classe \textit{membre} és abstracta, d'on deriva \textbf{\textit{Voluntari}} i \textbf{\textit{Gestor}}.
+
+La classe \textbf{\textit{Protectora}} és un dels conceptes centrals del sistema. Aquesta, es troba a una \textbf{\textit{Província}}, i està associada amb \textbf{\textit{Medicines}}, \textbf{\textit{Trets de Personalitat}} i \textbf{\textit{Tasques}}, que actuen com a base per a altres funcionalitats. També pot contenir diversos \textbf{\textit{Refugis}}, per distingir els diferents espais físics on es troben els animals.
+
+L'\textbf{\textit{Animal}} és un altre concepte clau. Aquest, té tota la informació necessària per identificar-lo i gestionar-lo. Un \textit{animal} pot tenir \textbf{\textit{Tractaments Mèdics}}, que sorgeixen de les \textit{medicines} del catàleg de la protectora. En aquest \textit{tractament}, es té en compte la freqüència i la dosi del medicament, així com les seves dates d'inici i fi. Seguint amb l'àmbit mèdic, aquest també està relacionat amb la classe \textbf{\textit{Visita Veterinària}}, per poder planificar-les. A més, un \textit{animal} pot tenir associats diversos \textit{trets de personalitat}, que també sorgeixen del catàleg de la protectora. Per separar el concepte d'imatge de l'animal, es troba el concepte d'\textbf{\textit{Imatge d'Animal}}, que permet associar diverses imatges a un mateix \textit{animal} i gestionar-les de forma independent.
+
+El \textbf{\textit{Procés d'Adopció}} també és un concepte central del sistema. Aquest està associat a un \textit{animal} i a un \textbf{\textit{Adoptant}}, i està format per diversos passos representats mitjançant la classe abstracta \textbf{\textit{Pas Adopció}}. D'aquesta manera, es poden gestionar les accions específiques de cada pas i mantenir un seguiment detallat del \textit{procés d'adopció}.
+
+La classe \textit{pas adopció} té cinc subclasses concretes: \textbf{\textit{Formulari}}, \textbf{\textit{Entrevista}}, \textbf{\textit{Visita al Refugi}}, \textbf{\textit{Contracte}} i \textbf{\textit{Recollida}}. Cada subclasse conté la informació específica d'aquell pas: les dades del \textit{formulari}, la data i hora de l'\textit{entrevista}, la data de la \textit{visita al refugi}, el \textit{contracte} generat i les dates de \textit{recollida}.
+
+Pel que fa a l'\textit{adoptant}, aquest no és un \textit{usuari} tradicional, ja que no inicia sessió a l'aplicació, sinó que hi accedeix mitjançant un enllaç enviat al seu correu electrònic. Per això, el concepte d'\textit{adoptant} es troba separat del d'\textit{usuari}, tot i que comparteixen els camps de nom i correu electrònic.
+
+Per últim, per cobrir la gestió de voluntaris i tasques, es troba el concepte de \textbf{\textit{Torn}}, \textbf{\textit{Tasca}} i \textbf{\textit{Tasca de Torn}}. Un \textit{torn} representa un període de temps en un dia i un refugi en concret. Aquest té un màxim de participants, per permetre una millor organització dels voluntaris. Cada \textit{torn} pot tenir diverses \textit{tasques}, del catàleg de la protectora, que a més es poden associar a un \textit{animal} en concret. A través de la classe \textit{tasca de torn}, es pot gestionar l'assignació i el seguiment de les tasques als voluntaris que participen en el \textit{torn}.
 
 \subsection{Model de comportament}
 

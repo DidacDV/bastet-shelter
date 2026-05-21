@@ -1550,7 +1550,119 @@ A continuació, es detallen les històries d'usuari agrupades per èpiques, segu
         \item Les plantilles creades estan disponibles en afegir tasques a qualsevol torn de la protectora.
     }
 
-\subsubsection{Gestió del compte}
+\subsubsection{Gestió d'animals}
+    \HU{OBJ1}
+    {Alta i ubicació d'un animal}
+    {5}
+    {5}
+    {Alta}
+    {gestor autenticat}
+    {poder donar d'alta un nou animal i assignar-lo a un refugi de la protectora}
+    {poder registrar els animals que arriben a la protectora i tenir-ne un control centralitzat}
+    {
+        \item Només un gestor autenticat pot donar d'alta un animal.
+        \item El formulari inclou els camps: nom, data de naixement, data d'arribada, descripció, raça i espècie.
+        \item Es pot indicar si l'animal està disponible per a adopció en el moment de l'alta.
+        \item S'ha d'assignar l'animal a un refugi de la protectora.
+        \item Es poden associar trets de personalitat de l'animal a partir del catàleg de la protectora.
+        \item Tots els camps obligatoris han d'estar emplenats per poder desar l'animal.
+        \item Un cop donat d'alta, l'animal apareix al llistat d'animals de la protectora.
+    }
+    \HU{OBJ1}
+    {Gestionar imatges d'un animal}
+    {3}
+    {5}
+    {Alta}
+    {gestor autenticat}
+    {poder pujar i eliminar imatges d'un animal de la protectora}
+    {poder mostrar als potencials adoptants fotografies reals de l'animal}
+    {
+        \item Només gestors autenticats poden gestionar les imatges d'un animal.
+        \item Es poden pujar una o més imatges des del dispositiu.
+        \item Les imatges s'emmagatzemen i es serveixen mitjançant Cloudinary.
+        \item Es poden eliminar imatges existents de l'animal.
+        \item Les imatges actualitzades es reflecteixen immediatament als detalls de l'animal.
+    }
+    \HU{OBJ1}
+    {Visualització d'animals de la protectora}
+    {8}
+    {1}
+    {Alta}
+    {gestor o voluntari autenticat}
+    {poder veure el llistat d'animals de la meva protectora amb la seva informació bàsica}
+    {poder localitzar ràpidament un animal i accedir als seus detalls}
+    {
+        \item Només gestors i voluntaris autenticats poden accedir a aquesta pantalla.
+        \item Es mostren tots els animals associats a la protectora.
+        \item Es pot cercar per nom i refugi mitjançant una barra de cerca.
+        \item Cada animal mostra la imatge, el nom, el refugi, l'edat i si té un procés d'adopció actiu.
+        \item En seleccionar un animal, es redirigeix a la pantalla de detall de l'animal.
+    }
+    \HU{OBJ1}
+    {Fitxa de detall d'un animal}
+    {8}
+    {5}
+    {Alta}
+    {gestor o voluntari autenticat}
+    {poder veure tota la informació detallada d'un animal de la protectora}
+    {poder consultar i modificar les dades de l'animal de forma centralitzada}
+    {
+        \item Només gestors i voluntaris autenticats poden accedir a la fitxa de detall.
+        \item La part superior mostra un carrusel d'imatges, el nom, la data de naixement i la data d'arribada.
+        \item El gestor pot modificar les dades de l'animal en qualsevol moment.
+        \item La fitxa està organitzada en quatre pestanyes: informació bàsica, visites veterinàries, registre mèdic i adopció.
+        \item La pestanya d'informació bàsica mostra la raça, la descripció, els trets de personalitat i el refugi assignat.
+        \item La pestanya d'adopció mostra si l'animal està disponible per a adopció i el seu procés actiu si en té.
+        \item Les pestanyes de visites veterinàries i registre mèdic es detallen a les HU corresponents.
+    }
+    \HU{OBJ1}
+    {Gestió de visites veterinàries d'un animal}
+    {5}
+    {2}
+    {Mitjana}
+    {gestor o voluntari autenticat}
+    {poder consultar i gestionar les visites veterinàries d'un animal}
+    {poder fer un seguiment de la salut veterinària de l'animal i planificar properes visites}
+    {
+        \item Només gestors i voluntaris autenticats poden accedir a aquesta pestanya.
+        \item Es mostra la propera visita programada si n'hi ha, amb data, tipus, nom i notes.
+        \item Es mostra un historial de visites passades ordenat per data.
+        \item El gestor pot planificar una nova visita indicant data, tipus, nom i notes.
+        \item El gestor pot modificar la propera visita programada.
+        \item Els voluntaris poden consultar les visites però no modificar-les ni crear-ne.
+    }
+    \HU{OBJ1}
+    {Gestió del registre mèdic d'un animal}
+    {5}
+    {2}
+    {Mitjana}
+    {gestor o voluntari autenticat}
+    {poder consultar i gestionar els tractaments mèdics actius d'un animal}
+    {poder fer un seguiment dels medicaments i tractaments que rep l'animal}
+    {
+        \item Només gestors i voluntaris autenticats poden accedir a aquesta pestanya.
+        \item Es mostren els tractaments actius de l'animal amb el nom del medicament, la freqüència, la dosi i l'estat.
+        \item En clicar un tractament, es mostren els seus detalls complets i el gestor pot editar-lo.
+        \item En fer doble clic, es canvia l'estat del tractament, per exemple de pendent a administrat.
+        \item El gestor pot afegir un nou tractament seleccionant un medicament del catàleg de la protectora, indicant la freqüència, la dosi, la unitat de mesura, la data d'inici i la data de fi.
+        \item Els voluntaris poden consultar els tractaments i canviar-ne l'estat, però no afegir-ne ni editar-los.
+    }
+
+
+\subsubsection{Notificacions}
+    \HU{OBJ3 / NFR6}
+    {Avisos del procés d'adopció}
+    {0}
+    {5}
+    {Mitjana}
+    {adoptant i gestor}
+    {rebre notificacions per correu electrònic sobre els canvis d'estat del procés d'adopció}
+    {estar informat en tot moment sobre l'evolució del procés sense haver d'accedir a l'aplicació}
+    {
+        \item Quan un procés d'adopció és rebutjat en qualsevol pas, l'adoptant rep un correu electrònic amb el motiu del rebuig.
+        \item Quan el procés d'adopció és completat satisfactòriament, l'adoptant rep un correu electrònic de confirmació.
+        \item Quan un animal rep una nova sol·licitud d'adopció, la protectora rep un correu electrònic de notificació.
+    }
 
 \subsection{Model conceptual}
 

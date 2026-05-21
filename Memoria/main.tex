@@ -16,6 +16,7 @@
 \usepackage[style=numeric, backend=bibtex, sorting=none]{biblatex}
 \addbibresource{references.bib}
 \usepackage{hyperref}
+\usepackage{pdflscape}
 
 \onehalfspacing
 \setlength{\parindent}{0pt}
@@ -1671,7 +1672,13 @@ En aquesta secció es descriu el model conceptual que representa tot el sistema,
 \subsubsection{Esquema conceptual de classes}
 Com a aclaració prèvia, quan es fa referència a una entitat a diferents llocs del diagrama (per exemple, \textit{Refugi}) es tracta de la mateixa entitat principal que està definida amb atributs a un altra part del diagrama. D'aquesta manera, el diagrama queda millor organitzat i més fàcil de llegir. 
 
-\includegraphics{UML-POSTCHANGES.pdf}
+\begin{landscape}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{uml.pdf}
+        \caption{Diagrama UML}
+    \end{figure}
+\end{landscape}
 
 \subsubsection{Restriccions d'integritat}
 \begin{itemize}

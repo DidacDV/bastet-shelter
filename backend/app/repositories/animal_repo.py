@@ -1,5 +1,6 @@
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
+from app.models.adoption.adoption_process import AdoptionProcess, AdoptionProcessStatusEnum
 from app.models.animal.animal import Animal
 from app.models.animal.animal_image import AnimalImage
 from app.models.refuge import Refuge
@@ -60,6 +61,16 @@ class AnimalRepository(BaseRepository[Animal]):
         )
 
     def get_portal_short_info(self, db: Session, province_id: str):
+        has_active_adoption_process = (
+            select(AdoptionProcess.id)
+            .where(
+                AdoptionProcess.animal_id == Animal.id,
+                AdoptionProcess.status == AdoptionProcessStatusEnum.ACTIVE,
+            )
+            .correlate(Animal)
+            .exists()
+        )
+
         query = (
             db.query(
                 Animal.id,
@@ -73,6 +84,7 @@ class AnimalRepository(BaseRepository[Animal]):
             .join(Refuge, Animal.refuge_id == Refuge.id)
             .join(Shelter, Refuge.shelter_id == Shelter.id)
             .filter(Animal.in_adoption == True)
+            .filter(~has_active_adoption_process)
         )
 
         query = query.filter(Refuge.province_id == province_id)

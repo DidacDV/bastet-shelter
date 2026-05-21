@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import NotFoundError, AuthorizationError
+from app.core.exceptions import NotFoundError, AuthorizationError, BusinessLogicError
 from app.models.trait import Trait
 from app.repositories.trait_repo import TraitRepository
 from app.schemas.trait_schema import TraitCreate, TraitResponse
@@ -36,5 +36,7 @@ class TraitService:
             raise NotFoundError("Trait not found")
         if trait.shelter_id != shelter_id:
             raise AuthorizationError("Trait does not belong to this shelter")
+        if self.trait_repo.is_used_by_animal(self.db, trait_id):
+            raise BusinessLogicError("Trait is used by an animal and cannot be deleted")
 
         self.trait_repo.delete(self.db, trait_id)

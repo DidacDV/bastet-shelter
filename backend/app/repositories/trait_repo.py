@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from app.models.animal.animal import animal_trait_association
 from app.models.trait import Trait
 from app.repositories.generic_repo import BaseRepository
 
@@ -32,3 +33,11 @@ class TraitRepository(BaseRepository[Trait]):
         db.add_all(traits)
         db.commit()
         return traits
+
+    def is_used_by_animal(self, db: Session, trait_id: int) -> bool:
+        return (
+            db.query(animal_trait_association.c.animal_id)
+            .filter(animal_trait_association.c.trait_id == trait_id)
+            .first()
+            is not None
+        )

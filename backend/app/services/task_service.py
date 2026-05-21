@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import NotFoundError, AuthorizationError
+from app.core.exceptions import NotFoundError, AuthorizationError, BusinessLogicError
 from app.models.task.task import Task
 from app.repositories.task_repo import TaskRepository
 from app.schemas.task_schema.task_schema import TaskCreate, TaskResponse, TaskUpdate
@@ -28,6 +28,8 @@ class TaskService:
             raise NotFoundError("Task not found")
         if task.shelter_id != shelter_id:
             raise AuthorizationError("Task does not belong to this shelter")
+        if self.task_repo.is_used_in_shift(self.db, task_id):
+            raise BusinessLogicError("Task template is used in a shift and cannot be deleted")
 
         self.task_repo.delete(self.db, task_id)
 

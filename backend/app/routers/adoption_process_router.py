@@ -32,10 +32,13 @@ def get_step_service(db: Session = Depends(get_db)) -> AdoptionStepsService:
 def start_adoption(
         animal_id: int,
         form_data: AdoptionFormSubmit,
+        background_tasks: BackgroundTasks,
         adoptant: Adoptant = Depends(get_current_adoptant),
         process_service: AdoptionProcessService = Depends(get_process_service)
 ):
-    return process_service.start_adoption(animal_id, adoptant.email, adoptant.name, form_data)
+    return process_service.start_adoption(
+        animal_id, adoptant.email, adoptant.name, form_data, background_tasks
+    )
 
 
 @router.post("/{process_id}/cancel", status_code=status.HTTP_204_NO_CONTENT)

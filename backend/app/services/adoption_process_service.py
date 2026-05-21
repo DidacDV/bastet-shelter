@@ -3,7 +3,12 @@ from datetime import date
 from sqlalchemy.orm import Session
 
 from app.core.email.email_sender import send_email
-from app.core.email.templates import adoption_completed_email, adoption_rejected_email
+from app.core.email.templates import (
+    adoption_completed_email,
+    adoption_rejected_email,
+    adoption_request_received_email,
+    adoption_request_shelter_email,
+)
 from app.core.exceptions import NotFoundError, BusinessLogicError, AuthorizationError
 from app.models.adoption.adoption_process import AdoptionProcess, AdoptionProcessStatusEnum
 from app.models.adoption.adoption_steps.adoption_step import AdoptionStep, StepStatusEnum, StepTypeEnum, STEP_ORDER
@@ -73,7 +78,14 @@ class AdoptionProcessService:
         if not refuge or refuge.shelter_id != shelter_id:
             raise AuthorizationError("Not authorized to view this adoption process")
 
-    def start_adoption(self, animal_id: int, adoptant_email: str, adoptant_name: str, form_data: AdoptionFormSubmit) -> AdoptionProcessResponse:
+    def start_adoption(
+        self,
+        animal_id: int,
+        adoptant_email: str,
+        adoptant_name: str,
+        form_data: AdoptionFormSubmit,
+        background_tasks: BackgroundTasks,
+    ) -> AdoptionProcessResponse:
         """an adoption process starts with an adoptant sending the form for X animal adoption"""
         animal = self.animal_repo.get_by_id(self.db, animal_id)
         if not animal:
@@ -107,6 +119,33 @@ class AdoptionProcessService:
 
         self.db.commit()
         self.db.refresh(process)
+
+        html_body = adoption_request_received_email(
+            adoptant_name=adoptant_name,
+            animal_name=animal.name,
+        )
+        send_email(
+            subject=f"We've received your adoption application for {animal.name}",
+            recipients=[adoptant_email],
+            body=html_body,
+            background_tasks=background_tasks,
+        )
+
+        shelter = animal.refuge.shelter if animal.refuge else None
+        if shelter and shelter.email:
+            shelter_html_body = adoption_request_shelter_email(
+                shelter_name=shelter.name,
+                adoptant_name=adoptant_name,
+                adoptant_email=adoptant_email,
+                animal_name=animal.name,
+            )
+            send_email(
+                subject=f"New adoption application for {animal.name}",
+                recipients=[shelter.email],
+                body=shelter_html_body,
+                background_tasks=background_tasks,
+            )
+
         return process_to_response(process, steps)
 
     def _cancel_process(self, process: AdoptionProcess, background_tasks: BackgroundTasks, reason: str = UNTOGGLE_ADOPTION_REASON) -> None:

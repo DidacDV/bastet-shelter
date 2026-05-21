@@ -65,6 +65,120 @@ def magic_link_email(name: str, magic_link_url: str) -> str:
     """
 
 
+def adoption_request_received_email(adoptant_name: str, animal_name: str) -> str:
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="margin:0; padding:0; background-color:#ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333333;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="padding: 30px 15px;">
+        <tr>
+          <td align="center">
+            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:500px; text-align: left;">
+
+              <tr>
+                <td style="padding-bottom: 20px; border-bottom: 2px solid #f0f0f5;">
+                  <h2 style="margin:0; color:#3B3686; font-size: 22px; font-weight: bold;">Bastet Shelter</h2>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding: 30px 0;">
+                  <p style="margin:0 0 16px; font-size:16px;">Hi {adoptant_name},</p>
+
+                  <p style="margin:0 0 16px; font-size:16px; line-height:1.5;">
+                    Thank you for submitting your adoption application for <strong>{animal_name}</strong>. We have received your request and our team will review it shortly.
+                  </p>
+
+                  <p style="margin:0 0 16px; font-size:16px; line-height:1.5;">
+                    You can log in to the adoption portal at any time to track the progress of your application. We will keep you updated by email as your adoption process moves forward.
+                  </p>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding-top:25px; border-top:2px solid #f0f0f5;">
+                  <p style="margin:0; font-size:13px; color:#777777;">
+                    Best,<br>
+                    The Bastet Shelter Team
+                  </p>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+    """
+
+
+def adoption_request_shelter_email(
+    shelter_name: str,
+    adoptant_name: str,
+    adoptant_email: str,
+    animal_name: str,
+) -> str:
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="margin:0; padding:0; background-color:#ffffff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333333;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="padding: 30px 15px;">
+        <tr>
+          <td align="center">
+            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:500px; text-align: left;">
+
+              <tr>
+                <td style="padding-bottom: 20px; border-bottom: 2px solid #f0f0f5;">
+                  <h2 style="margin:0; color:#3B3686; font-size: 22px; font-weight: bold;">Bastet Shelter</h2>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding: 30px 0;">
+                  <p style="margin:0 0 16px; font-size:16px;">Hi {shelter_name} team,</p>
+
+                  <p style="margin:0 0 16px; font-size:16px; line-height:1.5;">
+                    A new adoption application has been submitted for <strong>{animal_name}</strong>.
+                  </p>
+
+                  <p style="margin:0 0 16px; font-size:16px; line-height:1.5;">
+                    <strong>Adoptant:</strong> {adoptant_name}<br>
+                    <strong>Email:</strong> {adoptant_email}
+                  </p>
+
+                  <p style="margin:0 0 16px; font-size:16px; line-height:1.5;">
+                    You can review the application and manage the adoption process from your shelter dashboard.
+                  </p>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding-top:25px; border-top:2px solid #f0f0f5;">
+                  <p style="margin:0; font-size:13px; color:#777777;">
+                    Best,<br>
+                    The Bastet Shelter Team
+                  </p>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+    """
+
+
 def adoption_completed_email(adoptant_name: str, animal_name: str) -> str:
     return f"""
     <!DOCTYPE html>

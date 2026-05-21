@@ -1664,13 +1664,31 @@ A continuació, es detallen les històries d'usuari agrupades per èpiques, segu
         \item Quan un animal rep una nova sol·licitud d'adopció, la protectora rep un correu electrònic de notificació.
     }
 
+\newpage
 \subsection{Model conceptual}
+En aquesta secció es descriu el model conceptual que representa tot el sistema, on s'inclouen les entitats, les seves relacions i els seus atributs. També es detallen les restriccions d'integritat definides per mantenir la coherència del model.
 
 \subsubsection{Esquema conceptual de classes}
+Com a aclaració prèvia, quan es fa referència a una entitat a diferents llocs del diagrama (per exemple, \textit{Refugi}) es tracta de la mateixa entitat principal que està definida amb atributs a un altra part del diagrama. D'aquesta manera, el diagrama queda millor organitzat i més fàcil de llegir. 
+\subsubsection{Restriccions d'integritat}
+\begin{itemize}
+    \item \textbf{RT.1} L'atribut \textit{arrival\_date} d'un \textit{Animal} ha de ser posterior o igual a \textit{birth\_date}, si \textit{arrival\_date} no és nul·la.
+    \item \textbf{RT.2} L'atribut \textit{end\_date} d'un \textit{TractamentMedic} ha de ser posterior a \textit{start\_date}, si \textit{end\_date} no és nul·la.
+    \item \textbf{RT.3} L'atribut \textit{status\_updated\_at} d'un \textit{TractamentMedic} ha de ser posterior o igual a \textit{start\_date}.
+    \item \textbf{RT.4} L'atribut \textit{finish\_date} d'un \textit{PasAdopció} ha de ser posterior o igual a \textit{start\_date} del \textit{ProcésAdopció} associat, si \textit{finish\_date} no és nul·la.
+    \item \textbf{RT.5} L'atribut \textit{start\_time} d'un \textit{Torn} ha de ser anterior a \textit{end\_time}.
+    \item \textbf{RT.6} La data de \textit{start\_time} i \textit{end\_time} d'un \textit{Torn} ha de coincidir amb \textit{day}.
+    \item \textbf{RT.7} L'atribut \textit{end\_date} d'una \textit{CaracterísticaAnimal} ha de ser posterior a \textit{start\_date}, si \textit{end\_date} no és nul·la.
+    \item \textbf{RT.8} L'atribut \textit{GenerationDate} d'un \textit{Contracte} ha de ser anterior o igual a la data de signatura, si \textit{SignedAdoptant} o \textit{SignedShelter} és cert.
+    \item \textbf{RT.9} L'atribut \textit{dateHour} d'una \textit{Entrevista} ha de ser posterior o igual a \textit{start\_date} del \textit{ProcésAdopció} associat, si \textit{dateHour} no és nul·la.
+    \item \textbf{RT.10} L'atribut \textit{join\_date} d'un \textit{Membre} no pot ser posterior a la data actual.
+    \item \textbf{RT.11} L'ordre dels passos dins d'un mateix \textit{ProcésAdopció} ha de ser seqüencial sense repeticions.
+    \item \textbf{RT.12} Un \textit{PasAdopció} amb \textit{order} estrictament superior al del pas actiu del mateix \textit{ProcésAdopció} ha de tenir \textit{status} = \textit{PENDING}.
+    \item \textbf{RT.13} L'atribut \textit{end\_date} d'un \textit{ProcésAdopció} només pot ser no nul si \textit{status} és \textit{COMPLETED} o \textit{REJECTED}.
+\end{itemize}
 
 \subsubsection{Descripció de les classes}
 
-\subsubsection{Restriccions d'integritat}
 
 \subsection{Model de comportament}
 

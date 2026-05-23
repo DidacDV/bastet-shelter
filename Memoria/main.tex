@@ -17,6 +17,19 @@
 \addbibresource{references.bib}
 \usepackage{hyperref}
 \usepackage{pdflscape}
+\usepackage{listings}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{orange},
+    commentstyle=\color{gray},
+    backgroundcolor=\color{gray!10},
+    numbers=left,
+    frame=single,
+    breaklines=true
+}
 
 \onehalfspacing
 \setlength{\parindent}{0pt}
@@ -1751,15 +1764,66 @@ when displaying a pattern, show maybe diagram + code snippet
 \section{Implementació}
 \subsection{Tecnologies utilitzades}
 \subsubsection{Backend}
-Per crear la part principal del sistema que enllaça tota la resta, el backend, s'ha utilitzat Python com a llenguatge i FastAPI com a framework. Aquesta es una combinació que permet crear 
+En aquest projecte, el nucli de tot el sistema és el backend, ja que és l'encarregat de gestionar tota la lògica i facilitar les comunicacions i interaccions entre el portal web i l'aplicació mòbil. Per aquesta raó, s'ha optat per utilitzar Python amb el framework FastAPI. Python és un llenguatge àmpliament utilitzat en el desenvolupament backend, destacat per la seva llegibilitat, la seva gran comunitat i el seu extens ecosistema de llibreries. Aquesta combinació permet realitzar un desenvolupament ràpid i eficient, mantenint l'escalabilitat a futur gràcies al suport natiu de programació asíncrona mitjançant \textit{asyncio}     \cite{todo:asyncio}.
+
+FastAPI és un framework modern i en constant creixement \cite{todo:fastapi}, cosa que assegura un cicle de vida llarg i una evolució contínua. Destaca per la seva generació automàtica de documentació interactiva a través del codi, la facilitat per crear APIs REST i el seu sistema de validació de dades basat en tipus, que permet detectar errors en temps de desenvolupament. A més, ofereix un rendiment molt elevat comparat amb altres frameworks de Python com Django o Flask, situant-se al nivell de frameworks de llenguatges compilats \cite{TODO:FASTAPIBENCHMARKs}.
+\begin{lstlisting}
+@router.get("/provinces", response_model=ProvinceListResponse)
+async def get_provinces(db: Session = Depends(get_db)):
+    provinces = GeoService.get_provinces(db)
+    return {"provinces": provinces}
+\end{lstlisting}
+
+Per altra banda, en conjunt amb FastAPI, s'utilitzen llibreries que complementen i faciliten el desenvolupament del backend. Per exemple, SQLAlchemy és l'ORM escollit per a la gestió de la base de dades. A més d'evitar escriure SQL manualment i abstraure la base de dades del servidor, SQLAlchemy destaca pel seu patró d'\textit{Unit of Work} \cite{TODO:sessionbasicssqalchemy} mitjançant sessions, que garanteix la consistència de les transaccions, i pel seu sistema de relacions i \textit{lazy loading} \cite{TODO:lazyloadingschlalchemy}, que permet navegar entre entitats de forma natural des del codi.
+\begin{lstlisting}
+def update_adoption_status(self, db: Session, animal_id: int, in_adoption: bool) -> Animal | None:
+    animal = self.get_by_id(db, animal_id)
+    if animal:
+        animal.in_adoption = in_adoption
+        db.commit()
+        db.refresh(animal)
+    return animal
+\end{lstlisting}
+Complementàriament, s'utilitza Alembic com a eina de migracions de base de dades, que permet gestionar els canvis d'esquema de forma controlada i reproduïble, mantenint un historial de versions de la base de dades, especialment útil en projectes amb diversos desenvolupadors.
+
+L'últim pilar del backend és Pydantic, una eina de validació de dades amb integració nativa amb FastAPI. Pydantic permet definir els models de dades amb tipus estrictes i validacions personalitzades, que s'executen automàticament en cada petició sense necessitat de codi addicional. A més, els errors de validació es retornen de forma estructurada i llegible al client, útil per a debuggar com a desenvolupador. Els seus models també poden enllaçar-se amb les entitats de SQLAlchemy per facilitar la conversió entre models de base de dades i models de resposta a l'API, separant clarament la capa de persistència de la capa de comunicació.
+A més, s'utilitzen altres llibreries complementàries: APScheduler \cite{TODO:citeapscheduler} per a la planificació de tasques periòdiques en segon pla, FastAPI-Mail \cite{TODO:citefastapi-mail} per a l'enviament de correus electrònics i SQLAdmin \cite{TODO:citesqladmin} per a la generació del panell d'administració de la base de dades.
 
 \subsubsection{Aplicació mòbil}
+Per dur a terme el desenvolupament de l'aplicació mòbil, s'ha escollit el llenguatge dart amb el framework Flutter. Dart és un llenguatge modern, tipat i orientat a objectes, desenvolupat per Google, i ofereix un rendiment natiu en qualsevol plataforma i accelera el treball gràcies a la funció \textit{hot reload} \cite{TODO:hotreload}. Flutter és un framework per crear interfícies d'usuari multiplataforma a través d'un únic codi base, asoolint un rendiment gairebé natiu gràcies a Dart \cite{TODO:fluttervsnative} i a la seva arquitectura basada en widgets \cite{todo:citearchitectureflutter}. A més, Flutter disposa de moltes eines oficials i de tercers que simplifica la implementació de funcionalitats complexes, com ara la gestió de l'estat, la internacionalització o la generació de PDFs. Una altra raó per la qual s'ha escollit Flutter és l'entorn en el que et permet treballar, ja que s'integra sense problema amb Android Studio, i agilitzen molt el desenvolupament gràcies a les seves eines de debug i disseny visual.
+
+Específicament en aquest projecte, s'ha aprofitat la reutilització de codi que permeten els widgets de Flutter. Per exemple, per a cada element que requereix mostrar informació detallada, s'utilitza un \textit{BottomSheet} reutilitzable, com ara \texttt{ShiftTaskDetailBottomSheet}, que es reutilitza a totes les pantalles que el necessiten sense duplicar codi.
+
+Pel que fa a les llibreries utilitzades, Riverpod \cite{TODO:citeriverpod} és la solució escollida per a la gestió de l'estat de l'aplicació. S'han definit proveïdors per a les dades que es comparteixen entre pantalles, tant per a consultes generals com específiques, com ara l'obtenció de tots els torns o els torns d'una setmana i refugi concrets. D'aquesta manera, evitem trucades innecessàries al servidor, reduint la seva càrrega de treball i el temps d'espera de l'usuari. GetIt \cite{TODO:citegetit} s'utilitza com a contenidor de dependències, tot i que el patró que aplica s'explica amb més detall a la secció de disseny. Per altra banda, \texttt{shared\_preferences} \cite{TODO:citeshared_preferences} permet persistir dades locals al dispositiu, com ara el token d'autenticació de l'usuari.
+Finalment, cal destacar l'entorn de desenvolupament: Android Studio, que ofereix eines de debug, un emulador integrat i disseny visual de les interfícies, agilitzant el cicle de desenvolupament en gran mesura.
 \subsubsection{Portal web}
+Per al desenvolupament del portal web d'adopcions, s'ha escollit React com a llibreria principal per a la construcció de la interfície d'usuari, combinat amb TypeScript. React permet construir interfícies a partir de components reutilitzables, facilitant el manteniment i l'escalabilitat del codi. TypeScript afegeix un sistema de tipus estàtic sobre JavaScript, permetent detectar errors en temps de desenvolupament i millorant la llegibilitat i robustesa del codi, especialment en projectes amb moltes entitats i models de dades com és el cas d'aquest portal. D'aquesta manera, es pot assegurar que en tots els mòduls del sistema es manté una coherència amb els tipus de dades. 
 
+Pel que fa a l'estilització del projecte, s'ha escollit una combinació de Mantine UI \cite{TODO:citemantine} i TailwindCSS \cite{TODO:citetailwind}. Mantine UI és una biblioteca de components compatibles amb React que ofereix fins a 123 components de diverses categories, com ara formularis, gràfics, selectors, que poden ser personaltizats i adaptats a un tema visual concret. Gràcies a les modificacions que permet, es pot mantenir una coherència visual dins del propi portal web i amb l'aplicació mòbil.
+D'altra banda, TailwindCSS s'ha escollit pel seu enfocament \textit{utility-first}, que agilitza el procés d'estilització sense necessitat d'escriure CSS personalitzat. A més, complementa Mantine UI cobrint els ajustos de \textit{layout}, espaiat i posicionament que queden fora de l'àmbit dels components de la biblioteca.
+Una altra part destacable és la gestió de l'estat global, on s'ha utilitzat \textit{React Context} \cite{TODO:citereactcontext} per a dos casos concrets: l'autenticació de l'usuari i la internacionalització del portal. Degut a la simplicitat d'aquestes funcionalitats i la poca variació que tenen al llarg d'una sessió d'usuari, es considera que una solució més complexa com Redux no és necessària.
+\subsubsection{Serveis externs i integracions}
+Durant l'evolució del projecte, s'han integrat diversos serveis de tercers per a cobrir funcionalitats específiques de manera més eficient, en comparació a si s'haguessin construït des de zero.
+Per a l'emmagatzematge i gestió de les imatges i altres arxius, com els PDFs dels contractes, s'ha escollit Cloudinary, un servei al núvol que ofereix una solució completa adaptada a les necessitats del projecte. Cloudinary permet pujar, emmagatzemar i recuperar arxius de manera senzilla a través d'un kit de desenvolupament, retornant una URL pública per a cada arxiu que s'emmagatzema a la base de dades. A més, facilita l'optimització de les imatges des de la pròpia trucada al servei, permetent configurar paràmetres com la resolució, el format o la qualitat, millorant així la càrrega i l'experiència d'usuari.
 
+Per poder provar l'enviament de correus electrònics, s'ha utilitzat \textit{Mailtrap} \cite{TODO:citemailtrap}, un servei que actua com a un entorn de correu virtual, permetent capturar i visualitzar els correus que s'enviarien a un servidor de correu real. Això és especialment útil durant les proves, ja que permet verificar el contingut dels correus generats. En producció, s'utilitzaria un servidor SMTP real.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{MailTrapSchema.png}
+    \caption[Visualització del Mailtrap]{Visualització del Mailtrap. Font: \cite{todo:citeAutomatizacióndepruebasdeEMAILconMAILTRAP}}
+    \label{fig:mailtrap_illustration}
+\end{figure}
+
+Ja que el sistema està inicialment pensat per a un àmbit nacional, la localització es basa en les províncies d'Espanya. Per a obtenir aquesta informació i mantenir-la actualitzada, s'ha integrat el servei de \textit{GeoAPI.es} \cite{TODO:citegeoapi}, que proporciona dades geogràfiques oficials de les províncies espanyoles a través d'una API. S'ha configurat una tasca periòdica que consulta aquestes dades per mantenir-les sincronitzades.
 
 \subsection{Anàlisis d'alternatives}
+perque no s'ha triat una altra tecnologia per al backend
+perque no django
+perque no una altra plataforma que no sigui cloudinary
+perque flutter i no kotlin
 \subsection{Desplegament}
+Pel que fa al desplegament de l'aplicació mòbil, aquesta no es troba publicada a cap mercat d'aplicacions com Google Play Store o App Store. En el seu lloc, es distribueix localment mitjançant la generació d'un fitxer \texttt{.apk} que es pot instal·lar directament al dispositiu Android, fet que simplifica el procés de distribució durant el desenvolupament i les proves del projecte.
 \newpage
 
 \section{Desplegament}

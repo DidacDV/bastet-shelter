@@ -9,11 +9,12 @@ import {
 
 import caMessages from "./locales/ca.json";
 import enMessages from "./locales/en.json";
+import esMessages from "./locales/es.json";
 
 const dictionaries = {
   en: enMessages,
   ca: caMessages,
-  es: enMessages,
+  es: esMessages,
 } satisfies Record<string, typeof enMessages>;
 
 export type AppLocale = keyof typeof dictionaries;

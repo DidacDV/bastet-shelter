@@ -23,7 +23,7 @@ class AppLocalizations {
     AppLanguage(locale: Locale('es'), labelKey: 'language.spanish'),
   ];
   static const supportedLocales = [Locale('en'), Locale('ca'), Locale('es')];
-  static const translatedLocales = [Locale('en'), Locale('ca')];
+  static const translatedLocales = [Locale('en'), Locale('ca'), Locale('es')];
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();

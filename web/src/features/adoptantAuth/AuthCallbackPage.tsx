@@ -3,11 +3,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader, Text, Stack } from "@mantine/core";
 import { adoptantAuthRepository } from "./data/adoptantAuthRepository";
 import { useAuth } from "../../context/authContext";
+import { useLocalization } from "../../localization/localization";
 
 export default function AuthCallbackPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useLocalization();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -15,7 +17,7 @@ export default function AuthCallbackPage() {
       const token = searchParams.get("token");
 
       if (!token) {
-        setError("No token found in the URL.");
+        setError(t("auth.noToken"));
         return;
       }
 
@@ -30,7 +32,7 @@ export default function AuthCallbackPage() {
           navigate(redirect, { replace: true });
         }
       } catch (err) {
-        setError("Invalid or expired magic link. Please try logging in again.");
+        setError(t("auth.invalidMagicLink"));
       }
     };
 
@@ -49,7 +51,7 @@ export default function AuthCallbackPage() {
           c="primary"
           className="hover:underline cursor-pointer"
         >
-          Go back to Login
+          {t("auth.backToLogin")}
         </Text>
       </Stack>
     );
@@ -58,7 +60,7 @@ export default function AuthCallbackPage() {
   return (
     <Stack align="center" justify="center" className="min-h-[60vh]">
       <Loader color="primary" size="lg" />
-      <Text c="text-secondary">Verifying your secure link...</Text>
+      <Text c="text-secondary">{t("auth.verifyingLink")}</Text>
     </Stack>
   );
 }

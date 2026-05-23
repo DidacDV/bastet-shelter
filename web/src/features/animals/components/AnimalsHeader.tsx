@@ -17,6 +17,7 @@ import {
 import { AppColors } from "../../../theme/constants";
 import { useNavigate } from "react-router-dom";
 import ProvinceSelect from "../../locations/components/ProvinceSelect";
+import { useLocalization } from "../../../localization/localization";
 
 export type AnimalTypeFilter = "ALL" | "CAT" | "DOG" | "OTHER";
 
@@ -38,6 +39,7 @@ export default function AnimalsHeader({
   totalResults,
 }: AnimalsHeaderProps) {
   const navigate = useNavigate();
+  const { t } = useLocalization();
 
   const handleProvinceChange = (value: string | null) => {
     if (value) navigate(`/animals?province=${value}`);
@@ -57,10 +59,10 @@ export default function AnimalsHeader({
               order={2}
               style={{ color: AppColors.textDark, marginBottom: 4 }}
             >
-              Available Animals
+              {t("animals.availableTitle")}
             </Title>
             <Text c="dimmed">
-              Meet the animals looking for a forever home in this province.
+              {t("animals.availableSubtitle")}
             </Text>
           </div>
 
@@ -69,7 +71,7 @@ export default function AnimalsHeader({
             onChange={handleProvinceChange}
             size="sm"
             radius="md"
-            placeholder="Province..."
+            placeholder={t("animals.provincePlaceholder")}
             style={{ width: 200 }}
             styles={{
               input: { borderColor: AppColors.outline },
@@ -79,7 +81,7 @@ export default function AnimalsHeader({
 
         <Group align="center" gap="md" wrap="wrap">
           <TextInput
-            placeholder="Search by name or shelter..."
+            placeholder={t("animals.searchPlaceholder")}
             value={search}
             onChange={(e) => onSearchChange(e.currentTarget.value)}
             leftSection={<IconSearch size={16} color={AppColors.textHint} />}
@@ -101,7 +103,7 @@ export default function AnimalsHeader({
                 label: (
                   <Center style={{ gap: 10 }}>
                     <IconClipboardCheck size={16} />
-                    <span>All</span>
+                    <span>{t("common.all")}</span>
                   </Center>
                 ),
                 value: "ALL",
@@ -110,7 +112,7 @@ export default function AnimalsHeader({
                 label: (
                   <Center style={{ gap: 10 }}>
                     <IconCat size={16} />
-                    <span>Cat</span>
+                    <span>{t("animals.type.cat")}</span>
                   </Center>
                 ),
                 value: "CAT",
@@ -119,7 +121,7 @@ export default function AnimalsHeader({
                 label: (
                   <Center style={{ gap: 10 }}>
                     <IconDog size={16} />
-                    <span>Dog</span>
+                    <span>{t("animals.type.dog")}</span>
                   </Center>
                 ),
                 value: "DOG",
@@ -128,7 +130,7 @@ export default function AnimalsHeader({
                 label: (
                   <Center style={{ gap: 10 }}>
                     <IconDots size={16} />
-                    <span>Other</span>
+                    <span>{t("animals.type.other")}</span>
                   </Center>
                 ),
                 value: "OTHER",
@@ -145,10 +147,10 @@ export default function AnimalsHeader({
 
         <Text size="sm" c="dimmed" mt="sm">
           {totalResults === 0
-            ? "No animals found"
+            ? t("animals.noneFound")
             : totalResults === 1
-              ? "1 animal found"
-              : `${totalResults} animals found`}
+              ? t("animals.oneFound")
+              : t("animals.countFound", { count: totalResults })}
         </Text>
       </Container>
     </div>

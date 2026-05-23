@@ -3,6 +3,7 @@ import { IconCalendar, IconCircleCheck } from "@tabler/icons-react";
 import type { AnimalPickupStep } from "../data/adoptionTypes";
 import { AppColors } from "../../../theme/constants";
 import StepCardBase from "./StepCardBase";
+import { useLocalization } from "../../../localization/localization";
 
 function DateRow({
   icon,
@@ -15,6 +16,8 @@ function DateRow({
   value: string | null;
   fallback: string;
 }) {
+  const { t } = useLocalization();
+
   return (
     <Group gap={8} align="flex-start">
       <div style={{ marginTop: 2, color: AppColors.textHint }}>{icon}</div>
@@ -57,15 +60,15 @@ export default function AnimalPickupStepView({
       <Stack gap="md">
         <DateRow
           icon={<IconCalendar size={16} />}
-          label="Scheduled pickup"
+          label={t("adoption.scheduledPickup")}
           value={step.scheduled_at}
-          fallback="The shelter will confirm a pickup date shortly."
+          fallback={t("adoption.pickupFallback")}
         />
         <DateRow
           icon={<IconCircleCheck size={16} />}
-          label="Actual pickup"
+          label={t("adoption.actualPickup")}
           value={step.actual_pickup_at}
-          fallback="Not yet picked up."
+          fallback={t("adoption.notPickedUp")}
         />
       </Stack>
     </StepCardBase>

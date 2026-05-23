@@ -1,4 +1,5 @@
 import { Modal } from "@mantine/core";
+import { useLocalization } from "../../../localization/localization";
 
 interface ImageViewerModalProps {
   imageUrl: string | null;
@@ -9,6 +10,8 @@ export default function ImageViewerModal({
   imageUrl,
   onClose,
 }: ImageViewerModalProps) {
+  const { t } = useLocalization();
+
   return (
     <Modal
       opened={!!imageUrl}
@@ -26,7 +29,7 @@ export default function ImageViewerModal({
         <div style={{ position: "relative" }}>
           <img
             src={imageUrl}
-            alt="Expanded view"
+            alt={t("animals.expandedView")}
             style={{
               maxWidth: "90vw",
               maxHeight: "85vh",

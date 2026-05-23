@@ -11,10 +11,12 @@ import { AppColors } from "../../theme/constants";
 
 import StepTimeline from "./components/StepLine";
 import CurrentStepView from "./components/CurrentStep";
+import { useLocalization } from "../../localization/localization";
 
 export default function AdoptionDetailPage() {
   const { id } = useParams<{ id: string }>();
   const processId = Number(id);
+  const { locale, t } = useLocalization();
 
   const [process, setProcess] =
     useState<AdoptionProcessAdoptantResponse | null>(null);
@@ -27,7 +29,7 @@ export default function AdoptionDetailPage() {
         const data = await adoptionsRepository.getAdoptionDetail(processId);
         setProcess(data);
       } catch {
-        setError("Failed to load the adoption process. Please try again.");
+        setError(t("adoption.loadProcessError"));
       } finally {
         setLoading(false);
       }
@@ -56,7 +58,7 @@ export default function AdoptionDetailPage() {
           color={AppColors.error}
           variant="light"
         >
-          {error ?? "Adoption process not found."}
+          {error ?? t("adoption.processNotFound")}
         </Alert>
       </div>
     );
@@ -73,11 +75,12 @@ export default function AdoptionDetailPage() {
             {process.animal_name}
           </Title>
           <Text size="sm" style={{ color: AppColors.textSecondary }}>
-            Adoption process · Started on{" "}
-            {new Date(process.start_date).toLocaleDateString(undefined, {
+            {t("adoption.processStartedOn", {
+              date: new Date(process.start_date).toLocaleDateString(locale, {
               year: "numeric",
               month: "long",
               day: "numeric",
+              }),
             })}
           </Text>
         </Stack>
@@ -89,12 +92,12 @@ export default function AdoptionDetailPage() {
             variant="light"
             title={
               process.status === "CANCELLED"
-                ? "Process cancelled"
-                : "Application rejected"
+                ? t("adoption.processCancelled")
+                : t("adoption.applicationRejected")
             }
           >
             {process.rejection_reason ??
-              "This adoption process was closed. Please contact the shelter for more information."}
+              t("adoption.closedMessage")}
           </Alert>
         )}
 
@@ -113,7 +116,7 @@ export default function AdoptionDetailPage() {
               tt="uppercase"
               style={{ color: AppColors.textHint, letterSpacing: "0.08em" }}
             >
-              Current step
+              {t("adoption.currentStep")}
             </Text>
             <CurrentStepView
               step={process.current_step}
@@ -126,12 +129,12 @@ export default function AdoptionDetailPage() {
               fs="italic"
               style={{ color: AppColors.textSecondary }}
             >
-              * More information will be provided by the shelter through email.
+              {t("adoption.moreInfoEmail")}
             </Text>
           </Stack>
         ) : !isRejected ? (
           <Text size="sm" style={{ color: AppColors.textSecondary }}>
-            All steps have been completed.
+            {t("adoption.allStepsCompleted")}
           </Text>
         ) : null}
       </Stack>

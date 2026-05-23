@@ -19,8 +19,17 @@ import type { ContractStep } from "../data/adoptionTypes";
 import { adoptionsRepository } from "../data/adoptionRepository";
 import { AppColors } from "../../../theme/constants";
 import StepCardBase from "./StepCardBase";
+import { useLocalization } from "../../../localization/localization";
 
-function SignatureRow({ label, signed }: { label: string; signed: boolean }) {
+function SignatureRow({
+  label,
+  signed,
+}: {
+  label: string;
+  signed: boolean;
+}) {
+  const { t } = useLocalization();
+
   return (
     <Group gap={10} align="center">
       <ThemeIcon
@@ -40,7 +49,7 @@ function SignatureRow({ label, signed }: { label: string; signed: boolean }) {
             color: signed ? "var(--mantine-color-green-7)" : AppColors.textDark,
           }}
         >
-          {signed ? "Signed" : "Pending"}
+          {signed ? t("adoption.signed") : t("adoption.status.pending")}
         </Text>
       </Text>
     </Group>
@@ -56,6 +65,7 @@ export default function ContractStepView({
   processId: number;
   onSigned: (updated: ContractStep) => void;
 }) {
+  const { t } = useLocalization();
   const [signing, setSigning] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,7 +78,7 @@ export default function ContractStepView({
         onSigned(updated);
       }
     } catch {
-      setError("Something went wrong while signing. Please try again.");
+      setError(t("adoption.signError"));
     } finally {
       setSigning(false);
     }
@@ -93,7 +103,7 @@ export default function ContractStepView({
               size="sm"
               fw={500}
             >
-              View Contract PDF
+              {t("adoption.viewContractPdf")}
             </Anchor>
           </Group>
         ) : (
@@ -104,19 +114,18 @@ export default function ContractStepView({
               style={{ marginTop: 2 }}
             />
             <Text size="sm" style={{ color: AppColors.textSecondary }}>
-              The contract document is not yet available. The shelter will
-              upload it shortly.
+              {t("adoption.contractUnavailable")}
             </Text>
           </Group>
         )}
 
         <Stack gap={6}>
           <SignatureRow
-            label="Your signature"
+            label={t("adoption.yourSignature")}
             signed={step.signed_by_adoptant}
           />
           <SignatureRow
-            label="Shelter signature"
+            label={t("adoption.shelterSignature")}
             signed={step.signed_by_shelter}
           />
         </Stack>
@@ -140,11 +149,11 @@ export default function ContractStepView({
               loading={signing}
               disabled={!step.contract_url}
             >
-              Sign Contract
+              {t("adoption.signContract")}
             </Button>
             {!step.contract_url && (
               <Text size="xs" style={{ color: AppColors.textHint }}>
-                You can sign once the contract document has been uploaded.
+                {t("adoption.canSignWhenUploaded")}
               </Text>
             )}
           </Stack>

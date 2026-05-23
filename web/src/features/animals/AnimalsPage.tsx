@@ -21,8 +21,10 @@ import AnimalsHeader, {
   type AnimalTypeFilter,
 } from "./components/AnimalsHeader";
 import AnimalCard from "./components/AnimalCard";
+import { useLocalization } from "../../localization/localization";
 
 export default function AnimalsPage() {
+  const { t } = useLocalization();
   const [searchParams, setSearchParams] = useSearchParams();
   const urlProvinceId = searchParams.get("province");
 
@@ -88,10 +90,10 @@ export default function AnimalsPage() {
         <Stack align="center">
           <IconAlertCircle size={48} color={AppColors.warning} />
           <Title order={3} style={{ color: AppColors.textDark }}>
-            No location selected
+            {t("animals.noLocationSelected")}
           </Title>
           <Button component={Link} to="/" variant="light">
-            Go back to location selection
+            {t("animals.backToLocationSelection")}
           </Button>
         </Stack>
       </Center>
@@ -123,7 +125,7 @@ export default function AnimalsPage() {
         ) : error ? (
           <Center py={100}>
             <Text c="red">
-              Something went wrong while fetching the animals.
+              {t("animals.fetchError")}
             </Text>
           </Center>
         ) : filtered.length === 0 ? (
@@ -133,15 +135,15 @@ export default function AnimalsPage() {
           >
             <Text size="lg" fw={500} c="dimmed">
               {animals.length === 0
-                ? "No animals available for adoption in this province."
-                : "No animals match your search."}
+                ? t("animals.noneAvailableProvince")
+                : t("animals.noneMatchSearch")}
             </Text>
 
             {animals.length === 0 ? (
               <Group gap={8} style={{ color: AppColors.textHint }}>
                 <IconMapPin size={18} />
                 <Text size="sm">
-                  Try selecting a different province from the header above.
+                  {t("animals.tryDifferentProvince")}
                 </Text>
               </Group>
             ) : (
@@ -152,7 +154,7 @@ export default function AnimalsPage() {
                   setTypeFilter("ALL");
                 }}
               >
-                Clear filters
+                {t("animals.clearFilters")}
               </Button>
             )}
           </Center>

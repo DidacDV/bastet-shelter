@@ -2,7 +2,9 @@ import { Group, Title, Badge, Text, Button } from "@mantine/core";
 import { IconMapPin, IconHeart, IconEye } from "@tabler/icons-react";
 import { AppColors } from "../../../theme/constants";
 import { type AnimalPublicDetails } from "../data/animalsRepository";
-import { LAYOUT_CONSTANTS, ANIMAL_TYPE_LABEL } from "../data/constants";
+import { LAYOUT_CONSTANTS } from "../data/constants";
+import { useLocalization } from "../../../localization/localization";
+import { animalTypeKey } from "../../../localization/localizedMappers";
 
 interface AnimalHeaderProps {
   animal: AnimalPublicDetails;
@@ -17,6 +19,8 @@ export default function AnimalDetailHeader({
   isLoggedIn,
   hasExistingProcess,
 }: AnimalHeaderProps) {
+  const { t } = useLocalization();
+
   return (
     <Group justify="space-between" align="flex-start" mb="xl" wrap="nowrap">
       <div>
@@ -31,7 +35,7 @@ export default function AnimalDetailHeader({
             {animal.name}
           </Title>
           <Badge color="primary" variant="light" size="lg">
-            {ANIMAL_TYPE_LABEL[animal.animal_type] ?? animal.animal_type}
+            {t(animalTypeKey(animal.animal_type))}
           </Badge>
         </Group>
         <Group gap={6}>
@@ -55,10 +59,10 @@ export default function AnimalDetailHeader({
           visibleFrom="sm"
         >
           {hasExistingProcess
-            ? `View your adoption process with ${animal.name}`
+            ? t("animals.viewAdoptionWith", { animal: animal.name })
             : isLoggedIn
-              ? `Adopt ${animal.name}`
-              : `Quickly log in to adopt ${animal.name}`}
+              ? t("animals.adoptAnimal", { animal: animal.name })
+              : t("animals.loginToAdopt", { animal: animal.name })}
         </Button>
       )}
     </Group>

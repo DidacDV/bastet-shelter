@@ -2,8 +2,10 @@ import { Box, Title, Group, Text } from "@mantine/core";
 import { IconCalendar } from "@tabler/icons-react";
 import { AppColors } from "../../../theme/constants";
 import { type AnimalPublicDetails } from "../data/animalsRepository";
-import { LAYOUT_CONSTANTS, ANIMAL_TYPE_LABEL } from "../data/constants";
+import { LAYOUT_CONSTANTS } from "../data/constants";
 import { formatAge, formatDate } from "../../../utils/formatters";
+import { useLocalization } from "../../../localization/localization";
+import { animalTypeKey } from "../../../localization/localizedMappers";
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
@@ -27,6 +29,8 @@ export default function AnimalDetailsCard({
 }: {
   animal: AnimalPublicDetails;
 }) {
+  const { locale, t } = useLocalization();
+
   return (
     <Box
       style={{
@@ -37,29 +41,29 @@ export default function AnimalDetailsCard({
       }}
     >
       <Title order={4} mb="md" style={{ color: AppColors.textDark }}>
-        Details
+        {t("animals.details")}
       </Title>
 
-      <InfoRow label="Age" value={formatAge(animal.birth_date)} />
-      <InfoRow label="Breed" value={animal.breed || "Unknown"} />
+      <InfoRow label={t("animals.age")} value={formatAge(animal.birth_date, t)} />
+      <InfoRow label={t("animals.breed")} value={animal.breed || t("common.unknown")} />
       <InfoRow
-        label="Type"
-        value={ANIMAL_TYPE_LABEL[animal.animal_type] ?? animal.animal_type}
+        label={t("animals.type")}
+        value={t(animalTypeKey(animal.animal_type))}
       />
-      <InfoRow label="Shelter" value={animal.shelter_name} />
-      <InfoRow label="Refuge" value={animal.refuge_name} />
+      <InfoRow label={t("animals.shelter")} value={animal.shelter_name} />
+      <InfoRow label={t("animals.refuge")} value={animal.refuge_name} />
 
       {animal.arrival_date && (
         <InfoRow
-          label="At shelter since"
-          value={formatDate(animal.arrival_date)}
+          label={t("animals.atShelterSince")}
+          value={formatDate(animal.arrival_date, locale)}
         />
       )}
 
       <Group gap={6} mt={LAYOUT_CONSTANTS.GRID_GAP}>
         <IconCalendar size={14} color={AppColors.textHint} />
         <Text size="xs" c="dimmed">
-          Born {formatDate(animal.birth_date)}
+          {t("animals.born", { date: formatDate(animal.birth_date, locale) })}
         </Text>
       </Group>
 
@@ -73,7 +77,7 @@ export default function AnimalDetailsCard({
           }}
         >
           <Text size="xs" fw={500} style={{ color: AppColors.deepOrange }}>
-            This animal is not currently available for adoption.
+            {t("animals.notCurrentlyAvailable")}
           </Text>
         </Box>
       )}

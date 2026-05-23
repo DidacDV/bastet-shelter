@@ -2,6 +2,7 @@ import { Title, Text, Stack, Group } from "@mantine/core";
 import { IconMapPin, IconHeart } from "@tabler/icons-react";
 import { AppColors } from "../../../theme/constants";
 import StatPill from "../../../components/StatPill";
+import { useLocalization } from "../../../localization/localization";
 
 import Illustration1 from "../../../assets/images/Illustration-1.svg";
 import Illustration2 from "../../../assets/images/Illustration-2.svg";
@@ -9,6 +10,8 @@ import Illustration3 from "../../../assets/images/Illustration-10.svg";
 import Illustration4 from "../../..//assets/images/Illustration-19.svg";
 
 export default function HeroSection() {
+  const { t } = useLocalization();
+
   return (
     <div
       style={{
@@ -70,7 +73,7 @@ export default function HeroSection() {
                 lineHeight: 1.2,
               }}
             >
-              Find your new best friend
+              {t("home.heroTitle")}
             </Title>
             <Text
               mt="sm"
@@ -81,19 +84,18 @@ export default function HeroSection() {
                 lineHeight: 1.6,
               }}
             >
-              Browse animals from shelters across Spain that are ready for
-              adoption. Every animal deserves a loving home.
+              {t("home.heroSubtitle")}
             </Text>
           </div>
 
           <Group gap="sm" justify="center">
             <StatPill
               icon={<IconHeart size={14} />}
-              label="Animals looking for a home"
+              label={t("home.animalsLooking")}
             />
             <StatPill
               icon={<IconMapPin size={14} />}
-              label="Shelters across Spain"
+              label={t("home.sheltersAcrossSpain")}
             />
           </Group>
         </Stack>

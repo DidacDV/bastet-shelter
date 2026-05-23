@@ -4,6 +4,8 @@ import { type AdoptionProcessShort } from "../data/adoptionTypes";
 import { AppColors } from "../../../theme/constants";
 import { Link } from "react-router-dom";
 import placeholder from "../../../assets/images/paws/paw-cat-pet-svgrepo-com.svg";
+import { useLocalization } from "../../../localization/localization";
+import { adoptionStatusKey } from "../../../localization/localizedMappers";
 
 const STATUS_COLORS: Record<string, string> = {
   PENDING: AppColors.deepOrange,
@@ -14,20 +16,12 @@ const STATUS_COLORS: Record<string, string> = {
   CANCELLED: AppColors.textHint,
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  PENDING: "Pending",
-  ACTIVE: "Active",
-  IN_PROGRESS: "In Progress",
-  APPROVED: "Approved",
-  REJECTED: "Rejected",
-  CANCELLED: "Cancelled",
-};
-
 export default function AdoptionCard({
   adoption,
 }: {
   adoption: AdoptionProcessShort;
 }) {
+  const { locale, t } = useLocalization();
   const fallbackImg = adoption.animal_image_url || placeholder;
   return (
     <Link to={`/adoptions/${adoption.id}`} style={{ textDecoration: "none" }}>
@@ -67,7 +61,7 @@ export default function AdoptionCard({
               variant="light"
               color={STATUS_COLORS[adoption.status] ?? AppColors.textHint}
             >
-              {STATUS_LABELS[adoption.status] ?? adoption.status}
+              {t(adoptionStatusKey(adoption.status))}
             </Badge>
           </Group>
 
@@ -86,7 +80,9 @@ export default function AdoptionCard({
                 whiteSpace: "nowrap",
               }}
             >
-              Started on {new Date(adoption.start_date).toLocaleDateString()}
+              {t("adoption.startedOn", {
+                date: new Date(adoption.start_date).toLocaleDateString(locale),
+              })}
             </Text>
           </Group>
         </Stack>

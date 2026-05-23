@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/add_vet_visit_dialog.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/next_visit_card.dart';
@@ -26,7 +27,7 @@ class VetInfoTab extends ConsumerWidget {
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Center(
               child: Text(
-                'Could not load vet visits.',
+                context.l10n.t('vet.loadVisitsError'),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: AppColors.error,
                 ),
@@ -80,9 +81,9 @@ class _VetVisitsContent extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const _SectionHeader(
+                  _SectionHeader(
                     icon: Icons.next_plan_outlined,
-                    label: 'Next visit',
+                    label: context.l10n.t('vet.nextVisit'),
                   ),
                   if (canEdit)
                     FilledButton.icon(
@@ -91,7 +92,7 @@ class _VetVisitsContent extends StatelessWidget {
                         animalId: animalId,
                       ),
                       icon: const Icon(Icons.add_rounded, size: 18),
-                      label: const Text('Plan visit'),
+                      label: Text(context.l10n.t('vet.planVisit')),
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.surface,
@@ -109,7 +110,7 @@ class _VetVisitsContent extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: 6, bottom: 4),
                   child: Text(
-                    'No upcoming vet visits planned.',
+                    context.l10n.t('vet.noUpcomingVisits'),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: AppColors.textSecondary,
                       fontStyle: FontStyle.italic,
@@ -118,9 +119,9 @@ class _VetVisitsContent extends StatelessWidget {
                 ),
               const SizedBox(height: 24),
 
-              const _SectionHeader(
+              _SectionHeader(
                 icon: Icons.history_rounded,
-                label: 'Vet Visits History',
+                label: context.l10n.t('vet.history'),
               ),
               const SizedBox(height: 4),
 
@@ -129,7 +130,7 @@ class _VetVisitsContent extends StatelessWidget {
                   children: [
                     const SizedBox(width: 6),
                     Text(
-                      'Tap on a visit to view details or edit.',
+                      context.l10n.t('vet.tapVisitHint'),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: AppColors.textSecondary,
                         fontStyle: FontStyle.italic,

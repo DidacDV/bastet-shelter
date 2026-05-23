@@ -12,6 +12,8 @@ import type {
   StepType,
 } from "../data/adoptionTypes";
 import { AppColors } from "../../../theme/constants";
+import { useLocalization } from "../../../localization/localization";
+import { stepTypeKey } from "../../../localization/localizedMappers";
 
 const STEP_ICONS: Record<StepType, React.ReactNode> = {
   FORM: <IconFileDescription size={14} />,
@@ -19,14 +21,6 @@ const STEP_ICONS: Record<StepType, React.ReactNode> = {
   SHELTER_VISIT: <IconHome size={14} />,
   CONTRACT: <IconWriting size={14} />,
   ANIMAL_PICKUP: <IconPaw size={14} />,
-};
-
-const STEP_LABELS: Record<StepType, string> = {
-  FORM: "Form",
-  INTERVIEW: "Interview",
-  SHELTER_VISIT: "Shelter Visit",
-  CONTRACT: "Contract",
-  ANIMAL_PICKUP: "Pickup",
 };
 
 function stepIconColor(status: StepStatus, isCurrent: boolean) {
@@ -43,6 +37,7 @@ export default function StepTimeline({
   steps: AdoptionStepSummary[];
   currentOrder: number | null;
 }) {
+  const { t } = useLocalization();
   const sorted = [...steps].sort((a, b) => a.order - b.order);
 
   return (
@@ -54,7 +49,7 @@ export default function StepTimeline({
         style={{ color: AppColors.textHint, letterSpacing: "0.08em" }}
         mb="md"
       >
-        Progress
+        {t("adoption.progress")}
       </Text>
       <Group gap={0} align="center" wrap="nowrap">
         {sorted.map((step, i) => {
@@ -89,7 +84,7 @@ export default function StepTimeline({
                     lineHeight: 1.2,
                   }}
                 >
-                  {STEP_LABELS[step.type]}
+                  {t(stepTypeKey(step.type, true))}
                 </Text>
               </Stack>
 

@@ -3,12 +3,15 @@ import { IconCalendar, IconMail } from "@tabler/icons-react";
 import type { ShelterVisitStep } from "../data/adoptionTypes";
 import { AppColors } from "../../../theme/constants";
 import StepCardBase from "./StepCardBase";
+import { useLocalization } from "../../../localization/localization";
 
 export default function ShelterVisitStepView({
   step,
 }: {
   step: ShelterVisitStep;
 }) {
+  const { locale, t } = useLocalization();
+
   return (
     <StepCardBase
       type={step.type}
@@ -21,9 +24,9 @@ export default function ShelterVisitStepView({
         <Group gap={8} align="center">
           <IconCalendar size={16} color={AppColors.textHint} />
           <Text size="sm" style={{ color: AppColors.textSecondary }}>
-            Scheduled for{" "}
+            {t("adoption.scheduledFor")}{" "}
             <Text span fw={600} style={{ color: AppColors.textDark }}>
-              {new Date(step.scheduled_at).toLocaleDateString(undefined, {
+              {new Date(step.scheduled_at).toLocaleDateString(locale, {
                 weekday: "long",
                 year: "numeric",
                 month: "long",
@@ -40,8 +43,7 @@ export default function ShelterVisitStepView({
             style={{ marginTop: 2 }}
           />
           <Text size="sm" style={{ color: AppColors.textSecondary }}>
-            The shelter will reach out to arrange your visit via the email
-            address on your account.
+            {t("adoption.shelterVisitFallback")}
           </Text>
         </Group>
       )}

@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 
 void showCreateAdvertisementSheet(BuildContext context) {
   showModalBottomSheet(
@@ -53,9 +55,9 @@ class _CreateAdvertisementBottomSheetState
     if (!_formKey.currentState!.validate()) return;
 
     if (_selectedProvinceId == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Please select a location')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.t('community.selectLocation'))),
+      );
       return;
     }
 
@@ -98,10 +100,10 @@ class _CreateAdvertisementBottomSheetState
     final theme = Theme.of(context);
 
     return FormBottomSheet(
-      title: 'Create Advertisement',
+      title: context.l10n.t('community.createAdvertisement'),
       actions: [
         PrimaryButton(
-          label: 'Publish Advertisement',
+          label: context.l10n.t('community.publishAdvertisement'),
           isLoading: _isLoading,
           onPressed: _submit,
         ),
@@ -121,11 +123,11 @@ class _CreateAdvertisementBottomSheetState
 
               AppTextField(
                 controller: _titleController,
-                label: 'Title',
-                hintText: 'E.g., Need dry food for puppies',
+                label: context.l10n.t('community.title'),
+                hintText: context.l10n.t('community.titleHint'),
                 validator: (val) {
                   if (val == null || val.trim().isEmpty) {
-                    return 'Title is required';
+                    return context.l10n.t('community.titleRequired');
                   }
                   return null;
                 },
@@ -153,7 +155,7 @@ class _CreateAdvertisementBottomSheetState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Location',
+                          context.l10n.t('common.location'),
                           style: theme.textTheme.labelMedium?.copyWith(
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w600,
@@ -190,12 +192,12 @@ class _CreateAdvertisementBottomSheetState
 
               AppTextField(
                 controller: _descriptionController,
-                label: 'Description',
-                hintText: 'Provide details about what you need or offer...',
+                label: context.l10n.t('common.description'),
+                hintText: context.l10n.t('community.descriptionHint'),
                 maxLines: 4,
                 validator: (val) {
                   if (val == null || val.trim().isEmpty) {
-                    return 'Description is required';
+                    return context.l10n.t('community.descriptionRequired');
                   }
                   return null;
                 },
@@ -220,7 +222,7 @@ class _CategoryDropdown extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Category',
+          context.l10n.t('community.category'),
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
             color: AppColors.textSecondary,
             fontWeight: FontWeight.w600,
@@ -255,7 +257,7 @@ class _CategoryDropdown extends StatelessWidget {
             return DropdownMenuItem(
               value: cat,
               child: Text(
-                cat.value,
+                context.localizedAdCategory(cat),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -344,7 +346,7 @@ class _ImagePickerBox extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Add a cover photo',
+              context.l10n.t('community.addCoverPhoto'),
               style: theme.textTheme.titleSmall?.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w600,
@@ -352,7 +354,7 @@ class _ImagePickerBox extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'Optional but recommended',
+              context.l10n.t('community.optionalRecommended'),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: AppColors.textSecondary,
               ),

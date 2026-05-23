@@ -3,10 +3,12 @@ import { TextInput, Button, Title, Text, Alert, Stack } from "@mantine/core";
 import { useSearchParams } from "react-router-dom";
 import { adoptantAuthRepository } from "./data/adoptantAuthRepository";
 import FallingPaws from "./components/FallingPaws";
+import { useLocalization } from "../../localization/localization";
 
 const MAX_ILLUSTRATIONS = 16;
 
 export default function LoginPage() {
+  const { t } = useLocalization();
   const [searchParams] = useSearchParams();
   const reason = searchParams.get("reason");
 
@@ -43,7 +45,7 @@ export default function LoginPage() {
         {loginBg && (
           <img
             src={loginBg}
-            alt="Login illustration"
+            alt={t("auth.loginIllustrationAlt")}
             className="w-72 lg:w-96 h-auto object-contain relative z-10"
           />
         )}
@@ -54,14 +56,13 @@ export default function LoginPage() {
           {status === "success" ? (
             <div className="text-center">
               <Title order={2} className="text-primary mb-4">
-                Check your email
+                {t("auth.checkEmail")}
               </Title>
               <Text className="text-text-secondary text-lg">
-                We've sent a secure magic link to <strong>{email}</strong>.
+                {t("auth.magicLinkSent", { email })}
                 <br />
                 <br />
-                Click the link in the email to securely log in and continue your
-                adoption journey.
+                {t("auth.magicLinkInstructions")}
               </Text>
             </div>
           ) : (
@@ -70,13 +71,13 @@ export default function LoginPage() {
                 order={2}
                 className="text-text-dark mb-4 text-center md:text-left"
               >
-                Welcome to BastetShelter
+                {t("auth.welcome")}
               </Title>
               <Text
                 mb={40}
                 className="text-text-secondary text-center md:text-left"
               >
-                Enter your details to receive a secure login link.
+                {t("auth.enterDetails")}
               </Text>
 
               {reason === "expired" && (
@@ -85,13 +86,13 @@ export default function LoginPage() {
                   mb="xl"
                   className="bg-warning/10 text-warning"
                 >
-                  Your session expired. Please request a new link.
+                  {t("auth.sessionExpired")}
                 </Alert>
               )}
 
               {status === "error" && (
                 <Alert color="error" mb="xl" className="bg-error/10 text-error">
-                  Something went wrong. Please check your email and try again.
+                  {t("auth.requestError")}
                 </Alert>
               )}
 
@@ -103,7 +104,7 @@ export default function LoginPage() {
               >
                 <Stack gap="md">
                   <TextInput
-                    label="Your Name"
+                    label={t("auth.yourName")}
                     size="md"
                     radius="md"
                     value={name}
@@ -111,7 +112,7 @@ export default function LoginPage() {
                     required
                   />
                   <TextInput
-                    label="Email Address"
+                    label={t("auth.emailAddress")}
                     type="email"
                     size="md"
                     radius="md"
@@ -127,7 +128,7 @@ export default function LoginPage() {
                     radius="md"
                     loading={status === "loading"}
                   >
-                    Send email for login
+                    {t("auth.sendLoginEmail")}
                   </Button>
                 </Stack>
               </form>

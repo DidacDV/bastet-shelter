@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/shifts/data/models/shift_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -38,7 +39,7 @@ class ShiftCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text("-"),
+                  const Text("-"),
                   const SizedBox(width: 12),
                   Text(
                     timeFormat.format(shift.endTime),
@@ -63,7 +64,7 @@ class ShiftCard extends StatelessWidget {
                     Text(
                       shift.maxParticipants != null
                           ? '${shift.currentParticipants} / ${shift.maxParticipants}'
-                          : 'No limit',
+                          : context.l10n.t('shifts.noLimit'),
                       style: tt.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
                       ),

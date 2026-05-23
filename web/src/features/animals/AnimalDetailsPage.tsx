@@ -18,11 +18,13 @@ import ImageViewerModal from "./components/ImageViewerModal";
 import AdoptionFormModal from "./components/AdoptionFormModal";
 import { adoptionsRepository } from "../adoptions/data/adoptionRepository";
 import type { AdoptionFormSubmit } from "../adoptions/data/adoptionTypes";
+import { useLocalization } from "../../localization/localization";
 
 export default function AnimalDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
+  const { t } = useLocalization();
 
   const [animal, setAnimal] = useState<AnimalPublicDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -99,9 +101,9 @@ export default function AnimalDetailPage() {
           gap: 16,
         }}
       >
-        <Text c="dimmed">Animal not found or something went wrong.</Text>
+        <Text c="dimmed">{t("animals.detailNotFound")}</Text>
         <Button variant="light" onClick={() => navigate(-1)}>
-          Go back
+          {t("common.goBack")}
         </Button>
       </Center>
     );
@@ -131,7 +133,7 @@ export default function AnimalDetailPage() {
             mb="lg"
             px={0}
           >
-            Back to animals
+            {t("animals.backToAnimals")}
           </Button>
 
           <AnimalDetailHeader
@@ -170,10 +172,10 @@ export default function AnimalDetailPage() {
                 onClick={handleActionClick}
               >
                 {hasExistingProcess
-                  ? `View your adoption process with ${animal.name}`
+                  ? t("animals.viewAdoptionWith", { animal: animal.name })
                   : isLoggedIn
-                    ? `Adopt ${animal.name}`
-                    : `Quickly log in to adopt ${animal.name}`}
+                    ? t("animals.adoptAnimal", { animal: animal.name })
+                    : t("animals.loginToAdopt", { animal: animal.name })}
               </Button>
             </Box>
           )}

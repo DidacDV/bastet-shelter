@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_list/components/adoption_card.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/adoption_process_screen.dart';
 import 'package:bastetshelter/features/common/components/bastet_search_bar.dart'; // Import your search bar
@@ -28,7 +29,7 @@ class AdoptionList extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Adoption processes'),
+        title: Text(context.l10n.t('home.adoptionProcesses')),
         centerTitle: false,
       ),
       body: Column(
@@ -39,7 +40,7 @@ class AdoptionList extends ConsumerWidget {
               vertical: 8.0,
             ),
             child: BastetSearchBar(
-              hintText: 'Search by animal or adoptant...',
+              hintText: context.l10n.t('adoption.searchHint'),
               onChanged: (q) =>
                   ref.read(adoptionSearchQueryProvider.notifier).updateQuery(q),
             ),
@@ -63,7 +64,7 @@ class AdoptionList extends ConsumerWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Could not load adoptions',
+                        context.l10n.t('adoption.loadListError'),
                         style: tt.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -77,7 +78,7 @@ class AdoptionList extends ConsumerWidget {
                         //if error, we invalidate the original list, since the search one depends on that
                         onPressed: () => ref.invalidate(adoptionListProvider),
                         icon: const Icon(Icons.refresh_rounded),
-                        label: const Text('Retry'),
+                        label: Text(context.l10n.t('common.retry')),
                       ),
                     ],
                   ),
@@ -105,14 +106,14 @@ class AdoptionList extends ConsumerWidget {
                           ),
                           const SizedBox(height: 24),
                           Text(
-                            'No adoptions found',
+                            context.l10n.t('adoption.emptyTitle'),
                             style: tt.titleLarge?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Try adjusting your search query.',
+                            context.l10n.t('adoption.emptySearchMessage'),
                             textAlign: TextAlign.center,
                             style: tt.bodyMedium?.copyWith(
                               color: AppColors.textSecondary,

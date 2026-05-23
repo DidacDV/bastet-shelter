@@ -1,3 +1,5 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_process/adoption_process_details.dart';
 import 'package:bastetshelter/features/common/components/section_badge.dart';
@@ -70,7 +72,7 @@ class AdoptionProcessHeader extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       _InfoItem(
-                        label: 'Adoptant',
+                        label: context.l10n.t('adoption.adoptant'),
                         value: adoptantEmail,
                         alignment: CrossAxisAlignment.start,
                       ),
@@ -81,17 +83,21 @@ class AdoptionProcessHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SectionBadge(label: process.status.value),
+                    SectionBadge(
+                      label: context.localizedAdoptionProcessStatus(
+                        process.status,
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     _InfoItem(
-                      label: 'Start Date',
+                      label: context.l10n.t('medical.startDate'),
                       value: fmt.format(process.startDate),
                       alignment: CrossAxisAlignment.center,
                     ),
                     if (process.endDate != null) ...[
                       const SizedBox(height: 8),
                       _InfoItem(
-                        label: 'End Date',
+                        label: context.l10n.t('medical.endDate'),
                         value: fmt.format(process.endDate!),
                         alignment: CrossAxisAlignment.center,
                       ),

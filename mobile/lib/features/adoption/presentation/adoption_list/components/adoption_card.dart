@@ -1,5 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
-import 'package:bastetshelter/features/adoption/data/adoption_enums.dart';
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_process/adoption_process_summary.dart';
 import 'package:bastetshelter/features/common/components/section_badge.dart';
 import 'package:flutter/material.dart';
@@ -68,7 +68,9 @@ class AdoptionCard extends StatelessWidget {
                           ),
                         ),
                         SectionBadge(
-                          label: process.status.value,
+                          label: context.localizedAdoptionProcessStatus(
+                            process.status,
+                          ),
                           color: process.statusColor,
                         ),
                       ],
@@ -89,7 +91,12 @@ class AdoptionCard extends StatelessWidget {
                       children: [
                         //current step
                         if (process.currentStep != null)
-                          _StepPill(label: process.currentStep!.type.label),
+                          _StepPill(
+                            label: context.localizedAdoptionStepType(
+                              process.currentStep!.type,
+                              shortAnimalPickup: true,
+                            ),
+                          ),
 
                         const Spacer(),
 

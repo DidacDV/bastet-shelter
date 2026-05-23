@@ -15,6 +15,7 @@ import {
 } from "@mantine/core";
 import { IconHeart } from "@tabler/icons-react";
 import { AppColors } from "../../../theme/constants";
+import { useLocalization } from "../../../localization/localization";
 
 export interface AdoptionFormData {
   housing_type?: string;
@@ -54,6 +55,7 @@ export default function AdoptionFormModal({
   animalName,
   onSubmit,
 }: AdoptionFormModalProps) {
+  const { t } = useLocalization();
   const [form, setForm] = useState<AdoptionFormData>({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +73,7 @@ export default function AdoptionFormModal({
       setForm({});
       onClose();
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("common.tryAgainError"));
     } finally {
       setSubmitting(false);
     }
@@ -95,7 +97,7 @@ export default function AdoptionFormModal({
         <Group gap="sm">
           <IconHeart size={18} color={AppColors.primary} />
           <Title order={4} style={{ color: AppColors.textDark }}>
-            Adopt {animalName}
+            {t("adoption.form.adoptAnimal", { animal: animalName })}
           </Title>
         </Group>
       }
@@ -110,25 +112,24 @@ export default function AdoptionFormModal({
       }}
     >
       <Text size="sm" c="dimmed" mb="xl">
-        Tell us a bit about yourself and your home. All fields are optional —
-        just fill in what applies to you.
+        {t("adoption.form.intro")}
       </Text>
 
       <Stack gap="xl">
         <Stack gap="md">
-          <SectionLabel>Your home</SectionLabel>
+          <SectionLabel>{t("adoption.form.yourHome")}</SectionLabel>
 
           <Select
-            label="Type of housing"
-            placeholder="Select..."
+            label={t("adoption.form.housingType")}
+            placeholder={t("common.select")}
             value={form.housing_type ?? null}
             onChange={(v) => set("housing_type", v ?? undefined)}
             data={[
-              { value: "apartment", label: "Apartment" },
-              { value: "house", label: "House" },
-              { value: "house_with_garden", label: "House with garden" },
-              { value: "rural", label: "Rural / farm" },
-              { value: "other", label: "Other" },
+              { value: "apartment", label: t("adoption.form.housing.apartment") },
+              { value: "house", label: t("adoption.form.housing.house") },
+              { value: "house_with_garden", label: t("adoption.form.housing.houseWithGarden") },
+              { value: "rural", label: t("adoption.form.housing.rural") },
+              { value: "other", label: t("adoption.form.housing.other") },
             ]}
             radius="md"
             clearable
@@ -137,7 +138,7 @@ export default function AdoptionFormModal({
 
           <Group gap="xl">
             <Switch
-              label="I have a garden or outdoor space"
+              label={t("adoption.form.hasGarden")}
               checked={form.has_garden ?? false}
               onChange={(e) => set("has_garden", e.currentTarget.checked)}
               color="primary"
@@ -148,10 +149,10 @@ export default function AdoptionFormModal({
         <Divider color={AppColors.divider} />
 
         <Stack gap="md">
-          <SectionLabel>Your household</SectionLabel>
+          <SectionLabel>{t("adoption.form.yourHousehold")}</SectionLabel>
 
           <Switch
-            label="I have children at home"
+            label={t("adoption.form.hasChildren")}
             checked={form.has_children ?? false}
             onChange={(e) => set("has_children", e.currentTarget.checked)}
             color="primary"
@@ -167,14 +168,14 @@ export default function AdoptionFormModal({
               }}
             >
               <Text size="xs" c="dimmed" mb={8}>
-                Ages of children (e.g. 4, 8, 12)
+                {t("adoption.form.childrenAgesLabel")}
               </Text>
               <input
                 value={form.children_ages ?? ""}
                 onChange={(e) =>
                   set("children_ages", e.target.value || undefined)
                 }
-                placeholder="e.g. 4, 8, 12"
+                placeholder={t("adoption.form.childrenAgesHint")}
                 style={{
                   width: "100%",
                   border: `1px solid ${AppColors.outline}`,
@@ -190,7 +191,7 @@ export default function AdoptionFormModal({
           )}
 
           <Switch
-            label="I have other pets"
+            label={t("adoption.form.hasOtherPets")}
             checked={form.has_other_pets ?? false}
             onChange={(e) => set("has_other_pets", e.currentTarget.checked)}
             color="primary"
@@ -206,8 +207,8 @@ export default function AdoptionFormModal({
               }}
             >
               <Textarea
-                label="Tell us about your other pets"
-                placeholder="e.g. 1 adult cat, very calm"
+                label={t("adoption.form.otherPetsDescription")}
+                placeholder={t("adoption.form.otherPetsHint")}
                 value={form.other_pets_description ?? ""}
                 onChange={(e) =>
                   set(
@@ -232,10 +233,10 @@ export default function AdoptionFormModal({
         <Divider color={AppColors.divider} />
 
         <Stack gap="md">
-          <SectionLabel>Experience & routine</SectionLabel>
+          <SectionLabel>{t("adoption.form.experienceRoutine")}</SectionLabel>
 
           <Switch
-            label="I have previous experience with pets"
+            label={t("adoption.form.previousExperience")}
             checked={form.previous_pet_experience ?? false}
             onChange={(e) =>
               set("previous_pet_experience", e.currentTarget.checked)
@@ -244,8 +245,8 @@ export default function AdoptionFormModal({
           />
 
           <NumberInput
-            label="Hours the animal would be alone per day"
-            placeholder="e.g. 4"
+            label={t("adoption.form.hoursAlone")}
+            placeholder={t("adoption.form.hoursAloneHint")}
             value={form.hours_alone_per_day ?? ""}
             onChange={(v) =>
               set("hours_alone_per_day", typeof v === "number" ? v : undefined)
@@ -260,8 +261,8 @@ export default function AdoptionFormModal({
         <Divider color={AppColors.divider} />
 
         <Textarea
-          label="Why do you want to adopt?"
-          placeholder="Tell us what motivated you to adopt..."
+          label={t("adoption.form.reason")}
+          placeholder={t("adoption.form.reasonHint")}
           value={form.reason_for_adoption ?? ""}
           onChange={(e) =>
             set("reason_for_adoption", e.currentTarget.value || undefined)
@@ -285,7 +286,7 @@ export default function AdoptionFormModal({
             onClick={handleClose}
             disabled={submitting}
           >
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             color="primary"
@@ -294,7 +295,7 @@ export default function AdoptionFormModal({
             leftSection={<IconHeart size={15} />}
             onClick={handleSubmit}
           >
-            Send adoption request
+            {t("adoption.form.sendRequest")}
           </Button>
         </Group>
       </Stack>

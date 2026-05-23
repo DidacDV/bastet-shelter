@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/medicine/data/models/medicine_model.dart';
 import 'package:flutter/material.dart';
 
@@ -32,7 +33,7 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
     return SizedBox(
       width: double.infinity,
       child: DropdownMenu<Medicine>(
-        hintText: 'Search medicine...',
+        hintText: context.l10n.t('medicine.searchHint'),
         initialSelection: widget.initialItem,
         enableFilter: true,
         requestFocusOnTap: true,
@@ -44,7 +45,9 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
                 value: m,
                 label: m.name,
                 trailingIcon: Text(
-                  'Stock: ${m.currentStock}',
+                  context.l10n
+                      .t('medicine.stockValue')
+                      .replaceAll('{stock}', '${m.currentStock}'),
                   style: const TextStyle(fontSize: 11),
                 ),
               ),

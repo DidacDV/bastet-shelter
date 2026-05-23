@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/adoption_step_details.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_common_info.dart';
 import 'package:bastetshelter/features/common/components/fields/date_field.dart';
@@ -44,7 +45,7 @@ class ScheduledStepView extends ConsumerWidget {
               ),
               const SizedBox(height: 26),
               DateField(
-                label: 'Scheduled date',
+                label: context.l10n.t('adoption.scheduledDate'),
                 value: scheduledAt,
                 required: false,
                 firstDate: DateTime.now().subtract(const Duration(days: 365)),

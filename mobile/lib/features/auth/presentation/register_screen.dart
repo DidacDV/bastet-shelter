@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -80,7 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text('Register')),
+      appBar: AppBar(title: Text(context.l10n.t('auth.register'))),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
@@ -89,10 +90,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Create Account', style: tt.headlineMedium),
+                Text(
+                  context.l10n.t('auth.createAccount'),
+                  style: tt.headlineMedium,
+                ),
                 const SizedBox(height: 8),
                 Text(
-                  'Join us to help shelter animals',
+                  context.l10n.t('auth.registerSubtitle'),
                   style: tt.bodyMedium?.copyWith(
                     color: AppColors.textSecondary,
                   ),
@@ -100,33 +104,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 32),
                 AppTextField(
                   controller: _nameController,
-                  label: 'First Name',
+                  label: context.l10n.t('auth.firstName'),
                   validator: (value) =>
                       Validators.validateRequired(value, 'first name'),
                 ),
                 const SizedBox(height: 14),
                 AppTextField(
                   controller: _lastname1Controller,
-                  label: 'First Last Name',
+                  label: context.l10n.t('auth.firstLastName'),
                   validator: (value) =>
                       Validators.validateRequired(value, 'first last name'),
                 ),
                 const SizedBox(height: 14),
                 AppTextField(
                   controller: _lastname2Controller,
-                  label: 'Second Last Name (Optional)',
+                  label: context.l10n.t('auth.secondLastNameOptional'),
                 ),
                 const SizedBox(height: 14),
                 AppTextField(
                   controller: _emailController,
-                  label: 'Email',
+                  label: context.l10n.t('auth.email'),
                   keyboardType: TextInputType.emailAddress,
                   validator: Validators.validateEmail,
                 ),
                 const SizedBox(height: 14),
                 AppTextField(
                   controller: _passwordController,
-                  label: 'Password',
+                  label: context.l10n.t('auth.password'),
                   obscure: true,
                   validator: Validators.validatePassword,
                 ),
@@ -169,8 +173,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               height: 1.5,
                             ),
                             children: [
-                              const TextSpan(
-                                text: 'I have read and accept the ',
+                              TextSpan(
+                                text: context.l10n.t('auth.privacyPrefix'),
                               ),
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.baseline,
@@ -178,7 +182,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 child: GestureDetector(
                                   onTap: _openPrivacyPolicy,
                                   child: Text(
-                                    'Privacy Policy',
+                                    context.l10n.t('auth.privacyPolicy'),
                                     style: tt.bodySmall?.copyWith(
                                       color: AppColors.primary,
                                       fontWeight: FontWeight.w600,
@@ -188,9 +192,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                 ),
                               ),
-                              const TextSpan(
-                                text:
-                                    ' and consent to the processing of my personal data (name, surnames and email address) in accordance with the GDPR and LOPDGDD.',
+                              TextSpan(
+                                text: context.l10n.t('auth.privacySuffix'),
                               ),
                             ],
                           ),
@@ -205,7 +208,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Padding(
                     padding: const EdgeInsets.only(left: 34),
                     child: Text(
-                      'You must accept the Privacy Policy to continue.',
+                      context.l10n.t('auth.privacyRequired'),
                       style: tt.bodySmall?.copyWith(color: AppColors.error),
                     ),
                   ),
@@ -213,7 +216,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 const SizedBox(height: 28),
                 PrimaryButton(
-                  label: 'Register',
+                  label: context.l10n.t('auth.register'),
                   isLoading: _isLoading,
                   onPressed: _register,
                 ),

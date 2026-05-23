@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/vet_visit_type_dropdown.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/fields/app_text_field.dart'; // Added AppTextField
@@ -39,7 +40,7 @@ class _AddVetVisitBottomSheetState
     final clinic = _clinicController.text.trim();
     if (clinic.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a clinic name')),
+        SnackBar(content: Text(context.l10n.t('vet.enterClinicName'))),
       );
       return;
     }
@@ -69,7 +70,7 @@ class _AddVetVisitBottomSheetState
     final theme = Theme.of(context);
 
     return FormBottomSheet(
-      title: 'New Vet Visit',
+      title: context.l10n.t('vet.newVisit'),
       leading: const Icon(
         Icons.local_hospital_rounded,
         color: AppColors.primary,
@@ -77,7 +78,7 @@ class _AddVetVisitBottomSheetState
       ),
       actions: [
         PrimaryButton(
-          label: 'Save Visit',
+          label: context.l10n.t('vet.saveVisit'),
           isLoading: _loading,
           onPressed: _save,
         ),
@@ -92,7 +93,7 @@ class _AddVetVisitBottomSheetState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Date',
+                    context.l10n.t('common.date'),
                     style: theme.textTheme.labelMedium?.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -117,7 +118,7 @@ class _AddVetVisitBottomSheetState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Visit Type',
+                    context.l10n.t('vet.visitType'),
                     style: theme.textTheme.labelMedium?.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -137,14 +138,14 @@ class _AddVetVisitBottomSheetState
 
         AppTextField(
           controller: _clinicController,
-          label: 'Clinic Name',
+          label: context.l10n.t('vet.clinicName'),
           textCapitalization: TextCapitalization.words,
         ),
         const SizedBox(height: 20),
 
         AppTextField(
           controller: _notesController,
-          label: 'Notes (Optional)',
+          label: context.l10n.t('common.notesOptional'),
           textCapitalization: TextCapitalization.sentences,
         ),
       ],

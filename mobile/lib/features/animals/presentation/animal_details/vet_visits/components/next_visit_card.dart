@@ -1,4 +1,6 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/vet_visit_bottom_sheet.dart';
 import 'package:bastetshelter/features/medicine/data/models/vet_visit_model.dart';
 import 'package:flutter/material.dart';
@@ -68,7 +70,7 @@ class NextVisitCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    visit.visitType.label,
+                    context.localizedVetVisitType(visit.visitType),
                     style: theme.textTheme.titleMedium,
                   ),
                   const SizedBox(height: 2),
@@ -76,7 +78,9 @@ class NextVisitCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          "Location: ${visit.clinicName}",
+                          context.l10n
+                              .t('common.locationValue')
+                              .replaceAll('{location}', visit.clinicName),
                           style: theme.textTheme.bodySmall,
                           overflow: TextOverflow.ellipsis,
                         ),

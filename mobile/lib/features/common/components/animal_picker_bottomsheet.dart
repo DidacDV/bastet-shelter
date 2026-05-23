@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/animal_avatar.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';
@@ -14,11 +15,11 @@ class AnimalPickerBottomSheet extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return FormBottomSheet(
-      title: 'Select Animal',
+      title: context.l10n.t('animals.selectAnimal'),
       actions: [],
       children: [
         Text(
-          'Choose an animal to link to these tasks.',
+          context.l10n.t('animals.chooseAnimalForTasks'),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: AppColors.textSecondary,
           ),
@@ -27,7 +28,13 @@ class AnimalPickerBottomSheet extends ConsumerWidget {
 
         animalsAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Error: $e')),
+          error: (e, _) => Center(
+            child: Text(
+              context.l10n
+                  .t('common.errorWithMessage')
+                  .replaceAll('{error}', '$e'),
+            ),
+          ),
           data: (animals) {
             if (animals.isEmpty) {
               return Container(
@@ -37,7 +44,7 @@ class AnimalPickerBottomSheet extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppColors.outline),
                 ),
-                child: const Text('No animals found.'),
+                child: Text(context.l10n.t('animals.emptyWithPeriod')),
               );
             }
 

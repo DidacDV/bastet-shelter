@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/components/dosage_unit_dropdown.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/components/treatment_frequency_dropdown.dart';
@@ -79,10 +80,9 @@ class TreatmentDetailBottomSheetState
   Future<void> _delete() async {
     final confirmed = await ConfirmationDialog.show(
       context: context,
-      title: 'Delete treatment',
-      message:
-          'Are you sure you want to delete this animal treatment? This cannot be undone.',
-      confirmText: 'Delete',
+      title: context.l10n.t('medical.deleteTreatment'),
+      message: context.l10n.t('medical.deleteTreatmentMessage'),
+      confirmText: context.l10n.t('profile.delete'),
       isDestructive: true,
     );
 
@@ -105,7 +105,7 @@ class TreatmentDetailBottomSheetState
       actions: widget.canEdit
           ? [
               PrimaryButton(
-                label: 'Save changes',
+                label: context.l10n.t('common.saveChanges'),
                 isLoading: _loading,
                 onPressed: _save,
               ),
@@ -119,12 +119,12 @@ class TreatmentDetailBottomSheetState
                         width: 16,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Delete treatment'),
+                    : Text(context.l10n.t('medical.deleteTreatment')),
               ),
             ]
           : [
               PrimaryButton(
-                label: 'Close',
+                label: context.l10n.t('common.close'),
                 onPressed: () => Navigator.of(context).pop(),
                 isLoading: _loading,
               ),
@@ -136,7 +136,7 @@ class TreatmentDetailBottomSheetState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Dosage',
+                context.l10n.t('medical.dosage'),
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -148,7 +148,7 @@ class TreatmentDetailBottomSheetState
                   Expanded(
                     child: AppTextField(
                       controller: _dosageController,
-                      label: 'Amount',
+                      label: context.l10n.t('medical.amount'),
                       readOnly: !widget.canEdit,
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
@@ -159,8 +159,12 @@ class TreatmentDetailBottomSheetState
                         ),
                       ],
                       validator: (v) {
-                        if (v == null || v.isEmpty) return 'Required';
-                        if (double.tryParse(v) == null) return 'Invalid number';
+                        if (v == null || v.isEmpty) {
+                          return context.l10n.t('common.required');
+                        }
+                        if (double.tryParse(v) == null) {
+                          return context.l10n.t('common.invalidNumber');
+                        }
                         return null;
                       },
                     ),
@@ -183,7 +187,7 @@ class TreatmentDetailBottomSheetState
               const SizedBox(height: 20),
 
               Text(
-                'Frequency',
+                context.l10n.t('medical.frequency'),
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -205,21 +209,21 @@ class TreatmentDetailBottomSheetState
               const SizedBox(height: 20),
 
               InfoRow(
-                label: 'Start date',
+                label: context.l10n.t('medical.startDate'),
                 value: _formatDate(widget.treatment.startDate),
               ),
               if (widget.treatment.endDate != null)
                 InfoRow(
-                  label: 'End date',
+                  label: context.l10n.t('medical.endDate'),
                   value: _formatDate(widget.treatment.endDate!),
                 ),
               InfoRow(
-                label: 'Last status update',
+                label: context.l10n.t('medical.lastStatusUpdate'),
                 value: _formatDate(widget.treatment.statusUpdatedAt),
               ),
               if (widget.treatment.statusLastUpdatedByName != null)
                 InfoRow(
-                  label: 'Status last updated by',
+                  label: context.l10n.t('medical.statusLastUpdatedBy'),
                   value: widget.treatment.statusLastUpdatedByName!,
                 ),
             ],

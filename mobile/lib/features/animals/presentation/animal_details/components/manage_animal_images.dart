@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:bastetshelter/features/animals/data/models/animal_image_model.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
@@ -46,14 +47,19 @@ class _ManageAnimalImagesScreenState
           widget.animalId,
           [pickedFile],
         );
-
-        NavigationService.instance.showSnackBar('Image added successfully!');
+        if (mounted) {
+          NavigationService.instance.showSnackBar(
+            context.l10n.t('animals.imageAdded'),
+          );
+        }
       }
     } catch (e) {
-      NavigationService.instance.showSnackBar(
-        'Error picking image',
-        isError: true,
-      );
+      if (mounted) {
+        NavigationService.instance.showSnackBar(
+          context.l10n.t('animals.pickImageError'),
+          isError: true,
+        );
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -62,11 +68,10 @@ class _ManageAnimalImagesScreenState
   Future<void> _deleteImage(AnimalImage image) async {
     final confirm = await ConfirmationDialog.show(
       context: context,
-      title: 'Delete Photo',
-      message:
-          'Are you sure you want to delete this photo? This cannot be undone.',
+      title: context.l10n.t('animals.deletePhoto'),
+      message: context.l10n.t('animals.deletePhotoMessage'),
       isDestructive: true,
-      confirmText: 'Delete',
+      confirmText: context.l10n.t('profile.delete'),
     );
 
     if (confirm != true) return;
@@ -78,12 +83,18 @@ class _ManageAnimalImagesScreenState
           .read(animalsProvider.notifier)
           .deleteAnimalImage(widget.animalId, image.id);
 
-      NavigationService.instance.showSnackBar('Image deleted');
+      if (mounted) {
+        NavigationService.instance.showSnackBar(
+          context.l10n.t('animals.imageDeleted'),
+        );
+      }
     } catch (e) {
-      NavigationService.instance.showSnackBar(
-        'Failed to delete image',
-        isError: true,
-      );
+      if (mounted) {
+        NavigationService.instance.showSnackBar(
+          context.l10n.t('animals.deleteImageFailed'),
+          isError: true,
+        );
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -96,8 +107,8 @@ class _ManageAnimalImagesScreenState
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const BastetAppBar(
-        customTitle: 'Manage Photos',
+      appBar: BastetAppBar(
+        customTitle: context.l10n.t('animals.managePhotos'),
         showBackButton: true,
         showLogout: false,
         showConfig: false,
@@ -106,8 +117,9 @@ class _ManageAnimalImagesScreenState
           ? const Center(child: CircularProgressIndicator())
           : animalDetailsAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) =>
-                  const Center(child: Text('Could not load images.')),
+              error: (e, _) => Center(
+                child: Text(context.l10n.t('animals.imagesLoadError')),
+              ),
               data: (animal) {
                 final currentImages = animal.images;
 
@@ -117,7 +129,7 @@ class _ManageAnimalImagesScreenState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Current Photos',
+                        context.l10n.t('animals.currentPhotos'),
                         style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
@@ -125,7 +137,9 @@ class _ManageAnimalImagesScreenState
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Add up to $_maxImages photos. Delete existing ones to make room.',
+                        context.l10n
+                            .t('animals.managePhotosSubtitle')
+                            .replaceAll('{count}', '$_maxImages'),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
                         ),
@@ -176,14 +190,14 @@ class _ManageAnimalImagesScreenState
             width: 2,
           ),
         ),
-        child: const Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_a_photo_rounded, color: AppColors.primary),
-            SizedBox(height: 4),
+            const Icon(Icons.add_a_photo_rounded, color: AppColors.primary),
+            const SizedBox(height: 4),
             Text(
-              'Add',
-              style: TextStyle(
+              context.l10n.t('common.add'),
+              style: const TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,

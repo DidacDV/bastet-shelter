@@ -3,6 +3,7 @@ import { IconPaw } from "@tabler/icons-react";
 import { AppColors } from "../../../theme/constants";
 import { type AnimalImageResponse } from "../data/animalsRepository";
 import { LAYOUT_CONSTANTS } from "../data/constants";
+import { useLocalization } from "../../../localization/localization";
 
 interface PhotoGridProps {
   images: AnimalImageResponse[];
@@ -15,6 +16,7 @@ export default function PhotoGrid({
   name,
   onImageClick,
 }: PhotoGridProps) {
+  const { t } = useLocalization();
   const sorted = [...images]
     .sort((a, b) => a.order - b.order)
     .slice(0, LAYOUT_CONSTANTS.PHOTO_GRID_MAX_IMAGES);
@@ -36,7 +38,7 @@ export default function PhotoGrid({
       >
         <IconPaw size={48} color={AppColors.outline} stroke={1.2} />
         <Text c="dimmed" size="sm">
-          No photos yet
+          {t("animals.noPhotosYet")}
         </Text>
       </div>
     );

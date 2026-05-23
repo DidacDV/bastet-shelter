@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
@@ -85,9 +86,13 @@ class _TaskFormBottomSheetState extends ConsumerState<TaskFormBottomSheet> {
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error saving task: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              context.l10n.t('tasks.saveError').replaceAll('{error}', '$e'),
+            ),
+          ),
+        );
         setState(() => _loading = false);
       }
     }
@@ -96,10 +101,14 @@ class _TaskFormBottomSheetState extends ConsumerState<TaskFormBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return FormBottomSheet(
-      title: _isEditing ? 'Edit Task' : 'New Task',
+      title: _isEditing
+          ? context.l10n.t('tasks.editTask')
+          : context.l10n.t('tasks.newTask'),
       actions: [
         PrimaryButton(
-          label: _isEditing ? 'Save Changes' : 'Create Task',
+          label: _isEditing
+              ? context.l10n.t('common.saveChanges')
+              : context.l10n.t('tasks.createTask'),
           isLoading: _loading,
           onPressed: _save,
         ),
@@ -112,14 +121,14 @@ class _TaskFormBottomSheetState extends ConsumerState<TaskFormBottomSheet> {
             children: [
               AppTextField(
                 controller: _titleController,
-                label: 'Task Title',
+                label: context.l10n.t('tasks.taskTitle'),
                 validator: (v) => Validators.validateRequired(v, 'title'),
                 textCapitalization: TextCapitalization.sentences,
               ),
               const SizedBox(height: 16),
               AppTextField(
                 controller: _descriptionController,
-                label: 'Description',
+                label: context.l10n.t('common.description'),
                 textInputAction: TextInputAction.newline,
                 keyboardType: TextInputType.multiline,
                 validator: (v) => Validators.validateRequired(v, 'description'),
@@ -128,7 +137,7 @@ class _TaskFormBottomSheetState extends ConsumerState<TaskFormBottomSheet> {
               const SizedBox(height: 16),
               AppTextField(
                 controller: _numPeopleController,
-                label: 'Persons needed',
+                label: context.l10n.t('tasks.personsNeeded'),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 validator: (v) => Validators.validatePositiveNumber(

@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/community/presentation/components/advertisement_card.dart';
 import 'package:bastetshelter/features/community/presentation/components/create_advertisement_bottomsheet.dart';
@@ -27,8 +28,8 @@ class _MyAdvertisementsScreenState
     final isManager = ref.watch(isManagerProvider);
 
     return Scaffold(
-      appBar: const BastetAppBar(
-        customTitle: 'My Shelter Ads',
+      appBar: BastetAppBar(
+        customTitle: context.l10n.t('community.myShelterAds'),
         showBackButton: true,
         showLogout: false,
         showConfig: false,
@@ -44,9 +45,9 @@ class _MyAdvertisementsScreenState
               foregroundColor: AppColors.surface,
               elevation: 2,
               icon: const Icon(Icons.add_rounded),
-              label: const Text(
-                'New Ad',
-                style: TextStyle(
+              label: Text(
+                context.l10n.t('community.newAd'),
+                style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.3,
                 ),
@@ -56,7 +57,13 @@ class _MyAdvertisementsScreenState
 
       body: myAdsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
+        error: (err, stack) => Center(
+          child: Text(
+            context.l10n
+                .t('common.errorWithMessage')
+                .replaceAll('{error}', '$err'),
+          ),
+        ),
         data: (ads) {
           final filteredAds = _showInactive
               ? ads
@@ -65,7 +72,7 @@ class _MyAdvertisementsScreenState
           return Column(
             children: [
               SwitchListTile(
-                title: const Text('Show inactive ads'),
+                title: Text(context.l10n.t('community.showInactiveAds')),
                 value: _showInactive,
                 onChanged: (val) {
                   setState(() {
@@ -79,8 +86,8 @@ class _MyAdvertisementsScreenState
                     ? Center(
                         child: Text(
                           _showInactive
-                              ? 'Your shelter has no advertisements.'
-                              : 'Your shelter has no active advertisements.',
+                              ? context.l10n.t('community.noShelterAds')
+                              : context.l10n.t('community.noActiveShelterAds'),
                         ),
                       )
                     : GridView.builder(

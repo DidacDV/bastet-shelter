@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
 import 'package:bastetshelter/features/home/presentation/home_screen.dart';
@@ -31,7 +32,11 @@ class _UploadAnimalImagesScreenState
     if (_selectedImages.length >= _maxImages) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('You can only select up to $_maxImages images.'),
+          content: Text(
+            context.l10n
+                .t('animals.maxImages')
+                .replaceAll('{count}', '$_maxImages'),
+          ),
         ),
       );
       return;
@@ -46,16 +51,24 @@ class _UploadAnimalImagesScreenState
           if (_selectedImages.length > _maxImages) {
             _selectedImages = _selectedImages.sublist(0, _maxImages);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Limited to $_maxImages images.')),
+              SnackBar(
+                content: Text(
+                  context.l10n
+                      .t('animals.limitedImages')
+                      .replaceAll('{count}', '$_maxImages'),
+                ),
+              ),
             );
           }
         });
       }
     } catch (e) {
-      NavigationService.instance.showSnackBar(
-        'Error picking images',
-        isError: true,
-      );
+      if (mounted) {
+        NavigationService.instance.showSnackBar(
+          context.l10n.t('animals.pickImagesError'),
+          isError: true,
+        );
+      }
     }
   }
 
@@ -75,7 +88,9 @@ class _UploadAnimalImagesScreenState
         .uploadAnimalImages(widget.animalId, _selectedImages);
 
     if (mounted) {
-      NavigationService.instance.showSnackBar('Images uploaded successfully!');
+      NavigationService.instance.showSnackBar(
+        context.l10n.t('animals.imagesUploaded'),
+      );
       Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => const HomeScreen(initialIndex: 1),
@@ -110,7 +125,7 @@ class _UploadAnimalImagesScreenState
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: const Text('Animal Photos'),
+          title: Text(context.l10n.t('animals.photosTitle')),
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
@@ -120,9 +135,9 @@ class _UploadAnimalImagesScreenState
           actions: [
             TextButton(
               onPressed: _skipOrFinish,
-              child: const Text(
-                'Skip',
-                style: TextStyle(
+              child: Text(
+                context.l10n.t('common.skip'),
+                style: const TextStyle(
                   color: AppColors.primary,
                   fontWeight: FontWeight.bold,
                 ),
@@ -140,7 +155,7 @@ class _UploadAnimalImagesScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Upload Photos',
+                      context.l10n.t('animals.uploadPhotosTitle'),
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
@@ -148,7 +163,9 @@ class _UploadAnimalImagesScreenState
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Add up to $_maxImages clear photos of the animal to help them get adopted faster.',
+                      context.l10n
+                          .t('animals.uploadPhotosSubtitle')
+                          .replaceAll('{count}', '$_maxImages'),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -184,7 +201,7 @@ class _UploadAnimalImagesScreenState
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: PrimaryButton(
-                label: 'Upload Images',
+                label: context.l10n.t('animals.uploadImages'),
                 isLoading: _isLoading,
                 onPressed: _selectedImages.isEmpty ? null : _uploadImages,
               ),
@@ -209,14 +226,14 @@ class _UploadAnimalImagesScreenState
             width: 2,
           ),
         ),
-        child: const Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_a_photo_rounded, color: AppColors.primary),
-            SizedBox(height: 4),
+            const Icon(Icons.add_a_photo_rounded, color: AppColors.primary),
+            const SizedBox(height: 4),
             Text(
-              'Add',
-              style: TextStyle(
+              context.l10n.t('common.add'),
+              style: const TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,

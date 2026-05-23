@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/first_steps/presentation/components/animated_option_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -51,7 +52,7 @@ class _RolePickerScreenState extends State<RolePickerScreen>
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text('Get Started')),
+      appBar: AppBar(title: Text(context.l10n.t('firstSteps.getStarted'))),
       body: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnim,
@@ -74,13 +75,13 @@ class _RolePickerScreenState extends State<RolePickerScreen>
                   ),
                   const SizedBox(height: 48),
                   Text(
-                    'What is your role?',
+                    context.l10n.t('firstSteps.roleQuestion'),
                     style: tt.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Choose how you want to help the shelter',
+                    context.l10n.t('firstSteps.roleSubtitle'),
                     style: tt.bodyMedium?.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -88,14 +89,14 @@ class _RolePickerScreenState extends State<RolePickerScreen>
                   ),
                   const SizedBox(height: 48),
                   AnimatedOptionCard(
-                    label: 'Volunteer',
+                    label: context.l10n.t('firstSteps.volunteer'),
                     icon: Icons.volunteer_activism,
                     onTap: () =>
                         Navigator.pushNamed(context, '/role/volunteer-code'),
                   ),
                   const SizedBox(height: 16),
                   AnimatedOptionCard(
-                    label: 'Manager',
+                    label: context.l10n.t('firstSteps.manager'),
                     icon: Icons.manage_accounts,
                     onTap: () =>
                         Navigator.pushNamed(context, '/role/manager-picker'),

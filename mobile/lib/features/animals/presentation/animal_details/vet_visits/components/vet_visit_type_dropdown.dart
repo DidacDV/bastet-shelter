@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 import 'package:bastetshelter/features/medicine/data/models/vet_visit_model.dart';
 import 'package:flutter/material.dart';
 
@@ -32,7 +33,12 @@ class _VetVisitTypeDropdownState extends State<VetVisitTypeDropdown> {
         initialSelection: _selected,
         menuHeight: 250,
         dropdownMenuEntries: VetVisitType.values
-            .map((t) => DropdownMenuEntry(value: t, label: t.label))
+            .map(
+              (t) => DropdownMenuEntry(
+                value: t,
+                label: context.localizedVetVisitType(t),
+              ),
+            )
             .toList(),
         onSelected: (VetVisitType? newValue) {
           setState(() => _selected = newValue ?? _selected);

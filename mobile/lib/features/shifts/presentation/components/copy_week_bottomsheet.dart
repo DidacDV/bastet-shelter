@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/bottom_sheet/form_bottom_sheet.dart';
 import 'package:bastetshelter/features/common/components/fields/date_chip.dart';
 import 'package:bastetshelter/features/common/components/fields/week_picker_chip.dart';
@@ -53,9 +54,15 @@ class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              context.l10n
+                  .t('common.errorWithMessage')
+                  .replaceAll('{error}', '$e'),
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -68,10 +75,10 @@ class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
     const double arrowAreaWidth = 24 + 12 * 2;
 
     return FormBottomSheet(
-      title: 'Copy Previous Shifts',
+      title: context.l10n.t('shifts.copyPreviousShifts'),
       actions: [
         PrimaryButton(
-          label: 'Copy Shifts',
+          label: context.l10n.t('shifts.copyShifts'),
           isLoading: _loading,
           onPressed: _submit,
         ),
@@ -95,7 +102,7 @@ class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Select a past week to duplicate. Time slots and max participants will be copied.',
+                  context.l10n.t('shifts.copyWeekHelp'),
                   style: tt.bodySmall?.copyWith(color: AppColors.textPrimary),
                 ),
               ),
@@ -106,9 +113,19 @@ class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
 
         Row(
           children: [
-            Expanded(child: Text('From (Source)', style: tt.labelLarge)),
+            Expanded(
+              child: Text(
+                context.l10n.t('shifts.fromSource'),
+                style: tt.labelLarge,
+              ),
+            ),
             const SizedBox(width: arrowAreaWidth),
-            Expanded(child: Text('To (Target)', style: tt.labelLarge)),
+            Expanded(
+              child: Text(
+                context.l10n.t('shifts.toTarget'),
+                style: tt.labelLarge,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -118,7 +135,7 @@ class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
           children: [
             Expanded(
               child: WeekPickerChip(
-                label: 'Week',
+                label: context.l10n.t('shifts.week'),
                 date: _sourceWeekStart,
                 onWeekSelected: (newDate) {
                   setState(() => _sourceWeekStart = newDate);
@@ -136,7 +153,7 @@ class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
 
             Expanded(
               child: DateChip(
-                label: 'Week',
+                label: context.l10n.t('shifts.week'),
                 date: widget.targetWeekStart,
                 backgroundColor: AppColors.surface,
                 canEdit: false,
@@ -160,11 +177,11 @@ class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
             value: _copyTasks,
             activeColor: AppColors.primary,
             title: Text(
-              'Include Tasks',
+              context.l10n.t('shifts.includeTasks'),
               style: tt.titleSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
-              'Template tasks attached to the source shifts will be brought over (assigned uncompleted).',
+              context.l10n.t('shifts.includeTasksSubtitle'),
               style: tt.bodySmall?.copyWith(color: AppColors.textSecondary),
             ),
             onChanged: (val) {
@@ -190,11 +207,11 @@ class _CopyWeekBottomSheetState extends ConsumerState<CopyWeekBottomSheet> {
             value: _skipDaysWithShifts,
             activeColor: AppColors.primary,
             title: Text(
-              'Skip days with shifts',
+              context.l10n.t('shifts.skipDaysWithShifts'),
               style: tt.titleSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
-              'Days from the target week that have shifts wont have any shifts added to them',
+              context.l10n.t('shifts.skipDaysWithShiftsSubtitle'),
               style: tt.bodySmall?.copyWith(color: AppColors.textSecondary),
             ),
             onChanged: (val) {

@@ -2,8 +2,11 @@ import { Text } from "@mantine/core";
 import type { FormStep } from "../data/adoptionTypes";
 import { AppColors } from "../../../theme/constants";
 import StepCardBase from "./StepCardBase";
+import { useLocalization } from "../../../localization/localization";
 
 export default function FormStepView({ step }: { step: FormStep }) {
+  const { t } = useLocalization();
+
   return (
     <StepCardBase
       type={step.type}
@@ -13,8 +16,7 @@ export default function FormStepView({ step }: { step: FormStep }) {
       finish_date={step.finish_date}
     >
       <Text size="sm" style={{ color: AppColors.textSecondary }}>
-        Your adoption form has been submitted and is being reviewed by the
-        shelter. You will be notified once a decision has been made.
+        {t("adoption.formStepMessage")}
       </Text>
     </StepCardBase>
   );

@@ -5,12 +5,14 @@ import { AppColors } from "../../../theme/constants";
 import { Link } from "react-router-dom";
 import catPlaceholder from "../../../assets/images/Illustration-8.svg";
 import dogPlaceholder from "../../../assets/images/Illustration-1.svg";
+import { useLocalization } from "../../../localization/localization";
 
 export default function AnimalCard({
   animal,
 }: {
   animal: AnimalPublicShortInfo;
 }) {
+  const { t } = useLocalization();
   const fallbackImg =
     animal.animal_type === "CAT" ? catPlaceholder : dogPlaceholder;
   const isPlaceholder = !animal.image_url;
@@ -37,7 +39,7 @@ export default function AnimalCard({
                 h={220}
                 w="auto"
                 fit="contain"
-                alt="No photo available"
+                alt={t("animals.noPhotoAvailable")}
                 className="transition-transform duration-500 ease-out group-hover:scale-110"
               />
             </Center>
@@ -69,10 +71,10 @@ export default function AnimalCard({
             </Text>
             <Badge variant="light" color="primary">
               {animal.age === 0
-                ? "< 1 year"
+                ? t("animals.lessThanOneYear")
                 : animal.age === 1
-                  ? "1 year"
-                  : `${animal.age} years`}
+                  ? t("animals.oneYear")
+                  : t("animals.years", { count: animal.age })}
             </Badge>
           </Group>
 

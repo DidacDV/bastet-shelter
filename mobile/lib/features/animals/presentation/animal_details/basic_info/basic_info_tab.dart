@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/components/animal_traits_display.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/components/edit_traits_bottomsheet.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
@@ -36,12 +37,12 @@ class BasicInfoTab extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           EditableField(
-            label: "Breed",
+            label: context.l10n.t('animals.breed'),
             value: animal.breed,
             canEdit: isManager,
             onEdit: () => showEditBottomSheet(
               context: context,
-              label: "Breed",
+              label: context.l10n.t('animals.breed'),
               initialValue: animal.breed,
               onSave: (newValue) async {
                 await ref
@@ -58,12 +59,12 @@ class BasicInfoTab extends ConsumerWidget {
           ),
 
           EditableField(
-            label: "Description",
+            label: context.l10n.t('common.description'),
             value: animal.description,
             canEdit: isManager,
             onEdit: () => showEditBottomSheet(
               context: context,
-              label: "Description",
+              label: context.l10n.t('common.description'),
               initialValue: animal.description,
               keyboardType: TextInputType.multiline,
               onSave: (newValue) async {
@@ -99,7 +100,7 @@ class BasicInfoTab extends ConsumerWidget {
             child: Divider(height: 1),
           ),
           Text(
-            'REFUGE',
+            context.l10n.t('common.refuge').toUpperCase(),
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: AppColors.textSecondary,
               letterSpacing: 0.5,
@@ -132,11 +133,12 @@ class BasicInfoTab extends ConsumerWidget {
                 onPressed: () async {
                   final confirm = await ConfirmationDialog.show(
                     context: context,
-                    title: 'Delete Animal',
-                    message:
-                        'Are you sure you want to delete the record for "${animal.name}"? This action cannot be undone.',
+                    title: context.l10n.t('animals.deleteAnimal'),
+                    message: context.l10n
+                        .t('animals.deleteAnimalMessage')
+                        .replaceAll('{animal}', animal.name),
                     isDestructive: true,
-                    confirmText: 'Delete',
+                    confirmText: context.l10n.t('profile.delete'),
                   );
                   if (confirm == true) {
                     await ref
@@ -156,9 +158,9 @@ class BasicInfoTab extends ConsumerWidget {
                   ),
                 ),
                 icon: const Icon(Icons.delete_forever),
-                label: const Text(
-                  'Delete Animal Record',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                label: Text(
+                  context.l10n.t('animals.deleteAnimalRecord'),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ),

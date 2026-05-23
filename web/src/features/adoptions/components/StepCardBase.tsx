@@ -2,27 +2,17 @@ import { Card, Group, Text, Badge, Stack, Divider, Alert } from "@mantine/core";
 import { IconAlertCircle, IconNotes } from "@tabler/icons-react";
 import type { StepStatus, StepType } from "../data/adoptionTypes";
 import { AppColors } from "../../../theme/constants";
-
-const STEP_LABELS: Record<StepType, string> = {
-  FORM: "Adoption Form",
-  INTERVIEW: "Interview",
-  SHELTER_VISIT: "Shelter Visit",
-  CONTRACT: "Contract",
-  ANIMAL_PICKUP: "Animal Pickup",
-};
+import { useLocalization } from "../../../localization/localization";
+import {
+  stepStatusKey,
+  stepTypeKey,
+} from "../../../localization/localizedMappers";
 
 const STATUS_COLORS: Record<StepStatus, string> = {
   PENDING: "yellow",
   IN_PROGRESS: "blue",
   COMPLETED: "green",
   REJECTED: "red",
-};
-
-const STATUS_LABELS: Record<StepStatus, string> = {
-  PENDING: "Pending",
-  IN_PROGRESS: "In Progress",
-  COMPLETED: "Completed",
-  REJECTED: "Rejected",
 };
 
 interface StepCardBaseProps {
@@ -42,6 +32,8 @@ export default function StepCardBase({
   finish_date,
   children,
 }: StepCardBaseProps) {
+  const { locale, t } = useLocalization();
+
   return (
     <Card
       radius="md"
@@ -51,20 +43,21 @@ export default function StepCardBase({
       <Stack gap="md">
         <Group justify="space-between" align="center">
           <Text fw={700} size="lg" style={{ color: AppColors.textDark }}>
-            {STEP_LABELS[type]}
+            {t(stepTypeKey(type))}
           </Text>
           <Badge variant="light" color={STATUS_COLORS[status]} size="md">
-            {STATUS_LABELS[status]}
+            {t(stepStatusKey(status))}
           </Badge>
         </Group>
 
         {finish_date && (
           <Text size="sm" style={{ color: AppColors.textSecondary }}>
-            Completed on{" "}
-            {new Date(finish_date).toLocaleDateString(undefined, {
+            {t("adoption.completedOn", {
+              date: new Date(finish_date).toLocaleDateString(locale, {
               year: "numeric",
               month: "long",
               day: "numeric",
+              }),
             })}
           </Text>
         )}
@@ -81,7 +74,7 @@ export default function StepCardBase({
             icon={<IconAlertCircle size={16} />}
             color="red"
             variant="light"
-            title="Rejection reason"
+            title={t("adoption.rejectionReason")}
           >
             {rejection_reason}
           </Alert>

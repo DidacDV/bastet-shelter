@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class ApiErrorWidget extends StatelessWidget {
@@ -35,7 +36,7 @@ class ApiErrorWidget extends StatelessWidget {
             FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Try Again'),
+              label: Text(context.l10n.t('common.tryAgain')),
             ),
           ],
         ),

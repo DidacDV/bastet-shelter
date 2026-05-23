@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
@@ -36,10 +37,12 @@ class _RejectAdoptionBottomSheetState extends State<RejectAdoptionBottomSheet> {
       await widget.onReject(_reasonController.text.trim());
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
-      NavigationService.instance.showSnackBar(
-        'An error occurred while rejecting the adoption process.',
-        isError: true,
-      );
+      if (mounted) {
+        NavigationService.instance.showSnackBar(
+          context.l10n.t('adoption.rejectError'),
+          isError: true,
+        );
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -48,18 +51,18 @@ class _RejectAdoptionBottomSheetState extends State<RejectAdoptionBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return FormBottomSheet(
-      title: 'Reject Adoption',
+      title: context.l10n.t('adoption.rejectTitle'),
       leading: const Icon(Icons.warning_amber_rounded, color: AppColors.error),
       actions: [
         PrimaryButton(
-          label: 'Confirm Rejection & Notify',
+          label: context.l10n.t('adoption.confirmReject'),
           isLoading: _loading,
           onPressed: _submit,
         ),
       ],
       children: [
         Text(
-          'This will cancel the adoption process and notify the adoptant. This action cannot be undone.',
+          context.l10n.t('adoption.rejectWarning'),
           style: Theme.of(
             context,
           ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
@@ -69,7 +72,7 @@ class _RejectAdoptionBottomSheetState extends State<RejectAdoptionBottomSheet> {
           key: _formKey,
           child: AppTextField(
             controller: _reasonController,
-            label: 'Reason for rejection',
+            label: context.l10n.t('adoption.rejectionReason'),
             validator: (value) =>
                 Validators.validateRequired(value?.trim(), "reason"),
           ),

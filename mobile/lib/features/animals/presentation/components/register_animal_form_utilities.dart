@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/animals/data/animal_type_enum.dart';
 import 'package:flutter/material.dart';
 
@@ -73,7 +74,11 @@ class AnimalTypeSelector extends StatelessWidget {
                     width: isSelected ? 2 : 1.5,
                   ),
                 ),
-                child: Text(type.label),
+                child: Text(
+                  type == AnimalTypeEnum.cat
+                      ? context.l10n.t('animals.typeCat')
+                      : context.l10n.t('animals.typeDog'),
+                ),
               ),
             ),
           ),
@@ -106,7 +111,7 @@ class InAdoptionToggle extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              'Available for adoption',
+              context.l10n.t('animals.availableForAdoptionShort'),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),

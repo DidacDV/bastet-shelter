@@ -4,8 +4,10 @@ import { Link } from "react-router-dom";
 import { adoptionsRepository } from "./data/adoptionRepository";
 import type { AdoptionProcessShort } from "./data/adoptionTypes";
 import AdoptionCard from "./components/AdoptionCard";
+import { useLocalization } from "../../localization/localization";
 
 export default function AdoptionPage() {
+  const { t } = useLocalization();
   const [adoptions, setAdoptions] = useState<AdoptionProcessShort[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +23,7 @@ export default function AdoptionPage() {
         setAdoptions(adoptionsList);
       } catch (err) {
         console.error(err);
-        setError("Failed to load your adoptions. Please try again later.");
+        setError(t("adoption.loadMineError"));
       } finally {
         setLoading(false);
       }
@@ -42,7 +44,7 @@ export default function AdoptionPage() {
     return (
       <div className="max-w-5xl mx-auto py-8 px-4">
         <Title order={2} className="text-text-dark mb-1">
-          My Adoptions
+          {t("header.myAdoptions")}
         </Title>
         <Card className="bg-error/10 border-error/20 p-6 text-center mt-6">
           <Text className="text-error font-medium">{error}</Text>
@@ -62,10 +64,10 @@ export default function AdoptionPage() {
         }}
       >
         <Text size="lg" className="text-text-secondary">
-          You don't have any active adoption processes yet.
+          {t("adoption.emptyMine")}
         </Text>
         <Button component={Link} to="/animals" color="primary" size="md">
-          Find a Pet to Adopt
+          {t("adoption.findPetToAdopt")}
         </Button>
       </Center>
     );
@@ -74,10 +76,10 @@ export default function AdoptionPage() {
   return (
     <div className="max-w-5xl mx-auto py-8 px-4">
       <Title mb={8} order={2} className="text-text-dark">
-        My Adoptions
+        {t("header.myAdoptions")}
       </Title>
       <Text mb={16} className="text-text-secondary">
-        Click on an adoption card to view details and track your process
+        {t("adoption.mineSubtitle")}
       </Text>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

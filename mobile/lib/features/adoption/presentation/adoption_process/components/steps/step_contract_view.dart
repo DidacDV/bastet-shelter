@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/contract_step_details.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_common_info.dart';
 import 'package:bastetshelter/features/common/pdf_viewer.dart';
@@ -34,7 +35,10 @@ class ContractStepView extends ConsumerWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => PdfViewerScreen(url: url, title: 'Contract'),
+        builder: (_) => PdfViewerScreen(
+          url: url,
+          title: context.l10n.t('adoption.contract'),
+        ),
       ),
     );
   }
@@ -70,9 +74,12 @@ class ContractStepView extends ConsumerWidget {
                       ? () => _viewPdf(context, step.contractUrl!)
                       : null,
                   icon: const Icon(Icons.picture_as_pdf, size: 20),
-                  label: const FittedBox(
+                  label: FittedBox(
                     fit: BoxFit.scaleDown,
-                    child: Text('View PDF', maxLines: 1),
+                    child: Text(
+                      context.l10n.t('adoption.viewPdf'),
+                      maxLines: 1,
+                    ),
                   ),
                 ),
               ),
@@ -89,21 +96,24 @@ class ContractStepView extends ConsumerWidget {
                       ? () => _downloadPdf(step.contractUrl!)
                       : null,
                   icon: const Icon(Icons.download, size: 20),
-                  label: const FittedBox(
+                  label: FittedBox(
                     fit: BoxFit.scaleDown,
-                    child: Text('Download', maxLines: 1),
+                    child: Text(
+                      context.l10n.t('adoption.download'),
+                      maxLines: 1,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
           if (!hasContract)
-            const Padding(
-              padding: EdgeInsets.only(top: 8.0),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
               child: Text(
-                'Contract document has not been generated yet.',
+                context.l10n.t('adoption.contractNotGenerated'),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ),
 
@@ -118,7 +128,7 @@ class ContractStepView extends ConsumerWidget {
             child: Column(
               children: [
                 CheckboxListTile(
-                  title: const Text('Signed by Shelter'),
+                  title: Text(context.l10n.t('adoption.signedByShelter')),
                   value: step.signedByShelter ?? false,
                   onChanged: (bool? value) {
                     ref
@@ -128,7 +138,7 @@ class ContractStepView extends ConsumerWidget {
                 ),
                 const Divider(height: 1),
                 CheckboxListTile(
-                  title: const Text('Signed by Adoptant'),
+                  title: Text(context.l10n.t('adoption.signedByAdoptant')),
                   value: step.signedByAdoptant ?? false,
                   onChanged: (bool? value) {
                     isManager

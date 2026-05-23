@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class RejectionBanner extends StatelessWidget {
@@ -20,7 +21,7 @@ class RejectionBanner extends StatelessWidget {
         text: TextSpan(
           children: [
             TextSpan(
-              text: 'This adoption process was rejected with the next reason: ',
+              text: context.l10n.t('adoption.rejectedReasonPrefix'),
               style: tt.bodyMedium?.copyWith(
                 color: AppColors.error,
                 fontWeight: FontWeight.w700,

@@ -5,9 +5,11 @@ import { IconMapPin, IconArrowRight } from "@tabler/icons-react";
 import { AppColors } from "../../theme/constants";
 import HeroSection from "./components/HeroSection";
 import ProvinceSelect from "./components/ProvinceSelect";
+import { useLocalization } from "../../localization/localization";
 
 export default function LocationPage() {
   const navigate = useNavigate();
+  const { t } = useLocalization();
   const [selected, setSelected] = useState<string | null>(null);
 
   const handleContinue = () => {
@@ -44,17 +46,17 @@ export default function LocationPage() {
                 order={3}
                 style={{ color: AppColors.textDark, fontSize: "1.2rem" }}
               >
-                Where are you located?
+                {t("location.title")}
               </Title>
             </Group>
             <Text size="sm" c="dimmed" ml={28}>
-              Select your province to see animals from nearby shelters.
+              {t("location.subtitle")}
             </Text>
           </Stack>
 
           <Stack gap="md">
             <ProvinceSelect
-              placeholder="Select a province..."
+              placeholder={t("location.selectProvince")}
               value={selected}
               onChange={setSelected}
               size="md"
@@ -73,7 +75,7 @@ export default function LocationPage() {
               rightSection={<IconArrowRight size={16} />}
               onClick={handleContinue}
             >
-              See available animals
+              {t("location.seeAvailableAnimals")}
             </Button>
           </Stack>
         </Box>

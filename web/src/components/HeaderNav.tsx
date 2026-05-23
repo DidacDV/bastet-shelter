@@ -1,8 +1,9 @@
-import { Group, Box, UnstyledButton, Title } from "@mantine/core";
+import { Group, Box, UnstyledButton, Title, Select } from "@mantine/core";
 import { Link, useLocation } from "react-router-dom";
 import { AppColors } from "../theme/constants";
 import logo from "../assets/images/logo.png";
 import { useAuth } from "../context/authContext";
+import { supportedLocales, useLocalization } from "../localization/localization";
 
 const ArrowIcon = () => (
   <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -19,6 +20,7 @@ const ArrowIcon = () => (
 export default function HeaderNav() {
   const location = useLocation();
   const { isLoggedIn, logout } = useAuth();
+  const { locale, setLocale, t } = useLocalization();
 
   const NavItem = ({ to, label }: { to: string; label: string }) => {
     const isActive = location.pathname === to;
@@ -57,7 +59,7 @@ export default function HeaderNav() {
       >
         <img
           src={logo}
-          alt="BastetShelter logo"
+          alt={t("header.logoAlt")}
           style={{ height: 54, width: "auto", display: "block" }}
         />
         <Title
@@ -82,36 +84,56 @@ export default function HeaderNav() {
           transform: "translateX(-50%)",
         }}
       >
-        <NavItem to="/animals" label="Find a Pet" />
-        {isLoggedIn && <NavItem to="/adoptions" label="My Adoptions" />}
+        <NavItem to="/animals" label={t("header.findPet")} />
+        {isLoggedIn && (
+          <NavItem to="/adoptions" label={t("header.myAdoptions")} />
+        )}
       </Group>
 
-      {!isLoggedIn ? (
-        <UnstyledButton
-          component={Link}
-          to="/login"
-          className="
-            flex items-center gap-1.5 text-[13px] font-medium tracking-wider
-            text-primary bg-transparent border-[1.5px] border-primary rounded-sm
-            px-[18px] py-[7px] transition-all duration-200
-            hover:bg-primary hover:text-white
-          "
-        >
-          Log In <ArrowIcon />
-        </UnstyledButton>
-      ) : (
-        <UnstyledButton
-          onClick={logout}
-          className="
-            flex items-center gap-1.5 text-[13px] font-medium tracking-wider
-            text-error bg-transparent border-[1.5px] border-error rounded-sm
-            px-[18px] py-[7px] transition-all duration-200
-            hover:bg-error hover:text-white
-          "
-        >
-          Log Out
-        </UnstyledButton>
-      )}
+      <Group gap="sm">
+        <Select
+          aria-label={t("profile.language")}
+          value={locale}
+          data={supportedLocales.map((item) => ({
+            value: item.code,
+            label: t(item.labelKey),
+          }))}
+          onChange={(value) => {
+            if (value === "en" || value === "ca" || value === "es") {
+              setLocale(value);
+            }
+          }}
+          allowDeselect={false}
+          w={110}
+        />
+
+        {!isLoggedIn ? (
+          <UnstyledButton
+            component={Link}
+            to="/login"
+            className="
+              flex items-center gap-1.5 text-[13px] font-medium tracking-wider
+              text-primary bg-transparent border-[1.5px] border-primary rounded-sm
+              px-[18px] py-[7px] transition-all duration-200
+              hover:bg-primary hover:text-white
+            "
+          >
+            {t("header.logIn")} <ArrowIcon />
+          </UnstyledButton>
+        ) : (
+          <UnstyledButton
+            onClick={logout}
+            className="
+              flex items-center gap-1.5 text-[13px] font-medium tracking-wider
+              text-error bg-transparent border-[1.5px] border-error rounded-sm
+              px-[18px] py-[7px] transition-all duration-200
+              hover:bg-error hover:text-white
+            "
+          >
+            {t("header.logOut")}
+          </UnstyledButton>
+        )}
+      </Group>
     </Box>
   );
 }

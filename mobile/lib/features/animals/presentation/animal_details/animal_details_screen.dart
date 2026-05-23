@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/adoption/adoption_tab.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/basic_info_tab.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/components/animal_details_header.dart';
@@ -25,12 +26,13 @@ class AnimalDetailsScreen extends ConsumerWidget {
     return detailAsync.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, _) =>
-          const Scaffold(body: Center(child: Text('Could not load animal.'))),
+      error: (e, _) => Scaffold(
+        body: Center(child: Text(context.l10n.t('animals.detailLoadError'))),
+      ),
       data: (animalDetails) => Scaffold(
         backgroundColor: AppColors.background,
-        appBar: const BastetAppBar(
-          customTitle: 'Animal Details',
+        appBar: BastetAppBar(
+          customTitle: context.l10n.t('animals.detailsTitle'),
           showBackButton: true,
           showLogout: false,
         ),
@@ -58,12 +60,27 @@ class AnimalDetailsScreen extends ConsumerWidget {
               imageUrls: animalDetails.images.map((img) => img.url).toList(),
             ),
           ),
-          tabs: const [
-            Tab(icon: Icon(Icons.info_outline), text: "Basic"),
-            Tab(icon: Icon(Icons.pets_rounded), text: "Vet"),
-            Tab(icon: Icon(Icons.medical_information), text: "Medical"),
-            Tab(icon: Icon(Icons.task_alt), text: "Tasks"),
-            Tab(icon: Icon(Icons.home_outlined), text: "Adopt"),
+          tabs: [
+            Tab(
+              icon: const Icon(Icons.info_outline),
+              text: context.l10n.t('animals.tabBasic'),
+            ),
+            Tab(
+              icon: const Icon(Icons.pets_rounded),
+              text: context.l10n.t('animals.tabVet'),
+            ),
+            Tab(
+              icon: const Icon(Icons.medical_information),
+              text: context.l10n.t('animals.tabMedical'),
+            ),
+            Tab(
+              icon: const Icon(Icons.task_alt),
+              text: context.l10n.t('navigation.tasks'),
+            ),
+            Tab(
+              icon: const Icon(Icons.home_outlined),
+              text: context.l10n.t('animals.tabAdopt'),
+            ),
           ],
           tabViews: [
             BasicInfoTab(animalId: animalId, isManager: isManager),

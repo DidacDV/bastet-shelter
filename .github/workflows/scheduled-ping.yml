@@ -1,0 +1,22 @@
+name: Scheduled URL Ping
+
+on:
+  schedule:
+    #runs every 30 minutes
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Target URL
+        env:
+          TARGET_URL: ${{ secrets.BASTET_SERVER_URL }}
+        run: |
+          if [ -z "$TARGET_URL" ]; then
+            echo "Error: URL secret is empty or not set."
+            exit 1
+          fi
+          echo "Pinging URL..."
+          curl -fsS --max-time 30 -I "$TARGET_URL" | head -n 1

@@ -1883,12 +1883,14 @@ React Native & Basat en JavaScript/React, un ecosistema amb una corba d'aprenent
 \subsubsection{Portal web}
 Per al portal web, s'ha escollit React principalment per l'experiència prèvia de l'autor amb aquesta llibreria, cosa que ha permès un desenvolupament àgil i eficient dins del temps limitat del projecte i per això no s'han avaluat altres alternatives.
 \subsection{Desplegament}
-El servidor backend i la base de dades estan ambdos desplegats a Render \cite{todo:citerender?}. Render ofereix un servei gratuït, 
+El servidor backend i la base de dades estan ambdos desplegats a Render \cite{todo:citerender?}. Render ofereix un servei gratuït que permet gestionar la càrrega que es porta a terme durant les proves del desenvolupament. En un futur, es pot actualitzar el nivell i passar a un de pagament per més rendiment, disponibilitat i capacitat d'emmagatzematge, escalant de manera vertical.
+Al tenir aquests dos serveis en una mateixa plataforma, fa que la seva configuració i integració, sobretot en la direcció de backend cap a base de dades, que en estar a la mateixa plataforma, la connexió és interna, i per tant més ràpida i sobretot segura, ja que no s'exposa la base de dades a internet.
+
+%TODO explicar uptime robot per mantenir la web desperta
 
 Pel que fa al desplegament de l'aplicació mòbil, aquesta no es troba publicada a cap mercat d'aplicacions com Google Play Store o App Store. En el seu lloc, es distribueix localment mitjançant la generació d'un fitxer \texttt{.apk} que es pot instal·lar directament al dispositiu Android, fet que simplifica el procés de distribució durant el desenvolupament i les proves del projecte.
-\newpage
 
-\section{Desplegament}
+%TODO explicar netlifly
 \newpage
 \section{Control de qualitat}
 

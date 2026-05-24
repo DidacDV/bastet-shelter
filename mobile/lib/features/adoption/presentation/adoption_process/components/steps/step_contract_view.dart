@@ -6,6 +6,7 @@ import 'package:bastetshelter/providers/adoption/adoption_detail_provider.dart';
 import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContractStepView extends ConsumerWidget {
   const ContractStepView({
@@ -17,18 +18,16 @@ class ContractStepView extends ConsumerWidget {
   final ContractStepDetails step;
   final int processId;
 
-  //TODO: ON EMULTARO, IT CRASHES, TEST P
   Future<void> _downloadPdf(String rawUrl) async {
-    //final parts = rawUrl.split('/upload/');
-    //final downloadUrl = '${parts[0]}/upload/fl_attachment/${parts[1]}';
-    //final uri = Uri.parse(downloadUrl);
+    final parts = rawUrl.split('/upload/');
+    final downloadUrl = '${parts[0]}/upload/fl_attachment/${parts[1]}';
+    final uri = Uri.parse(downloadUrl);
 
-    //if (!await canLaunchUrl(uri)) {
-    //debugPrint('Cannot launch URL: $uri');
-    //return;
-    //}
-
-    //  await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+    if (!await canLaunchUrl(uri)) {
+      debugPrint('Cannot launch URL: $uri');
+      return;
+    }
+    await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
   }
 
   void _viewPdf(BuildContext context, String url) {

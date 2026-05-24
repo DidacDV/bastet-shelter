@@ -1819,10 +1819,72 @@ Ja que el sistema està inicialment pensat per a un àmbit nacional, la localitz
 
 \subsection{Anàlisis d'alternatives}
 perque no s'ha triat una altra tecnologia per al backend
-perque no django
-perque no una altra plataforma que no sigui cloudinary
-perque flutter i no kotlin
+\subsubsection{Backend}
+A l'hora de dissenyar un sistema robust, escalable i mantenible, s'han avaluat diverses alternatives tant pel que fa al llenguatge de programació com al framework utilitzat.
+
+Començant pèl propi llenguatge de programació, tot i ser només una eina intermitja entre el desenvolupador i el sistema, és important escollir un llenguatge que s'adapti a les necessitats del projecte i permeti l'ús d'un framework adequat.
+Les principals alternatives a Python eren C\# i Java, degut a l'experiència prèvia amb aquests llenguatges de l'autor. C\# és tracta d'un llenguatge potent i que rep actualitzacions constants, però el seu ecosistema i catàleg de llibreries per a backends webs és més limitat. Per altra banda, Java implica haver d'escriure més codi per a realitzar les mateixes funcionalitats, a més d'estar lligat a un desplegament més complex.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|p{5cm}|p{5cm}|}
+\hline
+\textbf{Alternativa} & \textbf{Avantatges} & \textbf{Inconvenients} \\
+\hline
+Python & Alta llegibilitat, àmplia comunitat i un ecosistema de llibreries molt extens. & Rendiment base inferior en comparació amb llenguatges compilats purs. \\
+\hline
+C\# & Llenguatge molt potent i amb actualitzacions constants. & Ecosistema i catàleg de llibreries per a backends web més limitats. \\
+\hline
+Java & Ecosistema molt madur i preparat per a oferir un alt rendiment. & Requereix escriure més codi per a les mateixes funcionalitats i implica un desplegament complex. \\
+\hline
+\end{tabular}
+\caption{Comparativa de llenguatges de programació per al backend}
+\label{tab:backend_lang}
+\end{table}
+
+Pel que fa als frameworks de Python, les alternatives principals eren Django i Flask. Django es tracta d'un framework orientat al desenvolupament més aviat tradicional a través de plantilles que et permeten crear vistes, és a dir més funcionalitats de les que el sistema necessita, a més d'estar orientat a un desenvolupament monolític, on el backend i el frontend estan molt lligats. Flask, tot i ser minimalista i flexible, requereix configurar manualment algunes funcionalitats que FastAPI ofereix per defecte, com la validació de dades o la documentació automàtica.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|p{5cm}|p{5cm}|}
+\hline
+\textbf{Alternativa} & \textbf{Avantatges} & \textbf{Inconvenients} \\
+\hline
+FastAPI & Generació automàtica de documentació, validació nativa de dades i alt rendiment asíncron. & Comunitat més jove en comparació amb els frameworks tradicionals. \\
+\hline
+Django & Molt complet i robust, ideal per a projectes que requereixen una solució tot en un. & Orientat a un desenvolupament monolític on el backend i el frontend estan molt lligats; inclou més funcionalitats de les necessàries. \\
+\hline
+Flask & Framework minimalista, molt lleuger i altament flexible. & Requereix configurar manualment característiques essencials com la validació de dades o la documentació. \\
+\hline
+\end{tabular}
+\caption{Comparativa de frameworks de Python per al backend}
+\label{tab:backend_frameworks}
+\end{table}
+
+\subsubsection{Aplicació mòbil}
+La principal alternativa a Flutter per desenvolupar una aplicació multiplataforma és React Native \cite{todo:reactnative}. Tot i que segueix el mateix concepte de generar aplicacions per a diverses plataformes a partir d'un únic codi base, assolir els mateixos resultats que Flutter tendeix a requerir més llibreries de tercers i una configuració més complexa. Flutter, en canvi, ofereix un conjunt d'eines i components oficials més complet, i s'integra de forma nativa amb Android Studio, que com ja s'ha mencionat abans, proporciona eines molt completes.
+Finalment, cal mencionar que l'autor disposa d'experiència prèvia negativa amb React Native en altres projectes, cosa que ha reforçat la decisió d'escollir Flutter.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|p{5cm}|p{5cm}|}
+\hline
+\textbf{Alternativa} & \textbf{Avantatges} & \textbf{Inconvenients} \\
+\hline
+Flutter & Conjunt complet de components oficials, integració nativa amb Android Studio i alt rendiment. & Utilitza Dart, un llenguatge menys estès fora d'aquest ecosistema. \\
+\hline
+React Native & Basat en JavaScript/React, un ecosistema amb una corba d'aprenentatge suau si es té experiència web. & Requereix una configuració més complexa i una dependència elevada de llibreries de tercers. E xperiència prèvia negativa de l'autor. \\
+\hline
+\end{tabular}
+\caption{Comparativa de tecnologies per al desenvolupament de l'aplicació mòbil}
+\label{tab:mobile_frameworks}
+\end{table}
+
+\subsubsection{Portal web}
+Per al portal web, s'ha escollit React principalment per l'experiència prèvia de l'autor amb aquesta llibreria, cosa que ha permès un desenvolupament àgil i eficient dins del temps limitat del projecte i per això no s'han avaluat altres alternatives.
 \subsection{Desplegament}
+El servidor backend i la base de dades estan ambdos desplegats a Render \cite{todo:citerender?}. Render ofereix un servei gratuït, 
+
 Pel que fa al desplegament de l'aplicació mòbil, aquesta no es troba publicada a cap mercat d'aplicacions com Google Play Store o App Store. En el seu lloc, es distribueix localment mitjançant la generació d'un fitxer \texttt{.apk} que es pot instal·lar directament al dispositiu Android, fet que simplifica el procés de distribució durant el desenvolupament i les proves del projecte.
 \newpage
 

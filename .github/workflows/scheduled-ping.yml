@@ -18,6 +18,5 @@ jobs:
             echo "Error: BASTET_SERVER_URL variable is empty or not set."
             exit 1
           fi
-          echo "Target URL: $TARGET_URL"
           echo "Pinging URL..."
           curl -fsS --max-time 30 "$TARGET_URL" -o /dev/null -w "HTTP status: %{http_code}\n"

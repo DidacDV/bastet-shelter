@@ -1,3 +1,3 @@
 export const AppConfig = {
-    baseUrl: 'http://localhost:8000'
-}
+  baseUrl: "https://bastet-shelter.onrender.com",
+};

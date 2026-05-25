@@ -37,6 +37,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
           showLogout: false,
         ),
         body: AppTabLayout(
+          showOnlySelectedLabel: true,
           header: SizedBox(
             height: MediaQuery.of(context).size.height * 0.30,
             child: AnimalDetailsHeader(

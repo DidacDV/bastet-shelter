@@ -104,6 +104,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               }),
             ),
             child: NavigationBar(
+              labelBehavior:
+                  NavigationDestinationLabelBehavior.onlyShowSelected,
               selectedIndex: _selectedIndex,
               onDestinationSelected: (i) => setState(() => _selectedIndex = i),
               destinations: [

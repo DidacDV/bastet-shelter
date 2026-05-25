@@ -1886,9 +1886,17 @@ Per al portal web, s'ha escollit React principalment per l'experiència prèvia 
 El servidor backend i la base de dades estan ambdos desplegats a Render \cite{todo:citerender?}. Render ofereix un servei gratuït que permet gestionar la càrrega que es porta a terme durant les proves del desenvolupament. En un futur, es pot actualitzar el nivell i passar a un de pagament per més rendiment, disponibilitat i capacitat d'emmagatzematge, escalant de manera vertical.
 Al tenir aquests dos serveis en una mateixa plataforma, fa que la seva configuració i integració, sobretot en la direcció de backend cap a base de dades, que en estar a la mateixa plataforma, la connexió és interna, i per tant més ràpida i sobretot segura, ja que no s'exposa la base de dades a internet.
 
-%TODO explicar uptime robot per mantenir la web desperta
+Degut a les restriccions de l'opció gratuïta de Render, la qual deixa al servidor en suspensió en cas de no rebre cap petició durant 30 minuts, s'han configurat dues maneres per mantenir-lo actiu. La primera es tracta d'un \textit{workflow} a través de GitHub Actions, el qual fa un ping a la IP on es troba l'aplicació cada 30 minuts, i informa si s'ha executat correctament o no. 
+A causa dels problemes de \textit{uptime} que ha experimentat GitHub al moment de realitzar el projecte \cite{todo:citeleaddvegithubproblme}, s'ha volgut evitar que aquest mecanisme sigui un \textit{single point of failure} (SPOF). És per això que també s'ha establert un ping mitjançant el servei UptimeRobot, que a més de despertar al servidor, permet obtenir mètriques sobre l'estat del servidor amb un històric, com es pot veure a la següent imatge.
 
-Pel que fa al desplegament de l'aplicació mòbil, aquesta no es troba publicada a cap mercat d'aplicacions com Google Play Store o App Store. En el seu lloc, es distribueix localment mitjançant la generació d'un fitxer \texttt{.apk} que es pot instal·lar directament al dispositiu Android, fet que simplifica el procés de distribució durant el desenvolupament i les proves del projecte.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{uptimerobot_bastetshelter.png}
+    \caption[Panell de control de uptime robot]{Panell de control de uptime robot. Font: Elaboració pròpia}
+    \label{fig:mailtrap_illustration}
+\end{figure}
+
+Pel que fa al desplegament de l'aplicació mòbil, aquesta no es troba publicada a cap mercat d'aplicacions com Google Play Store o App Store. En el seu lloc, es distribueix localment mitjançant la generació d'un fitxer \texttt{.apk} que es pot instal·lar directament al dispositiu Android, fet que simplifica el procés de distribució durant el desenvolupament i les proves del projecte. El motiu pel qual encara no es troba publicada a cap mercat d'aplicacions és el caràcter acadèmic i l'estat inicial del projecte.
 
 %TODO explicar netlifly
 \newpage

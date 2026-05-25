@@ -10,10 +10,13 @@ from app.services.adoption_process_service import AdoptionProcessService
 from app.repositories.animal_image_repo import AnimalImageRepository
 from app.repositories.animal_repo import AnimalRepository
 from app.repositories.refuge_repo import RefugeRepository
+from app.repositories.shift_task_repo import ShiftTaskRepository
 from app.repositories.trait_repo import TraitRepository
 from app.schemas.animals_schema.animals_image_schema import AnimalImageResponse
 from app.schemas.animals_schema.animals_schema import AnimalCreate, AnimalResponse, AnimalShortInfo, AnimalUpdate, \
     AnimalPublicShortInfo, AnimalPublicDetail
+from app.schemas.shift_schema.shift_schema import MyShiftTasksGroup, ShiftResponse
+from app.schemas.task_schema.shift_task_schema import ShiftTaskResponse
 
 import cloudinary
 import cloudinary.uploader as cloudinary_uploader
@@ -35,6 +38,7 @@ class AnimalService:
         self.animal_image_repo = AnimalImageRepository(db)
         self.process_repo = AdoptionProcessRepository(db)
         self.adoption_process_service = AdoptionProcessService(db)
+        self.shift_task_repo = ShiftTaskRepository(db)
 
     def _to_response(self, animal: Animal) -> AnimalResponse:
         process_ids = self.process_repo.get_process_ids_for_animal(self.db, animal.id)
@@ -150,6 +154,45 @@ class AnimalService:
         if not animal:
             raise NotFoundError("Animal not found")
         return self._to_response(animal)
+
+    def get_pending_tasks_for_animal(
+            self,
+            animal_id: int,
+            day: date | None = None,
+    ) -> list[MyShiftTasksGroup]:
+        animal = self.animal_repo.get_by_id(self.db, animal_id)
+        if not animal:
+            raise NotFoundError("Animal not found")
+
+        target_day = day or date.today()
+        shift_tasks = self.shift_task_repo.get_pending_by_animal_and_day(
+            self.db,
+            animal_id,
+            target_day,
+        )
+
+        grouped_tasks: dict[int, dict] = {}
+        for task in shift_tasks:
+            shift_id = task.shift_id
+            if shift_id not in grouped_tasks:
+                grouped_tasks[shift_id] = {
+                    "shift": task.shift,
+                    "tasks": [],
+                }
+            grouped_tasks[shift_id]["tasks"].append(task)
+
+        sorted_groups = sorted(
+            grouped_tasks.values(),
+            key=lambda group: group["shift"].start_time,
+        )
+
+        return [
+            MyShiftTasksGroup(
+                shift=ShiftResponse.model_validate(group["shift"]),
+                tasks=[ShiftTaskResponse.model_validate(task) for task in group["tasks"]],
+            )
+            for group in sorted_groups
+        ]
 
     def get_all_animals_short_info(self, shelter_id: int) -> list[AnimalShortInfo]:
         results = self.animal_repo.get_all_short_info(self.db, shelter_id)

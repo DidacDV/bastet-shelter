@@ -119,6 +119,54 @@ def test_get_animal_detail_error(client, mock_service):
     assert response.json()["detail"] == "Animal not found"
 
 
+def test_get_animal_pending_tasks_success(client, mock_service):
+    mock_service.get_pending_tasks_for_animal.return_value = [
+        {
+            "shift": {
+                "id": 1,
+                "start_time": "2026-05-25T09:00:00",
+                "end_time": "2026-05-25T13:00:00",
+                "day": "2026-05-25",
+                "refuge_id": 1,
+                "max_participants": 5,
+                "current_participants": 2,
+            },
+            "tasks": [
+                {
+                    "id": 10,
+                    "status": "NOT_COMPLETED",
+                    "assigned_date": "2026-05-25",
+                    "shift_id": 1,
+                    "task_id": 3,
+                    "task": {
+                        "id": 3,
+                        "title": "Walk",
+                        "description": "Morning walk",
+                        "num_people": 1,
+                    },
+                    "participant": None,
+                    "animal": None,
+                }
+            ],
+        }
+    ]
+
+    response = client.get("/animals/1/pending-tasks")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()["pending_tasks"]) == 1
+    mock_service.get_pending_tasks_for_animal.assert_called_once_with(1, None)
+
+
+def test_get_animal_pending_tasks_error(client, mock_service):
+    mock_service.get_pending_tasks_for_animal.side_effect = ValueError("Animal not found")
+
+    response = client.get("/animals/999/pending-tasks")
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json()["detail"] == "Animal not found"
+
+
 def test_toggle_adoption_success(client, mock_service):
     mock_service.set_in_adoption.return_value = {
         "id": 1, "name": "Buddy", "birth_date": "2026-01-01", "arrival_date": None,

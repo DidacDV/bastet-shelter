@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.core.exceptions import NotFoundError, AuthorizationError, BusinessLogicError
 from app.models.animal.animal import Animal
+from app.models.task.task import TaskStatusEnum
 from app.repositories.adoption.adoption_process_repo import AdoptionProcessRepository
 from app.services.adoption_process_service import AdoptionProcessService
 from app.repositories.animal_image_repo import AnimalImageRepository
@@ -165,7 +166,7 @@ class AnimalService:
             raise NotFoundError("Animal not found")
 
         target_day = day or date.today()
-        shift_tasks = self.shift_task_repo.get_pending_by_animal_and_day(
+        shift_tasks = self.shift_task_repo.get_by_animal_and_day(
             self.db,
             animal_id,
             target_day,
@@ -189,10 +190,20 @@ class AnimalService:
         return [
             MyShiftTasksGroup(
                 shift=ShiftResponse.model_validate(group["shift"]),
-                tasks=[ShiftTaskResponse.model_validate(task) for task in group["tasks"]],
+                tasks=[
+                    ShiftTaskResponse.model_validate(task)
+                    for task in self._sort_animal_daily_tasks(group["tasks"])
+                ],
             )
             for group in sorted_groups
         ]
+
+    @staticmethod
+    def _sort_animal_daily_tasks(tasks: list) -> list:
+        return sorted(
+            tasks,
+            key=lambda task: (task.status == TaskStatusEnum.COMPLETED, task.id),
+        )
 
     def get_all_animals_short_info(self, shelter_id: int) -> list[AnimalShortInfo]:
         results = self.animal_repo.get_all_short_info(self.db, shelter_id)

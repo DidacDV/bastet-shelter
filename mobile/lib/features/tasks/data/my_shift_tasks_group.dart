@@ -25,8 +25,29 @@ class MyShiftTasksGroup {
     Map<String, dynamic> json,
   ) {
     final list = json['pending_tasks'] as List<dynamic>? ?? [];
-    return list
-        .map((e) => MyShiftTasksGroup.fromJson(e as Map<String, dynamic>))
+    return sortTasksPendingFirst(
+      list
+          .map((e) => MyShiftTasksGroup.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+
+  static List<MyShiftTasksGroup> sortTasksPendingFirst(
+    List<MyShiftTasksGroup> groups,
+  ) {
+    return groups
+        .map(
+          (group) => MyShiftTasksGroup(
+            shift: group.shift,
+            tasks: [...group.tasks]..sort(_comparePendingFirst),
+          ),
+        )
         .toList();
+  }
+
+  static int _comparePendingFirst(ShiftTask a, ShiftTask b) {
+    final statusOrder = a.status.index.compareTo(b.status.index);
+    if (statusOrder != 0) return statusOrder;
+    return a.id.compareTo(b.id);
   }
 }

@@ -19,6 +19,7 @@ class MyTasksScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: BastetAppBar(
+        showLogout: false,
         customTitle: context.l10n.t('tasks.myAssignedTitle'),
         showBackButton: true,
         showConfig: false,

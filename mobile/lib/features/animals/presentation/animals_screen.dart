@@ -23,7 +23,10 @@ class AnimalsScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const BastetAppBar(),
+      appBar: BastetAppBar(
+        customTitle: context.l10n.t('animals.title'),
+        showLogout: false,
+      ),
       body: Stack(
         children: [
           Column(

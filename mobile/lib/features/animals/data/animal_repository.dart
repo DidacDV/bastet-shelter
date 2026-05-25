@@ -4,6 +4,7 @@ import 'package:bastetshelter/core/network/api_client.dart';
 import 'package:bastetshelter/features/animals/data/models/animal_details_model.dart';
 import 'package:bastetshelter/features/animals/data/models/animal_image_model.dart';
 import 'package:bastetshelter/features/animals/data/models/animal_summary_model.dart';
+import 'package:bastetshelter/features/tasks/data/my_shift_tasks_group.dart';
 import 'package:image_picker/image_picker.dart';
 import 'animal_type_enum.dart';
 
@@ -84,5 +85,10 @@ class AnimalRepository {
 
   Future<void> toggleAnimalAdoption(int animalId) async {
     return _apiClient.patch('/animals/$animalId/adoption');
+  }
+
+  Future<List<MyShiftTasksGroup>> getPendingTasks(int animalId) async {
+    final data = await _apiClient.get('/animals/$animalId/pending-tasks');
+    return MyShiftTasksGroup.pendingTasksListFromJson(data);
   }
 }

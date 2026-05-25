@@ -20,4 +20,13 @@ class MyShiftTasksGroup {
         .map((e) => MyShiftTasksGroup.fromJson(e as Map<String, dynamic>))
         .toList();
   }
+
+  static List<MyShiftTasksGroup> pendingTasksListFromJson(
+    Map<String, dynamic> json,
+  ) {
+    final list = json['pending_tasks'] as List<dynamic>? ?? [];
+    return list
+        .map((e) => MyShiftTasksGroup.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
 }

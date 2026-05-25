@@ -81,7 +81,7 @@ final class AdvertisementsProvider
   Advertisements create() => Advertisements();
 }
 
-String _$advertisementsHash() => r'33bec1ae1953ecbe289d5b72dc874ac0ea963ea7';
+String _$advertisementsHash() => r'cf0819bbb3bd9a9fb91d3de6ba29bb5b4a3f4b04';
 
 abstract class _$Advertisements
     extends $AsyncNotifier<List<AdvertisementSummary>> {

@@ -143,6 +143,7 @@ def test_get_animal_pending_tasks_success(client, mock_service):
                         "title": "Walk",
                         "description": "Morning walk",
                         "num_people": 1,
+                        "shelter_id": 1,
                     },
                     "participant": None,
                     "animal": None,

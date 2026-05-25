@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 from fastapi import BackgroundTasks
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.email.email_sender import send_email
 from app.core.email.templates import magic_link_email
 from app.core.exceptions import AuthorizationError
@@ -39,7 +40,7 @@ class AdoptantAuthService:
         )
         self.token_repo.create(self.db, magic_link)
 
-        frontend_magic_link_url = f"http://localhost:5173/verify?token={raw_token}"
+        frontend_magic_link_url = f"{settings.frontend_base_url}/verify?token={raw_token}"
 
         send_email(
             subject="Your access link to Bastet Shelter",

@@ -99,6 +99,7 @@ Go to Render → your web service → **Environment** tab and add:
 | `MAIL_FROM` | Sender email address |
 | `MAIL_PORT` | SMTP port (e.g. 587) |
 | `MAIL_SERVER` | SMTP server (e.g. smtp.gmail.com) |
+| `FRONTEND_URL` | Public URL of the adoptant web app (e.g. `https://your-site.netlify.app`). Used in email links. Defaults to `http://localhost:5173` locally. |
 
 > Never commit `.env` to the repository. Make sure it is in `.gitignore`.
 

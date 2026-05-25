@@ -28,7 +28,7 @@ export default function AuthCallbackPage() {
           login(result.access_token, result.adoptant_name);
 
           //check redirect
-          const redirect = searchParams.get("redirect") || "/adoption";
+          const redirect = searchParams.get("redirect") || "/";
           navigate(redirect, { replace: true });
         }
       } catch (err) {

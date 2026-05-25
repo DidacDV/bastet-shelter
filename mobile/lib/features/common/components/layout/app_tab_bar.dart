@@ -6,8 +6,9 @@ class AppTabLayout extends StatefulWidget {
   final List<Tab> tabs;
   final List<Widget> tabViews;
   final int initialIndex;
-
   final ValueChanged<int>? onTabChanged;
+
+  final bool showOnlySelectedLabel;
 
   const AppTabLayout({
     super.key,
@@ -16,6 +17,7 @@ class AppTabLayout extends StatefulWidget {
     required this.tabViews,
     this.initialIndex = 0,
     this.onTabChanged,
+    this.showOnlySelectedLabel = false,
   }) : assert(
          tabs.length == tabViews.length,
          'The number of tabs must match the number of tabViews',
@@ -45,9 +47,10 @@ class _AppTabLayoutState extends State<AppTabLayout>
   }
 
   void _handleTabChange() {
-    //(flutter fires this listener multiple times during a swipe animation)
     if (_tabController.index != _currentIndex) {
-      _currentIndex = _tabController.index;
+      setState(() {
+        _currentIndex = _tabController.index;
+      });
       widget.onTabChanged?.call(_currentIndex);
     }
   }
@@ -72,6 +75,25 @@ class _AppTabLayoutState extends State<AppTabLayout>
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
 
+    //if showOnlySelected label is set, we search for the selected tab and only show its text
+    final List<Widget> displayTabs = widget.showOnlySelectedLabel
+        ? widget.tabs.asMap().entries.map((entry) {
+            final isSelected = entry.key == _currentIndex;
+            final originalText = entry.value.text;
+
+            return Tab(
+              icon: entry.value.icon,
+              child: isSelected && originalText != null
+                  ? FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.center,
+                      child: Text(originalText),
+                    )
+                  : null,
+            );
+          }).toList()
+        : widget.tabs;
+
     return Column(
       children: [
         if (widget.header != null) widget.header!,
@@ -88,7 +110,7 @@ class _AppTabLayoutState extends State<AppTabLayout>
           dividerColor: AppColors.outline,
           indicatorSize: TabBarIndicatorSize.tab,
           indicatorWeight: 3.0,
-          tabs: widget.tabs,
+          tabs: displayTabs,
         ),
 
         Expanded(

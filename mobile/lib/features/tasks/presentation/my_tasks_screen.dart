@@ -1,9 +1,7 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
-import 'package:bastetshelter/features/common/components/manage_list_card.dart';
-import 'package:bastetshelter/features/shifts/data/models/shift_task_model.dart';
-import 'package:bastetshelter/features/shifts/presentation/components/shift_task_detail_bottomsheet.dart';
+import 'package:bastetshelter/features/shifts/presentation/components/pending_shift_task_card.dart';
 import 'package:bastetshelter/providers/tasks/my_tasks_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,10 +14,12 @@ class MyTasksScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tasksAsync = ref.watch(myTasksProvider);
     final tt = Theme.of(context).textTheme;
+    final notifier = ref.read(myTasksProvider.notifier);
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: BastetAppBar(
+        showLogout: false,
         customTitle: context.l10n.t('tasks.myAssignedTitle'),
         showBackButton: true,
         showConfig: false,
@@ -67,7 +67,6 @@ class MyTasksScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-
                   Container(
                     decoration: BoxDecoration(
                       color: AppColors.surface,
@@ -84,9 +83,25 @@ class MyTasksScreen extends ConsumerWidget {
                         separatorBuilder: (_, _) => const SizedBox(height: 8),
                         itemBuilder: (context, taskIndex) {
                           final task = tasks[taskIndex];
-                          return _MyTaskItem(
+
+                          return PendingShiftTaskCard(
                             shiftTask: task,
                             isEven: taskIndex.isEven,
+                            showAnimalName: true,
+                            showParticipantName: false,
+                            isJoined: true,
+                            currentParticipantId: task.participant?.id,
+                            onAssignToMe: () async {},
+                            onUnassign: () async {
+                              await notifier.unassignTask(
+                                task.id,
+                                task.shiftId,
+                                animalId: task.animal?.id,
+                              );
+                            },
+                            onToggleCompletion: () async {
+                              await notifier.toggleCompletion(task);
+                            },
                           );
                         },
                       ),
@@ -98,76 +113,6 @@ class MyTasksScreen extends ConsumerWidget {
           );
         },
       ),
-    );
-  }
-}
-
-class _MyTaskItem extends ConsumerWidget {
-  final ShiftTask shiftTask;
-  final bool isEven;
-
-  const _MyTaskItem({required this.shiftTask, required this.isEven});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final tt = Theme.of(context).textTheme;
-    final notifier = ref.read(myTasksProvider.notifier);
-    final isCompleted = shiftTask.status == ShiftTaskStatus.completed;
-
-    return ManageListCard(
-      title: shiftTask.task.title,
-      leadingIcon: isCompleted
-          ? Icons.check_circle_rounded
-          : Icons.radio_button_unchecked_rounded,
-      isEven: isEven,
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            shiftTask.task.description,
-            style: tt.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
-              decoration: isCompleted ? TextDecoration.lineThrough : null,
-            ),
-          ),
-          if (shiftTask.animal != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              context.l10n
-                  .t('common.animalName')
-                  .replaceAll('{animal}', shiftTask.animal?.name ?? ''),
-              style: tt.bodySmall?.copyWith(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ],
-      ),
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: AppColors.surface,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          builder: (_) => ShiftTaskDetailBottomSheet(
-            shiftTask: shiftTask,
-            isJoined: true,
-            currentParticipantId: shiftTask.participant?.id,
-            onAssignToMe: () async {
-              //needed to satisfy constructor?
-            },
-            onUnassign: () async {
-              await notifier.unassignTask(shiftTask.id, shiftTask.shiftId);
-            },
-            onToggleCompletion: () async {
-              await notifier.toggleCompletion(shiftTask);
-            },
-          ),
-        );
-      },
     );
   }
 }

@@ -18,6 +18,10 @@ class AnimalDetailsHeader extends StatelessWidget {
   final Future<void> Function(String)? onNameSave;
   final List<String> imageUrls;
 
+  final double nameFontSize;
+  final double nameIconSize;
+  final double dateChipScale;
+
   const AnimalDetailsHeader({
     super.key,
     required this.imageUrls,
@@ -26,12 +30,14 @@ class AnimalDetailsHeader extends StatelessWidget {
     this.onArrivalDateSave,
     this.onBirthdaySave,
     this.onNameSave,
+    this.nameFontSize = 20.0,
+    this.nameIconSize = 18.0,
+    this.dateChipScale = 0.85,
   });
 
   @override
   Widget build(BuildContext context) {
     final Color pillBackgroundColor = Colors.white.withValues(alpha: 0.6);
-
     final double statusBarHeight = MediaQuery.of(context).padding.top;
 
     return Stack(
@@ -72,103 +78,114 @@ class AnimalDetailsHeader extends StatelessWidget {
           bottom: 2,
           left: 2,
           right: 2,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.5),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: EditableField(
-                      label: context.l10n.t('common.name'),
-                      value: animal.name,
-                      isTitle: true,
-                      canEdit: canEdit,
-                      alignment: CrossAxisAlignment.center,
-                      onEdit: () => showEditBottomSheet(
-                        context: context,
-                        label: context.l10n.t('common.name'),
-                        initialValue: animal.name,
-                        onSave: (newVal) async {
-                          await onNameSave?.call(newVal);
-                        },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Transform.scale(
+                  scale: dateChipScale,
+                  alignment: Alignment.centerLeft,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                      child: DateChip(
+                        label: context.l10n.t('animals.arrival'),
+                        date: animal.arrivalDate ?? animal.birthDate,
+                        canEdit: canEdit,
+                        backgroundColor: Colors.white.withValues(alpha: 0.5),
+                        onEdit: !canEdit
+                            ? null
+                            : () async {
+                                final picked = await showDatePicker(
+                                  context: context,
+                                  initialDate:
+                                      animal.arrivalDate ?? animal.birthDate,
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime.now(),
+                                );
+                                if (picked != null &&
+                                    onArrivalDateSave != null) {
+                                  await onArrivalDateSave!(picked);
+                                }
+                              },
                       ),
                     ),
                   ),
                 ),
-              ),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ClipRRect(
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                        child: DateChip(
-                          label: context.l10n.t('animals.arrival'),
-                          date: animal.arrivalDate ?? animal.birthDate,
-                          canEdit: canEdit,
-                          backgroundColor: Colors.white.withValues(alpha: 0.5),
-                          onEdit: !canEdit
-                              ? null
-                              : () async {
-                                  final picked = await showDatePicker(
-                                    context: context,
-                                    initialDate:
-                                        animal.arrivalDate ?? animal.birthDate,
-                                    firstDate: DateTime(2000),
-                                    lastDate: DateTime.now(),
-                                  );
-                                  if (picked != null &&
-                                      onArrivalDateSave != null) {
-                                    await onArrivalDateSave!(picked);
-                                  }
-                                },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: EditableField(
+                            label: context.l10n.t('common.name'),
+                            value: animal.name,
+                            isTitle: true,
+                            canEdit: canEdit,
+                            customFontSize: nameFontSize,
+                            customIconSize: nameIconSize,
+                            alignment: CrossAxisAlignment.center,
+                            onEdit: () => showEditBottomSheet(
+                              context: context,
+                              label: context.l10n.t('common.name'),
+                              initialValue: animal.name,
+                              onSave: (newVal) async {
+                                await onNameSave?.call(newVal);
+                              },
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                        child: DateChip(
-                          label: context.l10n.t('animals.birthday'),
-                          date: animal.birthDate,
-                          canEdit: canEdit,
-                          backgroundColor: Colors.white.withValues(alpha: 0.5),
-                          onEdit: !canEdit
-                              ? null
-                              : () async {
-                                  final picked = await showDatePicker(
-                                    context: context,
-                                    initialDate: animal.birthDate,
-                                    firstDate: DateTime(2000),
-                                    lastDate: DateTime.now(),
-                                  );
-                                  if (picked != null &&
-                                      onBirthdaySave != null) {
-                                    await onBirthdaySave!(picked);
-                                  }
-                                },
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+
+                Transform.scale(
+                  scale: dateChipScale,
+                  alignment: Alignment.centerRight,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                      child: DateChip(
+                        label: context.l10n.t('animals.birthday'),
+                        date: animal.birthDate,
+                        canEdit: canEdit,
+                        backgroundColor: Colors.white.withValues(alpha: 0.5),
+                        onEdit: !canEdit
+                            ? null
+                            : () async {
+                                final picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: animal.birthDate,
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime.now(),
+                                );
+                                if (picked != null && onBirthdaySave != null) {
+                                  await onBirthdaySave!(picked);
+                                }
+                              },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],

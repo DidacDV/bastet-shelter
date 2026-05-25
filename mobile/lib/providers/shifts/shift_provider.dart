@@ -1,11 +1,49 @@
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/shifts/data/models/shift_model.dart';
+import 'package:bastetshelter/providers/animals/animal_pending_tasks_provider.dart';
+import 'package:bastetshelter/providers/animals/animal_provider.dart';
 import 'package:bastetshelter/providers/tasks/my_tasks_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:bastetshelter/features/shifts/data/shift_repository.dart';
 
 part 'shift_provider.g.dart';
+
+void invalidateAnimalListCache(Ref ref) {
+  ref.invalidate(animalsProvider);
+}
+
+void invalidateAnimalPendingTasksCache(Ref ref, {int? animalId}) {
+  if (animalId != null) {
+    ref.invalidate(animalPendingTasksProvider(animalId));
+  } else {
+    ref.invalidate(animalPendingTasksProvider);
+  }
+}
+
+void invalidateAnimalTaskCaches(Ref ref, {int? animalId}) {
+  invalidateAnimalListCache(ref);
+  invalidateAnimalPendingTasksCache(ref, animalId: animalId);
+}
+
+void invalidateRelatedShiftTaskProviders(
+  Ref ref, {
+  required int shiftId,
+  int? animalId,
+  bool invalidateShiftDetail = true,
+  bool invalidateMyTasks = true,
+  bool invalidateAnimalPendingTasks = true,
+}) {
+  if (invalidateShiftDetail) {
+    ref.invalidate(shiftDetailProvider(shiftId));
+  }
+  if (invalidateMyTasks) {
+    ref.invalidate(myTasksProvider);
+  }
+  if (invalidateAnimalPendingTasks && animalId != null) {
+    ref.invalidate(animalPendingTasksProvider(animalId));
+  }
+}
 
 @riverpod
 ShiftRepository shiftRepository(Ref ref) {
@@ -131,8 +169,11 @@ class ShiftDetailNotifier extends _$ShiftDetailNotifier {
 
   Future<void> removeTask(int shiftTaskId) async {
     await genericApiCall(() async {
+      final animalId = _animalIdForShiftTask(shiftTaskId);
       await ref.read(shiftRepositoryProvider).removeTask(shiftTaskId);
       ref.invalidateSelf();
+      ref.invalidate(myTasksProvider);
+      invalidateAnimalTaskCaches(ref, animalId: animalId);
     });
   }
 
@@ -155,6 +196,8 @@ class ShiftDetailNotifier extends _$ShiftDetailNotifier {
         );
       }
       ref.invalidateSelf();
+      ref.invalidate(myTasksProvider);
+      invalidateAnimalTaskCaches(ref, animalId: animalId);
     });
   }
 
@@ -178,33 +221,63 @@ class ShiftDetailNotifier extends _$ShiftDetailNotifier {
 
   Future<void> assignTask(int shiftTaskId, int participantId) async {
     await genericApiCall(() async {
+      final animalId = _animalIdForShiftTask(shiftTaskId);
       await ref
           .read(shiftRepositoryProvider)
           .assignTask(shiftTaskId, participantId);
       ref.invalidateSelf();
-      ref.invalidate(myTasksProvider);
+      invalidateRelatedShiftTaskProviders(
+        ref,
+        shiftId: shiftId,
+        animalId: animalId,
+        invalidateShiftDetail: false,
+      );
     });
   }
 
   Future<void> unassignTask(int shiftTaskId) async {
     await genericApiCall(() async {
+      final animalId = _animalIdForShiftTask(shiftTaskId);
       await ref.read(shiftRepositoryProvider).unassignTask(shiftTaskId);
       ref.invalidateSelf();
-      ref.invalidate(myTasksProvider);
+      invalidateRelatedShiftTaskProviders(
+        ref,
+        shiftId: shiftId,
+        animalId: animalId,
+        invalidateShiftDetail: false,
+      );
     });
   }
 
   Future<void> completeTask(int shiftTaskId) async {
     await genericApiCall(() async {
+      final animalId = _animalIdForShiftTask(shiftTaskId);
       await ref.read(shiftRepositoryProvider).completeTask(shiftTaskId);
       ref.invalidateSelf();
+      ref.invalidate(myTasksProvider);
+      invalidateAnimalTaskCaches(ref, animalId: animalId);
     });
   }
 
   Future<void> uncompleteTask(int shiftTaskId) async {
     await genericApiCall(() async {
+      final animalId = _animalIdForShiftTask(shiftTaskId);
       await ref.read(shiftRepositoryProvider).uncompleteTask(shiftTaskId);
       ref.invalidateSelf();
+      ref.invalidate(myTasksProvider);
+      invalidateAnimalTaskCaches(ref, animalId: animalId);
     });
+  }
+
+  int? _animalIdForShiftTask(int shiftTaskId) {
+    final detail = state.value;
+    if (detail == null) return null;
+
+    for (final task in detail.shiftTasks) {
+      if (task.id == shiftTaskId) {
+        return task.animal?.id;
+      }
+    }
+    return null;
   }
 }

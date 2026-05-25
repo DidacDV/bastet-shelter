@@ -41,3 +41,6 @@ class MyShiftTasksGroup(BaseModel):
 
 class ListMyShiftTaskGroupResponse(BaseModel):
     my_shift_tasks: List[MyShiftTasksGroup]
+
+class AnimalPendingTasksResponse(BaseModel):
+    pending_tasks: list[MyShiftTasksGroup]

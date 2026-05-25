@@ -19,6 +19,30 @@ class ShiftTaskRepository(BaseRepository[ShiftTask]):
     def get_by_animal(self, db: Session, animal_id: int) -> list[ShiftTask]:
         return db.query(ShiftTask).filter(ShiftTask.animal_id == animal_id).all()
 
+    def get_by_animal_and_day(
+            self,
+            db: Session,
+            animal_id: int,
+            day: date,
+    ) -> list[ShiftTask]:
+        return (
+            db.query(ShiftTask)
+            .filter(
+                ShiftTask.animal_id == animal_id,
+                ShiftTask.assigned_date == day,
+                ShiftTask.status.in_([
+                    TaskStatusEnum.NOT_COMPLETED,
+                    TaskStatusEnum.COMPLETED,
+                ]),
+            )
+            .options(
+                selectinload(ShiftTask.shift),
+                selectinload(ShiftTask.task),
+                selectinload(ShiftTask.participant),
+            )
+            .all()
+        )
+
     def update_status(self, db: Session, shift_task_id: int, status: TaskStatusEnum) -> ShiftTask | None:
         shift_task = self.get_by_id(db, shift_task_id)
         if shift_task:

@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import pytest
 from unittest.mock import MagicMock, AsyncMock, patch
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.services.geo_service import GeoService
 
 @pytest.mark.asyncio
@@ -67,7 +67,7 @@ async def test_run_periodic_update_up_to_date():
     db = MagicMock()
     db.query.return_value.count.return_value = 52
     mock_province = MagicMock()
-    mock_province.last_updated = datetime.now()
+    mock_province.last_updated = datetime.now(timezone.utc)
     db.query.return_value.first.return_value = mock_province
 
     with patch("app.services.geo_service.GeoService.fetch_and_update_provinces", new_callable=AsyncMock) as mock_fetch:

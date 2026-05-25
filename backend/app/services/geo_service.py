@@ -48,7 +48,8 @@ class GeoService:
 
     @staticmethod
     async def run_periodic_update(db: Session):
-        if db.query(Province).count() == 0 or db.query(Province).first().last_updated < datetime.now(timezone.utc) - timedelta(days=365):
+        if db.query(Province).count() == 0 or db.query(Province).first().last_updated < datetime.now() - timedelta(
+                days=365):
             api_key = getattr(settings, "GEOAPI_KEY", None)
             if api_key:
                 logger.info("Starting periodic provinces update...")

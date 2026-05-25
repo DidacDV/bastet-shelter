@@ -1,5 +1,13 @@
-import Router from './router'
+import { AuthProvider } from "./context/authContext";
+import { LocalizationProvider } from "./localization/localization";
+import Router from "./router";
 
 export default function App() {
-  return <Router />
+  return (
+    <LocalizationProvider>
+      <AuthProvider>
+        <Router />
+      </AuthProvider>
+    </LocalizationProvider>
+  );
 }

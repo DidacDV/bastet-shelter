@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/providers/traits/trait_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,7 +26,7 @@ class TraitsChipSelector extends ConsumerWidget {
         ),
       ),
       error: (e, _) => Text(
-        'Could not load traits.',
+        context.l10n.t('traits.couldNotLoad'),
         style: Theme.of(
           context,
         ).textTheme.bodySmall?.copyWith(color: AppColors.error),

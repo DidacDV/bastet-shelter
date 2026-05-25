@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/animal_pickup_step_details.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_common_info.dart';
 import 'package:bastetshelter/features/common/components/fields/date_field.dart';
@@ -32,7 +33,7 @@ class AnimalPickupStepView extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Pickup Schedule',
+                context.l10n.t('adoption.pickupSchedule'),
                 style: tt.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
@@ -40,7 +41,7 @@ class AnimalPickupStepView extends ConsumerWidget {
               ),
               const SizedBox(height: 26),
               DateField(
-                label: 'Scheduled date',
+                label: context.l10n.t('adoption.scheduledDate'),
                 value: step.scheduledAt,
                 required: false,
                 firstDate: DateTime.now().subtract(const Duration(days: 365)),
@@ -56,7 +57,7 @@ class AnimalPickupStepView extends ConsumerWidget {
               ),
               const SizedBox(height: 20),
               DateField(
-                label: 'Actual pickup date',
+                label: context.l10n.t('adoption.actualPickupDate'),
                 value: step.actualPickupAt,
                 required: false,
                 firstDate: DateTime.now().subtract(const Duration(days: 365)),

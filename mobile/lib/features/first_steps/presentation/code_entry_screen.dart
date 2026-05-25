@@ -1,6 +1,7 @@
 import 'package:bastetshelter/core/animations/stagger_entrance_mixin.dart';
 import 'package:bastetshelter/core/animations/staggered_helper.dart';
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/common/components/illustrated_header.dart';
@@ -128,14 +129,21 @@ class _CodeEntryScreenState extends State<CodeEntryScreen>
                               : 'assets/images/Illustration-1.svg',
                           height: 180,
                         ),
-                        badgeLabel: isVolunteer ? 'VOLUNTEER' : 'MANAGER',
+                        badgeLabel: isVolunteer
+                            ? context.l10n.t('firstSteps.volunteerBadge')
+                            : context.l10n.t('firstSteps.managerBadge'),
                         badgeColor: isVolunteer
                             ? AppColors.primary
                             : AppColors.secondary,
-                        title:
-                            'Join as\n${isVolunteer ? 'Volunteer' : 'Manager'}',
-                        subtitle:
-                            'Enter the unique code provided by the shelter to access their workspace.',
+                        title: context.l10n
+                            .t('firstSteps.joinAs')
+                            .replaceAll(
+                              '{role}',
+                              isVolunteer
+                                  ? context.l10n.t('firstSteps.volunteer')
+                                  : context.l10n.t('firstSteps.manager'),
+                            ),
+                        subtitle: context.l10n.t('firstSteps.codeSubtitle'),
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -151,7 +159,7 @@ class _CodeEntryScreenState extends State<CodeEntryScreen>
                         ),
                         child: AppTextField(
                           controller: _codeController,
-                          label: 'Shelter Code',
+                          label: context.l10n.t('firstSteps.shelterCode'),
                           textCapitalization: TextCapitalization.characters,
                           inputFormatters: [
                             FilteringTextInputFormatter.deny(RegExp(r'\s')),
@@ -173,7 +181,7 @@ class _CodeEntryScreenState extends State<CodeEntryScreen>
                       child: Padding(
                         padding: const EdgeInsets.only(left: 4),
                         child: Text(
-                          'Codes are case insensitive',
+                          context.l10n.t('firstSteps.codesCaseInsensitive'),
                           style: tt.labelSmall?.copyWith(
                             color: AppColors.textSecondary.withValues(
                               alpha: 0.6,
@@ -192,7 +200,7 @@ class _CodeEntryScreenState extends State<CodeEntryScreen>
             Padding(
               padding: const EdgeInsets.fromLTRB(28, 8, 28, 20),
               child: PrimaryButton(
-                label: 'Join Shelter',
+                label: context.l10n.t('firstSteps.joinShelterAction'),
                 isLoading: _isLoading,
                 onPressed: _submit,
               ),

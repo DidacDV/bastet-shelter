@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/section_card.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_model.dart';
@@ -15,7 +16,7 @@ class RefugesCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SectionCard(
-      title: 'Refuges',
+      title: context.l10n.t('shelter.refuges'),
       icon: Icons.holiday_village,
       trailingAction: IconButton(
         onPressed: () => showModalBottomSheet(
@@ -31,11 +32,11 @@ class RefugesCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (shelter.refuges.isEmpty)
-            const Padding(
-              padding: EdgeInsets.only(bottom: 16.0),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
               child: Text(
-                'No refuges added yet.',
-                style: TextStyle(
+                context.l10n.t('shelter.noRefugesAdded'),
+                style: const TextStyle(
                   color: Colors.grey,
                   fontStyle: FontStyle.italic,
                 ),
@@ -60,11 +61,12 @@ class RefugesCard extends ConsumerWidget {
                   onDelete: () async {
                     final confirm = await ConfirmationDialog.show(
                       context: context,
-                      title: 'Delete refuge',
-                      message:
-                          'Are you sure you want to delete ${refuge.name}?',
+                      title: context.l10n.t('shelter.deleteRefuge'),
+                      message: context.l10n
+                          .t('shelter.deleteRefugeMessage')
+                          .replaceAll('{refuge}', refuge.name),
                       isDestructive: true,
-                      confirmText: 'Delete',
+                      confirmText: context.l10n.t('profile.delete'),
                     );
                     if (confirm) {
                       await ref

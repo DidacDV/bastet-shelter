@@ -8,6 +8,7 @@ from app.models.adoption.adoption_steps.shelter_visit import ShelterVisit
 from app.models.adoption.adoption_steps.adoption_form import AdoptionForm
 from app.models.animal.animal import Animal, animal_trait_association
 from app.models.trait import Trait
+from app.models.advertisement import Advertisement
 from app.models.shelter import Shelter
 from app.models.refuge import Refuge
 from app.models.province import Province

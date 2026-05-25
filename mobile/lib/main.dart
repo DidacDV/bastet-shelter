@@ -1,8 +1,12 @@
+import 'package:bastetshelter/core/guard/manager_guard.dart' show ManagerGuard;
+import 'package:bastetshelter/core/localization/app_localizations.dart';
+import 'package:bastetshelter/core/localization/locale_provider.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/theme.dart';
 import 'package:bastetshelter/features/shelter/presentation/configuration_screen.dart';
 import 'package:bastetshelter/features/shelter/presentation/create_shelter_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:bastetshelter/features/auth/presentation/login_screen.dart';
 import 'package:bastetshelter/features/auth/presentation/register_screen.dart';
@@ -23,15 +27,25 @@ void main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+
     return MaterialApp(
-      title: 'Bastet Shelter',
+      onGenerateTitle: (context) => context.l10n.t('app.title'),
       navigatorKey: NavigationService.instance.navigationKey,
       theme: AppTheme.light,
+      locale: locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       initialRoute: getIt<ApiClient>().hasValidToken ? '/home' : '/login',
       routes: {
         '/login': (context) => const LoginScreen(),
@@ -44,7 +58,7 @@ class MyApp extends StatelessWidget {
             const CodeEntryScreen(mode: CodeScreenMode.manager),
         '/role/manager-picker': (_) => const ManagerPickerScreen(),
         '/role/create-shelter': (_) => const CreateShelterScreen(),
-        '/shelter/config': (_) => const ConfigScreen(),
+        '/shelter/config': (_) => const ManagerGuard(child: ConfigScreen()),
       },
     );
   }

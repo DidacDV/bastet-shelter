@@ -1,5 +1,8 @@
+import io
 from datetime import date, datetime
 from sqlalchemy.orm import Session
+
+import cloudinary.uploader as cloudinary_uploader
 
 from app.core.exceptions import NotFoundError, BusinessLogicError
 from app.models.adoption.adoption_steps.adoption_step import AdoptionStep, StepStatusEnum, StepTypeEnum
@@ -14,6 +17,7 @@ from app.schemas.adoption_schema.adoption_mappers import step_to_detail_response
 from app.schemas.adoption_schema.adoption_schema import ScheduledDateUpdate, NotesUpdate
 from app.schemas.adoption_schema.adoption_step_schema import AdvanceStepRequest, InterviewResponse, \
     ShelterVisitResponse, AnimalPickupResponse, AdoptionStepBaseResponse, ContractResponse
+from app.services.pdf import pdf_service
 
 
 class AdoptionStepsService:
@@ -49,6 +53,32 @@ class AdoptionStepsService:
         if request.notes is not None:
             step.notes = request.notes
 
+    def _generate_contract(self, process_id: int) -> None:
+        process = self.process_repo.get_by_id(self.db, process_id)
+        animal = process.animal
+        adoptant = process.adoptant
+        shelter_id = animal.refuge.shelter_id
+
+        steps = self.step_repo.get_steps_for_process(self.db, process_id)
+        contract_step: Contract | None = next((s for s in steps if isinstance(s, Contract)), None)
+        if not contract_step:
+            return
+
+        file_name = f"contract_{process_id}_{animal.name}_{adoptant.name}".replace(" ", "_")
+        pdfbytes = pdf_service.generate_contract_pdf(animal=animal, adoptant=adoptant)
+        result = cloudinary_uploader.upload(
+            io.BytesIO(pdfbytes),
+            folder=f"shelters/{shelter_id}/contracts/",
+            public_id=file_name,
+            resource_type="raw",
+            format="pdf"
+        )
+
+        contract_step.contract_url = result["secure_url"]
+        contract_step.cloudinary_public_id = result["public_id"]
+        contract_step.generation_date = date.today()
+        self.db.commit()
+
     def _advance_shelter_visit(self, step: ShelterVisit, request: AdvanceStepRequest) -> None:
         self._check_has_scheduled_date_passed(step.scheduled_at, "Shelter visit")
         step.status = StepStatusEnum.COMPLETED
@@ -56,6 +86,7 @@ class AdoptionStepsService:
         step.notes = request.notes
         if request.notes is not None:
             step.notes = request.notes
+        self._generate_contract(process_id=step.adoption_process_id)
 
     def _advance_contract(self, step: Contract, request: AdvanceStepRequest) -> None:
         if not step.signed_by_adoptant or not step.signed_by_shelter:

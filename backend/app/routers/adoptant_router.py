@@ -8,7 +8,7 @@ from app.core.exceptions import NotFoundError, AuthorizationError
 from app.models.adoption.adoptant import Adoptant
 from app.models.user import AuthenticatedUser
 from app.schemas.adoption_schema.adoptant_schema import AdoptantResponse
-from app.schemas.adoption_schema.adoption_process_schema import AdoptionProcessResponse
+from app.schemas.adoption_schema.adoption_process_schema import AdoptionProcessResponse, AdoptionProcessAdoptantResponse
 from app.services.adoption_process_service import AdoptionProcessService
 
 router = APIRouter(prefix="/adoptant", tags=["Adoptants"])
@@ -24,7 +24,7 @@ def get_all_processes_for_adoptant(
 ):
     return process_service.get_all_processes_for_adoptant(adoptant.id)
 
-@router.get("/processes/{process_id}", response_model=AdoptionProcessResponse)
+@router.get("/processes/{process_id}", response_model=AdoptionProcessAdoptantResponse)
 def get_adoption_process_adoptant(
         process_id: int,
         adoptant: Adoptant = Depends(get_current_adoptant),

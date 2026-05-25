@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/form_step_details.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/show_form_details_bottomsheet.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_common_info.dart';
@@ -31,7 +32,7 @@ class FormStepView extends ConsumerWidget {
                 showFormDetailsBottomSheet(context: context, content: content);
               }
             },
-            label: 'View form details',
+            label: context.l10n.t('adoption.viewFormDetails'),
             isLoading: false,
           ),
         ),

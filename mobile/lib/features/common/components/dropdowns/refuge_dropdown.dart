@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class RefugeItem {
@@ -11,6 +12,7 @@ class RefugeDropdown extends StatefulWidget {
   final int? initialItem;
   final ValueChanged<int?> onChanged;
   final bool showLabel;
+  final bool canEdit;
 
   const RefugeDropdown({
     super.key,
@@ -18,6 +20,7 @@ class RefugeDropdown extends StatefulWidget {
     this.initialItem,
     required this.onChanged,
     this.showLabel = true,
+    this.canEdit = true,
   });
 
   @override
@@ -35,10 +38,20 @@ class _RefugeDropdownState extends State<RefugeDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.canEdit) {
+      final name = widget.items
+          .firstWhere(
+            (r) => r.id == _selected,
+            orElse: () => RefugeItem(id: -1, name: '—'),
+          )
+          .name;
+      return Text(name, style: Theme.of(context).textTheme.bodyMedium);
+    }
+
     return DropdownButtonFormField<int>(
       initialValue: _selected,
       decoration: InputDecoration(
-        labelText: widget.showLabel ? 'Refuge' : null,
+        labelText: widget.showLabel ? context.l10n.t('common.refuge') : null,
         border: widget.showLabel ? null : InputBorder.none,
         contentPadding: widget.showLabel
             ? null

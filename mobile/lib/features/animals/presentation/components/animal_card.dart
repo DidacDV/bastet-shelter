@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/animal_details_screen.dart';
 import 'package:bastetshelter/features/animals/presentation/components/tasks_badge.dart';
 import 'package:flutter/material.dart';
@@ -113,7 +114,7 @@ class AnimalCard extends StatelessWidget {
                               const SizedBox(width: 4),
                               Expanded(
                                 child: Text(
-                                  'In adoption process',
+                                  context.l10n.t('animals.inAdoptionProcess'),
                                   style: tt.bodySmall?.copyWith(
                                     color: AppColors.accent,
                                     fontWeight: FontWeight.w600,

@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class AppErrorState extends StatelessWidget {
@@ -21,7 +22,10 @@ class AppErrorState extends StatelessWidget {
               color: AppColors.error,
             ),
             const SizedBox(height: 16),
-            Text('Something went wrong', style: theme.textTheme.titleMedium),
+            Text(
+              context.l10n.t('common.somethingWentWrong'),
+              style: theme.textTheme.titleMedium,
+            ),
             const SizedBox(height: 6),
             Text(
               message,

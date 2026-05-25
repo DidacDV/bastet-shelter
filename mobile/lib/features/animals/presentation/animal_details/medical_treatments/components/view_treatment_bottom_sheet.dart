@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/components/dosage_unit_dropdown.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/components/treatment_frequency_dropdown.dart';
@@ -15,11 +16,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class TreatmentDetailBottomSheet extends ConsumerStatefulWidget {
   final MedicalTreatment treatment;
   final int animalId;
+  final bool canEdit;
 
   const TreatmentDetailBottomSheet({
     super.key,
     required this.treatment,
     required this.animalId,
+    this.canEdit = false,
   });
 
   @override
@@ -77,10 +80,9 @@ class TreatmentDetailBottomSheetState
   Future<void> _delete() async {
     final confirmed = await ConfirmationDialog.show(
       context: context,
-      title: 'Delete treatment',
-      message:
-          'Are you sure you want to delete this animal treatment? This cannot be undone.',
-      confirmText: 'Delete',
+      title: context.l10n.t('medical.deleteTreatment'),
+      message: context.l10n.t('medical.deleteTreatmentMessage'),
+      confirmText: context.l10n.t('profile.delete'),
       isDestructive: true,
     );
 
@@ -100,34 +102,41 @@ class TreatmentDetailBottomSheetState
 
     return FormBottomSheet(
       title: widget.treatment.medicineName,
-      actions: [
-        PrimaryButton(
-          label: 'Save changes',
-          isLoading: _loading,
-          onPressed: _save,
-        ),
-        const SizedBox(height: 12),
-        TextButton(
-          onPressed: _deleting ? null : _delete,
-          style: TextButton.styleFrom(foregroundColor: AppColors.error),
-          child: _deleting
-              ? const SizedBox(
-                  height: 16,
-                  width: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Delete treatment'),
-        ),
-      ],
+      actions: widget.canEdit
+          ? [
+              PrimaryButton(
+                label: context.l10n.t('common.saveChanges'),
+                isLoading: _loading,
+                onPressed: _save,
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: _deleting ? null : _delete,
+                style: TextButton.styleFrom(foregroundColor: AppColors.error),
+                child: _deleting
+                    ? const SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(context.l10n.t('medical.deleteTreatment')),
+              ),
+            ]
+          : [
+              PrimaryButton(
+                label: context.l10n.t('common.close'),
+                onPressed: () => Navigator.of(context).pop(),
+                isLoading: _loading,
+              ),
+            ],
       children: [
         Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Dosage row — text field + unit selector together
               Text(
-                'Dosage',
+                context.l10n.t('medical.dosage'),
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -139,7 +148,8 @@ class TreatmentDetailBottomSheetState
                   Expanded(
                     child: AppTextField(
                       controller: _dosageController,
-                      label: 'Amount',
+                      label: context.l10n.t('medical.amount'),
+                      readOnly: !widget.canEdit,
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
@@ -149,52 +159,71 @@ class TreatmentDetailBottomSheetState
                         ),
                       ],
                       validator: (v) {
-                        if (v == null || v.isEmpty) return 'Required';
-                        if (double.tryParse(v) == null) return 'Invalid number';
+                        if (v == null || v.isEmpty) {
+                          return context.l10n.t('common.required');
+                        }
+                        if (double.tryParse(v) == null) {
+                          return context.l10n.t('common.invalidNumber');
+                        }
                         return null;
                       },
                     ),
                   ),
                   const SizedBox(width: 12),
-                  DosageUnitDropdown(
-                    initialItem: _dosageUnit,
-                    onChanged: (u) =>
-                        setState(() => _dosageUnit = u ?? _dosageUnit),
+
+                  IgnorePointer(
+                    ignoring: !widget.canEdit,
+                    child: Opacity(
+                      opacity: widget.canEdit ? 1.0 : 0.6,
+                      child: DosageUnitDropdown(
+                        initialItem: _dosageUnit,
+                        onChanged: (u) =>
+                            setState(() => _dosageUnit = u ?? _dosageUnit),
+                      ),
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
 
               Text(
-                'Frequency',
+                context.l10n.t('medical.frequency'),
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 8),
-              FrequencyDropdown(
-                initialItem: _frequency,
-                onChanged: (f) => setState(() => _frequency = f ?? _frequency),
+
+              IgnorePointer(
+                ignoring: !widget.canEdit,
+                child: Opacity(
+                  opacity: widget.canEdit ? 1.0 : 0.6,
+                  child: FrequencyDropdown(
+                    initialItem: _frequency,
+                    onChanged: (f) =>
+                        setState(() => _frequency = f ?? _frequency),
+                  ),
+                ),
               ),
 
               const SizedBox(height: 20),
 
               InfoRow(
-                label: 'Start date',
+                label: context.l10n.t('medical.startDate'),
                 value: _formatDate(widget.treatment.startDate),
               ),
               if (widget.treatment.endDate != null)
                 InfoRow(
-                  label: 'End date',
+                  label: context.l10n.t('medical.endDate'),
                   value: _formatDate(widget.treatment.endDate!),
                 ),
               InfoRow(
-                label: 'Last status update',
+                label: context.l10n.t('medical.lastStatusUpdate'),
                 value: _formatDate(widget.treatment.statusUpdatedAt),
               ),
               if (widget.treatment.statusLastUpdatedByName != null)
                 InfoRow(
-                  label: 'Status last updated by',
+                  label: context.l10n.t('medical.statusLastUpdatedBy'),
                   value: widget.treatment.statusLastUpdatedByName!,
                 ),
             ],
@@ -208,11 +237,11 @@ class TreatmentDetailBottomSheetState
       '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
 }
 
-//helper to open it
 Future<void> showTreatmentDetailBottomSheet({
   required BuildContext context,
   required MedicalTreatment treatment,
   required int animalId,
+  bool canEdit = false,
 }) {
   return showModalBottomSheet(
     context: context,
@@ -221,7 +250,10 @@ Future<void> showTreatmentDetailBottomSheet({
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    builder: (_) =>
-        TreatmentDetailBottomSheet(treatment: treatment, animalId: animalId),
+    builder: (_) => TreatmentDetailBottomSheet(
+      treatment: treatment,
+      animalId: animalId,
+      canEdit: canEdit,
+    ),
   );
 }

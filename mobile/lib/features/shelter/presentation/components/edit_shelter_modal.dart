@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
 import 'package:bastetshelter/providers/geo/geo_provider.dart';
 import 'package:bastetshelter/providers/shelters/shelter_notifier.dart';
@@ -9,11 +10,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class EditShelterModal extends ConsumerStatefulWidget {
   final String currentName;
   final String currentProvinceId;
+  final String? currentEmail;
 
   const EditShelterModal({
     super.key,
     required this.currentName,
     required this.currentProvinceId,
+    this.currentEmail,
   });
 
   @override
@@ -22,6 +25,7 @@ class EditShelterModal extends ConsumerStatefulWidget {
 
 class _EditShelterModalState extends ConsumerState<EditShelterModal> {
   late final TextEditingController _nameController;
+  late final TextEditingController _emailController;
   late String _selectedProvinceId;
   final _formKey = GlobalKey<FormState>();
 
@@ -29,12 +33,14 @@ class _EditShelterModalState extends ConsumerState<EditShelterModal> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.currentName);
+    _emailController = TextEditingController(text: widget.currentEmail);
     _selectedProvinceId = widget.currentProvinceId;
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -42,11 +48,16 @@ class _EditShelterModalState extends ConsumerState<EditShelterModal> {
     if (!_formKey.currentState!.validate()) return;
 
     final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
     if (name.isEmpty) return;
 
     ref
         .read(shelterProvider.notifier)
-        .updateShelter(name: name, provinceId: _selectedProvinceId);
+        .updateShelter(
+          name: name,
+          provinceId: _selectedProvinceId,
+          email: email.isNotEmpty ? email : null,
+        );
 
     Navigator.pop(context);
   }
@@ -68,22 +79,34 @@ class _EditShelterModalState extends ConsumerState<EditShelterModal> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Edit Shelter',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              context.l10n.t('shelter.editShelter'),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             AppTextField(
               controller: _nameController,
-              label: 'Shelter name',
+              label: context.l10n.t('shelter.name'),
               keyboardType: TextInputType.text,
-              validator: (value) =>
-                  Validators.validateRequired(value, 'Shelter Name'),
+              validator: (value) => Validators.validateRequired(
+                value,
+                context.l10n.t('shelter.name'),
+              ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Select Province',
-              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
+            AppTextField(
+              controller: _emailController,
+              label: context.l10n.t('shelter.email'),
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) => Validators.validateEmailNoRequired(value),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              context.l10n.t('shelter.selectProvince'),
+              style: const TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(height: 8),
             provincesAsync.when(
@@ -96,7 +119,9 @@ class _EditShelterModalState extends ConsumerState<EditShelterModal> {
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => Text(
-                'Error loading provinces: $e',
+                context.l10n
+                    .t('shelter.provincesLoadError')
+                    .replaceAll('{error}', '$e'),
                 style: const TextStyle(color: Colors.red),
               ),
             ),
@@ -106,7 +131,7 @@ class _EditShelterModalState extends ConsumerState<EditShelterModal> {
               height: 48,
               child: FilledButton(
                 onPressed: _saveShelter,
-                child: const Text('Save Changes'),
+                child: Text(context.l10n.t('common.saveChanges')),
               ),
             ),
           ],

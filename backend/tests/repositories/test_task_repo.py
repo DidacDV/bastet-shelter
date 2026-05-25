@@ -1,5 +1,10 @@
+from datetime import date, datetime
+
 from app.repositories.task_repo import TaskRepository
 from app.models.task.task import Task
+from app.models.task.shift_task import ShiftTask
+from app.models.shift.shift import Shift
+from app.models.refuge import Refuge
 from tests.repositories.utils import _create_shelter
 
 class TestTaskRepository:
@@ -30,3 +35,31 @@ class TestTaskRepository:
 
         result = self.repo.get_all(db)
         assert len(result) >= 1
+
+    def test_is_used_in_shift(self, db):
+        shelter = _create_shelter(db)
+        refuge = Refuge(name="Test Refuge", province_id="08", shelter_id=shelter.id)
+        task = Task(title="Test Task", description="Desc", num_people=1, shelter_id=shelter.id)
+        unused_task = Task(title="Unused Task", description="Desc", num_people=1, shelter_id=shelter.id)
+        db.add_all([refuge, task, unused_task])
+        db.commit()
+        db.refresh(refuge)
+        db.refresh(task)
+        db.refresh(unused_task)
+
+        shift = Shift(
+            start_time=datetime(2026, 1, 1, 8, 0),
+            end_time=datetime(2026, 1, 1, 12, 0),
+            day=date(2026, 1, 1),
+            shelter_id=shelter.id,
+            refuge_id=refuge.id,
+        )
+        db.add(shift)
+        db.commit()
+        db.refresh(shift)
+
+        db.add(ShiftTask(shift_id=shift.id, task_id=task.id, assigned_date=shift.day))
+        db.commit()
+
+        assert self.repo.is_used_in_shift(db, task.id) is True
+        assert self.repo.is_used_in_shift(db, unused_task.id) is False

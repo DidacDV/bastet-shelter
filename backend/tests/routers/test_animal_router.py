@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, ANY
 from fastapi import status
 from app.main import app
 from app.routers.animal_router import get_animal_service
@@ -133,8 +133,7 @@ def test_toggle_adoption_success(client, mock_service):
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json()["in_adoption"] is True
-    mock_service.set_in_adoption.assert_called_once_with(1)
-
+    mock_service.set_in_adoption.assert_called_once_with(1, ANY)
 
 def test_get_animal_service(db):
     from app.routers.animal_router import get_animal_service

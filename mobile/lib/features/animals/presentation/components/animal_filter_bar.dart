@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bastetshelter/core/constants.dart';
@@ -21,7 +22,9 @@ class AnimalFilterBar extends ConsumerWidget {
         children: [
           FilterChip(
             label: Text(
-              filter.inAdoption == false ? 'Not in adoption' : 'In adoption',
+              filter.inAdoption == false
+                  ? context.l10n.t('animals.notInAdoption')
+                  : context.l10n.t('animals.inAdoption'),
             ),
             selected: filter.inAdoption != null,
             onSelected: (_) =>
@@ -35,7 +38,7 @@ class AnimalFilterBar extends ConsumerWidget {
           const SizedBox(width: 8),
 
           FilterChip(
-            label: const Text('Pending tasks'),
+            label: Text(context.l10n.t('animals.pendingTasks')),
             selected: filter.hasPendingTasks,
             onSelected: (bool isSelected) =>
                 notifier.setHasPendingTasks(isSelected),

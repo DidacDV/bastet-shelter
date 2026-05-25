@@ -1,5 +1,7 @@
 import pytest
 from unittest.mock import MagicMock
+from app.core.exceptions import AuthorizationError, BusinessLogicError, NotFoundError
+from app.models.task.task import Task
 from app.services.task_service import TaskService
 from app.schemas.task_schema.task_schema import TaskCreate
 
@@ -47,3 +49,42 @@ def test_get_tasks(service):
     assert len(result) == 1
     assert result[0].title == "Task 1"
     service.task_repo.get_by_shelter.assert_called_once_with(service.db, shelter_id)
+
+def test_delete_task_success(service):
+    task_id = 1
+    shelter_id = 1
+    mock_task = MagicMock(spec=Task)
+    mock_task.shelter_id = shelter_id
+
+    service.task_repo.get_by_id.return_value = mock_task
+    service.task_repo.is_used_in_shift.return_value = False
+
+    service.delete_task(shelter_id, task_id)
+
+    service.task_repo.delete.assert_called_once_with(service.db, task_id)
+
+def test_delete_task_not_found(service):
+    service.task_repo.get_by_id.return_value = None
+
+    with pytest.raises(NotFoundError):
+        service.delete_task(1, 1)
+
+def test_delete_task_wrong_shelter(service):
+    mock_task = MagicMock(spec=Task)
+    mock_task.shelter_id = 2
+    service.task_repo.get_by_id.return_value = mock_task
+
+    with pytest.raises(AuthorizationError):
+        service.delete_task(1, 1)
+
+def test_delete_task_used_in_shift(service):
+    mock_task = MagicMock(spec=Task)
+    mock_task.shelter_id = 1
+    service.task_repo.get_by_id.return_value = mock_task
+    service.task_repo.is_used_in_shift.return_value = True
+
+    with pytest.raises(BusinessLogicError) as excinfo:
+        service.delete_task(1, 1)
+
+    assert "shift" in excinfo.value.message.lower()
+    service.task_repo.delete.assert_not_called()

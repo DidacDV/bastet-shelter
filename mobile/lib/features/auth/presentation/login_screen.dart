@@ -1,22 +1,25 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
 import 'package:bastetshelter/features/common/components/fields/app_text_field.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_repository.dart';
+import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/utils/validators.dart';
 import 'package:bastetshelter/features/common/components/primary_button.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
+class _LoginScreenState extends ConsumerState<LoginScreen>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -66,6 +69,7 @@ class _LoginScreenState extends State<LoginScreen>
         _emailController.text,
         _passwordController.text,
       );
+      ref.invalidate(isManagerProvider);
       final hasMembership = await _shelterRepository.hasMembership();
       if (mounted) {
         Navigator.pushReplacementNamed(
@@ -144,10 +148,13 @@ class _LoginScreenState extends State<LoginScreen>
 
                       const SizedBox(height: 56),
 
-                      Text('Sign in', style: tt.headlineMedium),
+                      Text(
+                        context.l10n.t('auth.signIn'),
+                        style: tt.headlineMedium,
+                      ),
                       const SizedBox(height: 4),
                       Text(
-                        'Welcome back to helping others',
+                        context.l10n.t('auth.loginSubtitle'),
                         style: tt.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
                         ),
@@ -162,14 +169,14 @@ class _LoginScreenState extends State<LoginScreen>
                           children: [
                             AppTextField(
                               controller: _emailController,
-                              label: 'Email',
+                              label: context.l10n.t('auth.email'),
                               keyboardType: TextInputType.emailAddress,
                               validator: Validators.validateEmail,
                             ),
                             const SizedBox(height: 14),
                             AppTextField(
                               controller: _passwordController,
-                              label: 'Password',
+                              label: context.l10n.t('auth.password'),
                               obscure: true,
                               validator: Validators.validatePassword,
                             ),
@@ -191,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       MaterialTapTargetSize.shrinkWrap,
                                 ),
                                 child: Text(
-                                  'Forgot password?',
+                                  context.l10n.t('auth.forgotPassword'),
                                   style: tt.labelMedium?.copyWith(
                                     color: AppColors.secondary,
                                   ),
@@ -202,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen>
                             const SizedBox(height: 24),
 
                             PrimaryButton(
-                              label: 'Sign in',
+                              label: context.l10n.t('auth.signIn'),
                               isLoading: _isLoading,
                               onPressed: _login,
                             ),
@@ -218,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Don't have an account?",
+                              context.l10n.t('auth.noAccount'),
                               style: tt.bodyMedium?.copyWith(
                                 color: AppColors.textSecondary,
                               ),
@@ -232,7 +239,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
                               child: Text(
-                                'Register',
+                                context.l10n.t('auth.register'),
                                 style: tt.bodyMedium?.copyWith(
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.w700,

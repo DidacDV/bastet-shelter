@@ -1,7 +1,10 @@
-import 'package:bastetshelter/core/constants.dart'; // Ensure AppColors is imported
+import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/community/presentation/community_screen.dart';
-import 'package:bastetshelter/features/shifts/presentation/shifts_screen.dart';
+import 'package:bastetshelter/features/shifts/presentation/shifts_gateway_screen.dart';
+import 'package:bastetshelter/features/tasks/presentation/my_tasks_screen.dart';
 import 'package:bastetshelter/features/tasks/presentation/tasks_screen.dart';
+import 'package:bastetshelter/providers/auth/auth_provider.dart';
 import 'package:bastetshelter/providers/geo/geo_provider.dart';
 import 'package:bastetshelter/features/animals/presentation/animals_screen.dart';
 import 'package:bastetshelter/features/common/components/layout/app_shell.dart';
@@ -19,6 +22,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late int _selectedIndex;
+  late final isManager = ref.watch(isManagerProvider);
 
   @override
   void initState() {
@@ -35,16 +39,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     GlobalKey<NavigatorState>(),
   ];
 
-  final List<Widget> _tabs = const [
-    HomeTab(),
-    AnimalsScreen(),
-    ShiftsScreen(),
-    TasksScreen(),
-    CommunityScreen(),
+  late final List<Widget> _tabs = [
+    const HomeTab(),
+    const AnimalsScreen(),
+    const ShiftsGatewayScreen(),
+    isManager ? const TasksScreen() : MyTasksScreen(),
+    const CommunityScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
@@ -100,31 +106,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: NavigationBar(
               selectedIndex: _selectedIndex,
               onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-              destinations: const [
+              destinations: [
                 NavigationDestination(
-                  icon: Icon(Icons.home_outlined),
-                  selectedIcon: Icon(Icons.home),
-                  label: 'Home',
+                  icon: const Icon(Icons.home_outlined),
+                  selectedIcon: const Icon(Icons.home),
+                  label: l10n.t('navigation.home'),
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.pets_outlined),
-                  selectedIcon: Icon(Icons.pets),
-                  label: 'Animals',
+                  icon: const Icon(Icons.pets_outlined),
+                  selectedIcon: const Icon(Icons.pets),
+                  label: l10n.t('navigation.animals'),
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.schedule_outlined),
-                  selectedIcon: Icon(Icons.schedule),
-                  label: 'Shifts',
+                  icon: const Icon(Icons.schedule_outlined),
+                  selectedIcon: const Icon(Icons.schedule),
+                  label: l10n.t('navigation.shifts'),
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.task_outlined),
-                  selectedIcon: Icon(Icons.task),
-                  label: 'Tasks',
+                  icon: const Icon(Icons.task_outlined),
+                  selectedIcon: const Icon(Icons.task),
+                  label: l10n.t('navigation.tasks'),
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.people_outlined),
-                  selectedIcon: Icon(Icons.people),
-                  label: 'Community',
+                  icon: const Icon(Icons.people_outlined),
+                  selectedIcon: const Icon(Icons.people),
+                  label: l10n.t('navigation.community'),
                 ),
               ],
             ),

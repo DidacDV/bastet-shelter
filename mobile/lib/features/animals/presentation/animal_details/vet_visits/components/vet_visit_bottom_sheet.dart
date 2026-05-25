@@ -1,3 +1,5 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/components/vet_visit_type_dropdown.dart';
 import 'package:bastetshelter/features/common/components/confirmation_dialog.dart';
 import 'package:bastetshelter/features/common/components/app_editable_field.dart';
@@ -81,12 +83,14 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Edit Clinic'),
+        title: Text(context.l10n.t('vet.editClinic')),
         content: TextField(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(labelText: 'Clinic name'),
+          decoration: InputDecoration(
+            labelText: context.l10n.t('vet.clinicName'),
+          ),
         ),
         actions: [
           Row(
@@ -94,7 +98,7 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
               Expanded(
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: Text(context.l10n.t('common.cancel')),
                 ),
               ),
               const SizedBox(width: 12),
@@ -107,7 +111,7 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
                       Navigator.pop(context);
                     }
                   },
-                  child: const Text('Save'),
+                  child: Text(context.l10n.t('common.save')),
                 ),
               ),
             ],
@@ -135,10 +139,9 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
   Future<void> _delete() async {
     final confirmed = await ConfirmationDialog.show(
       context: context,
-      title: 'Delete visit',
-      message:
-          'Are you sure you want to delete this vet visit? This cannot be undone.',
-      confirmText: 'Delete',
+      title: context.l10n.t('vet.deleteVisit'),
+      message: context.l10n.t('vet.deleteVisitMessage'),
+      confirmText: context.l10n.t('profile.delete'),
       isDestructive: true,
     );
     if (!confirmed) return;
@@ -156,11 +159,11 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
     final canEdit = widget.isManager;
 
     return FormBottomSheet(
-      title: 'Vet Visit',
+      title: context.l10n.t('vet.visit'),
       actions: [
         if (canEdit) ...[
           PrimaryButton(
-            label: 'Save Changes',
+            label: context.l10n.t('common.saveChanges'),
             isLoading: _isSaving,
             onPressed: _save,
           ),
@@ -168,7 +171,7 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
           TextButton.icon(
             onPressed: _delete,
             icon: const Icon(Icons.delete_outline_rounded, size: 18),
-            label: const Text('Delete visit'),
+            label: Text(context.l10n.t('vet.deleteVisit')),
             style: TextButton.styleFrom(
               foregroundColor: theme.colorScheme.error,
             ),
@@ -177,7 +180,7 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
       ],
       children: [
         EditableField(
-          label: 'Date',
+          label: context.l10n.t('common.date'),
           value: _formattedDate,
           canEdit: canEdit,
           onEdit: _pickDate,
@@ -186,7 +189,7 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
 
         if (canEdit) ...[
           Text(
-            'Visit Type',
+            context.l10n.t('vet.visitType'),
             style: theme.textTheme.labelMedium?.copyWith(
               color: AppColors.textSecondary,
             ),
@@ -198,14 +201,14 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
           ),
         ] else
           EditableField(
-            label: 'Visit Type',
-            value: _visitType.label,
+            label: context.l10n.t('vet.visitType'),
+            value: context.localizedVetVisitType(_visitType),
             canEdit: false,
           ),
         const SizedBox(height: 20),
 
         EditableField(
-          label: 'Clinic',
+          label: context.l10n.t('vet.clinic'),
           value: _clinicName,
           canEdit: canEdit,
           onEdit: _editClinic,
@@ -216,7 +219,7 @@ class _VetVisitBottomSheetState extends ConsumerState<VetVisitBottomSheet> {
           const Divider(),
           const SizedBox(height: 12),
           Text(
-            'Notes',
+            context.l10n.t('common.notes'),
             style: theme.textTheme.labelSmall?.copyWith(
               color: AppColors.textSecondary,
               letterSpacing: 0.5,

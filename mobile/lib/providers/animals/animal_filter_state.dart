@@ -30,7 +30,6 @@ class AnimalFilterState {
     );
   }
 
-  // TODO: More filters?
   List<AnimalSummary> apply(List<AnimalSummary> all) {
     return all.where((a) {
       if (query.isNotEmpty) {

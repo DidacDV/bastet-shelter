@@ -2,11 +2,15 @@ import 'package:bastetshelter/core/navigation_service.dart';
 import 'package:bastetshelter/features/adoption/data/adoptant_repository.dart';
 import 'package:bastetshelter/features/adoption/data/adoption_repository.dart';
 import 'package:bastetshelter/features/animals/data/animal_repository.dart';
+import 'package:bastetshelter/features/community/data/advertisement_repository.dart';
 import 'package:bastetshelter/features/geo/data/geo_repository.dart';
 import 'package:bastetshelter/features/medicine/data/medicine_repository.dart';
 import 'package:bastetshelter/features/medicine/data/vet_visit_repository.dart';
 import 'package:bastetshelter/features/medical_treatments/data/medical_treatment_repository.dart';
+import 'package:bastetshelter/features/shifts/data/shift_repository.dart';
+import 'package:bastetshelter/features/tasks/data/task_repository.dart';
 import 'package:bastetshelter/features/traits/data/trait_repository.dart';
+import 'package:bastetshelter/features/user/data/user_repository.dart';
 import 'package:get_it/get_it.dart';
 
 import 'package:bastetshelter/features/auth/data/auth_repository.dart';
@@ -52,4 +56,8 @@ void configureDependencies() {
   getIt.registerSingleton<AdoptantRepository>(
     AdoptantRepository(getIt<ApiClient>()),
   );
+  getIt.registerSingleton<TaskRepository>(TaskRepository(getIt<ApiClient>()));
+  getIt.registerSingleton(ShiftRepository(getIt<ApiClient>()));
+  getIt.registerSingleton(AdvertisementRepository(getIt<ApiClient>()));
+  getIt.registerSingleton(UserRepository(getIt<ApiClient>()));
 }

@@ -1,6 +1,7 @@
 import 'package:bastetshelter/core/animations/stagger_entrance_mixin.dart';
 import 'package:bastetshelter/core/animations/staggered_helper.dart';
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/first_steps/presentation/components/animated_option_card.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +39,6 @@ class _ManagerPickerScreenState extends State<ManagerPickerScreen>
         child: Column(
           children: [
             Expanded(
-              // Everything is now inside the SingleChildScrollView!
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 28),
                 child: Column(
@@ -50,7 +50,7 @@ class _ManagerPickerScreenState extends State<ManagerPickerScreen>
                       fade: s0.fade,
                       slide: s0.slide,
                       child: Text(
-                        'What would\nyou like to do?',
+                        context.l10n.t('firstSteps.managerQuestion'),
                         style: tt.headlineLarge?.copyWith(
                           height: 1.1,
                           letterSpacing: -0.5,
@@ -63,7 +63,7 @@ class _ManagerPickerScreenState extends State<ManagerPickerScreen>
                       fade: s1.fade,
                       slide: s1.slide,
                       child: Text(
-                        'Select how you want to proceed as a manager.',
+                        context.l10n.t('firstSteps.managerSubtitle'),
                         style: tt.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
                           height: 1.5,
@@ -71,14 +71,13 @@ class _ManagerPickerScreenState extends State<ManagerPickerScreen>
                       ),
                     ),
 
-                    // This spacing pushes the cards down into the "middle" visual area
                     const SizedBox(height: 48),
 
                     Staggered(
                       fade: s2.fade,
                       slide: s2.slide,
                       child: AnimatedOptionCard(
-                        label: 'Join a Shelter',
+                        label: context.l10n.t('firstSteps.joinShelterAction'),
                         icon: Icons.door_front_door,
                         onTap: () =>
                             Navigator.pushNamed(context, '/role/manager-code'),
@@ -91,7 +90,7 @@ class _ManagerPickerScreenState extends State<ManagerPickerScreen>
                       fade: s3.fade,
                       slide: s3.slide,
                       child: AnimatedOptionCard(
-                        label: 'Create a Shelter',
+                        label: context.l10n.t('firstSteps.createShelterAction'),
                         icon: Icons.add_home,
                         onTap: () => Navigator.pushNamed(
                           context,

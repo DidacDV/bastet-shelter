@@ -158,7 +158,7 @@ class ApiClient {
   dynamic _handleResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       if (response.statusCode == 204 || response.body.isEmpty) {
-        return null;
+        return <String, dynamic>{};
       }
       return jsonDecode(response.body);
     }
@@ -171,6 +171,14 @@ class ApiClient {
       );
       throw ApiException(401, 'Session expired');
     }
+    if (response.statusCode == 403) {
+      NavigationService.instance.showSnackBar(
+        "You don't have permission to perform this action",
+        isError: true,
+      );
+      throw ApiException(403, 'Insufficient permissions');
+    }
+
     String message;
     try {
       final body = jsonDecode(response.body);

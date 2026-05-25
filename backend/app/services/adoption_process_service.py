@@ -2,6 +2,13 @@ import io
 from datetime import date
 from sqlalchemy.orm import Session
 
+from app.core.email.email_sender import send_email
+from app.core.email.templates import (
+    adoption_completed_email,
+    adoption_rejected_email,
+    adoption_request_received_email,
+    adoption_request_shelter_email,
+)
 from app.core.exceptions import NotFoundError, BusinessLogicError, AuthorizationError
 from app.models.adoption.adoption_process import AdoptionProcess, AdoptionProcessStatusEnum
 from app.models.adoption.adoption_steps.adoption_step import AdoptionStep, StepStatusEnum, StepTypeEnum, STEP_ORDER
@@ -17,11 +24,12 @@ from app.repositories.animal_repo import AnimalRepository
 from app.schemas.adoption_schema.adoptant_schema import AdoptantResponse
 from app.schemas.adoption_schema.adoption_form_schema import AdoptionFormSubmit
 
-from app.schemas.adoption_schema.adoption_mappers import process_to_response, process_to_detail_response
-from app.schemas.adoption_schema.adoption_process_schema import AdoptionProcessResponse, AdoptionProcessDetailResponse
+from app.schemas.adoption_schema.adoption_mappers import process_to_response, process_to_detail_response, process_to_adoptant_response
+from app.schemas.adoption_schema.adoption_process_schema import AdoptionProcessResponse, AdoptionProcessDetailResponse, AdoptionProcessAdoptantResponse
 from app.services.pdf import pdf_service
 
 import cloudinary.uploader as cloudinary_uploader
+from fastapi import BackgroundTasks
 
 
 UNTOGGLE_ADOPTION_REASON = "This adoption process has been rejected because the animal is no longer in adoption."
@@ -70,7 +78,14 @@ class AdoptionProcessService:
         if not refuge or refuge.shelter_id != shelter_id:
             raise AuthorizationError("Not authorized to view this adoption process")
 
-    def start_adoption(self, animal_id: int, adoptant_email: str, adoptant_name: str, form_data: AdoptionFormSubmit) -> AdoptionProcessResponse:
+    def start_adoption(
+        self,
+        animal_id: int,
+        adoptant_email: str,
+        adoptant_name: str,
+        form_data: AdoptionFormSubmit,
+        background_tasks: BackgroundTasks,
+    ) -> AdoptionProcessResponse:
         """an adoption process starts with an adoptant sending the form for X animal adoption"""
         animal = self.animal_repo.get_by_id(self.db, animal_id)
         if not animal:
@@ -104,9 +119,36 @@ class AdoptionProcessService:
 
         self.db.commit()
         self.db.refresh(process)
+
+        html_body = adoption_request_received_email(
+            adoptant_name=adoptant_name,
+            animal_name=animal.name,
+        )
+        send_email(
+            subject=f"We've received your adoption application for {animal.name}",
+            recipients=[adoptant_email],
+            body=html_body,
+            background_tasks=background_tasks,
+        )
+
+        shelter = animal.refuge.shelter if animal.refuge else None
+        if shelter and shelter.email:
+            shelter_html_body = adoption_request_shelter_email(
+                shelter_name=shelter.name,
+                adoptant_name=adoptant_name,
+                adoptant_email=adoptant_email,
+                animal_name=animal.name,
+            )
+            send_email(
+                subject=f"New adoption application for {animal.name}",
+                recipients=[shelter.email],
+                body=shelter_html_body,
+                background_tasks=background_tasks,
+            )
+
         return process_to_response(process, steps)
 
-    def _cancel_process(self, process: AdoptionProcess, reason: str = UNTOGGLE_ADOPTION_REASON) -> None:
+    def _cancel_process(self, process: AdoptionProcess, background_tasks: BackgroundTasks, reason: str = UNTOGGLE_ADOPTION_REASON) -> None:
         """rejects all pending steps, marks process rejected, and notifies adoptant."""
         if reason:
             current_step = self.step_repo.get_current_step(self.db, process.id)
@@ -115,37 +157,59 @@ class AdoptionProcessService:
 
         self.step_repo.mark_all_rejected(self.db, process.id)
         self.process_repo.mark_rejected(self.db, process)
-        # TODO: notify adoptant (process.adoptant_id)
+        html_body = adoption_rejected_email(
+            adoptant_name=process.adoptant.name,
+            animal_name=process.animal.name,
+            reason=reason
+        )
 
-    def cancel_adoption(self, process_id: int, adoptant_id: int) -> None:
+        send_email(
+            subject=f"Update regarding your adoption application for {process.animal.name}",
+            recipients=[str(process.adoptant.email)],
+            body=html_body,
+            background_tasks=background_tasks
+        )
+
+    def cancel_adoption(self, process_id: int, adoptant_id: int, background_tasks: BackgroundTasks) -> None:
         """done by ADOPTANT"""
         process = self._get_process_or_raise(process_id)
         if process.adoptant_id != adoptant_id:
             raise AuthorizationError("Not authorized to cancel this adoption process")
         self.check_is_process_active(process_id)
 
-        self._cancel_process(process)
+        self._cancel_process(process, background_tasks)
 
-    def reject_adoption(self, process_id: int, shelter_id: int, reason: str) -> None:
+    def reject_adoption(self, process_id: int, shelter_id: int, reason: str, background_tasks: BackgroundTasks) -> None:
         """rejected by a shelter MANAGER"""
         process = self._get_process_or_raise(process_id)
 
         self._check_belongs_to_shelter(process, shelter_id)
         self.check_is_process_active(process_id)
 
-        self._cancel_process(process, reason=reason)
+        self._cancel_process(process, reason=reason, background_tasks=background_tasks)
 
-    def cancel_all_active_for_animal(self, animal_id: int) -> None:
+    def cancel_all_active_for_animal(self, animal_id: int, background_tasks: BackgroundTasks) -> None:
         """vancel all active adoption processes for an animal"""
         active_processes = self.process_repo.get_all_active_processes_for_animal(self.db, animal_id)
         for process in active_processes:
-            self._cancel_process(process)
+            self._cancel_process(process, background_tasks=background_tasks)
 
-    def mark_process_completed(self, process_id: int) -> None:
+    def mark_process_completed(self, process_id: int, background_tasks: BackgroundTasks) -> None:
         """marks the entire adoption process as completed (its steps too)"""
         process = self._get_process_or_raise(process_id)
         self.process_repo.mark_completed(self.db, process)
-        # todo: NOTIFY ADOPTANT
+        process.animal.in_adoption = False
+        html_body = adoption_completed_email(
+            adoptant_name=process.adoptant.name,
+            animal_name=process.animal.name
+        )
+
+        send_email(
+            subject=f"Great news! Your adoption process for {process.animal.name} is complete 🐾",
+            recipients=[str(process.adoptant.email)],
+            body=html_body,
+            background_tasks=background_tasks
+        )
 
     def get_adoption_process_details(self, process_id: int) -> AdoptionProcessDetailResponse:
         """full details"""
@@ -160,13 +224,13 @@ class AdoptionProcessService:
         steps = self.step_repo.get_steps_for_process(self.db, process.id)
         return process_to_detail_response(process, steps)
 
-    def get_adoption_process_steps_adoptant(self, process_id: int, adoptant_id: int) -> AdoptionProcessResponse:
-        """adoptant views their own adoption process (which has less info)"""
+    def get_adoption_process_steps_adoptant(self, process_id: int, adoptant_id: int) -> AdoptionProcessAdoptantResponse:
+        """adoptant views their own adoption process: current step with full detail, others as summary"""
         process = self._get_process_or_raise(process_id)
         if process.adoptant_id != adoptant_id:
             raise AuthorizationError("Not authorized to view this adoption process")
         steps = self.step_repo.get_steps_for_process(self.db, process.id)
-        return process_to_response(process, steps)
+        return process_to_adoptant_response(process, steps)
 
     def get_all_processes_for_shelter(self, shelter_id: int) -> list[AdoptionProcessResponse]:
         processes = self.process_repo.get_processes_for_shelter(self.db, shelter_id)

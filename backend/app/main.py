@@ -1,4 +1,6 @@
 import logging
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
@@ -15,6 +17,7 @@ from app.core.exceptions import NotFoundError, BusinessLogicError, Authorization
 from app.database import Base, engine, SessionLocal
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.jobs.treatment_reset_job import reset_treatments
 from app.routers.adoption_process_router import router as adoption_process_router
 from app.routers.adoption_steps_router import router as adoption_steps_router
 from app.routers.adoption_auth_router import router as adoption_auth_router
@@ -30,6 +33,7 @@ from app.routers.shift_router import router as shift_router
 from app.routers.geo_router import router as geo_router
 from app.routers.trait_router import router as trait_router
 from app.routers.medical_router import router as medical_router
+from app.routers.advertisement_router import router as advertisement_router
 
 from app.services.geo_service import GeoService
 import app.models as models
@@ -43,6 +47,11 @@ async def lifespan(app: FastAPI):
         await GeoService.run_periodic_update(db)
     finally:
         db.close()
+
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(reset_treatments, "interval", hours=1)
+    scheduler.start()
+
     yield
 
 logging.basicConfig(level=logging.INFO)
@@ -107,6 +116,7 @@ app.include_router(adoption_steps_router)
 app.include_router(adoption_process_router)
 app.include_router(adoption_auth_router)
 app.include_router(adoptant_router)
+app.include_router(advertisement_router)
 
 # create SQLAdmin page
 admin = Admin(app, engine, authentication_backend=authentication_backend)

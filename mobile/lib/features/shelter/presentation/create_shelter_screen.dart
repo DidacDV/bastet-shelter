@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/common/components/illustrated_header.dart';
 import 'package:bastetshelter/providers/geo/geo_provider.dart';
 import 'package:bastetshelter/core/service_locator.dart';
@@ -23,6 +24,7 @@ class CreateShelterScreen extends ConsumerStatefulWidget {
 class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _refugeNameController = TextEditingController();
   final _shelterRepository = getIt<ShelterRepository>();
 
@@ -32,6 +34,7 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _emailController.dispose();
     _refugeNameController.dispose();
     super.dispose();
   }
@@ -47,6 +50,9 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
         _nameController.text,
         _selectedLocationId!,
         _refugeNameController.text,
+        _emailController.text.trim().isEmpty
+            ? null
+            : _emailController.text.trim(),
       );
       if (mounted) Navigator.pushReplacementNamed(context, '/home');
     });
@@ -87,18 +93,17 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
                           'assets/images/Illustration-8.svg',
                           height: 180,
                         ),
-                        badgeLabel: 'NEW SHELTER',
-                        title: 'Set up your\nshelter',
-                        subtitle:
-                            'Fill in the details below to create your shelter and get started.',
+                        badgeLabel: context.l10n.t('shelter.newShelterBadge'),
+                        title: context.l10n.t('shelter.setupTitle'),
+                        subtitle: context.l10n.t('shelter.setupSubtitle'),
                       ),
                       const SizedBox(height: 32),
 
-                      _FormLabel(label: 'Shelter name', tt: tt),
+                      _FormLabel(label: context.l10n.t('shelter.name'), tt: tt),
                       const SizedBox(height: 6),
                       AppTextField(
                         controller: _nameController,
-                        label: 'e.g. MyShelter',
+                        label: context.l10n.t('shelter.nameExample'),
                         keyboardType: TextInputType.name,
                         validator: (v) =>
                             Validators.validateRequired(v, "shelter's name"),
@@ -106,7 +111,24 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
 
                       const SizedBox(height: 20),
 
-                      _FormLabel(label: 'Province', tt: tt),
+                      _FormLabel(
+                        label: context.l10n.t('shelter.emailOptional'),
+                        tt: tt,
+                      ),
+                      const SizedBox(height: 6),
+                      AppTextField(
+                        controller: _emailController,
+                        label: context.l10n.t('shelter.emailExample'),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (v) => Validators.validateEmailNoRequired(v),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      _FormLabel(
+                        label: context.l10n.t('shelter.province'),
+                        tt: tt,
+                      ),
                       const SizedBox(height: 6),
                       provincesAsync.when(
                         data: (provinces) => LocationDropdown(
@@ -122,18 +144,21 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
                           ),
                         ),
                         error: (e, _) => Text(
-                          'Could not load locations.',
+                          context.l10n.t('shelter.locationsLoadError'),
                           style: tt.bodySmall?.copyWith(color: AppColors.error),
                         ),
                       ),
 
                       const SizedBox(height: 20),
 
-                      _FormLabel(label: 'First refuge name', tt: tt),
+                      _FormLabel(
+                        label: context.l10n.t('shelter.firstRefugeName'),
+                        tt: tt,
+                      ),
                       const SizedBox(height: 6),
                       AppTextField(
                         controller: _refugeNameController,
-                        label: 'e.g. RubiRefuge',
+                        label: context.l10n.t('shelter.refugeNameExample'),
                         validator: (v) =>
                             Validators.validateRequired(v, "refuge name"),
                       ),
@@ -148,7 +173,7 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(28, 8, 28, 20),
               child: PrimaryButton(
-                label: 'Create Shelter',
+                label: context.l10n.t('shelter.createShelter'),
                 isLoading: _isLoading,
                 onPressed: _createShelter,
               ),

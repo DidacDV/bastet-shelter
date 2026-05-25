@@ -125,7 +125,7 @@ def test_update_shelter(client):
     manager_token, _, _, shelter_id = _create_shelter(client, token, name="Old Name", province_id="08")
 
     res = client.put(
-        f"/shelters/{shelter_id}",
+        f"/shelters/",
         json={"name": "New Name", "province_id": "08"},
         headers=_auth_headers(manager_token)
     )
@@ -140,7 +140,7 @@ def test_update_shelter_partial(client):
     manager_token, _, _, shelter_id = _create_shelter(client, token, name="Old Name", province_id="08")
 
     res = client.put(
-        f"/shelters/{shelter_id}",
+        f"/shelters/",
         json={"name": "Updated Name"},
         headers=_auth_headers(manager_token)
     )
@@ -159,7 +159,7 @@ def test_update_shelter_unauthorized(client):
     vol_token = join_res.json()["access_token"]
 
     res = client.put(
-        "/shelters/1",
+        "/shelters/",
         json={"name": "New Name"},
         headers=_auth_headers(vol_token)
     )

@@ -111,6 +111,8 @@ class MedicalService:
         if not medicine:
             raise NotFoundError("Medicine not found")
         self._validate_medicine_belongs_to_shelter(medicine, shelter_id)
+        if self.medicine_repo.is_used_in_active_treatment(self.db, medicine_id):
+            raise BusinessLogicError("Medicine is used in an active treatment and cannot be deleted")
         self.medicine_repo.delete(self.db, medicine_id)
 
     # TREATMENT

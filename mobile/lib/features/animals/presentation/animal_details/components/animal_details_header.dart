@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/animals/data/models/animal_details_model.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/components/animal_image_slider.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/components/manage_animal_images.dart';
@@ -27,9 +30,7 @@ class AnimalDetailsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color pillBackgroundColor = Theme.of(
-      context,
-    ).colorScheme.surface.withValues(alpha: 0.95);
+    final Color pillBackgroundColor = Colors.white.withValues(alpha: 0.6);
 
     final double statusBarHeight = MediaQuery.of(context).padding.top;
 
@@ -48,7 +49,6 @@ class AnimalDetailsHeader extends StatelessWidget {
               clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: () => Navigator.of(context, rootNavigator: true).push(
-                  // <-- This bypasses AppShell!
                   MaterialPageRoute(
                     builder: (context) => ManageAnimalImagesScreen(
                       animalId: animal.id,
@@ -75,24 +75,34 @@ class AnimalDetailsHeader extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                decoration: BoxDecoration(
-                  color: pillBackgroundColor,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: EditableField(
-                  label: 'Name',
-                  value: animal.name,
-                  isTitle: true,
-                  canEdit: canEdit,
-                  onEdit: () => showEditBottomSheet(
-                    context: context,
-                    label: "Name",
-                    initialValue: animal.name,
-                    onSave: (newVal) async {
-                      await onNameSave?.call(newVal);
-                    },
+              ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: EditableField(
+                      label: context.l10n.t('common.name'),
+                      value: animal.name,
+                      isTitle: true,
+                      canEdit: canEdit,
+                      alignment: CrossAxisAlignment.center,
+                      onEdit: () => showEditBottomSheet(
+                        context: context,
+                        label: context.l10n.t('common.name'),
+                        initialValue: animal.name,
+                        onSave: (newVal) async {
+                          await onNameSave?.call(newVal);
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -102,44 +112,58 @@ class AnimalDetailsHeader extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    DateChip(
-                      label: "Arrival",
-                      date: animal.arrivalDate ?? animal.birthDate,
-                      canEdit: canEdit,
-                      backgroundColor: pillBackgroundColor,
-                      onEdit: !canEdit
-                          ? null
-                          : () async {
-                              final picked = await showDatePicker(
-                                context: context,
-                                initialDate:
-                                    animal.arrivalDate ?? animal.birthDate,
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime.now(),
-                              );
-                              if (picked != null && onArrivalDateSave != null) {
-                                await onArrivalDateSave!(picked);
-                              }
-                            },
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                        child: DateChip(
+                          label: context.l10n.t('animals.arrival'),
+                          date: animal.arrivalDate ?? animal.birthDate,
+                          canEdit: canEdit,
+                          backgroundColor: Colors.white.withValues(alpha: 0.5),
+                          onEdit: !canEdit
+                              ? null
+                              : () async {
+                                  final picked = await showDatePicker(
+                                    context: context,
+                                    initialDate:
+                                        animal.arrivalDate ?? animal.birthDate,
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime.now(),
+                                  );
+                                  if (picked != null &&
+                                      onArrivalDateSave != null) {
+                                    await onArrivalDateSave!(picked);
+                                  }
+                                },
+                        ),
+                      ),
                     ),
-                    DateChip(
-                      label: "Birthday",
-                      date: animal.birthDate,
-                      canEdit: canEdit,
-                      backgroundColor: pillBackgroundColor,
-                      onEdit: !canEdit
-                          ? null
-                          : () async {
-                              final picked = await showDatePicker(
-                                context: context,
-                                initialDate: animal.birthDate,
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime.now(),
-                              );
-                              if (picked != null && onBirthdaySave != null) {
-                                await onBirthdaySave!(picked);
-                              }
-                            },
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                        child: DateChip(
+                          label: context.l10n.t('animals.birthday'),
+                          date: animal.birthDate,
+                          canEdit: canEdit,
+                          backgroundColor: Colors.white.withValues(alpha: 0.5),
+                          onEdit: !canEdit
+                              ? null
+                              : () async {
+                                  final picked = await showDatePicker(
+                                    context: context,
+                                    initialDate: animal.birthDate,
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime.now(),
+                                  );
+                                  if (picked != null &&
+                                      onBirthdaySave != null) {
+                                    await onBirthdaySave!(picked);
+                                  }
+                                },
+                        ),
+                      ),
                     ),
                   ],
                 ),

@@ -1,11 +1,12 @@
 from typing import List
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from app.core.dependencies.role_dependencies import get_db, get_current_user, require_manager
 from app.models.user import AuthenticatedUser
 from app.schemas.animals_schema.animals_image_schema import AnimalImageResponse
-from app.schemas.animals_schema.animals_schema import AnimalCreate, AnimalResponse, AnimalSummaryInfoList, AnimalUpdate
+from app.schemas.animals_schema.animals_schema import AnimalCreate, AnimalResponse, AnimalSummaryInfoList, AnimalUpdate, \
+    AnimalPublicSummaryList, AnimalPublicDetail
 from app.services.animal_service import AnimalService
 
 router = APIRouter(prefix="/animals", tags=["animals"])
@@ -37,6 +38,23 @@ def get_short_infos(
     animals = service.get_all_animals_short_info(auth.shelter_id)
     return {"animals": animals}
 
+@router.get("/short_info_portal", response_model=AnimalPublicSummaryList)
+def get_short_infos_portal(
+    province_id: str,
+    service: AnimalService = Depends(get_animal_service)
+):
+    if not province_id:
+        return {"animals": []}
+    animals = service.get_portal_animals_short_info(province_id)
+    return {"animals": animals}
+
+@router.get("/public/{animal_id}", response_model=AnimalPublicDetail)
+def get_animal_public_detail(
+    animal_id: int,
+    service: AnimalService = Depends(get_animal_service)
+):
+    return service.get_animal_public_detail(animal_id)
+
 @router.get("/{animal_id}", response_model=AnimalResponse)
 def get_animal_detail(
     animal_id: int,
@@ -65,10 +83,11 @@ def delete_animal(
 @router.patch("/{animal_id}/adoption", response_model=AnimalResponse)
 def toggle_adoption(
     animal_id: int,
+    background_tasks: BackgroundTasks,
     auth: AuthenticatedUser = Depends(require_manager),
     service: AnimalService = Depends(get_animal_service)
 ):
-    return service.set_in_adoption(animal_id)
+    return service.set_in_adoption(animal_id, background_tasks)
 
 @router.post("/{animal_id}/images", response_model=AnimalImageResponse)
 def upload_animal_image(

@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/steps/contract_step_details.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/adoption_process_body.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/adoption_process_footer.dart';
@@ -21,13 +22,14 @@ class AdoptionProcessScreen extends ConsumerWidget {
     );
 
     return Scaffold(
-      appBar: const BastetAppBar(
-        customTitle: 'Adoption Process',
+      appBar: BastetAppBar(
+        customTitle: context.l10n.t('adoption.processTitle'),
         showBackButton: true,
       ),
       body: screenDataAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error loading data')),
+        error: (e, _) =>
+            Center(child: Text(context.l10n.t('adoption.loadDataError'))),
         data: (data) {
           final isDone =
               data.process.status.name == 'rejected' ||
@@ -49,14 +51,14 @@ class AdoptionProcessScreen extends ConsumerWidget {
               AdoptionProcessHeader(
                 process: data.process,
                 animalName: data.animal.name,
-                adoptantName: data.adoptant.name,
+                adoptantEmail: data.adoptant.email,
                 animalImageUrl: data.animal.primaryImageUrl,
               ),
               if (isRejected)
                 RejectionBanner(
                   reason:
                       data.process.rejectionReason ??
-                      'No reason provided for this rejection.',
+                      context.l10n.t('adoption.noRejectionReason'),
                 ),
               Expanded(
                 child: AdoptionProcessBody(

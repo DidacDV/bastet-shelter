@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 import 'package:bastetshelter/features/adoption/data/adoption_enums.dart';
 import 'package:bastetshelter/features/adoption/data/models/adoption_steps/adoption_step_details.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/components/steps/step_content.dart';
@@ -62,7 +63,10 @@ class _AdoptionProcessBodyState extends State<AdoptionProcessBody> {
 
     final stepperItems = sorted.asMap().entries.map((entry) {
       return VerticalStepperItem(
-        label: entry.value.type.label,
+        label: context.localizedAdoptionStepType(
+          entry.value.type,
+          shortAnimalPickup: true,
+        ),
         icon: entry.value.type.icon,
         state: _stateFor(entry.value, entry.key),
       );

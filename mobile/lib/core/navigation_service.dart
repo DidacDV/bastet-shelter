@@ -2,6 +2,7 @@
 // Posted by S.R Keshav
 // Retrieved 2026-03-16, License - CC BY-SA 4.0
 
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class NavigationService {
@@ -29,15 +30,52 @@ class NavigationService {
     navigationKey.currentState!.pushNamedAndRemoveUntil('/login', (_) => false);
   }
 
-  // TODO create custom snackbar that follows app theme
   void showSnackBar(String message, {bool isError = false}) {
     final context = navigationKey.currentContext;
     if (context == null) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: isError ? Colors.blue : null,
-      ),
-    );
+
+    final theme = Theme.of(context);
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Row(
+            spacing: 12,
+            children: [
+              Icon(
+                isError ? Icons.error_outline : Icons.check_circle_outline,
+                color: isError
+                    ? theme.colorScheme.onError
+                    : theme.colorScheme.onPrimary,
+              ),
+              Expanded(
+                child: Text(
+                  message,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: isError
+                        ? theme.colorScheme.onError
+                        : theme.colorScheme.onPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: isError
+              ? theme.colorScheme.secondary
+              : theme.colorScheme.primary,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.all(16),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+  }
+
+  void showSnackBarKey(String key, {bool isError = false}) {
+    final context = navigationKey.currentContext;
+    showSnackBar(context?.l10n.t(key) ?? key, isError: isError);
   }
 }

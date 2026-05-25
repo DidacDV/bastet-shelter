@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:bastetshelter/core/constants.dart';
 
@@ -54,7 +55,9 @@ class _BastetSearchBarState extends State<BastetSearchBar> {
       controller: _controller,
       onChanged: _onChanged,
       decoration: InputDecoration(
-        hintText: widget.hintText,
+        hintText: widget.hintText == 'Search…'
+            ? context.l10n.t('common.search')
+            : widget.hintText,
         prefixIcon: const Icon(
           Icons.search,
           color: AppColors.textHint,

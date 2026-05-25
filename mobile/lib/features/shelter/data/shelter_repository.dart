@@ -31,10 +31,16 @@ class ShelterRepository {
     String name,
     String location,
     String refugeName,
+    String? email,
   ) async {
     final data = await _client.post(
       '/shelters/',
-      body: {'name': name, 'province_id': location, 'refuge_name': refugeName},
+      body: {
+        'name': name,
+        'province_id': location,
+        'refuge_name': refugeName,
+        'shelter_email': email,
+      },
     );
     final token = data['access_token'];
     _client.setToken(token);
@@ -85,13 +91,18 @@ class ShelterRepository {
     return Refuge.fromJson(response);
   }
 
-  Future<Shelter> updateShelter(String shelterName, String locationId) async {
-    final shelterId = _client.getTokenClaim<int>('shelter_id');
-    if (shelterId == null) throw ApiException(401, 'No shelter in token');
-
+  Future<Shelter> updateShelter(
+    String shelterName,
+    String locationId,
+    String? email,
+  ) async {
     final response = await _client.put(
-      '/shelters/$shelterId',
-      body: {'name': shelterName, 'province_id': locationId},
+      '/shelters/',
+      body: {
+        'name': shelterName,
+        'province_id': locationId,
+        'email': email ?? '',
+      },
     );
     return Shelter.fromJson(response);
   }

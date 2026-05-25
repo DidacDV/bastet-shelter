@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/constants.dart';
+import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_list/adoption_list_screen.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/home/presentation/components/home_card.dart';
@@ -17,7 +18,7 @@ class HomeTab extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      appBar: const BastetAppBar(),
+      appBar: const BastetAppBar(showProfile: true),
 
       body: dashboardAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -29,9 +30,12 @@ class HomeTab extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 16),
-                Text('Welcome', style: theme.textTheme.displayLarge),
                 Text(
-                  'Keep on track with your shelter.',
+                  context.l10n.t('home.welcome'),
+                  style: theme.textTheme.displayLarge,
+                ),
+                Text(
+                  context.l10n.t('home.subtitle'),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: AppColors.textSecondary,
                   ),
@@ -49,7 +53,7 @@ class HomeTab extends ConsumerWidget {
                             widthFactor: 0.85,
                             child: StatCard(
                               count: dashboard.animalCount,
-                              label: 'Registered animals',
+                              label: context.l10n.t('home.registeredAnimals'),
                               icon: Icons.pets_rounded,
                               bgColor: AppColors.primaryTint,
                               fgColor: AppColors.primary,
@@ -64,7 +68,7 @@ class HomeTab extends ConsumerWidget {
                             widthFactor: 0.85,
                             child: StatCard(
                               count: dashboard.activeAdoptionCount,
-                              label: 'Adoption processes',
+                              label: context.l10n.t('home.adoptionProcesses'),
                               icon: Icons.home_rounded,
                               bgColor: AppColors.secondaryTint,
                               fgColor: AppColors.secondary,
@@ -83,7 +87,7 @@ class HomeTab extends ConsumerWidget {
                             widthFactor: 0.85,
                             child: StatCard(
                               count: dashboard.volunteerCount,
-                              label: 'Active volunteers',
+                              label: context.l10n.t('home.activeVolunteers'),
                               icon: Icons.people_rounded,
                               bgColor: AppColors.accentTint,
                               fgColor: AppColors.accent,

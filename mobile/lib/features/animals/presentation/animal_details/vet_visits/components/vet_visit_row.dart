@@ -1,3 +1,4 @@
+import 'package:bastetshelter/core/localization/localized_mappers.dart';
 import 'package:bastetshelter/features/medicine/data/models/vet_visit_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -29,7 +30,7 @@ class VetVisitRow extends StatelessWidget {
           Expanded(
             flex: 4,
             child: Text(
-              visit.visitType.label,
+              context.localizedVetVisitType(visit.visitType),
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),

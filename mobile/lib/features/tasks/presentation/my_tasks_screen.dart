@@ -95,6 +95,7 @@ class MyTasksScreen extends ConsumerWidget {
                               await notifier.unassignTask(
                                 task.id,
                                 task.shiftId,
+                                animalId: task.animal?.id,
                               );
                             },
                             onToggleCompletion: () async {

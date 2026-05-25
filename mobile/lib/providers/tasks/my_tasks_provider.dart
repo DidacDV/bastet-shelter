@@ -22,16 +22,47 @@ class MyTasks extends _$MyTasks {
         await ref.read(shiftRepositoryProvider).completeTask(task.id);
       }
       ref.invalidateSelf();
-      ref.invalidate(shiftDetailProvider(task.shiftId));
+      invalidateRelatedShiftTaskProviders(
+        ref,
+        shiftId: task.shiftId,
+        animalId: task.animal?.id,
+        invalidateMyTasks: false,
+      );
       invalidateAnimalTaskCaches(ref, animalId: task.animal?.id);
     });
   }
 
-  Future<void> unassignTask(int shiftTaskId, int shiftId) async {
+  Future<void> unassignTask(
+    int shiftTaskId,
+    int shiftId, {
+    int? animalId,
+  }) async {
     await genericApiCall(() async {
       await ref.read(shiftRepositoryProvider).unassignTask(shiftTaskId);
-      ref.invalidateSelf();
-      ref.invalidate(shiftDetailProvider(shiftId));
+
+      final current = state.value;
+      if (current != null) {
+        state = AsyncData(
+          current
+              .map(
+                (group) => MyShiftTasksGroup(
+                  shift: group.shift,
+                  tasks: group.tasks
+                      .where((task) => task.id != shiftTaskId)
+                      .toList(),
+                ),
+              )
+              .where((group) => group.tasks.isNotEmpty)
+              .toList(),
+        );
+      }
+
+      invalidateRelatedShiftTaskProviders(
+        ref,
+        shiftId: shiftId,
+        animalId: animalId,
+        invalidateMyTasks: false,
+      );
     });
   }
 }

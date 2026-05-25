@@ -16,8 +16,6 @@ function DateRow({
   value: string | null;
   fallback: string;
 }) {
-  const { t } = useLocalization();
-
   return (
     <Group gap={8} align="flex-start">
       <div style={{ marginTop: 2, color: AppColors.textHint }}>{icon}</div>
@@ -49,6 +47,7 @@ export default function AnimalPickupStepView({
 }: {
   step: AnimalPickupStep;
 }) {
+  const { t } = useLocalization();
   return (
     <StepCardBase
       type={step.type}

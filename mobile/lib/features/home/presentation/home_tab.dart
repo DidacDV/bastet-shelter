@@ -77,6 +77,7 @@ class HomeTab extends ConsumerWidget {
                                   builder: (context) => AdoptionList(),
                                 ),
                               ),
+                              displayIcon: true,
                             ),
                           ),
                         ),

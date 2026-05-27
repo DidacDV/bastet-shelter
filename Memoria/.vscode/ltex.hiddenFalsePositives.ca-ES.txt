@@ -1,0 +1,1 @@
+{"rule":"SE_DAVANT_SC","sentence":"^\\QSi l'usuari està autenticat i ja té un procés d'adopció, el botó d'adopció es substitueix per un altre que redirigeix a la pàgina del procés d'adopció en curs.\\E$"}

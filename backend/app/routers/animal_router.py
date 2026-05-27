@@ -1,4 +1,5 @@
-from typing import List
+from typing import List, Optional
+from datetime import date
 from fastapi import APIRouter, Depends, UploadFile, File, BackgroundTasks
 from sqlalchemy.orm import Session
 
@@ -7,6 +8,7 @@ from app.models.user import AuthenticatedUser
 from app.schemas.animals_schema.animals_image_schema import AnimalImageResponse
 from app.schemas.animals_schema.animals_schema import AnimalCreate, AnimalResponse, AnimalSummaryInfoList, AnimalUpdate, \
     AnimalPublicSummaryList, AnimalPublicDetail
+from app.schemas.shift_schema.shift_schema import AnimalPendingTasksResponse
 from app.services.animal_service import AnimalService
 
 router = APIRouter(prefix="/animals", tags=["animals"])
@@ -54,6 +56,15 @@ def get_animal_public_detail(
     service: AnimalService = Depends(get_animal_service)
 ):
     return service.get_animal_public_detail(animal_id)
+
+@router.get("/{animal_id}/pending-tasks", response_model=AnimalPendingTasksResponse)
+def get_animal_pending_tasks(
+    animal_id: int,
+    day: Optional[date] = None,
+    auth: AuthenticatedUser = Depends(get_current_user),
+    service: AnimalService = Depends(get_animal_service),
+):
+    return {"pending_tasks": service.get_pending_tasks_for_animal(animal_id, day)}
 
 @router.get("/{animal_id}", response_model=AnimalResponse)
 def get_animal_detail(

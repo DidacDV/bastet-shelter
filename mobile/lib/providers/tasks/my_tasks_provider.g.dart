@@ -33,7 +33,7 @@ final class MyTasksProvider
   MyTasks create() => MyTasks();
 }
 
-String _$myTasksHash() => r'3a8294e5558289f360d53b892f5c885f73e1c412';
+String _$myTasksHash() => r'9f5d513eb9771d248d3009dc10aa0df4fe0e662b';
 
 abstract class _$MyTasks extends $AsyncNotifier<List<MyShiftTasksGroup>> {
   FutureOr<List<MyShiftTasksGroup>> build();

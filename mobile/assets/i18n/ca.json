@@ -435,6 +435,8 @@
   "adoption.searchHint": "Cerca per animal o adoptant...",
   "adoption.loadListError": "No s'han pogut carregar les adopcions",
   "adoption.emptyTitle": "No s'han trobat adopcions",
+  "adoption.emptyMessage": "Encara no hi ha processos d'adopció.",
+  "adoption.emptyFilterMessage": "Prova d'ajustar la cerca o els filtres.",
   "adoption.emptySearchMessage": "Prova d'ajustar la cerca.",
   "adoption.contract": "Contracte",
   "adoption.viewPdf": "Veure PDF",

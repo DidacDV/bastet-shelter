@@ -435,6 +435,8 @@
   "adoption.searchHint": "Buscar por animal o adoptante...",
   "adoption.loadListError": "No se han podido cargar las adopciones",
   "adoption.emptyTitle": "No se han encontrado adopciones",
+  "adoption.emptyMessage": "Todavía no hay procesos de adopción.",
+  "adoption.emptyFilterMessage": "Prueba a ajustar la búsqueda o los filtros.",
   "adoption.emptySearchMessage": "Prueba a ajustar la búsqueda.",
   "adoption.contract": "Contrato",
   "adoption.viewPdf": "Ver PDF",

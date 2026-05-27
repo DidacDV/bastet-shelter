@@ -87,6 +87,10 @@
 \setlength{\cftbeforelottitleskip}{0pt}
 
 \setlength{\cftbeforechapskip}{6pt}
+\lstset{
+    aboveskip=20pt,
+    belowskip=4pt
+}
 
 %start section from 1
 \renewcommand{\thesection}{\arabic{section}}
@@ -108,6 +112,25 @@
 \end{tabular}\caption[HU: #2]{Història d'usuari de: #2.}\label{tab:hu_#1}\end{table}%
 }
 
+%macro for volere non func. requisites
+\newcommand{\RNF}[9]{%
+\begin{table}[H]\centering\footnotesize\renewcommand{\arraystretch}{1.1}%
+\setlength{\extrarowheight}{0pt}%
+\begin{tabular}{|l|p{4.8cm}|p{4.8cm}|}\hline
+\rowcolor{oceanblue}\textcolor{white}{\textbf{Requisit No Funcional}} & \multicolumn{2}{l|}{\textcolor{white}{\textbf{#1 - #3}}} \\\hline
+\textbf{Tipus Volere} & \multicolumn{2}{l|}{#2} \\\hline
+\rowcolor{gray!10}\textbf{Satisfacció} & \textbf{Satisfacció: } #8 & \textbf{Insatisfacció: } #9 \\\hline
+\rowcolor{oceanblue}\multicolumn{3}{|l|}{\textcolor{white}{\textbf{Descripció}}} \\\hline
+\multicolumn{3}{|p{12.5cm}|}{#4} \\\hline
+\rowcolor{oceanblue}\multicolumn{3}{|l|}{\textcolor{white}{\textbf{Justificació}}} \\\hline
+\multicolumn{3}{|p{12.5cm}|}{#5} \\\hline
+\rowcolor{oceanblue}\multicolumn{3}{|l|}{\textcolor{white}{\textbf{Origen}}} \\\hline
+\multicolumn{3}{|p{12.5cm}|}{#6} \\\hline
+\rowcolor{oceanblue}\multicolumn{3}{|l|}{\textcolor{white}{\textbf{Criteri d'Acceptació}}} \\\hline
+\multicolumn{3}{|p{12.5cm}|}{#7} \\\hline
+\end{tabular}\caption[RNF: #3]{Requisit no funcional: #3.}\label{tab:rnf_#1}\end{table}%
+}
+
 \begin{document}
 \portada
 
@@ -117,6 +140,8 @@
 \renewcommand{\figurename}{Figura}
 \renewcommand{\tablename}{Taula}
 \renewcommand{\bibname}{Referències}
+\renewcommand{\lstlistingname}{Bloc de codi}
+\renewcommand{\lstlistlistingname}{Índex de blocs de codi}
 
 \captionsetup[figure]{font=it}
 \tableofcontents
@@ -124,6 +149,8 @@
 \listoffigures
 \newpage
 \listoftables
+\newpage
+\lstlistoflistings
 \newpage
 \section{Introducció}
 El projecte \titolTFG és un Treball de Fi de Grau (TFG) del grau d'Enginyeria Informàtica, més en concret de l’especialitat d’Enginyeria del Software, de la Facultat d’Informàtica de Barcelona (FIB) de la Universitat Politècnica de Catalunya (UPC). S’ha realitzat amb la modalitat A i és dirigit per la María José Casañ Guerrero.
@@ -1110,7 +1137,7 @@ En aquesta secció es detallarà l'especificació del projecte, incloent-hi els 
 
 Els requisits finals descrits a continuació són fruit de l'estudi de mercat realitzat a la secció~\ref{sec:context}, en conjunt amb l'experiència de l'autor realitzant un voluntariat en una protectora d'animals, i la informació recollida a través de contactar amb una entitat de protecció animal local, concretament Rodamons de Rubí \cite{noauthor_gatos_nodate}, a través de correu electrònic.
 
-\subsection{Històries d'usuari}
+\subsection{Requisits funcionals}
 A continuació, es detallen les històries d'usuari agrupades per èpiques, seguint la metodologia \textit{Agile}. Cada història d'usuari inclou l'objectiu al qual fa referència (i a quin requisit no funcional, si aplica), una descripció clara de la funcionalitat desitjada, els criteris d'acceptació, i una estimació en punts d'esforç basada en l'escala de Planning Poker \cite{mira_planning_2015}, adaptada per a un desenvolupador individual.
 \subsubsection{Portal d'adopcions}
     Aquesta èpica comprèn les funcionalitats relacionades amb la pàgina web que actua com a portal d'adopcions per aquells usuaris externs al sistema que volen adoptar un gat. Aquest portal permetrà als usuaris navegar pels gats disponibles per a adopció, veure els seus perfils detallats i iniciar el procés d'adopció.
@@ -1679,6 +1706,76 @@ A continuació, es detallen les històries d'usuari agrupades per èpiques, segu
     }
 
 \newpage
+
+\subsection{Requisits no funcionals}
+Per a l'especificació dels requisits no funcionals s'ha utilitzat la plantilla Volere, la qual proporciona una estructura estàndard per descriure cada requisit de manera clara \cite{robertson_mastering_2011}. Els graus de satisfacció i insatisfacció, com indica la plantilla Volere, es troben en una escala 1 al 5.
+
+\RNF
+  {NFR1}
+  {Usabilitat}
+  {Usabilitat}
+  {La interfície del portal web i de l'aplicació ha de ser fàcil d'utilitzar per a usuaris sense formació tècnica prèvia.}
+  {El sistema és utilitzat per perfils molt diversos: voluntaris, gestors de protectores i adoptants sense coneixements tècnics. Una interfície complexa reduiria l'ús del sistema o empobriria l'experiència dels usuaris participants.}
+  {Autor del projecte}
+  {El 80\% d'una sèrie d'usuaris sense formació tècnica ni coneixements previs de l'aplicació ha de poder completar les tasques principals (consultar animals, gestionar un torn, veure tasques) sense ajuda externa i en menys de 5 minuts.}
+  {4}
+  {4}
+
+\RNF
+  {NFR2}
+  {Rendiment (Capacitat i Creixement)}
+  {Escalabilitat}
+  {El sistema ha de ser capaç de gestionar un increment d'usuaris sense afectar les funcionalitats principals, suportant el creixement progressiu de protectores i usuaris registrats.}
+  {Un sistema que perd rendiment amb el creixement d'usuaris i requisits limita la seva utilitat a llarg termini i pot comprometre l'experiència dels usuaris existents.}
+  {Autor del projecte}
+  {El sistema ha de mantenir un temps de resposta inferior a 4 segons en el 90\% de les peticions amb fins a 100 usuaris simultanis, mesurat amb eines de test de càrrega.}
+  {3}
+  {3}
+
+\RNF
+  {NFR3}
+  {Seguretat (Privacitat)}
+  {Privacitat}
+  {El sistema ha de complir de manera estricta amb el Reglament General de Protecció de Dades (RGPD), garantint el tractament segur de les dades personals de tots els actors implicats.}
+  {El sistema gestiona dades personals sensibles d'adoptants, voluntaris i animals. L'incompliment del RGPD pot arribar a comportar sancions legals.}
+  {Autor del projecte}
+  {El sistema ha de requerir als usuaris llegir i acceptar les polítiques de privacitat abans de registrar-se. Els usuaris poden esborrar el seu compte en qualsevol moment.} 
+  {3}
+  {3}
+
+\RNF
+  {NFR4}
+  {Rendiment (Confiabilitat i Disponibilitat)}
+  {Disponibilitat}
+  {El portal web d'adopcions i les funcionalitats de l'aplicació han d'estar disponibles un 99\% del temps com a mínim.}
+  {Una falta de disponibilitat del sistema pot impedir als adoptants consultar animals i als gestors de protectores dur a terme la seva feina diària, generant pèrdues de confiança en el sistema i creant problemes en el dia a dia de les protectores.}
+  {Autor del projecte}
+  {El sistema no ha d'estar fora de servei més d'una hora al mes. La disponibilitat es monitorarà   mitjançant eines com UptimeRobot o alternatives similars.}
+  {4}
+  {4}
+
+\RNF
+  {NFR5}
+  {Usabilitat (Personalització i Internacionalització)}
+  {Internacionalització}
+  {El sistema ha de permetre escollir l'idioma entre català i castellà, l'anglès en totes les vistes del portal web i de l'aplicació mòbil.}
+  {Limitar el sistema a un sol idioma exclouria una part significativa dels usuaris potencials i reduiria l'accessibilitat del sistema.}
+  {Autor del projecte}
+  {Tot el text de l'aplicació i portal web ha d'estar disponible en català, castellà i anglès. Un canvi d'idioma ha d'aplicar-se de manera immediata sense necessitat haver de reiniciar l'aplicació.}
+  {3}
+  {2}
+
+\RNF
+  {NFR6}
+  {Seguretat (Accés i Integritat)}
+  {Seguretat}
+  {El sistema ha d'implementar autenticació segura mitjançant tokens JWT, control d'accés basat en rols (RBAC) i comunicació xifrada via HTTPS per garantir que cada actor només pugui accedir a les funcionalitats que li corresponen.}
+  {El sistema tracta amb dades sensibles en certs punts. No realitzar una bona tasca de seguretat pot comprometre als usuaris i als animals.}
+  {Autor del projecte}
+  {Un usuari amb rol de voluntari que intenti accedir a una ruta restringida (per exemple, modificar dades d'un animal o gestionar sol·licituds d'adopció) ha de rebre un error HTTP 403. A més, totes les comunicacions entre client i servidor han de realitzar-se amb HTTPS.}
+  {5}
+  {5}
+
 \subsection{Model conceptual}
 En aquesta secció es descriu el model conceptual que representa tot el sistema, on s'inclouen les entitats, les seves relacions i els seus atributs. També es detallen les restriccions d'integritat definides per mantenir la coherència del model.
 
@@ -1767,23 +1864,22 @@ when displaying a pattern, show maybe diagram + code snippet
 En aquest projecte, el nucli de tot el sistema és el \textbf{backend}, ja que és l'encarregat de gestionar tota la lògica i facilitar les comunicacions i interaccions entre el portal web i l'aplicació mòbil. Per aquesta raó, s'ha optat per utilitzar \textbf{Python} amb el framework \textbf{FastAPI}. Python és un llenguatge àmpliament fet servir en el desenvolupament backend, destacat per la seva llegibilitat, la seva gran comunitat i el seu extens ecosistema de llibreries. Aquesta combinació permet realitzar un desenvolupament ràpid i eficient, mantenint l'escalabilitat a futur gràcies al suport natiu de programació asíncrona mitjançant \textit{asyncio} \cite{noauthor_asyncio_nodate}.
 
 FastAPI és un framework modern i en constant creixement \cite{noauthor_fastapi_nodate}, cosa que assegura un cicle de vida llarg i una evolució contínua. Destaca per la seva \textbf{generació automàtica de documentació} interactiva a través del codi, la facilitat per crear \textbf{APIs REST} i el seu sistema de \textbf{validació de dades} basat en tipus, que permet detectar errors en temps de desenvolupament. A més, ofereix un rendiment molt elevat comparat amb altres frameworks de Python com Django o Flask, situant-se al nivell de frameworks de llenguatges compilats \cite{noauthor_benchmarks_nodate}.
-\begin{lstlisting}
+
+A continuació es mostra un exemple d’implementació d’un endpoint REST amb FastAPI:
+
+\begin{lstlisting}[
+    language=Python,
+    caption={Exemple d'endpoint REST implementat amb FastAPI},
+    label={lst:fastapi_endpoint},
+    captionpos=b
+]
 @router.get("/provinces", response_model=ProvinceListResponse)
 async def get_provinces(db: Session = Depends(get_db)):
     provinces = GeoService.get_provinces(db)
     return {"provinces": provinces}
 \end{lstlisting}
-
 Per altra banda, en conjunt amb FastAPI, s'utilitzen llibreries que complementen i faciliten el desenvolupament del backend. Per exemple, \textbf{SQLAlchemy} és l'ORM escollit per a la gestió de la base de dades. A més d'evitar escriure SQL manualment i abstraure la base de dades del servidor, SQLAlchemy destaca pel seu patró d'\textit{Unit of Work} \cite{noauthor_session_nodate} mitjançant sessions, que garanteix la consistència de les transaccions, i pel seu sistema de relacions i \textit{lazy loading} \cite{noauthor_relationship_nodate}, que permet navegar entre entitats de forma natural des del codi.
-\begin{lstlisting}
-def update_adoption_status(self, db: Session, animal_id: int, in_adoption: bool) -> Animal | None:
-    animal = self.get_by_id(db, animal_id)
-    if animal:
-        animal.in_adoption = in_adoption
-        db.commit()
-        db.refresh(animal)
-    return animal
-\end{lstlisting}
+
 Complementàriament, s'utilitza \textbf{Alembic} com a eina de migracions de base de dades, que permet gestionar els canvis d'esquema de forma controlada i reproduïble, mantenint un historial de versions de la base de dades, especialment útil en projectes amb diversos desenvolupadors.
 
 L'últim pilar del backend és \textbf{Pydantic}, una eina de validació de dades amb integració nativa amb FastAPI. Pydantic permet definir els models de dades amb \textbf{tipus estrictes i validacions personalitzades}, que s'executen automàticament en cada petició sense necessitat de codi addicional. A més, els errors de validació es retornen de forma estructurada i llegible al client, útil per a debuggar com a desenvolupador. Els seus models també poden enllaçar-se amb les entitats de SQLAlchemy per facilitar la conversió entre models de base de dades i models de resposta a l'API, separant clarament la capa de persistència de la capa de comunicació.
@@ -1820,12 +1916,12 @@ Per poder provar l'enviament de correus electrònics, s'ha utilitzat \textbf{Mai
 Ja que el sistema està inicialment pensat per a un àmbit nacional, la localització es basa en les províncies d'Espanya. Per a obtenir aquesta informació i mantenir-la actualitzada, s'ha integrat el servei de \textit{GeoAPI.es} \cite{noauthor_geoapi_nodate}, que proporciona dades geogràfiques oficials de les províncies espanyoles a través d'una API. S'ha configurat una tasca periòdica que consulta aquestes dades per mantenir-les sincronitzades.
 
 \subsection{Desplegament}
-El servidor backend i la base de dades estan ambdós desplegats a \textbf{Render} \cite{todo:citerender?}. Render ofereix un servei gratuït que permet gestionar la càrrega que es porta a terme durant les proves del desenvolupament. En un futur, es pot actualitzar el nivell i passar a un de pagament per més rendiment, disponibilitat i capacitat d'emmagatzematge, escalant de manera vertical.
+El servidor backend i la base de dades estan ambdós desplegats a \textbf{Render} \cite{noauthor_render_nodate}. Render ofereix un servei gratuït que permet gestionar la càrrega que es porta a terme durant les proves del desenvolupament. En un futur, es pot actualitzar el nivell i passar a un de pagament per més rendiment, disponibilitat i capacitat d'emmagatzematge, escalant de manera vertical.
 En tenir aquests dos serveis en una mateixa plataforma, fa que la seva configuració i integració, sobretot en la direcció de backend cap a base de dades, que en estar a la mateixa plataforma, la connexió és interna, i per tant més ràpida i sobretot segura, ja que no s'exposa la base de dades a internet.
 A més, el desplegament del backend està automatitzat a través de les opcions que ofereix Render, que en detectar canvis a la branca \texttt{main} del repositori, inicia automàticament un nou desplegament amb els últims canvis.
 
 Per les restriccions de l'opció gratuïta de Render, la qual deixa al servidor en suspensió en cas de no rebre cap petició durant 30 minuts, s'han configurat dues maneres per mantenir-lo actiu. La primera consisteix en un \textit{workflow} a través de \textbf{GitHub Actions}, el qual fa un ping a la IP on es troba l'aplicació cada 30 minuts, i informa si s'ha executat correctament o no.
-A causa dels problemes de \textit{uptime} que ha experimentat GitHub al moment de realitzar el projecte \cite{todo:citeleaddvegithubproblme}, s'ha volgut evitar que aquest mecanisme sigui un \textbf{\textit{single point of failure}} (SPOF). És per això que també s'ha establert un ping mitjançant el servei \textbf{UptimeRobot}, que a més de despertar al servidor, permet obtenir mètriques sobre l'estat del servidor amb un històric, com es pot veure a la següent imatge.
+A causa dels problemes de \textit{uptime} que ha experimentat GitHub al moment de realitzar el projecte \cite{humble_whats_2026}, s'ha volgut evitar que aquest mecanisme sigui un \textbf{\textit{single point of failure}} (SPOF). És per això que també s'ha establert un ping mitjançant el servei \textbf{UptimeRobot}, que a més de despertar al servidor, permet obtenir mètriques sobre l'estat del servidor amb un històric, com es pot veure a la següent imatge.
 
 \begin{figure}[H]
     \centering
@@ -1898,7 +1994,7 @@ Flask & Framework minimalista, molt lleuger i altament flexible. & Requereix con
 \end{table}
 
 \subsubsection{Aplicació mòbil}
-La principal alternativa a Flutter per desenvolupar una aplicació multiplataforma és \textbf{React Native} \cite{todo:reactnative}. Tot i que segueix el mateix concepte de generar aplicacions per a diverses plataformes a partir d'un únic codi base, assolir els mateixos resultats que Flutter tendeix a requerir més llibreries de tercers i una configuració més complexa. Flutter, en canvi, ofereix un conjunt d'eines i components oficials més complet, i s'integra de forma nativa amb Android Studio, que com ja s'ha mencionat abans, proporciona eines molt completes.
+La principal alternativa a Flutter per desenvolupar una aplicació multiplataforma és \textbf{React Native} \cite{noauthor_react_nodate}. Tot i que segueix el mateix concepte de generar aplicacions per a diverses plataformes a partir d'un únic codi base, assolir els mateixos resultats que Flutter tendeix a requerir més llibreries de tercers i una configuració més complexa. Flutter, en canvi, ofereix un conjunt d'eines i components oficials més complet, i s'integra de forma nativa amb Android Studio, que com ja s'ha mencionat abans, proporciona eines molt completes.
 Finalment, cal mencionar que l'autor disposa d'experiència prèvia negativa amb React Native en altres projectes, cosa que ha reforçat la decisió d'escollir Flutter.
 
 \begin{table}[H]
@@ -1941,7 +2037,7 @@ Pel que fa a les alternatives per a la base de dades, la decisió estava en si t
 Una altra part a favor és la consistència, ja que les dades que es generen al propi sistema poden ser utilitzades en una auditoria o per a generar informes, fet que reforça la necessitat de garantir la \textbf{integritat} i la \textbf{traçabilitat} de les dades, aspectes en què els sistemes relacionals destaquen.
 Finalment, gràcies a la simplicitat de SQLAlchemy i la seva integració amb FastAPI, es va optar per \textbf{PostgreSQL} com a sistema gestor, consolidant l'opció relacional com la més adequada per a aquest projecte.
 
-Dins de les opcions de bases de dades relacionals, s'ha escollit PostgreSQL per la seva robustesa i escalabilitat ja demostrada i aplicada en molts projectes de producció. També permet gestionar dades geogràfiques a través de l'extensió \textbf{PostGIS} \cite{todo:postgis}, que pot ser útil a futur per a totes aquelles funcionalitats relacionades amb la localització de la protectora, els refugis i els adoptants, com ara la visualització de mapes de protectores o la cerca d'animals disponibles per a l'adopció a prop de la ubicació de l'adoptant.
+Dins de les opcions de bases de dades relacionals, s'ha escollit PostgreSQL per la seva robustesa i escalabilitat ja demostrada i aplicada en molts projectes de producció. També permet gestionar dades geogràfiques a través de l'extensió \textbf{PostGIS} \cite{noauthor_postgis_nodate}, que pot ser útil a futur per a totes aquelles funcionalitats relacionades amb la localització de la protectora, els refugis i els adoptants, com ara la visualització de mapes de protectores o la cerca d'animals disponibles per a l'adopció a prop de la ubicació de l'adoptant.
 
 \subsubsection{Emmagatzematge d'arxius}
 En aquest servei, s'ha escollit \textbf{Cloudinary} a causa de la facilitat d'ús i la configuració ràpida que ofereix. En un principi, s'havia considerat únicament per guardar les imatges del sistema (tant dels animals com dels anuncis), però amb el requisit de poder generar i emmagatzemar els contractes d'adopció en format PDF, es va veure que també podia ser una solució eficient per a aquest tipus d'arxius, evitant haver de realitzar la inicialització i configuració d'un altre servei diferent per a aquest mateix propòsit.

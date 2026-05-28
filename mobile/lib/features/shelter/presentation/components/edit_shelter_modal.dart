@@ -56,7 +56,7 @@ class _EditShelterModalState extends ConsumerState<EditShelterModal> {
         .updateShelter(
           name: name,
           provinceId: _selectedProvinceId,
-          email: email.isNotEmpty ? email : null,
+          email: email,
         );
 
     Navigator.pop(context);
@@ -98,7 +98,7 @@ class _EditShelterModalState extends ConsumerState<EditShelterModal> {
               controller: _emailController,
               label: context.l10n.t('shelter.email'),
               keyboardType: TextInputType.emailAddress,
-              validator: (value) => Validators.validateEmailNoRequired(value),
+              validator: (value) => Validators.validateEmail(value),
             ),
             const SizedBox(height: 16),
             Text(

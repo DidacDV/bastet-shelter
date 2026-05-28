@@ -31,7 +31,7 @@ class ShelterRepository {
     String name,
     String location,
     String refugeName,
-    String? email,
+    String email,
   ) async {
     final data = await _client.post(
       '/shelters/',
@@ -94,15 +94,11 @@ class ShelterRepository {
   Future<Shelter> updateShelter(
     String shelterName,
     String locationId,
-    String? email,
+    String email,
   ) async {
     final response = await _client.put(
       '/shelters/',
-      body: {
-        'name': shelterName,
-        'province_id': locationId,
-        'email': email ?? '',
-      },
+      body: {'name': shelterName, 'province_id': locationId, 'email': email},
     );
     return Shelter.fromJson(response);
   }

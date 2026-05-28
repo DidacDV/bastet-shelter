@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Container, Loader, Center, Button, Box, Text } from "@mantine/core";
 import { IconArrowLeft, IconHeart, IconEye } from "@tabler/icons-react";
 import {
@@ -23,6 +23,8 @@ import { useLocalization } from "../../localization/localization";
 export default function AnimalDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const wantsToAdopt = searchParams.get("intent") === "adopt";
   const { isLoggedIn } = useAuth();
   const { t } = useLocalization();
 
@@ -67,11 +69,20 @@ export default function AnimalDetailPage() {
     }
   }, [isLoggedIn, animal]);
 
+  useEffect(() => {
+    if (!wantsToAdopt || !isLoggedIn || !animal || hasExistingProcess) return;
+    if (animal.in_adoption) {
+      setAdoptionModalOpen(true);
+    }
+  }, [animal, hasExistingProcess, isLoggedIn, wantsToAdopt]);
+
   const handleActionClick = () => {
     if (hasExistingProcess) {
       navigate(`/adoptions/${existingProcessId}`);
     } else if (!isLoggedIn) {
-      navigate(`/login?redirect=/animals/${animal?.id}`);
+      const redirectPath = `/animals/${animal?.id}?intent=adopt`;
+      sessionStorage.setItem("auth_redirect", redirectPath);
+      navigate(`/login?redirect=${encodeURIComponent(redirectPath)}`);
     } else {
       setAdoptionModalOpen(true);
     }

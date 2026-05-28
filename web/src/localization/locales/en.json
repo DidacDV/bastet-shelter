@@ -53,6 +53,7 @@
   "animals.noDescription": "No description provided yet.",
   "animals.personality": "Personality",
   "animals.detailNotFound": "Animal not found or something went wrong.",
+  "animals.adoptLinkNotFound": "This adoption link is invalid or the animal is no longer available.",
   "animals.backToAnimals": "Back to animals",
   "animals.viewAdoptionWith": "View your adoption process with {animal}",
   "animals.adoptAnimal": "Adopt {animal}",

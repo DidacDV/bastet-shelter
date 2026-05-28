@@ -25,6 +25,15 @@ class ShelterRepository(BaseRepository[Shelter]):
             .first()
         )
 
+    def get_by_link_name(self, db: Session, link_name: str) -> Shelter | None:
+        return db.query(Shelter).filter(Shelter.link_name == link_name).first()
+
+    def link_name_exists(self, db: Session, link_name: str, exclude_id: int | None = None) -> bool:
+        query = db.query(Shelter.id).filter(Shelter.link_name == link_name)
+        if exclude_id is not None:
+            query = query.filter(Shelter.id != exclude_id)
+        return query.first() is not None
+
     def update_volunteer_code(self, db: Session, shelter_id: int, code: str) -> None:
         shelter = db.query(Shelter).filter(Shelter.id == shelter_id).first()
         shelter.volunteer_code = code

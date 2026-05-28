@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.core.dependencies.locale_dependencies import get_request_locale
 from app.core.dependencies.role_dependencies import get_current_user, require_shelter_manager, require_shelter_volunteer
 from app.database import get_db
 from app.models.shelter_member import RoleEnum
 from app.models.user import AuthenticatedUser
 from app.schemas.shelter_member_schema import ShelterMemberInfo
-from app.schemas.shelter_schema import ShelterResponse, ShelterCreate, ShelterWithTokenResponse, ShelterUpdate
+from app.schemas.shelter_schema import ShelterResponse, ShelterCreate, ShelterWithTokenResponse, ShelterUpdate, ExternalIntegrationResponse
 from app.services.shelter_service import ShelterService
 
 router = APIRouter(prefix="/shelters", tags=["shelters"])
@@ -21,6 +22,14 @@ def create_shelter(
     auth: AuthenticatedUser = Depends(get_current_user)
 ):
     return service.create_shelter(data, auth.user.id, auth.user.login.email)
+
+@router.get("/integration", response_model=ExternalIntegrationResponse, status_code=status.HTTP_200_OK)
+def get_external_integration_info(
+        service: ShelterService = Depends(get_shelter_service),
+        auth: AuthenticatedUser = Depends(require_shelter_manager),
+        locale: str = Depends(get_request_locale),
+):
+    return service.get_external_integration_info(auth.shelter_id, locale)
 
 @router.put("/", response_model=ShelterResponse, status_code=status.HTTP_200_OK)
 def update_shelter(

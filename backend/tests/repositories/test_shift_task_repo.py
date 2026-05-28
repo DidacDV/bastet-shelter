@@ -48,7 +48,8 @@ class TestShiftTaskRepository:
     def test_get_by_animal(self, db):
         shelter, refuge, shift, task = self._setup_shift(db)
         animal = Animal(
-            name="Test Animal", 
+            name="Test Animal",
+            link_name="test-animal",
             birth_date=date(2026, 1, 1),
             description="Desc", 
             breed="Breed", 

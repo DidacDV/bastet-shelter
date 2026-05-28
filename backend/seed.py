@@ -51,6 +51,7 @@ async def seed_data():
             name="Bastet's Hope",
             province_id="08",
             email="contact@bastetshope.com",
+            link_name="bastets-hope",
             volunteer_code="VOL123",
             manager_code="MAN456",
         )

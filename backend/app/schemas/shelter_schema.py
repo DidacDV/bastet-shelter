@@ -26,11 +26,20 @@ class ShelterResponse(BaseModel):
 
     id: int
     name: str
+    link_name: str
     shelter_email: str | None = Field(validation_alias="email", default=None)
     province: ProvinceResponse
     volunteer_code: str
     manager_code: str
     refuges: list[RefugeResponse]
+
+class ExternalIntegrationResponse(BaseModel):
+    portal_base_url: str
+    shelter_link_name: str
+    url_pattern: str
+    button_html_template: str
+    usage_hint: str
+    duplicate_name_hint: str
 
 class ShelterBasicInfoResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)

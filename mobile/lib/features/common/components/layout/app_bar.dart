@@ -44,14 +44,24 @@ class BastetAppBar extends ConsumerWidget implements PreferredSizeWidget {
       elevation: 0,
       automaticallyImplyLeading: showBackButton,
       actions: [
-        if (isManager && showConfig)
+        if (isManager && showConfig) ...[
+          IconButton(
+            icon: const Icon(Icons.link_rounded),
+            tooltip: context.l10n.t('shelter.externalIntegration'),
+            onPressed: () => Navigator.of(
+              context,
+              rootNavigator: true,
+            ).pushNamed('/shelter/integration'),
+          ),
           IconButton(
             icon: const Icon(Icons.settings),
+            tooltip: context.l10n.t('shelter.configuration'),
             onPressed: () => Navigator.of(
               context,
               rootNavigator: true,
             ).pushNamed('/shelter/config'),
           ),
+        ],
 
         if (showProfile)
           IconButton(

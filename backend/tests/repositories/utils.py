@@ -3,11 +3,12 @@ from app.models.shelter import Shelter
 from app.models.user import User
 
 
-def _create_shelter(db, volunteer_code="VOL123", manager_code="MAN456", email="contact@rodamons.com") -> Shelter:
+def _create_shelter(db, volunteer_code="VOL123", manager_code="MAN456", email="contact@rodamons.com", link_name="rodamons") -> Shelter:
     shelter = Shelter(
         name="Rodamons",
         province_id="08",
         email=email,
+        link_name=link_name,
         volunteer_code=volunteer_code,
         manager_code=manager_code,
     )

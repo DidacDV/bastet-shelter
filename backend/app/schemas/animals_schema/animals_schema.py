@@ -24,6 +24,7 @@ class AnimalResponse(BaseModel):
 
     id: int
     name: str
+    link_name: str
     birth_date: date
     arrival_date: date | None
     description: str
@@ -35,12 +36,15 @@ class AnimalResponse(BaseModel):
     refuge_name: str | None = None
     images: list[AnimalImageResponse] = []
     adoption_processes: list[int] = []
+    adoption_url: str | None = None
 
 class AnimalPublicDetail(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
     name: str
+    link_name: str
+    shelter_link_name: str
     birth_date: date
     arrival_date: date | None
     description: str

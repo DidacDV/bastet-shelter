@@ -1,4 +1,5 @@
 import 'package:bastetshelter/core/network/api_client.dart';
+import 'package:bastetshelter/features/shelter/data/external_integration_model.dart';
 import 'package:bastetshelter/features/shelter/data/refuge_model.dart';
 import 'package:bastetshelter/features/shelter/data/shelter_model.dart';
 
@@ -51,6 +52,11 @@ class ShelterRepository {
     if (shelterId == null) throw ApiException(401, 'No shelter in token');
     final response = await _client.get('/shelters/info');
     return Shelter.fromJson(response);
+  }
+
+  Future<ExternalIntegration> getExternalIntegrationInfo() async {
+    final response = await _client.get('/shelters/integration');
+    return ExternalIntegration.fromJson(response);
   }
 
   Future<String> changeVolunteerCode() async {

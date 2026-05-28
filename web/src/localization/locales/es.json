@@ -53,6 +53,7 @@
   "animals.noDescription": "Aún no hay descripción.",
   "animals.personality": "Personalidad",
   "animals.detailNotFound": "No se ha encontrado el animal o algo ha ido mal.",
+  "animals.adoptLinkNotFound": "Este enlace de adopción no es válido o el animal ya no está disponible.",
   "animals.backToAnimals": "Volver a los animales",
   "animals.viewAdoptionWith": "Ver tu proceso de adopción con {animal}",
   "animals.adoptAnimal": "Adoptar a {animal}",

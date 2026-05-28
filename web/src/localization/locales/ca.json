@@ -53,6 +53,7 @@
   "animals.noDescription": "Encara no hi ha cap descripció.",
   "animals.personality": "Personalitat",
   "animals.detailNotFound": "No s'ha trobat l'animal o alguna cosa ha anat malament.",
+  "animals.adoptLinkNotFound": "Aquest enllaç d'adopció no és vàlid o l'animal ja no està disponible.",
   "animals.backToAnimals": "Torna als animals",
   "animals.viewAdoptionWith": "Veure el teu procés d'adopció amb {animal}",
   "animals.adoptAnimal": "Adopta {animal}",

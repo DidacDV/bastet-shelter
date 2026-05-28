@@ -13,6 +13,7 @@ def _mock_shelter(volunteer_code="VOL123", manager_code="MAN456"):
     shelter.id = 1
     shelter.name = "Rodamons"
     shelter.email = "contact@rodamons.com"
+    shelter.link_name = "rodamons"
     shelter.province_id = "08"
     shelter.province = MagicMock()
     shelter.province.id = "08"
@@ -39,6 +40,7 @@ def service():
     s = ShelterService(db)
     s.shelter_repo = MagicMock()
     s.member_repo = MagicMock()
+    s.shelter_repo.link_name_exists.return_value = False
     s.member_repo.create.side_effect = lambda db, m: _mock_member(m.role)
     return s
 

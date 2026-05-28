@@ -13,6 +13,7 @@ def _mock_shelter(volunteer_code="VOL123", manager_code="MAN456"):
     shelter.id = 1
     shelter.name = "Rodamons"
     shelter.email = "contact@rodamons.com"
+    shelter.link_name = "rodamons"
     shelter.province_id = "08"
     shelter.province = MagicMock()
     shelter.province.id = "08"

@@ -296,6 +296,33 @@ def test_e2e_volunteer_joins_shift_and_gets_assigned_task(client):
     assert manager_view.json()["current_participants"] == 1
 
 
+@pytest.mark.e2e
+def test_e2e_external_adoption_link_by_name(client):
+    manager_token = _setup_animal_ready_for_adoption(client)
+    animal_id = _register_simple_animal(client, manager_token)
+
+    client.patch(f"/animals/{animal_id}/adoption", headers=auth_headers(manager_token))
+
+    animal = client.get(
+        f"/animals/{animal_id}",
+        headers=auth_headers(manager_token),
+    ).json()
+    shelter_link_name = client.get("/shelters/info", headers=auth_headers(manager_token)).json()["link_name"]
+
+    public = client.get(
+        f"/animals/public/by-link/{shelter_link_name}/{animal['link_name']}"
+    )
+    assert public.status_code == 200
+    assert public.json()["name"] == "Milo"
+    assert public.json()["link_name"] == "milo"
+    assert public.json()["shelter_link_name"] == shelter_link_name
+
+    integration = client.get("/shelters/integration", headers=auth_headers(manager_token))
+    assert integration.status_code == 200
+    assert shelter_link_name in integration.json()["url_pattern"]
+    assert animal["adoption_url"].endswith(f"/adopt/{shelter_link_name}/{animal['link_name']}")
+
+
 def _setup_animal_ready_for_adoption(client) -> str:
     token = register_user(client, email="manager-adopt@example.com")
     manager_token, _ = create_shelter(

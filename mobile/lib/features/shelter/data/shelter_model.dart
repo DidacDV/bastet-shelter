@@ -3,6 +3,7 @@ import '../../geo/data/province_model.dart';
 
 class Shelter {
   final String name;
+  final String linkName;
   final String? email;
   final Province province;
   final String? volunteerCode;
@@ -11,6 +12,7 @@ class Shelter {
 
   Shelter({
     required this.name,
+    required this.linkName,
     this.email,
     required this.province,
     this.volunteerCode,
@@ -21,6 +23,7 @@ class Shelter {
   factory Shelter.fromJson(Map<String, dynamic> json) {
     return Shelter(
       name: json['name'],
+      linkName: json['link_name'] ?? '',
       email: json['shelter_email'],
       province: Province.fromJson(json['province']),
       volunteerCode: json['volunteer_code'],
@@ -35,6 +38,7 @@ class Shelter {
 
   Shelter copyWith({
     String? name,
+    String? linkName,
     String? email,
     Province? province,
     String? volunteerCode,
@@ -43,6 +47,7 @@ class Shelter {
   }) {
     return Shelter(
       name: name ?? this.name,
+      linkName: linkName ?? this.linkName,
       email: email ?? this.email,
       province: province ?? this.province,
       volunteerCode: volunteerCode ?? this.volunteerCode,

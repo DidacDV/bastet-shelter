@@ -1,4 +1,6 @@
 import 'package:bastetshelter/core/localization/app_localizations.dart';
+import 'package:bastetshelter/core/network/api_client.dart';
+import 'package:bastetshelter/core/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,6 +29,7 @@ class LocaleNotifier extends Notifier<Locale> {
       return;
     }
     state = Locale(languageCode);
+    getIt<ApiClient>().setLanguageCode(languageCode);
   }
 
   Future<void> setLocale(Locale locale) async {
@@ -36,6 +39,7 @@ class LocaleNotifier extends Notifier<Locale> {
     final nextLocale = Locale(languageCode);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_localePreferenceKey, languageCode);
+    getIt<ApiClient>().setLanguageCode(languageCode);
     state = nextLocale;
   }
 }

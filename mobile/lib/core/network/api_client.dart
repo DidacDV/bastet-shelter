@@ -21,11 +21,18 @@ class ApiException implements Exception {
 class ApiClient {
   final http.Client _client = http.Client();
   String? _accessToken;
+  String _languageCode = 'en'; //default to english?
   static const String _tokenKey = 'access_token';
+  static const String _localePreferenceKey = 'app_locale';
 
   Future<void> loadTokenFromStorage() async {
     final prefs = await SharedPreferences.getInstance();
     _accessToken = prefs.getString(_tokenKey);
+    _languageCode = prefs.getString(_localePreferenceKey) ?? 'en';
+  }
+
+  void setLanguageCode(String languageCode) {
+    _languageCode = languageCode;
   }
 
   Future<void> setToken(String token) async {
@@ -148,7 +155,10 @@ class ApiClient {
   }
 
   Map<String, String> _getHeaders() {
-    final headers = <String, String>{'Content-Type': 'application/json'};
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+      'Accept-Language': _languageCode,
+    };
     if (_accessToken != null) {
       headers['Authorization'] = 'Bearer $_accessToken';
     }

@@ -92,6 +92,8 @@
     belowskip=4pt
 }
 
+\graphicspath{ {resources/} {resources/diagrams/} }
+
 %start section from 1
 \renewcommand{\thesection}{\arabic{section}}
 \setcounter{secnumdepth}{3}
@@ -1829,33 +1831,64 @@ Per últim, per cobrir la gestió de voluntaris i tasques, es troba el concepte 
 when displaying a pattern, show maybe diagram + code snippet
 \subsection{Descripció general de l'arquitectura}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{diagrama_arq_fisica.png}
+    \caption[Arquitectura física del sistema]{Arquitectura física del sistema. Font: Elaboració pròpia}
+    \label{fig:diagrama_arq_fisica}
+\end{figure}
+
+ficar diagrama de l'arq fisica general, i després explicarla.
+Sobretot explicar que es un sist distribuit, i com es comuniquen etc
+\subsection{Comportament del sistema}
+
 \subsection{Aplicació mòbil}
 
-\subsubsection{Mockups i disseny visual}
+\subsubsection{Mockups i vistes principals}
 
 \subsubsection{Navegació}
 
 \subsubsection{Patrons arquitectònics}
+- Feature-Driven Architecture (Divisió per mòduls)
+- Arquitectura per capes (Data i Presentation)
+- Gestió de l'estat (Riverpod)
+- Navegació centralitzada?
 
 \subsubsection{Patrons de disseny}
-
+- Patró Repository
+- Injecció de Dependències (Service Locator)
+- Patró Observer (reactivitat de la UI)
+- Singleton
+- Facade (Amb ApiClient)
+- Proxy / Decorator (Amb ManagerGuard)
+- Factory (Models fromJson)
 \subsection{Backend}
 
-\subsubsection{Documentació de l'API}
+\subsubsection{Especificació de l'API}
 
 \subsubsection{Patrons arquitectònics}
-
+- Arquitectura Monolítica
+- Arquitectura per Capes (Routers, Services, Repositories)
+- Execució de tasques asíncrones (Task Scheduling)
 \subsubsection{Patrons de disseny}
+- Patró Repository
+- Repositori Genèric (Generic Repository Pattern)
+- DTO / Data Mapper (amb Pydantic)
+- Injecció de Dependències (amb Depends de FastAPI)
+- Decorator (al fer lo de les excepcions, que ho declaro a main?)
 
 \subsubsection{Disseny de la base de dades}
 
 \subsection{Portal web d'adopcions}
 
-\subsubsection{Mockups i disseny visual}
+\subsubsection{Vistes}
 
 \subsubsection{Navegació}
 
 \subsubsection{Patrons arquitectònics}
+- Single Page Application (SPA)
+- Component-Based Architecture
+- Feature-Driven Architecture (Vertical)
 \newpage
 
 \section{Implementació}

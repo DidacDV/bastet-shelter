@@ -145,7 +145,7 @@ def test_e2e_register_animal_with_traits_and_photo(mock_cloudinary_upload, clien
 @pytest.mark.e2e
 @patch("fastapi_mail.FastMail.send_message", new_callable=AsyncMock)
 @patch("app.services.adoption_process_service.send_email")
-def test_e2e_adoption_process_from_portal_to_shelter_review(mock_send_email, client, db):
+def test_e2e_adoption_process_from_portal_to_shelter_review(mock_fastmail_send ,mock_send_email, client, db):
     """
     An adoptant authenticates with a magic link, submits an adoption form for
     a published animal, and both the adoptant and the shelter can see the new

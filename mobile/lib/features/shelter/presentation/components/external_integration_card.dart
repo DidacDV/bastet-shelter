@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class ExternalIntegrationCard extends StatefulWidget {
-  const ExternalIntegrationCard({super.key});
+  const ExternalIntegrationCard({super.key, this.showHeader = true});
+
+  final bool showHeader;
 
   @override
   State<ExternalIntegrationCard> createState() =>
@@ -55,56 +57,62 @@ class _ExternalIntegrationCardState extends State<ExternalIntegrationCard> {
 
   @override
   Widget build(BuildContext context) {
+    final content = _loading
+        ? const Center(child: CircularProgressIndicator())
+        : _error != null
+        ? Text(_error!, style: const TextStyle(color: Colors.red))
+        : _integration == null
+        ? const SizedBox.shrink()
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.l10n.t('shelter.externalIntegrationDescription'),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 16),
+              _CopyField(
+                label: context.l10n.t('shelter.urlPattern'),
+                value: _integration!.urlPattern,
+                onCopy: () => _copyToClipboard(
+                  _integration!.urlPattern,
+                  context.l10n.t('shelter.linkCopied'),
+                ),
+              ),
+              const SizedBox(height: 12),
+              _CopyField(
+                label: context.l10n.t('shelter.htmlButtonSnippet'),
+                value: _integration!.buttonHtmlTemplate,
+                onCopy: () => _copyToClipboard(
+                  _integration!.buttonHtmlTemplate,
+                  context.l10n.t('shelter.snippetCopied'),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                _integration!.usageHint,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: Colors.grey[700]),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _integration!.duplicateNameHint,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: Colors.grey[700]),
+              ),
+            ],
+          );
+
+    if (!widget.showHeader) {
+      return content;
+    }
+
     return SectionCard(
       title: context.l10n.t('shelter.externalIntegration'),
       icon: Icons.link_rounded,
-      child: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
-          ? Text(_error!, style: const TextStyle(color: Colors.red))
-          : _integration == null
-          ? const SizedBox.shrink()
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.l10n.t('shelter.externalIntegrationDescription'),
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16),
-                _CopyField(
-                  label: context.l10n.t('shelter.urlPattern'),
-                  value: _integration!.urlPattern,
-                  onCopy: () => _copyToClipboard(
-                    _integration!.urlPattern,
-                    context.l10n.t('shelter.linkCopied'),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _CopyField(
-                  label: context.l10n.t('shelter.htmlButtonSnippet'),
-                  value: _integration!.buttonHtmlTemplate,
-                  onCopy: () => _copyToClipboard(
-                    _integration!.buttonHtmlTemplate,
-                    context.l10n.t('shelter.snippetCopied'),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  _integration!.usageHint,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.grey[700]),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _integration!.duplicateNameHint,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.grey[700]),
-                ),
-              ],
-            ),
+      child: content,
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:bastetshelter/core/localization/locale_provider.dart';
 import 'package:bastetshelter/core/service_locator.dart';
 import 'package:bastetshelter/core/theme.dart';
 import 'package:bastetshelter/features/shelter/presentation/configuration_screen.dart';
+import 'package:bastetshelter/features/shelter/presentation/external_integration_screen.dart';
 import 'package:bastetshelter/features/shelter/presentation/create_shelter_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -59,6 +60,8 @@ class MyApp extends ConsumerWidget {
         '/role/manager-picker': (_) => const ManagerPickerScreen(),
         '/role/create-shelter': (_) => const CreateShelterScreen(),
         '/shelter/config': (_) => const ManagerGuard(child: ConfigScreen()),
+        '/shelter/integration': (_) =>
+            const ManagerGuard(child: ExternalIntegrationScreen()),
       },
     );
   }

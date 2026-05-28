@@ -1,0 +1,5 @@
+{
+  "shelter.external_integration.usage_hint": "Use each animal's name in the link: lowercase, without accents, and spaces replaced by hyphens. Example: 'Luna' becomes 'luna'.",
+  "shelter.external_integration.duplicate_name_hint": "If two animals share the same name, the second one becomes 'luna-2', the third 'luna-3', and so on. Copy the exact link from the app to avoid mistakes.",
+  "shelter.external_integration.button_label": "Request adoption"
+}

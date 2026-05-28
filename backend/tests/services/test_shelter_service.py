@@ -40,6 +40,7 @@ def service():
     s = ShelterService(db)
     s.shelter_repo = MagicMock()
     s.member_repo = MagicMock()
+    s.shelter_repo.link_name_exists.return_value = False
     s.member_repo.create.side_effect = lambda db, m: _mock_member(m.role)
     return s
 

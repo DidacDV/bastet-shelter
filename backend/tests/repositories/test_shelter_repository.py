@@ -31,6 +31,17 @@ class TestShelterRepository:
         result = self.repo.get_by_manager_code(db, "INVALID")
         assert result is None
 
+    def test_get_by_email(self, db):
+        _create_shelter(db, email="contact@rodamons.com")
+        result = self.repo.get_by_email(db, "contact@rodamons.com")
+        assert result is not None
+        assert result.email == "contact@rodamons.com"
+
+    def test_get_by_email_is_case_insensitive(self, db):
+        _create_shelter(db, email="Contact@Rodamons.com")
+        result = self.repo.get_by_email(db, "contact@rodamons.com")
+        assert result is not None
+
     def test_volunteer_code_does_not_match_manager_code(self, db):
         _create_shelter(db, volunteer_code="VOL123", manager_code="MAN456")
         assert self.repo.get_by_volunteer_code(db, "MAN456") is None

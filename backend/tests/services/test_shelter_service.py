@@ -5,7 +5,7 @@ from datetime import date
 from app.services.shelter_service import ShelterService
 from app.models.shelter_member import RoleEnum
 from app.schemas.shelter_schema import ShelterCreate, ShelterUpdate
-from app.core.exceptions import NotFoundError
+from app.core.exceptions import NotFoundError, BusinessLogicError
 
 
 def _mock_shelter(volunteer_code="VOL123", manager_code="MAN456"):
@@ -46,6 +46,7 @@ def service():
 #region CREATE_SHELTER
 
 def test_create_shelter_returns_token_and_shelter(service):
+    service.shelter_repo.get_by_email.return_value = None
     service.shelter_repo.create.return_value = _mock_shelter()
 
     result = service.create_shelter(
@@ -60,6 +61,7 @@ def test_create_shelter_returns_token_and_shelter(service):
 
 
 def test_create_shelter_adds_user_as_manager(service):
+    service.shelter_repo.get_by_email.return_value = None
     service.shelter_repo.create.return_value = _mock_shelter()
 
     service.create_shelter(
@@ -71,6 +73,17 @@ def test_create_shelter_adds_user_as_manager(service):
     service.member_repo.create.assert_called_once()
     created_member = service.member_repo.create.call_args[0][1]
     assert created_member.role == RoleEnum.MANAGER
+
+
+def test_create_shelter_duplicate_email_raises(service):
+    service.shelter_repo.get_by_email.return_value = _mock_shelter()
+
+    with pytest.raises(BusinessLogicError, match="email already exists"):
+        service.create_shelter(
+            data=ShelterCreate(name="Rodamons", province_id="08", refuge_name="refuge", shelter_email="owner@example.com"),
+            user_id=1,
+            user_email="owner@example.com",
+        )
 
 #endregion
 
@@ -243,6 +256,30 @@ def test_update_shelter_success(service):
 
     assert result.name == "Rodamons"
     service.shelter_repo.update.assert_called_once_with(service.db, 1, {"name": "New Name", "province_id": "08"})
+
+
+def test_update_shelter_duplicate_email_raises(service):
+    service.shelter_repo.get_by_email.return_value = _mock_shelter()
+    data = ShelterUpdate(email="other@example.com")
+
+    with pytest.raises(BusinessLogicError, match="email already exists"):
+        service.update_shelter(2, data)
+
+
+def test_update_shelter_same_email_allowed(service):
+    mock_shelter = _mock_shelter()
+    service.shelter_repo.get_by_email.return_value = mock_shelter
+    service.shelter_repo.update.return_value = mock_shelter
+    data = ShelterUpdate(email="contact@rodamons.com")
+
+    result = service.update_shelter(1, data)
+
+    assert result.name == "Rodamons"
+    service.shelter_repo.update.assert_called_once_with(
+        service.db,
+        1,
+        {"email": "contact@rodamons.com"},
+    )
 
 
 def test_update_shelter_not_found(service):

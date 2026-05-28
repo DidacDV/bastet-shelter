@@ -2,7 +2,7 @@ from datetime import date
 from typing import Optional
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import NotFoundError
+from app.core.exceptions import NotFoundError, BusinessLogicError
 from app.core.security import create_access_token
 from app.core.utils import generate_code
 from app.models.refuge import Refuge
@@ -25,8 +25,18 @@ class ShelterService:
         self.member_repo = ShelterMemberRepository(db)
         self.trait_repo = TraitRepository(db)
 
+    def _ensure_email_available(self, email: str, exclude_shelter_id: int | None = None) -> None:
+        existing = self.shelter_repo.get_by_email(self.db, email)
+        if existing and existing.id != exclude_shelter_id:
+            raise BusinessLogicError("A shelter with this email already exists")
+
     def create_shelter(self, data: ShelterCreate, user_id: int, user_email: str) -> dict:
-        new_shelter = Shelter(name=data.name, province_id=data.province_id, email=data.shelter_email)
+        self._ensure_email_available(data.shelter_email)
+        new_shelter = Shelter(
+            name=data.name,
+            province_id=data.province_id,
+            email=data.shelter_email.strip().lower(),
+        )
         created_shelter = self.shelter_repo.create(self.db, new_shelter)
 
         first_refuge = Refuge(name=data.refuge_name, province_id=new_shelter.province_id, shelter_id=created_shelter.id)
@@ -64,6 +74,10 @@ class ShelterService:
 
     def update_shelter(self, shelter_id: int, data: ShelterUpdate) -> ShelterResponse:
         update_data = data.model_dump(exclude_unset=True)
+        if "email" in update_data:
+            normalized_email = update_data["email"].strip().lower()
+            self._ensure_email_available(normalized_email, exclude_shelter_id=shelter_id)
+            update_data["email"] = normalized_email
         updated_shelter = self.shelter_repo.update(self.db, shelter_id, update_data)
         if not updated_shelter:
             raise NotFoundError("Shelter not found")

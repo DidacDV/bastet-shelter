@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.models.shelter import Shelter
@@ -15,6 +16,14 @@ class ShelterRepository(BaseRepository[Shelter]):
 
     def get_by_volunteer_code(self, db: Session, code: str) -> Shelter | None:
         return db.query(Shelter).filter(Shelter.volunteer_code.ilike(code)).first()
+
+    def get_by_email(self, db: Session, email: str) -> Shelter | None:
+        normalized_email = email.strip().lower()
+        return (
+            db.query(Shelter)
+            .filter(func.lower(Shelter.email) == normalized_email)
+            .first()
+        )
 
     def update_volunteer_code(self, db: Session, shelter_id: int, code: str) -> None:
         shelter = db.query(Shelter).filter(Shelter.id == shelter_id).first()

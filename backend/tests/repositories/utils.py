@@ -3,9 +3,14 @@ from app.models.shelter import Shelter
 from app.models.user import User
 
 
-def _create_shelter(db, volunteer_code="VOL123", manager_code="MAN456") -> Shelter:
-    shelter = Shelter(name="Rodamons", province_id="08",
-                      volunteer_code=volunteer_code, manager_code=manager_code)
+def _create_shelter(db, volunteer_code="VOL123", manager_code="MAN456", email="contact@rodamons.com") -> Shelter:
+    shelter = Shelter(
+        name="Rodamons",
+        province_id="08",
+        email=email,
+        volunteer_code=volunteer_code,
+        manager_code=manager_code,
+    )
     db.add(shelter)
     db.commit()
     db.refresh(shelter)

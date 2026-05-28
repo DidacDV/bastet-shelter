@@ -50,6 +50,15 @@ def get_short_infos_portal(
     animals = service.get_portal_animals_short_info(province_id)
     return {"animals": animals}
 
+"""uses link names for both shelter and animal instead of regular ids so it can be integrated to external services of shelters"""
+@router.get("/public/by-link/{shelter_link_name}/{animal_link_name}", response_model=AnimalPublicDetail)
+def get_animal_public_detail_by_link_name(
+    shelter_link_name: str,
+    animal_link_name: str,
+    service: AnimalService = Depends(get_animal_service)
+):
+    return service.get_animal_public_detail_by_link_name(shelter_link_name, animal_link_name)
+
 @router.get("/public/{animal_id}", response_model=AnimalPublicDetail)
 def get_animal_public_detail(
     animal_id: int,

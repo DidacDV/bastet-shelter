@@ -4,7 +4,9 @@ from sqlalchemy.orm import Session
 
 from app.core.exceptions import NotFoundError, BusinessLogicError
 from app.core.security import create_access_token
-from app.core.utils import generate_code
+from app.core.utils import generate_code, generate_unique_link_name
+from app.core.config import settings
+from app.localization import translate
 from app.models.refuge import Refuge
 from app.models.shelter import Shelter
 from app.models.shelter_member import RoleEnum, Manager, Volunteer
@@ -13,7 +15,13 @@ from app.repositories.refuge_repo import RefugeRepository
 from app.repositories.shelter_repo import ShelterRepository
 from app.repositories.shelter_member_repo import ShelterMemberRepository
 from app.repositories.trait_repo import TraitRepository
-from app.schemas.shelter_schema import ShelterCreate, ShelterResponse, ShelterBasicInfoResponse, ShelterUpdate
+from app.schemas.shelter_schema import (
+    ShelterCreate,
+    ShelterResponse,
+    ShelterBasicInfoResponse,
+    ShelterUpdate,
+    ExternalIntegrationResponse,
+)
 from app.schemas.shelter_member_schema import ShelterMemberResponse, ShelterMemberInfo
 
 
@@ -32,10 +40,15 @@ class ShelterService:
 
     def create_shelter(self, data: ShelterCreate, user_id: int, user_email: str) -> dict:
         self._ensure_email_available(data.shelter_email)
+        shelter_link_name = generate_unique_link_name(
+            data.name,
+            lambda candidate: self.shelter_repo.link_name_exists(self.db, candidate),
+        )
         new_shelter = Shelter(
             name=data.name,
             province_id=data.province_id,
             email=data.shelter_email.strip().lower(),
+            link_name=shelter_link_name,
         )
         created_shelter = self.shelter_repo.create(self.db, new_shelter)
 
@@ -82,6 +95,29 @@ class ShelterService:
         if not updated_shelter:
             raise NotFoundError("Shelter not found")
         return ShelterResponse.model_validate(updated_shelter)
+
+    def get_external_integration_info(self, shelter_id: int, locale: str = "en") -> ExternalIntegrationResponse:
+        shelter = self.shelter_repo.get_by_id(self.db, shelter_id)
+        if not shelter:
+            raise NotFoundError("Shelter not found")
+
+        base_url = settings.PORTAL_BASE_URL.rstrip("/")
+        url_pattern = f"{base_url}/adopt/{shelter.link_name}/{{animal_link_name}}"
+        button_label = translate("shelter.external_integration.button_label", locale)
+        button_html = (
+            f'<a href="{base_url}/adopt/{shelter.link_name}/{{animal_link_name}}" '
+            'target="_blank" rel="noopener noreferrer">'
+            f"{button_label}</a>"
+        )
+
+        return ExternalIntegrationResponse(
+            portal_base_url=base_url,
+            shelter_link_name=shelter.link_name,
+            url_pattern=url_pattern,
+            button_html_template=button_html,
+            usage_hint=translate("shelter.external_integration.usage_hint", locale),
+            duplicate_name_hint=translate("shelter.external_integration.duplicate_name_hint", locale),
+        )
 
     def join_as_volunteer(self, user_id: int, shelter_code: str, user_email: str) -> dict:
         shelter = self.shelter_repo.get_by_volunteer_code(self.db, shelter_code)

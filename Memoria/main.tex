@@ -624,7 +624,7 @@ Observem a continuació el diagrama de Gantt, destacant les dependències entre 
     \centering
     \includegraphics[width=\textwidth]{gant_planif.png}
     \caption[Diagrama de Gantt]{Diagrama de Gantt. Font: Elaboració pròpia}
-    \label{fig:gitflow_illustration}
+    \label{fig:gant_ilustration}
 \end{figure}
 \newpage
 \section{Gestió del risc}
@@ -1831,6 +1831,8 @@ Per últim, per cobrir la gestió de voluntaris i tasques, es troba el concepte 
 when displaying a pattern, show maybe diagram + code snippet
 \subsection{Descripció general de l'arquitectura}
 
+A continuació es pot observar una visió global del sistema.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=1.1\textwidth]{diagrama_arq_fisica.png}
@@ -1838,10 +1840,16 @@ when displaying a pattern, show maybe diagram + code snippet
     \label{fig:diagrama_arq_fisica}
 \end{figure}
 
-ficar diagrama de l'arq fisica general, i després explicarla.
-Sobretot explicar que es un sist distribuit, i com es comuniquen etc
-\subsection{Comportament del sistema}
+El disseny principal del projecte consta d'un sistema distribuït a través de diferents clients, com són el mòbil i el portal web, enllaçats i connectats a través del servidor backend, que actua com a nucli essencial per a qualsevol operació. La figura~\ref{fig:diagrama_arq_fisica} recull els components principals del desplegament: dos clients (l'aplicació mòbil \textit{Flutter} i el portal web \textit{React} allotjat a Netlify), el servidor backend \textit{FastAPI} allotjat a Render, la base de dades PostgreSQL i Cloudinary com a servei extern d'emmagatzematge i distribució d'imatges.
 
+Gràcies a tenir un backend que centralitza la llògica, es pot assolir el següent:
+\begin{itemize}
+    \item Les protectores poden gestionar totes les variables del dia a dia al seu àmbit, com poden ser els animals, les tasques i els torns
+    \item Els adoptants poden accedir al portal web públic, on podran veure possibles animals a adoptar, sense requerir cap mena de configuració ni esforç per part de la protectora 
+\end{itemize}
+A més, per aquelles protectores que ja disposin d'un lloc web propi, s'ha habilitat un mecanisme d'integració externa: des de l'aplicació mòbil poden obtenir enllaços d'adopció reutilitzables i un fragment HTML per incrustar-los al seu web. Quan un adoptant hi accedeix, és redirigit al portal web públic del sistema, on pot iniciar el procés d'adopció sense necessitat d'utilitzar l'aplicació mòbil.
+
+Per a més detalls sobre les tecnologies utilitzades, es pot consultar la secció~\ref{sec:implementacio}.
 \subsection{Aplicació mòbil}
 
 \subsubsection{Mockups i vistes principals}
@@ -1891,7 +1899,7 @@ Sobretot explicar que es un sist distribuit, i com es comuniquen etc
 - Feature-Driven Architecture (Vertical)
 \newpage
 
-\section{Implementació}
+\section{Implementació}\label{sec:implementacio}
 \subsection{Tecnologies utilitzades}
 \subsubsection{Backend}
 En aquest projecte, el nucli de tot el sistema és el \textbf{backend}, ja que és l'encarregat de gestionar tota la lògica i facilitar les comunicacions i interaccions entre el portal web i l'aplicació mòbil. Per aquesta raó, s'ha optat per utilitzar \textbf{Python} amb el framework \textbf{FastAPI}. Python és un llenguatge àmpliament fet servir en el desenvolupament backend, destacat per la seva llegibilitat, la seva gran comunitat i el seu extens ecosistema de llibreries. Aquesta combinació permet realitzar un desenvolupament ràpid i eficient, mantenint l'escalabilitat a futur gràcies al suport natiu de programació asíncrona mitjançant \textit{asyncio} \cite{noauthor_asyncio_nodate}.

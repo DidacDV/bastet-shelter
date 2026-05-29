@@ -18,6 +18,16 @@
 \usepackage{hyperref}
 \usepackage{pdflscape}
 \usepackage{listings}
+\usepackage{titlesec}
+\usepackage{subcaption}
+
+\setcounter{secnumdepth}{4}
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+    {-3.25ex\@plus -1ex \@minus -.2ex}%
+    {1.5ex \@plus .2ex}
+    {\normalfont\normalsize\bfseries}}
+\makeatother
 
 \lstset{
     language=Python,
@@ -92,7 +102,7 @@
     belowskip=4pt
 }
 
-\graphicspath{ {resources/} {resources/diagrams/} }
+\graphicspath{ {resources/} {resources/diagrams/} {resources/mobile_screens} }
 
 %start section from 1
 \renewcommand{\thesection}{\arabic{section}}
@@ -131,6 +141,29 @@
 \rowcolor{oceanblue}\multicolumn{3}{|l|}{\textcolor{white}{\textbf{Criteri d'Acceptació}}} \\\hline
 \multicolumn{3}{|p{12.5cm}|}{#7} \\\hline
 \end{tabular}\caption[RNF: #3]{Requisit no funcional: #3.}\label{tab:rnf_#1}\end{table}%
+}
+
+%macro for 2 mobile app screenshots side by side
+%arguments: #1=Fitxer1, #2=Subcaption1, #3=Label1, #4=Fitxer2, #5=Subcaption2, #6=Label2, #7=CaptionGlobal, #8=LabelGlobal
+\newcommand{\figuresDuesMobils}[8]{%
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.25\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{#1}
+        \caption{#2}
+        \label{#3}
+    \end{subfigure}%
+    \hspace{1.5cm}% 
+    \begin{subfigure}[b]{0.25\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{#4}
+        \caption{#5}
+        \label{#6}
+    \end{subfigure}
+    \caption[#7]{#7. Font: Elaboració pròpia}
+    \label{#8}
+\end{figure}
 }
 
 \begin{document}
@@ -1851,10 +1884,72 @@ A més, per aquelles protectores que ja disposin d'un lloc web propi, s'ha habil
 
 Per a més detalls sobre les tecnologies utilitzades, es pot consultar la secció~\ref{sec:implementacio}.
 \subsection{Aplicació mòbil}
+\subsubsection{Vistes principals}
+En aquesta secció es mostren algunes de les vistes més representatives de l'aplicació mòbil. Les imatges presentades corresponen a captures de la versió final implementada i permeten visualitzar la interfície i les funcionalitats principals disponibles per als usuaris.
+\paragraph{Login i Registre}
+S'inicia amb la pantalla de login o registre, on l'usuari haurà d'identificar-se com un voluntari o com a un gestor d'una protectora.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.25\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{app_login.png}
+        \caption{Pantalla de registre inicial}
+        \label{fig:app_login}
+    \end{subfigure}
+    \hspace{1.5cm}
+    \begin{subfigure}[b]{0.25\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{app_register_step1.png}
+        \caption{Pantalla de confirmació}
+        \label{fig:app_register_step1}
+    \end{subfigure}
+        \caption[Inici de registre d'usuari]{Flux de registre d'un nou usuari. Font: Elaboració pròpia}
+    \label{fig:flux_registre1}
+\end{figure}
 
-\subsubsection{Mockups i vistes principals}
+En el cas d'escollir gestor, haurà de decidir si unir-se a una protectora a través del codi, o crear-ne una de nova al sistema. Si s'escull voluntari, es va directament a la pantalla per introduïr el codi, degut a que no poden crear protectores.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.35\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{app_register_step3.png}
+        \caption{Pantalla per introduïr el codi}
+        \label{fig:app_register_step3}
+    \end{subfigure}
+    \hspace{1.5cm}
+    \begin{subfigure}[b]{0.35\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{app_register_step2.png}
+        \caption{Pantalla de gestor}
+        \label{fig:app_register_step2}
+    \end{subfigure}
+        \caption[Flux de registre d'usuari]{Flux de registre d'un nou usuari. Font: Elaboració pròpia}
+    \label{fig:flux_registre1}
+\end{figure}
+
+Finalment, si el gestor escull l'opció per a crear una nova protectora, ha d'omplir els camps necessaris per poder fer-ho, com es veu a la següent pantalla. Tots son obligatoris, i s'informa a l'usuari si es deixa un camp sense omplir.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{app_register_step4.png}
+    \caption[Pantalla per configurar la protectora]{Pantalla per configurar la protectora. Font: Elaboració pròpia}
+    \label{fig:app_register_step4}
+\end{figure}
+
+\paragraph{Pàgina principal}
+
 
 \subsubsection{Navegació}
+A continuació es pot visualitzar el diagrama de navegació de l'aplicació mòbil. S'inclou una llegenda a la part superior esquerra. El diagrama simplifica modals i diàlegs equivalents en un sol node, omet estats de càrrega/error i les passes de navegació enrere. A més, resumeix pestanyes repetitives (dies de la setmana, seccions del detall d’animal) per mantenir la llegibilitat.
+
+\begin{landscape}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.6\textwidth]{diagrama_navegacio_app.png}
+    \caption[Navegació de l'app mòbil]{Navegació de l'app mòbil. Font: Elaboració pròpia}
+    \label{fig:diagrama_navegacio_app}
+\end{figure}
+\end{landscape}
 
 \subsubsection{Patrons arquitectònics}
 - Feature-Driven Architecture (Divisió per mòduls)

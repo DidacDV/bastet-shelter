@@ -144,25 +144,24 @@
 }
 
 %macro for 2 mobile app screenshots side by side
-%arguments: #1=Fitxer1, #2=Subcaption1, #3=Label1, #4=Fitxer2, #5=Subcaption2, #6=Label2, #7=CaptionGlobal, #8=LabelGlobal
-\newcommand{\figuresDuesMobils}[8]{%
+\newcommand{\twoFiguresLayout}[9]{%
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.25\textwidth}
+    \begin{subfigure}[b]{#1\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{#1}
-        \caption{#2}
-        \label{#3}
+        \includegraphics[width=\textwidth]{#2}
+        \caption{#3}
+        \label{#4}
     \end{subfigure}%
     \hspace{1.5cm}% 
-    \begin{subfigure}[b]{0.25\textwidth}
+    \begin{subfigure}[b]{#1\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{#4}
-        \caption{#5}
-        \label{#6}
+        \includegraphics[width=\textwidth]{#5}
+        \caption{#6}
+        \label{#7}
     \end{subfigure}
-    \caption[#7]{#7. Font: Elaboració pròpia}
-    \label{#8}
+    \caption[#8]{#8. Font: Elaboració pròpia}
+    \label{#9}
 \end{figure}
 }
 
@@ -1888,45 +1887,29 @@ Per a més detalls sobre les tecnologies utilitzades, es pot consultar la secci�
 En aquesta secció es mostren algunes de les vistes més representatives de l'aplicació mòbil. Les imatges presentades corresponen a captures de la versió final implementada i permeten visualitzar la interfície i les funcionalitats principals disponibles per als usuaris.
 \paragraph{Login i Registre}
 S'inicia amb la pantalla de login o registre, on l'usuari haurà d'identificar-se com un voluntari o com a un gestor d'una protectora.
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[b]{0.25\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{app_login.png}
-        \caption{Pantalla de registre inicial}
-        \label{fig:app_login}
-    \end{subfigure}
-    \hspace{1.5cm}
-    \begin{subfigure}[b]{0.25\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{app_register_step1.png}
-        \caption{Pantalla de confirmació}
-        \label{fig:app_register_step1}
-    \end{subfigure}
-        \caption[Inici de registre d'usuari]{Flux de registre d'un nou usuari. Font: Elaboració pròpia}
-    \label{fig:flux_registre1}
-\end{figure}
+\twoFiguresLayout
+    {0.25}
+    {app_login.png}
+    {Pantalla de registre inicial}
+    {fig:app_login}
+    {app_register_step1.png}
+    {Pantalla de confirmació}
+    {fig:app_register_step1}
+    {Flux de registre d'un nou usuari}
+    {fig:flux_registre1}
 
 En el cas d'escollir gestor, haurà de decidir si unir-se a una protectora a través del codi, o crear-ne una de nova al sistema. Si s'escull voluntari, es va directament a la pantalla per introduïr el codi, degut a que no poden crear protectores.
 
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[b]{0.35\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{app_register_step3.png}
-        \caption{Pantalla per introduïr el codi}
-        \label{fig:app_register_step3}
-    \end{subfigure}
-    \hspace{1.5cm}
-    \begin{subfigure}[b]{0.35\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{app_register_step2.png}
-        \caption{Pantalla de gestor}
-        \label{fig:app_register_step2}
-    \end{subfigure}
-        \caption[Flux de registre d'usuari]{Flux de registre d'un nou usuari. Font: Elaboració pròpia}
-    \label{fig:flux_registre1}
-\end{figure}
+\twoFiguresLayout
+    {0.35}
+    {app_register_step3.png}
+    {Pantalla per introduïr el codi}
+    {fig:app_register_step3}
+    {app_register_step2.png}
+    {Pantalla de gestor}
+    {fig:app_register_step2}
+    {Flux de registre d'un nou usuari}
+    {fig:flux_registre2}
 
 Finalment, si el gestor escull l'opció per a crear una nova protectora, ha d'omplir els camps necessaris per poder fer-ho, com es veu a la següent pantalla. Tots son obligatoris, i s'informa a l'usuari si es deixa un camp sense omplir.
 \begin{figure}[H]

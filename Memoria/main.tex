@@ -144,17 +144,18 @@
 }
 
 %macro for 2 mobile app screenshots side by side
+%arguments: #1=width, #2=Fitxer1, #3=Subcaption1, #4=Label1, #5=Fitxer2, #6=Subcaption2, #7=Label2, #8=CaptionGlobal, #9=LabelGlobal
 \newcommand{\twoFiguresLayout}[9]{%
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{#1\textwidth}
+    \begin{subfigure}[t]{#1\textwidth}
         \centering
         \includegraphics[width=\textwidth]{#2}
         \caption{#3}
         \label{#4}
     \end{subfigure}%
-    \hspace{1.5cm}% 
-    \begin{subfigure}[b]{#1\textwidth}
+    \hspace{1.5cm}%
+    \begin{subfigure}[t]{#1\textwidth}
         \centering
         \includegraphics[width=\textwidth]{#5}
         \caption{#6}
@@ -162,6 +163,35 @@
     \end{subfigure}
     \caption[#8]{#8. Font: Elaboració pròpia}
     \label{#9}
+\end{figure}
+}
+
+%macro for 3 mobile app screenshots side by side
+\newcommand{\threeFiguresLayout}[8]{%
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{#1\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{#2}
+        \caption{#3}
+        \label{fig:#2}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{#1\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{#4}
+        \caption{#5}
+        \label{fig:#4}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{#1\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{#6}
+        \caption{#7}
+        \label{fig:#6}
+    \end{subfigure}
+    \caption[#8]{#8. Font: Elaboració pròpia}
+    \label{fig:group_#2}
 \end{figure}
 }
 
@@ -1921,7 +1951,189 @@ Finalment, si el gestor escull l'opció per a crear una nova protectora, ha d'om
 
 \paragraph{Pàgina principal}
 
+Un cop autenticat, l'usuari va a la pantalla principal, on es mostra un resum amb dades de la protectora, i des d'on pot accedir a les altres pantalles més rellevants a través de \textit{tabs}.  
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{app_homepage.png}
+    \caption[Pantalla principal]{Pantalla principal. Font: Elaboració pròpia}
+    \label{fig:app_homepage}
+\end{figure}
 
+A la part superior es troben 3 icones que permeten a l'usuari anar a diferents pantalles: Integracions externes, perfil i configuració de la protectora.
+
+\threeFiguresLayout
+    {0.22}
+    {app_integrations.png}{Integració externa}
+    {app_profile.png}{Perfil d'usuari}
+    {app_configuration.png}{Configuració de la protectora}
+    {Pantalles accessibles des de la barra superior}
+Les pantalles de configuració i integració externa només són accessibles per als gestors de la protectora. Des de la configuració, es poden modificar els atributs de la protectora, els refugis (o afegir-ne de nous), i es poden gestionar els medicaments i els trets característics dels animals.
+A continuació es pot veure el tipus de modal que s'utilitza a tota l'aplicació per realitzar modificacions o crear entitats. També, la pantalla de medicines, que segueix una estructura gairebé igual a la de tasques i trets característics.
+\twoFiguresLayout
+    {0.35}
+    {app_refuge_bottomsheet.png}
+    {Bottomsheet per crear un refugi}
+    {fig:app_refuge_bottomsheet}
+    {app_medical.png}
+    {Pantalla per la gestió de medicines}
+    {fig:app_medical}
+    {Vistes dins de configuració}
+    {fig:vistes_configuració}
+\paragraph{Gestió d'animals}
+La segona pestanya de la barra inferior centralitza la consulta i administració dels animals de la protectora. La pantalla mostra una graella amb les fitxes dels animals registrats, una barra de cerca i filtres per tipus d'animal o estat d'adopció. Els gestors poden registrar un nou animal, que després d'omplir el formulari pot afegir fotografies abans de tornar al llistat.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{app_animals_screen.png}
+    \caption[Llistat d'animals]{Llistat d'animals de la protectora. Font: Elaboració pròpia}
+    \label{fig:app_animals_screen}
+\end{figure}
+
+En seleccionar un animal, s'obre la fitxa detallada. A la part superior es mostren les imatges en forma de \textit{carousel}, el nom i les dates rellevants, on tots els camps poden ser editats pels gestors. A més, es pot accedir a una pantalla específica per pujar, reordenar o eliminar fotografies. La resta de la informació s'organitza en cinc pestanyes, cadascuna orientada a un aspecte diferent del seguiment de l'animal.
+
+\twoFiguresLayout
+    {0.22}
+    {app_animal_details_basic.png}
+    {Pestanya d'informació bàsica}
+    {fig:app_animal_details_basic}
+    {app_animal_details_vet.png}
+    {Pestanya de visites veterinàries}
+    {fig:app_animal_details_vet}
+    {Informació general i seguiment veterinari}
+    {fig:animal_tabs_general}
+
+La pestanya d'informació bàsica mostra la raça, la descripció, els trets de personalitat i el refugi assignat, amb edició directa per part del gestor. La pestanya de visites veterinàries permet consultar l'historial de revisions i afegir noves entrades des d'un \textit{bottom sheet}. En el cas de voler veure més detalls o voler editar-la, l'usuari pot clicar a la visita.
+
+\twoFiguresLayout
+    {0.22}
+    {app_animal_details_medic.png}
+    {Pestanya de tractaments mèdics}
+    {fig:app_animal_details_medic}
+    {app_animal_details_tasks.png}
+    {Pestanya de tasques pendents}
+    {fig:app_animal_details_tasks}
+    {Seguiment mèdic i tasques}
+    {fig:animal_tabs_operatiu}
+
+La pestanya de tractaments recull els medicaments actius i finalitzats associats a l'animal, permetent afegir tractaments amb els medicaments definits anteriorment, mentre que la de tasques mostra les activitats del dia associades a l'animal vinculades als torns de voluntariat.
+
+\twoFiguresLayout
+    {0.22}
+    {app_animal_details_adoption.png}
+    {Pestanya d'adopció}
+    {fig:app_animal_details_adoption}
+    {app_manage_photos.png}
+    {Gestió de les imatges}
+    {fig:app_manage_photos}
+    {Adopció i imatges de l'animal}
+    {fig:animal_tabs_adopcio}
+
+Finalment, la pestanya d'adopció indica si l'animal està disponible per adoptar, enllaça amb el procés actiu si n'hi ha i, per als gestors, permet copiar l'URL d'integració externa. 
+La gestió de les imatges, tot i no ser una pestanya pròpiament dita, forma part dels detalls de l'animal.
+\paragraph{Tasques}
+La funció principal de les tasques es definir i organitzar les activitats diàries que es realitzen als torns, per això com a gestor es dona la capacitat de crear plantilles de tasques (i editar-les).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{app_tasks_general.png}
+    \caption[Llistat de tasques]{Llistat de tasques de la protectora. Font: Elaboració pròpia}
+    \label{fig:app_tasks_general}
+\end{figure}
+
+Tant els voluntaris com els gestors poden veure les tasques que tenen assignades als diferents torns del dia actual, a més de poder marcar-les com a completades o pendents.
+
+\twoFiguresLayout
+    {0.22}
+    {app_tasks_mine.png}
+    {Pestanya de les meves tasques}
+    {fig:app_tasks_mine}
+    {app_tasks_details.png}
+    {Detalls de la tasca}
+    {fig:app_tasks_details}
+    {Detalls i seguiment de les tasques}
+    {fig:tasks_details}
+\paragraph{Torns}
+
+La tercera pestanya de la barra inferior permet planificar i consultar els torns de voluntariat de cada refugi. Si la protectora disposa de més d'un refugi, l'usuari ha de triar primer sobre quin vol treballar, en cas contrari, accedeix directament al calendari setmanal.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{app_shift_rfgs.png}
+    \caption[Selecció de refugi]{Selecció de refugi per consultar els torns. Font: Elaboració pròpia}
+    \label{fig:app_shift_rfgs}
+\end{figure}
+
+Un cop seleccionat el refugi, es mostra la vista setmanal dels torns organitzada per dies. L'usuari pot canviar de setmana mitjançant el selector superior i, com a gestor, crear nous torns o copiar la planificació d'una setmana anterior. Cada unitat resumeix l'horari, el refugi i el nombre de participants.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{app_shift_list.png}
+    \caption[Calendari setmanal de torns]{Calendari setmanal de torns. Font: Elaboració pròpia}
+    \label{fig:app_shift_list}
+\end{figure}
+
+En obrir un torn concret, es visualitza el detall complet: horari, participants, tasques assignades i l'estat de cada una. Els voluntaris i gestors poden apuntar-s'hi o abandonar-lo, mentre que només els gestors poden modificar el límit de participants, eliminar el torn o afegir tasques creades prèviament a la protectora, opcionalment vinculades a un animal concret.
+
+\twoFiguresLayout
+    {0.22}
+    {app_shift_details.png}
+    {Detall d'un torn}
+    {fig:app_shift_details}
+    {app_shift_copy_tasks.png}
+    {Assignació de tasques al torn}
+    {fig:app_shift_copy_tasks}
+    {Gestió d'un torn i les seves tasques}
+    {fig:shifts_gestio}
+\paragraph{Ecosistema de protectores}
+
+L'última pestanya de la barra inferior funciona com un espai col·laboratiu entre protectores. La vista principal mostra un marketplace d'anuncis publicats per altres entitats, on es poden cercar ofertes per província o títol i filtrar-les per categoria, com ara material, transport o difusió. En seleccionar un anunci, s'obre un \textit{bottom sheet} amb el detall complet de la publicació, amb l'opció de contactar amb la protectora que l'ha publicat mitjançant un enllaç directe al seu correu electrònic.
+
+Des de la mateixa pestanya, l'usuari pot accedir als anuncis de la seva protectora. Els gestors poden crear-ne de nous, consultar els actius o inactius i editar-los, els voluntaris només poden visualitzar-los. D'aquesta manera, les entitats poden compartir recursos i necessitats sense dependre de canals externs.
+
+\twoFiguresLayout
+    {0.22}
+    {app_community_explore.png}
+    {Exploració d'anuncis}
+    {fig:app_community_explore}
+    {app_community_mine.png}
+    {Anuncis de la protectora}
+    {fig:app_community_mine}
+    {Marketplace col·laboratiu entre protectores}
+    {fig:community_ecosistema}
+\paragraph{Adopció}
+Des de la pantalla principal, els gestors poden accedir al llistat de processos d'adopció actius de la protectora. La vista permet cercar per nom de l'animal o de l'adoptant, filtrar per estat i obrir el detall de cada procés per fer-ne el seguiment pas a pas.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{app_adoption_list.png}
+    \caption[Llistat de processos d'adopció]{Llistat de processos d'adopció. Font: Elaboració pròpia}
+    \label{fig:app_adoption_list}
+\end{figure}
+
+Cada procés segueix una seqüència de passos definida: formulari inicial, entrevista, visita a la protectora, contracte i recollida de l'animal. A l'aplicació mòbil, el gestor visualitza l'estat de cada pas, en pot aprovar o rebutjar el procés i, quan cal, programar les dates previstes.
+
+\twoFiguresLayout
+    {0.22}
+    {app_adoption_form.png}
+    {Pas del formulari}
+    {fig:app_adoption_form}
+    {app_adoption_interview.png}
+    {Pas de l'entrevista}
+    {fig:app_adoption_interview}
+    {Formulari i entrevista}
+    {fig:adoption_passos_inicials}
+
+El primer pas recull les respostes de l'adoptant al formulari del portal web, consultables des de l'aplicació mitjançant un \textit{bottom sheet}. El pas d'entrevista permet al gestor establir la data prevista i consultar-la un cop planificada. La visita a la protectora i la recollida de l'animal segueixen una estructura similar a la de l'entrevista, mostrant la data acordada per a cada activitat.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{app_adoption_contract.png}
+    \caption[Pas del contracte d'adopció]{Pas del contracte d'adopció. Font: Elaboració pròpia}
+    \label{fig:app_adoption_contract}
+\end{figure}
+
+Al pas del contracte, el gestor pot visualitzar el document generat, comprovar les signatures de l'adoptant i de la protectora i avançar el procés un cop completades. Quan tots els passos s'han completat correctament, el procés queda tancat i l'animal deixa d'aparèixer com a disponible per adoptar.
+En el cas de rebutjar un procés, es mostra una petita nota per indicar el motiu del rebuig.
 \subsubsection{Navegació}
 A continuació es pot visualitzar el diagrama de navegació de l'aplicació mòbil. S'inclou una llegenda a la part superior esquerra. El diagrama simplifica modals i diàlegs equivalents en un sol node, omet estats de càrrega/error i les passes de navegació enrere. A més, resumeix pestanyes repetitives (dies de la setmana, seccions del detall d’animal) per mantenir la llegibilitat.
 

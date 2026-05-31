@@ -1918,7 +1918,7 @@ A continuació es pot observar una visió global del sistema.
 
 El disseny principal del projecte consta d'un sistema distribuït a través de diferents clients, com són el mòbil i el portal web, enllaçats i connectats a través del servidor backend, que actua com a nucli essencial per a qualsevol operació. La figura~\ref{fig:diagrama_arq_fisica} recull els components principals del desplegament: dos clients (l'aplicació mòbil \textit{Flutter} i el portal web \textit{React} allotjat a Netlify), el servidor backend \textit{FastAPI} allotjat a Render, la base de dades PostgreSQL i Cloudinary com a servei extern d'emmagatzematge i distribució d'imatges.
 
-Gràcies a tenir un backend que centralitza la llògica, es pot assolir el següent:
+Gràcies a tenir un backend que centralitza la lògica, es pot assolir el següent:
 \begin{itemize}
     \item Les protectores poden gestionar totes les variables del dia a dia al seu àmbit, com poden ser els animals, les tasques i els torns
     \item Els adoptants poden accedir al portal web públic, on podran veure possibles animals a adoptar, sense requerir cap mena de configuració ni esforç per part de la protectora 
@@ -1942,7 +1942,7 @@ S'inicia amb la pantalla de login o registre, on l'usuari haurà d'identificar-s
     {Flux de registre d'un nou usuari}
     {fig:flux_registre1}
 
-En el cas d'escollir gestor, haurà de decidir si unir-se a una protectora a través del codi, o crear-ne una de nova al sistema. Si s'escull voluntari, es va directament a la pantalla per introduïr el codi, degut a que no poden crear protectores.
+En el cas d'escollir gestor, haurà de decidir si unir-se a una protectora a través del codi, o crear-ne una de nova al sistema. Si s'escull voluntari, es va directament a la pantalla per introduir el codi, ja que no poden crear protectores.
 
 \twoFiguresLayout
     {0.35}
@@ -1955,7 +1955,7 @@ En el cas d'escollir gestor, haurà de decidir si unir-se a una protectora a tra
     {Flux de registre d'un nou usuari}
     {fig:flux_registre2}
 
-Finalment, si el gestor escull l'opció per a crear una nova protectora, ha d'omplir els camps necessaris per poder fer-ho, com es veu a la següent pantalla. Tots son obligatoris, i s'informa a l'usuari si es deixa un camp sense omplir.
+Finalment, si el gestor escull l'opció per a crear una nova protectora, ha d'omplir els camps necessaris per poder fer-ho, com es veu a la següent pantalla. Tots són obligatoris, i s'informa l'usuari si es deixa un camp sense omplir.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.35\textwidth]{app_register_step4.png}
@@ -1964,7 +1964,6 @@ Finalment, si el gestor escull l'opció per a crear una nova protectora, ha d'om
 \end{figure}
 
 \paragraph{Pàgina principal}
-
 Un cop autenticat, l'usuari va a la pantalla principal, on es mostra un resum amb dades de la protectora, i des d'on pot accedir a les altres pantalles més rellevants a través de \textit{tabs}.  
 \begin{figure}[H]
     \centering
@@ -2029,7 +2028,7 @@ La pestanya d'informació bàsica mostra la raça, la descripció, els trets de 
     {Seguiment mèdic i tasques}
     {fig:animal_tabs_operatiu}
 
-La pestanya de tractaments recull els medicaments actius i finalitzats associats a l'animal, permetent afegir tractaments amb els medicaments definits anteriorment, mentre que la de tasques mostra les activitats del dia associades a l'animal vinculades als torns de voluntariat.
+La pestanya de tractaments recull els medicaments actius i finalitzats associats a l'animal, cosa que permet afegir tractaments amb els medicaments definits anteriorment, mentre que la de tasques mostra les activitats del dia associades a l'animal vinculades als torns de voluntariat.
 
 \twoFiguresLayout
     {0.22}
@@ -2045,7 +2044,7 @@ La pestanya de tractaments recull els medicaments actius i finalitzats associats
 Finalment, la pestanya d'adopció indica si l'animal està disponible per adoptar, enllaça amb el procés actiu si n'hi ha i, per als gestors, permet copiar l'URL d'integració externa. 
 La gestió de les imatges, tot i no ser una pestanya pròpiament dita, forma part dels detalls de l'animal.
 \paragraph{Tasques}
-La funció principal de les tasques es definir i organitzar les activitats diàries que es realitzen als torns, per això com a gestor es dona la capacitat de crear plantilles de tasques (i editar-les).
+La funció principal de les tasques és definir i organitzar les activitats diàries que es realitzen als torns, per això com a gestor es dona la capacitat de crear plantilles de tasques (i editar-les).
 
 \begin{figure}[H]
     \centering
@@ -2067,7 +2066,6 @@ Tant els voluntaris com els gestors poden veure les tasques que tenen assignades
     {Detalls i seguiment de les tasques}
     {fig:tasks_details}
 \paragraph{Torns}
-
 La tercera pestanya de la barra inferior permet planificar i consultar els torns de voluntariat de cada refugi. Si la protectora disposa de més d'un refugi, l'usuari ha de triar primer sobre quin vol treballar, en cas contrari, accedeix directament al calendari setmanal.
 
 \begin{figure}[H]
@@ -2086,7 +2084,7 @@ Un cop seleccionat el refugi, es mostra la vista setmanal dels torns organitzada
     \label{fig:app_shift_list}
 \end{figure}
 
-En obrir un torn concret, es visualitza el detall complet: horari, participants, tasques assignades i l'estat de cada una. Els voluntaris i gestors poden apuntar-s'hi o abandonar-lo, mentre que només els gestors poden modificar el límit de participants, eliminar el torn o afegir tasques creades prèviament a la protectora, opcionalment vinculades a un animal concret.
+En obrir un torn concret, es visualitzen els seus detalls: horari, participants, tasques assignades i l'estat de cada una. Els voluntaris i gestors poden apuntar-s'hi o abandonar-lo, mentre que només els gestors poden modificar el límit de participants, eliminar el torn o afegir tasques creades prèviament a la protectora, opcionalment vinculades a un animal concret.
 
 \twoFiguresLayout
     {0.22}
@@ -2099,10 +2097,9 @@ En obrir un torn concret, es visualitza el detall complet: horari, participants,
     {Gestió d'un torn i les seves tasques}
     {fig:shifts_gestio}
 \paragraph{Ecosistema de protectores}
+L'última pestanya de la barra inferior funciona com un espai col·laboratiu entre protectores. La vista principal mostra un \textit{marketplace} d'anuncis publicats per altres entitats, on es poden cercar ofertes per província o títol i filtrar-les per categoria, com ara aliments, materials o transport. En seleccionar un anunci, s'obre un \textit{bottom sheet} amb el detall complet de la publicació, amb l'opció de contactar amb la protectora que l'ha publicat mitjançant un enllaç directe al seu correu electrònic.
 
-L'última pestanya de la barra inferior funciona com un espai col·laboratiu entre protectores. La vista principal mostra un marketplace d'anuncis publicats per altres entitats, on es poden cercar ofertes per província o títol i filtrar-les per categoria, com ara material, transport o difusió. En seleccionar un anunci, s'obre un \textit{bottom sheet} amb el detall complet de la publicació, amb l'opció de contactar amb la protectora que l'ha publicat mitjançant un enllaç directe al seu correu electrònic.
-
-Des de la mateixa pestanya, l'usuari pot accedir als anuncis de la seva protectora. Els gestors poden crear-ne de nous, consultar els actius o inactius i editar-los, els voluntaris només poden visualitzar-los. D'aquesta manera, les entitats poden compartir recursos i necessitats sense dependre de canals externs.
+Des de la mateixa pestanya, l'usuari pot accedir als anuncis de la seva protectora. Els gestors poden crear-ne de nous, consultar els actius o inactius i editar-los i els voluntaris només poden visualitzar-los.
 
 \twoFiguresLayout
     {0.22}
@@ -2124,7 +2121,7 @@ Des de la pantalla principal, els gestors poden accedir al llistat de processos 
     \label{fig:app_adoption_list}
 \end{figure}
 
-Cada procés segueix una seqüència de passos definida: formulari inicial, entrevista, visita a la protectora, contracte i recollida de l'animal. A l'aplicació mòbil, el gestor visualitza l'estat de cada pas, en pot aprovar o rebutjar el procés i, quan cal, programar les dates previstes.
+Cada procés segueix una seqüència de passos definida i ordenada: formulari inicial, entrevista, visita a la protectora, contracte i recollida de l'animal. A l'aplicació mòbil, el gestor visualitza l'estat de cada pas, en pot aprovar o rebutjar el procés i, quan cal, programar les dates previstes.
 
 \twoFiguresLayout
     {0.22}
@@ -2149,7 +2146,7 @@ El primer pas recull les respostes de l'adoptant al formulari del portal web, co
 Al pas del contracte, el gestor pot visualitzar el document generat, comprovar les signatures de l'adoptant i de la protectora i avançar el procés un cop completades. Quan tots els passos s'han completat correctament, el procés queda tancat i l'animal deixa d'aparèixer com a disponible per adoptar.
 En el cas de rebutjar un procés, es mostra una petita nota per indicar el motiu del rebuig.
 \subsubsection{Navegació}
-A continuació es pot visualitzar el diagrama de navegació de l'aplicació mòbil. S'inclou una llegenda a la part superior esquerra. El diagrama simplifica modals i diàlegs equivalents en un sol node, omet estats de càrrega/error i les passes de navegació enrere. A més, resumeix pestanyes repetitives (dies de la setmana, seccions del detall d’animal) per mantenir la llegibilitat.
+A continuació es pot visualitzar el diagrama de navegació de l'aplicació mòbil. S'inclou una llegenda a la part superior esquerra. El diagrama simplifica modals i diàlegs equivalents en un sol node, omet estats de càrrega/error i les de navegacins cap enrere. A més, resumeix pestanyes repetitives (dies de la setmana, seccions del detall d’animal) per mantenir la llegibilitat.
 
 \begin{landscape}
 \begin{figure}[H]
@@ -2162,9 +2159,9 @@ A continuació es pot visualitzar el diagrama de navegació de l'aplicació mòb
 
 \subsubsection{Patrons arquitectònics}
 \paragraph{Feature-Driven Architecture (Vertical)}
-S'ha optat per una arquitectura orientada a funcionalitats, on cada mòdul de l'aplicació mòbil s'encarrega únicament d'una funcionalitat concreta, com poden ser els animals o els torns. Gràcies a mantenir aquesta divisió, s'assoleix una granularitat més fina i es permet una major escalabilitat a futur, gràcies a la separació entre les diferents àrees del sistema.
+S'ha optat per una arquitectura orientada a funcionalitats, on cada mòdul de l'aplicació mòbil s'encarrega únicament d'una funcionalitat concreta, com poden ser els animals o els torns. Gràcies a mantenir aquesta divisió, s'assoleix una granularitat més fina i es permet una escalabilitat més elevada a futur, gràcies a la separació entre les diferents àrees del sistema.
 
-En el cas de tractar-se d'un projecte en equip, aquesta arquitectura també permet a cada desenvolupador tractar una funcionalitat concreta sense col·lisionar amb altres. Aquesta arquitectura també permet afegir noves funcionalitats de forma més senzilla, al no haver de modificar gairebé res del que ja està implementat, sinó que es pot crear un nou mòdul i integrar-lo a l'aplicació.
+En el cas de tractar-se d'un projecte en equip, aquesta arquitectura també permet a cada desenvolupador tractar una funcionalitat concreta sense col·lidir amb altres. Aquesta arquitectura també permet afegir noves funcionalitats de forma més senzilla, al no haver de modificar gairebé res del que ja està implementat, sinó que es pot crear un nou mòdul i integrar-lo a l'aplicació.
 
 A la següent figura es pot veure com s'aplica aquesta arquitectura al projecte. 
 \begin{figure}[H]
@@ -2179,9 +2176,9 @@ Tot i dividir per funcionalitats, existeix un mòdul \texttt{core} que concentra
 Paral·lelament, la gestió de l'estat s'ha separat en un mòdul \texttt{providers} independent. Els proveïdors de Riverpod alimenten pantalles de diferents funcionalitats i necessiten invalidar-se mútuament quan es modifiquen dades. Mantenir-los fora de cada \texttt{feature} evita acoblar mòduls entre si innecessàriament, permet reutilitzar i emmagatzemar en memòria \textit{cache} les consultes de forma centralitzada i deixa les carpetes de funcionalitat limitades a les capes de dades (\textit{data}) i presentació (\textit{presentation}).
 
 \paragraph{Arquitectura per capes (Data i Presentation)}
-Aquest patró arquitectònic aplica directament als mòduls, es a dir es troba a un nivell més baix que el de l'arquitectura orientada a funcionalitats descrita anteriorment.
+Aquest patró arquitectònic aplica directament als mòduls, és a dir es troba a un nivell més baix que el de l'arquitectura orientada a funcionalitats descrita anteriorment.
 
-Cada mòdul es divideix en dues capes: \textit{data} i \textit{presentation}. La capa de dades s'encarrega de gestionar les fonts de dades i d'abstraure el client HTTP del backend. Concretament, inclou els \textit{repositoris}, que encapsulen les crides a l'API i tradueixen les respostes en models de domini de l'aplicació, i els propis models, juntament amb els mètodes que actuen com a factories (\texttt{fromJson}) i els \textit{enums} associats. D'aquesta manera, la resta de l'aplicació no depèn directament de la comunicació amb el backend.
+Cada mòdul es divideix en dues capes: \textit{data} i \textit{presentation}. La capa de dades s'encarrega de gestionar les fonts de dades i d'abstraure el client HTTP del backend. Concretament, inclou els \textit{repositoris}, que encapsulen les crides a l'API i tradueixen les respostes en models de domini de l'aplicació, i els mateixos models, juntament amb els mètodes que actuen com a factories (\texttt{fromJson}) i els \textit{enums} associats. D'aquesta manera, la resta de l'aplicació no depèn directament de la comunicació amb el backend.
 
 \begin{figure}[H]
     \centering
@@ -2192,12 +2189,12 @@ Cada mòdul es divideix en dues capes: \textit{data} i \textit{presentation}. La
 
 La capa de presentació conté pantalles, components reutilitzables dins del mòdul i la lògica d'interacció amb l'usuari: formularis, navegació local, estats de càrrega o error i composició visual. Aquesta capa no accedeix directament a l'API, ja que consumeix les dades exposades pels proveïdors de Riverpod, que actuen com a intermediari entre la interfície i els repositoris. El flux queda, doncs, en la direcció \textit{presentation} $\rightarrow$ \textit{providers} $\rightarrow$ \textit{data}.
 
-Quan un element d'interfície es reutilitza entre diverses funcionalitats s'ubica al mòdul \texttt{features\\/common}, que comparteix només codi de presentació comú sense introduir dependències entre mòduls. Un exemple d'això es el component de \texttt{datefield} que es reutilitza a diferents pantalles per recollir dates, però que no pertany a cap funcionalitat concreta.
+Quan un element d'interfície es reutilitza entre diverses funcionalitats s'ubica al mòdul \texttt{features\\/common}, que comparteix només codi de presentació comú sense introduir dependències entre mòduls. Un exemple d'això és el component de \texttt{datefield} que es reutilitza a diferents pantalles per recollir dates, però que no pertany a cap funcionalitat concreta.
 
 \paragraph{Gestió de l'estat reactiu amb Riverpod}
 Per poder estalviar trucades al servidor backend i mantenir les dades més rellevants en memòria, s'ha optat per utilitzar \textbf{Riverpod}, una llibreria que implementa una gestió de l'estat reactiva. Gràcies a aquesta, es poden definir proveïdors que encapsulen tant l'estat de les dades com les operacions que criden als repositoris per modificar-les. Des de qualsevol part de l'aplicació es poden consumir amb \texttt{ref.watch}, de manera que quan canviïn les dades es torni a renderitzar automàticament només la part de la interfície que les utilitza, facilitant la reactivitat de la UI.
 
-Els proveïdors s'han definit mitjançant \texttt{riverpod\_annotation}, que genera el codi auxiliar (\texttt{.g.dart}) i redueix el codi boilerplate. Segons el cas, s'utilitzen tres variants principals: proveïdors asíncrons (\texttt{Future}) per a consultes al servidor a través de l'API, \textit{notifiers} amb mètodes propis per a modificacions (crear, actualitzar o esborrar entitats), i proveïdors síncrons per a un estat d'interfície lleuger (filtres o cerca).
+Els proveïdors s'han definit mitjançant \texttt{riverpod\_annotation}, que genera el codi auxiliar (\texttt{.g.dart}) i redueix el codi boilerplate. Segons el cas, s'usen tres variants principals: proveïdors asíncrons (\texttt{Future}) per a consultes al servidor a través de l'API, \textit{notifiers} amb mètodes propis per a modificacions (crear, actualitzar o esborrar entitats), i proveïdors síncrons per a un estat d'interfície lleuger (filtres o cerca).
 
 Un altre patró recurrent són els proveïdors derivats, que no accedeixen directament al servidor sinó que combinen un proveïdor de dades amb un de filtres o cerca en client. Així, la llista d'animals es filtra per text, estat d'adopció o tasques pendents sense tornar a consultar l'API; el mateix passa amb el llistat d'adopcions.
 
@@ -2212,13 +2209,13 @@ A la següent figura es pot veure el flux de treball estàndard de l'aplicació 
 
 \subsubsection{Patrons de disseny}
 \paragraph{Injecció de dependències} \label{sec:injeccio_dependencies}
-A través del patró d'injecció de dependències, es pot separar la lògica de creació d'objectes de la lògica d'us, passant les dependències necessàries de cada classe per paràmetre al constructor. Gràcies a això, s'aconsegueix un codi més net, modular i desacoplat, degut a que permet en un futur canviar les implementacions de les dependències sense haver de modificar qui les consumeix.
+A través del patró d'injecció de dependències, es pot separar la lògica de creació d'objectes de la lògica d'ús, passant les dependències necessàries de cada classe per paràmetre al constructor. Gràcies a això, s'aconsegueix un codi més net, modular i desacoblat, ja que permet en un futur canviar les implementacions de les dependències sense haver de modificar qui les consumeix.
 
-Una altra part positiva és poder utilitzar mocks en les dependències al realitzar tests, ja que es poden passar implementacions alternatives directament al constructor sense modificar el codi de producció. A més, es pot utilitzar un contenidor de dependències (\textit{service locator}) per gestionar les instàncies i facilitar la seva reutilització, com es fa al mòdul \texttt{core}.
+Una altra part positiva és poder utilitzar mocks en les dependències en fer tests, ja que es poden passar implementacions alternatives directament al constructor sense modificar el codi de producció. A més, es pot fer servir un contenidor de dependències (\textit{service locator}) per gestionar les instàncies i facilitar la seva reutilització, com es fa al mòdul \texttt{core}.
 
 A continuació, es pot veure un exemple d'aquest patró a l'aplicació mòbil, on el comportament del sistema es veu dividit en dues fases:
 \begin{itemize}
-    \item Injecció de dependències al contenidor: Al arrencar l'aplicació, el \textit{Service Locator} registra les instàncies ApiClient i AnimalRepository, on el repositori rep el client com a paràmetre.
+    \item Injecció de dependències al contenidor: Al iniciar l'aplicació, el \textit{Service Locator} registra les instàncies ApiClient i AnimalRepository, on el repositori rep el client com a paràmetre.
     \item Flux de dades: Al necessitar els detalls d'un animal, la pantalla crida al proveïdor de Riverpod, aquest obté el repositori gràcies al contenidor de dependències. Aquest repositori fa ús del client HTTP per cridar al backend i obtenir les dades de l'animal.
 \end{itemize}
 \begin{figure}[H]
@@ -2228,7 +2225,7 @@ A continuació, es pot veure un exemple d'aquest patró a l'aplicació mòbil, o
     \label{fig:diagrama_DI_flow}
 \end{figure}
 \paragraph{Patró repositori}
-Aquest patró s'utilitza per separar la lògica de trucades al servidor backend a través del client HTTP de la resta de l'aplicació. Hi ha un repository per a cada funcionalitat, i aquest, a més de proporcionar abstracció sobre les crides a l'API, també tradueix les respostes en els models de domini de l'aplicació.
+Aquest patró s'utilitza per separar la lògica de trucades al servidor backend a través del client HTTP de la resta de l'aplicació. Hi ha un repositori per a cada funcionalitat, i aquest, a més de proporcionar abstracció sobre les crides a l'API, també tradueix les respostes en els models de domini de l'aplicació.
 
 L'ús es pot veure a la següent figura i a l'exemple anterior (\ref{fig:diagrama_DI_flow}).
 \begin{figure}[H]
@@ -2238,7 +2235,7 @@ L'ús es pot veure a la següent figura i a l'exemple anterior (\ref{fig:diagram
     \label{fig:diagrama_repository_app}
 \end{figure}
 \paragraph{Patró observador}
-Aquest patró forma part de la reactivitat a la interfície. Permet que diversos observadors (en el cas de l'aplicació, pantalles) es subscriguin a un subjecte (en aquest cas, el proveïdor de Riverpod) i rebin notificacions de manera automàtica quan hi hagi canvis en les dades que observen.
+Aquest patró forma part de la reactivitat a la interfície. Permet que diversos observadors (en el cas de l'aplicació, pantalles) se subscriguin a un subjecte (en aquest cas, el proveïdor de Riverpod) i rebin notificacions de manera automàtica quan hi hagi canvis en les dades que observen.
 Gràcies a aquest patró, es pot establir relacions entre subjectes i observadors de manera dinàmica, i si es vol afegir un nou observador, el codi del subjecte no es veu afectat. A la figura següent es pot veure el comportament descrit aplicat al projecte.
 \begin{figure}[H]
     \centering
@@ -2285,15 +2282,15 @@ Per facilitar aquesta tasca, FastAPI genera automàticament una documentació in
     \item \textbf{Animals} (\texttt{/animals}): Gestió completa dels animals (alta, consulta, actualització, eliminació, imatges i estat d'adopció). Inclou endpoints públics per al portal web i integracions externes.
     \item \textbf{Traits} (\texttt{/traits}): Manteniment de les característiques que s'assignen als animals.
     \item \textbf{Tasks} (\texttt{/tasks}): Definició de les tasques reutilitzables del refugi i consulta de les tasques assignades als torns de l'usuari autenticat.
-    \item \textbf{Shifts} (\texttt{/shifts}): Planificació de torns de voluntariat per refugi: creació, inscripció, assignació de tasques als participants i marc-les com a completades.
+    \item \textbf{Shifts} (\texttt{/shifts}): Planificació de torns de voluntariat per refugi: creació, inscripció, assignació de tasques als participants i marcar-les com a completades.
     \item \textbf{Medical} (\texttt{/medical}): Informació sanitària associada als animals: medicaments del refugi, tractaments actius i historial de visites veterinaris.
-    \item \textbf{Geo} (\texttt{/geo}): Llistat de províncies utilitzat en formularis de registre, refugis, portal d'adopcions i filtres geogràfics.
+    \item \textbf{Geo} (\texttt{/geo}): Llistat de províncies utilitzat a través de tot el sistema.
     \item \textbf{Dashboard} (\texttt{/dashboard}): Resum per a la pantalla d'inici de l'app: nombre d'animals, voluntaris actius i processos d'adopció en curs.
     \item \textbf{Adoption Login} (\texttt{/adoption-auth}): Autenticació del portal d'adopcions mitjançant enllaç màgic per correu electrònic, sense contrasenya tradicional.
     \item \textbf{Adoption Process} (\texttt{/adoption}): Flux principal d'adopció: inici de sol·licitud, consulta per adoptant o gestor, avançament o salt d'etapes, rebuig, cancel·lació i generació del contracte en PDF.
     \item \textbf{Adoption steps} (\texttt{/adoption/\{process\_id\}/steps}): Detall i actualització de cada etapa del procés (formulari, entrevista, visita, recollida, contracte i signatures).
     \item \textbf{Adoptants} (\texttt{/adoptant}): Consulta de processos d'adopció des de la perspectiva de l'adoptant i accés a les seves dades per part del gestor.
-    \item \textbf{Advertisements} (\texttt{/advertisements}): Pels anuncis de l'ecosistema entre protectores (ofertes i demandes), amb filtres per província i categoria, i gestió d'imatges associades.
+    \item \textbf{Advertisements} (\texttt{/advertisements}): Pels anuncis de l'ecosistema entre protectores, amb filtres per província i categoria, i gestió d'imatges associades.
 \end{itemize}
 
 Finalment, a la figura següent es pot veure un exemple d'una part de la documentació generada a través de FastAPI, en concret la de swagger UI, amb els endpoints dels animals.
@@ -2304,19 +2301,167 @@ Finalment, a la figura següent es pot veure un exemple d'una part de la documen
     \label{fig:swagger_example}
 \end{figure}
 
-
 \subsubsection{Patrons arquitectònics}
-- Arquitectura Monolítica
-- Arquitectura per Capes (Routers, Services, Repositories)
-- Execució de tasques asíncrones (Task Scheduling)
-\subsubsection{Patrons de disseny}
-- Patró Repository
-- Repositori Genèric (Generic Repository Pattern)
-- DTO / Data Mapper (amb Pydantic)
-- Injecció de Dependències (amb Depends de FastAPI)
-- Decorator (al fer lo de les excepcions, que ho declaro a main?)
+\paragraph{Arquitectura monolítica}
+Aquest tipus d'arquitectura es basa a centralitzar diverses funcionalitats i components en una única base de codi i un únic procés central d'execució. En aquest projecte, s'ha escollit aquesta arquitectura a causa de la simplicitat que proporciona a l'hora de treballar i fer un desplegament senzill i ràpid. A més, no causa retards a l'hora de desenvolupar, com si podria causar una arquitectura de microserveis, per exemple, per la complexitat d'afegir mètodes de comunicació entre els diferents serveis del sistema.
 
+Veient l'abast d'aquest projecte, es creu que una arquitectura monolítica és suficient per assolir els objectius proposats i complir amb els requisits funcionals i no funcionals. Tot i això, l'organització del backend no deixa de ser modular i extensible, gràcies a la separació per capes, explicada a continuació, cosa que fa que l'adaptació d'una arquitectura més complexa a futur sigui més assequible.
+
+Com es pot observar a la figura~\ref{fig:diagrama_arq_fisica}, tota la lògica del servidor s'executa dins d'un únic procés backend, compartit pels dos clients del sistema.
+
+\paragraph{Arquitectura per capes}
+Al contrari dels dos clients del sistema, al backend s'opta per utilitzar una arquitectura dividida per capes, amb la següent organització. 
+\begin{itemize}
+    \item \textbf{Routers}: capa de presentació, responsable de rebre les peticions HTTP, validar-les i portar-les al servei corresponent.
+    \item \textbf{Services}: capa de lògica de negoci, on es processen les dades i s'apliquen les regles del domini.
+    \item \textbf{Repositories}: capa d'accés a dades, responsable de la comunicació amb la base de dades.
+    \item \textbf{Models}: defineixen l'estructura de les entitats a la base de dades
+    \item \textbf{Schemas}: defineixen els models de dades d'entrada i sortida de l'API, separant l'estructura "externa" de les entitats de la seva representació "interna" (a la base de dades).
+\end{itemize}
+Aquesta decisió es basa en la necessitat de mantenir una separació clara entre les responsabilitats de cada part del sistema. D'aquesta manera, s'aconsegueix seguir el patró estàndard en APIs REST, que a més s'integra fàcilment amb el framework escollit de treball, FastAPI. A diferència dels clients, on les funcionalitats guien l'organització del codi, al backend les capes tècniques són transversals a tots els recursos, cosa que fa que la separació per capes sigui més natural i coherent.
+
+A la figura següent es pot observar com s'aplica aquesta organització al projecte.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{python_layer_arch.png}
+    \caption[Arquitectura per capes al backend]{Arquitectura per capes al backend. Font: Elaboració pròpia}
+    \label{fig:python_layer_arch}
+\end{figure}
+\paragraph{Processament en segon pla}
+Per a determinades operacions que no requereixen una interacció directa amb l'usuari, s'ha optat per executar-les en segon pla mitjançant tasques planificades. Un exemple d'ús és l'actualització automàtica dels estats dels tractaments mèdics dels animals, que es revisen cada hora per determinar si cal canviar el seu estat en funció de la seva periodicitat.
+
+A la següent figura es pot veure aquest procés aplicat al projecte.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=0.5\textheight, keepaspectratio]{diagrama_tasques_segonpla.png}
+    \caption[Processament en segon pla]{Processament en segon pla. Font: Elaboració pròpia}
+    \label{fig:diagrama_tasques_segonpla}
+\end{figure}
+
+\subsubsection{Patrons de disseny}
+\paragraph{Patró repositori}
+De forma equivalent al client mòbil, el backend també aplica el patró repositori per separar la lògica d'accés a dades de la lògica del sistema.
+En aquest cas, també s'aplica com a base un repositori genèric, que conté les operacions bàsiques per a llegir, crear, actualitzar i esborrar entitats a la base de dades. Tots els repositoris específics per a cada recurs, amplien aquesta base i apliquen les seves pròpies operacions específiques, gràcies a això s'estalvia molta repetició de codi i es manté una coherència entre els diferents repositoris.
+
+A la figura següent es pot observar l'estructura del patró repositori al backend, on el repositori genèric és la base de tots els altres.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=0.5\textheight, keepaspectratio]{diagrama_base_repository.png}
+    \caption[Patró repositori amb repositori genèric]{Patró repositori amb repositori genèric. Font: Elaboració pròpia}
+    \label{fig:diagrama_base_repository}
+\end{figure}
+\paragraph{Patró DTO}
+Aquest patró permet separar l'estructura de les entitats de la base de dades de la representació que s'utilitza per comunicar-se amb el client a través de l'API. Durant el desenvolupament, s'han anat creant diferents DTOs (anomenats \textit{schemas} al projecte) per a cada recurs, d'acord amb els requisits de cada funcionalitat.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.\textwidth]{diagrama_DTO_pattern.png}
+    \caption[Patró DTO]{Patró DTO. Font: Elaboració pròpia}
+    \label{fig:diagrama_DTO_pattern}
+\end{figure}
+\paragraph{Patró Decorator i Patró Facade}
+A través d'aquest patró s'afegeixen funcionalitats addicionals a una classe o mètode de forma dinàmica, sense patir fricció amb aquestes. En aquest projecte, es fa servir per afegir funcionalitats per sobre de l'enviament d'emails, concretament per registrar els correus enviats.
+
+A més, en aquesta mateixa funcionalitat s'utilitza el patró Facade, ja que una simple funció, \texttt{send\_email}, amaga tota la complexitat darrere de generar, configurar i enviar una notificació per correu electrònic. Gràcies a això, es pot reutilitzar aquesta funció a qualsevol part del codi sense de preocupar-se per la funcionalitat d'enviament que té darrere.
+
+En la figura a continuació es poden veure els dos patrons aplicats a la funcionalitat d'enviament de correus.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.\textwidth]{diagrama_facade_decorator.png}
+    \caption[Patró Facade i Patró Decorator]{Patró Facade i Patró Decorator. Font: Elaboració pròpia}
+    \label{fig:diagrama_facade_decorator}
+\end{figure}
+\paragraph{Injecció de dependències}
+Tot i que al backend també s'utilitza aquest patró, es fa servir de manera diferent que al client mòbil. En aquest cas, no hi ha un contenidor de dependències explícit, sinó que s'injecten de manera automàtica a cada endpoint on són necessàries.
+Això té una gran relació amb el framework escollit per al backend, FastAPI, ja que proporciona una manera fàcil i senzilla d'injectar dependències a través d'un paràmetre a qualsevol funció. Això facilita, per exemple, la gestió de la sessió de la base de dades per a cada operació, que s'obre i es tanca per a cada petició de manera transparent, com es pot veure a l'exemple següent.
+\begin{lstlisting}[
+    style=pythonStyle,
+    caption={Injecció de dependències al backend},
+    label={lst:fastapi_endpoint},
+    captionpos=b
+]
+def get_shift_service(db: Session = Depends(get_db)) -> ShiftService:
+    return ShiftService(db)
+
+@router.get("/", response_model=ListShiftResponse)
+def get_shifts(
+    refuge_id: int,
+    day: Optional[date] = None,
+    week_start: Optional[date] = None,
+    auth: AuthenticatedUser = Depends(get_current_user),
+    service: ShiftService = Depends(get_shift_service)
+):
+    return {"shifts": service.get_shifts(refuge_id, day, week_start)}
+\end{lstlisting}
 \subsubsection{Disseny de la base de dades}
+Com que el model de la base de dades queda descrit a la figura  de la secció d'Especificació, en aquest apartat es 
+vol mostrar l'esquema final de la base de dades. Com a aclariment, s'ha optat per utilitzar una base de dades relacional amb el patró \textit{Class Table Inheritance} per a les herències.
+
+Aquestes taules apliquen les restriccions de domini a través de tipus enumerats (\textit{ENUM}) i claus úniques. A continuació es llisten les taules del sistema, on se subratllen les claus externes i s'indiquen les seves relacions i restriccions textuals:
+
+\begin{itemize}
+    \item \textbf{provinces}(\underline{id}, name, community\_code, last\_updated), on \textit{name} és un valor únic.
+    
+    \item \textbf{shelter}(\underline{id}, name, \underline{province\_id}, volunteer\_code, manager\_code, email), on \textit{province\_id} referència a \textbf{provinces}, i els camps \textit{volunteer\_code}, \textit{manager\_code} i \textit{email} són únics.
+    
+    \item \textbf{refuge}(\underline{id}, name, \underline{province\_id}, \underline{shelter\_id}), on \textit{province\_id} referència a \textbf{provinces} i \textit{shelter\_id} referència a \textbf{shelter}.
+    
+    \item \textbf{login}(\underline{id}, email, password), on \textit{email} és únic i actua com a índex de cerca.
+    
+    \item \textbf{user}(\underline{id}, name, last\_name\_1, last\_name\_2, active, \underline{login\_id}), on \textit{login\_id} referència a \textbf{login} i és únic.
+    
+    \item \textbf{shelter\_member}(\underline{id}, \underline{user\_id}, \underline{shelter\_id}, role, join\_date, type), on \textit{user\_id} referència a \textbf{user} i és únic, \textit{shelter\_id} referència a \textbf{shelter}, i \textit{role} és un enum (\texttt{VOLUNTEER}, \texttt{MANAGER}, \texttt{ADMIN}).
+    
+    \item \textbf{volunteer}(\underline{id}, hours\_worked), on \textit{id} referència a \textbf{shelter\_member}, que és la classe pare.
+    
+    \item \textbf{manager}(\underline{id}), on \textit{id} referència a \textbf{shelter\_member}, que és la classe pare.
+    
+    \item \textbf{adoptant}(\underline{id}, email, name), on \textit{email} és únic.
+    
+    \item \textbf{magic\_link\_token}(\underline{id}, \underline{adoptant\_id}, token, expires\_at), on \textit{adoptant\_id} referència a \textbf{adoptant} i \textit{token} és únic.
+    
+    \item \textbf{animal}(\underline{id}, name, birth\_date, arrival\_date, description, breed, animal\_type, in\_adoption, \underline{refuge\_id}), on \textit{refuge\_id} referència a \textbf{refuge} i \textit{animal\_type} és un enum (\texttt{CAT}, \texttt{DOG}).
+    
+    \item \textbf{animal\_image}(\underline{id}, \underline{animal\_id}, url, cloudinary\_public\_id, order), on \textit{animal\_id} referència a \textbf{animal}.
+    
+    \item \textbf{trait}(\underline{id}, name, \underline{shelter\_id}), on \textit{shelter\_id} referència a \textbf{shelter}.
+    
+    \item \textbf{animal\_trait}(\underline{animal\_id}, \underline{trait\_id}), taula intermèdia on \textit{animal\_id} referència a \textbf{animal} i \textit{trait\_id} referència a \textbf{trait}.
+    
+    \item \textbf{medicine}(\underline{id}, name, current\_stock, \underline{shelter\_id}), on \textit{shelter\_id} referència a \textbf{shelter} i la combinació de \textit{name} i \textit{shelter\_id} és única.
+    
+    \item \textbf{animal\_treatment}(\underline{id}, \underline{animal\_id}, \underline{medicine\_id}, frequency, status, status\_updated\_at, start\_date, end\_date, dosage, dosage\_unit, \underline{status\_last\_updated\_by\_id}), on \textit{animal\_id} referència a \textbf{animal}, \textit{medicine\_id} referència a \textbf{medicine}, \textit{status\_last\_updated\_by\_id} referència a \textbf{user}, i els camps \textit{frequency}, \textit{status} i \textit{dosage\_unit} utilitzen enums.
+    
+    \item \textbf{task}(\underline{id}, title, description, num\_people, \underline{shelter\_id}), on \textit{shelter\_id} referència a \textbf{shelter}.
+    
+    \item \textbf{shift}(\underline{id}, start\_time, end\_time, day, \underline{shelter\_id}, \underline{refuge\_id}, max\_participants), on \textit{shelter\_id} referència a \textbf{shelter} i \textit{refuge\_id} referència a \textbf{refuge}.
+    
+    \item \textbf{shift\_participant}(\underline{id}, \underline{shift\_id}, \underline{member\_id}), on \textit{shift\_id} referència a \textbf{shift} i \textit{member\_id} referència a \textbf{shelter\_member}.
+    
+    \item \textbf{shift\_task}(\underline{id}, status, assigned\_date, \underline{shift\_id}, \underline{task\_id}, \underline{participant\_id}, \underline{animal\_id}), on \textit{shift\_id} referència a \textbf{shift}, \textit{task\_id} referència a \textbf{task}, \textit{participant\_id} referència a \textbf{shift\_participant}, i \textit{animal\_id} referència a \textbf{animal}.
+    
+    \item \textbf{advertisement}(\underline{id}, title, description, category, published\_on, is\_active, image\_url, image\_public\_id, \underline{province\_id}, \underline{shelter\_id}), on \textit{province\_id} referència a \textbf{provinces}, \textit{shelter\_id} referència a \textbf{shelter} i \textit{category} és un enum (\texttt{FOOD}, \texttt{MEDICINE}, \texttt{EQUIPMENT}, \texttt{TOYS}, \texttt{OTHER}).
+    
+    \item \textbf{vet\_visit}(\underline{id}, \underline{animal\_id}, visit\_date, visit\_type, clinic\_name, notes), on \textit{animal\_id} referència a \textbf{animal} i \textit{visit\_type} és un enum clínic.
+    
+    \item \textbf{adoption\_process}(\underline{id}, \underline{animal\_id}, \underline{adoptant\_id}, start\_date, end\_date, status), on \textit{animal\_id} referència a \textbf{animal}, \textit{adoptant\_id} referència a \textbf{adoptant} i \textit{status} és un enum (\texttt{ACTIVE}, \texttt{COMPLETED}, \texttt{REJECTED}).
+    
+    \item \textbf{adoption\_step}(\underline{id}, \underline{adoption\_process\_id}, type, status, order, finish\_date, notes, rejection\_reason), on \textit{adoption\_process\_id} referència a \textbf{adoption\_process}, \textit{type} és un enum de tipus de pas (\texttt{FORM}, \texttt{INTERVIEW}, etc.) i \textit{status} és un enum d'estat (\texttt{PENDING}, \texttt{COMPLETED}, etc.).
+    
+    \item \textbf{adoption\_form}(\underline{id}, housing\_type, has\_garden, has\_other\_pets, other\_pets\_description, has\_children, children\_ages, previous\_pet\_experience, hours\_alone\_per\_day, reason\_for\_adoption, accepted), on \textit{id} referència a \textbf{adoption\_step}, que és la classe pare.
+    
+    \item \textbf{interview}(\underline{id}, scheduled\_at), on \textit{id} referència a \textbf{adoption\_step}, que és la classe pare.
+    
+    \item \textbf{shelter\_visit}(\underline{id}, scheduled\_at), on \textit{id} referència a \textbf{adoption\_step}, que és la classe pare.
+    
+    \item \textbf{contract}(\underline{id}, contract\_url, cloudinary\_public\_id, generation\_date, signed\_by\_adoptant, signed\_by\_shelter), on \textit{id} referència a \textbf{adoption\_step}, que és la classe pare.
+    
+    \item \textbf{animal\_pickup}(\underline{id}, scheduled\_at, actual\_pickup\_at), on \textit{id} referència a \textbf{adoption\_step}, que és la classe pare.
+\end{itemize}
+
+
 
 \subsection{Portal web d'adopcions}
 

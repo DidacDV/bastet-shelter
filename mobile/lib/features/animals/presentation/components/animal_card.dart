@@ -71,7 +71,7 @@ class AnimalCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '${animal.age < 0 ? '<1' : animal.age} ${animal.age == 1 ? 'year' : 'years'}',
+                          _formatAnimalAge(context.l10n, animal.age),
                           style: tt.bodySmall?.copyWith(
                             color: AppColors.textHint,
                             fontWeight: FontWeight.w600,
@@ -137,6 +137,12 @@ class AnimalCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String _formatAnimalAge(AppLocalizations l10n, int age) {
+  if (age <= 0) return l10n.t('animals.lessThanOneYear');
+  if (age == 1) return l10n.t('animals.oneYear');
+  return l10n.t('animals.years', params: {'count': age.toString()});
 }
 
 class _AnimalImage extends StatelessWidget {

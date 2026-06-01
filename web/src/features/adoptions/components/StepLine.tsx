@@ -1,4 +1,5 @@
-import { Group, Stack, ThemeIcon, Text, Divider } from "@mantine/core";
+import { Fragment } from "react";
+import { Box, Stack, ThemeIcon, Text, Divider } from "@mantine/core";
 import {
   IconFileDescription,
   IconUsers,
@@ -22,6 +23,8 @@ const STEP_ICONS: Record<StepType, React.ReactNode> = {
   CONTRACT: <IconWriting size={14} />,
   ANIMAL_PICKUP: <IconPaw size={14} />,
 };
+
+const ICON_ROW_HEIGHT = 28;
 
 function stepIconColor(status: StepStatus, isCurrent: boolean) {
   if (isCurrent) return AppColors.primary;
@@ -51,25 +54,31 @@ export default function StepTimeline({
       >
         {t("adoption.progress")}
       </Text>
-      <Group gap={0} align="center" wrap="nowrap">
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          width: "100%",
+        }}
+      >
         {sorted.map((step, i) => {
           const isCurrent = step.order === currentOrder;
           const color = stepIconColor(step.status, isCurrent);
 
           return (
-            <Group
-              key={step.type}
-              gap={0}
-              align="center"
-              wrap="nowrap"
-              style={{ flex: 1 }}
-            >
-              <Stack align="center" gap={4} style={{ minWidth: 52 }}>
+            <Fragment key={step.type}>
+              <Stack
+                align="center"
+                gap={4}
+                style={{ flex: "1 1 0", minWidth: 0 }}
+              >
                 <ThemeIcon
                   size="md"
                   radius="xl"
                   color={color}
                   variant={isCurrent ? "filled" : "light"}
+                  style={{ flexShrink: 0 }}
                 >
                   {STEP_ICONS[step.type]}
                 </ThemeIcon>
@@ -82,6 +91,7 @@ export default function StepTimeline({
                       ? AppColors.textDark
                       : AppColors.textSecondary,
                     lineHeight: 1.2,
+                    wordBreak: "break-word",
                   }}
                 >
                   {t(stepTypeKey(step.type, true))}
@@ -89,19 +99,30 @@ export default function StepTimeline({
               </Stack>
 
               {i < sorted.length - 1 && (
-                <Divider
-                  style={{ flex: 1 }}
-                  color={
-                    step.status === "COMPLETED"
-                      ? AppColors.reddish
-                      : AppColors.divider
-                  }
-                />
+                <Box
+                  style={{
+                    flex: "1 1 0",
+                    minWidth: 0,
+                    height: ICON_ROW_HEIGHT,
+                    display: "flex",
+                    alignItems: "center",
+                    paddingInline: 4,
+                  }}
+                >
+                  <Divider
+                    style={{ width: "100%" }}
+                    color={
+                      step.status === "COMPLETED"
+                        ? AppColors.reddish
+                        : AppColors.divider
+                    }
+                  />
+                </Box>
               )}
-            </Group>
+            </Fragment>
           );
         })}
-      </Group>
+      </div>
     </div>
   );
 }

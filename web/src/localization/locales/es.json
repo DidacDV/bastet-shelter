@@ -145,17 +145,17 @@
   "adoption.form.sendRequest": "Enviar solicitud de adopción",
   "auth.loginIllustrationAlt": "Ilustración de inicio de sesión",
   "auth.checkEmail": "Revisa tu correo",
-  "auth.magicLinkSent": "Hemos enviado un enlace seguro a {email}.",
-  "auth.magicLinkInstructions": "Haz clic en el enlace del correo para iniciar sesión de forma segura y continuar tu proceso de adopción.",
+  "auth.loginLinkSent": "Hemos enviado un enlace de inicio de sesión a {email}.",
+  "auth.loginLinkInstructions": "Haz clic en el enlace de inicio de sesión del correo para continuar tu proceso de adopción.",
   "auth.welcome": "Bienvenido/a a BastetShelter",
-  "auth.enterDetails": "Introduce tus datos para recibir un enlace seguro de inicio de sesión.",
-  "auth.sessionExpired": "Tu sesión ha caducado. Solicita un enlace nuevo.",
+  "auth.enterDetails": "Introduce tus datos para recibir un enlace de inicio de sesión.",
+  "auth.sessionExpired": "Tu sesión ha caducado. Solicita un nuevo enlace de inicio de sesión.",
   "auth.requestError": "Algo ha ido mal. Revisa el correo e inténtalo de nuevo.",
   "auth.yourName": "Tu nombre",
   "auth.emailAddress": "Dirección de correo electrónico",
   "auth.sendLoginEmail": "Enviar correo de inicio de sesión",
   "auth.noToken": "No se ha encontrado ningún token en la URL.",
-  "auth.invalidMagicLink": "El enlace mágico no es válido o ha caducado. Vuelve a iniciar sesión.",
+  "auth.invalidLoginLink": "El enlace de inicio de sesión no es válido o ha caducado. Vuelve a iniciar sesión.",
   "auth.backToLogin": "Volver al inicio de sesión",
-  "auth.verifyingLink": "Verificando el enlace seguro..."
+  "auth.verifyingLink": "Verificando el enlace de inicio de sesión..."
 }

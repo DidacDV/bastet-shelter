@@ -145,17 +145,17 @@
   "adoption.form.sendRequest": "Send adoption request",
   "auth.loginIllustrationAlt": "Login illustration",
   "auth.checkEmail": "Check your email",
-  "auth.magicLinkSent": "We've sent a secure magic link to {email}.",
-  "auth.magicLinkInstructions": "Click the link in the email to securely log in and continue your adoption journey.",
+  "auth.loginLinkSent": "We've sent a login link to {email}.",
+  "auth.loginLinkInstructions": "Click the login link in the email to log in and continue your adoption journey.",
   "auth.welcome": "Welcome to BastetShelter",
   "auth.enterDetails": "Enter your details to receive a secure login link.",
-  "auth.sessionExpired": "Your session expired. Please request a new link.",
+  "auth.sessionExpired": "Your session expired. Please request a new login link.",
   "auth.requestError": "Something went wrong. Please check your email and try again.",
   "auth.yourName": "Your Name",
   "auth.emailAddress": "Email Address",
   "auth.sendLoginEmail": "Send email for login",
   "auth.noToken": "No token found in the URL.",
-  "auth.invalidMagicLink": "Invalid or expired magic link. Please try logging in again.",
+  "auth.invalidLoginLink": "Invalid or expired login link. Please try logging in again.",
   "auth.backToLogin": "Go back to Login",
-  "auth.verifyingLink": "Verifying your secure link..."
+  "auth.verifyingLink": "Verifying your login link..."
 }

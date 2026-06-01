@@ -66,10 +66,10 @@ export default function LoginPage() {
                 {t("auth.checkEmail")}
               </Title>
               <Text className="text-text-secondary text-lg">
-                {t("auth.magicLinkSent", { email })}
+                {t("auth.loginLinkSent", { email })}
                 <br />
                 <br />
-                {t("auth.magicLinkInstructions")}
+                {t("auth.loginLinkInstructions")}
               </Text>
             </div>
           ) : (

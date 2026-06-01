@@ -34,7 +34,7 @@ export default function AuthCallbackPage() {
           navigate(redirect, { replace: true });
         }
       } catch (err) {
-        setError(t("auth.invalidMagicLink"));
+        setError(t("auth.invalidLoginLink"));
       }
     };
 

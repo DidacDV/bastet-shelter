@@ -118,7 +118,7 @@
     belowskip=4pt
 }
 
-\graphicspath{ {resources/} {resources/diagrams/} {resources/mobile_screens} }
+\graphicspath{ {resources/} {resources/diagrams/} {resources/mobile_screens} {resources/web_screens} }
 
 %start section from 1
 \renewcommand{\thesection}{\arabic{section}}
@@ -2157,7 +2157,7 @@ A continuació es pot visualitzar el diagrama de navegació de l'aplicació mòb
 \end{figure}
 \end{landscape}
 
-\subsubsection{Patrons arquitectònics}
+\subsubsection{Patrons arquitectònics} \label{sec:patrons_arq_app}
 \paragraph{Feature-Driven Architecture (Vertical)}
 S'ha optat per una arquitectura orientada a funcionalitats, on cada mòdul de l'aplicació mòbil s'encarrega únicament d'una funcionalitat concreta, com poden ser els animals o els torns. Gràcies a mantenir aquesta divisió, s'assoleix una granularitat més fina i es permet una escalabilitat més elevada a futur, gràcies a la separació entre les diferents àrees del sistema.
 
@@ -2366,7 +2366,6 @@ A través d'aquest patró s'afegeixen funcionalitats addicionals a una classe o 
 A més, en aquesta mateixa funcionalitat s'utilitza el patró Facade, ja que una simple funció, \texttt{send\_email}, amaga tota la complexitat darrere de generar, configurar i enviar una notificació per correu electrònic. Gràcies a això, es pot reutilitzar aquesta funció a qualsevol part del codi sense de preocupar-se per la funcionalitat d'enviament que té darrere.
 
 En la figura a continuació es poden veure els dos patrons aplicats a la funcionalitat d'enviament de correus.
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=1.\textwidth]{diagrama_facade_decorator.png}
@@ -2464,15 +2463,88 @@ Aquestes taules apliquen les restriccions de domini a través de tipus enumerats
 
 
 \subsection{Portal web d'adopcions}
-
 \subsubsection{Vistes}
+En aquesta secció es descriuen breument i es mostren les diferents vistes del portal web d'adopcions, utilitzat pels adoptants. Excepte la vista principal, les imatges han estat retallades per mostrar només la part més rellevant de la pantalla.
+\paragraph{Pàgina d'inici}
+A l'entrar al portal, el primer que es demana a l'usuari és que introdueixi a quina localitat està interessat a adoptar.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{home_screen_web.png}
+    \caption[Pàgina d'inici al portal web d'adopcions]{Pàgina d'inici al portal web d'adopcions. Font: Elaboració pròpia}
+    \label{fig:home_screen_web}
+\end{figure}
+\paragraph{Llistat d'animals}
+Amb la localitat ja escollida, l'usuari veu un llistat d'aquells animals de les protectores de la zona que estan en adopció, amb l'opció de filtrar per espècie, nom de la protectora i altres característiques. A més, es mostra informació bàsica de cada animal, com el seu nom, edat i una fotografia.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{animals_screen_web.png}
+    \caption[Llistat d'animals en adopció al portal web]{Llistat d'animals en adopció al portal web. Font: Elaboració pròpia}
+    \label{fig:animals_screen_web}
+\end{figure}
+\paragraph{Detall d'animal}
+En clicar a un animal del llistat, l'usuari veu tota la seva informació. Aquesta inclou la descripció atribuïda per la protectora, totes les seves imatges i altres dades rellevants. A més, des d'aquesta pantalla es pot iniciar sol·licitar l'adopció d'aquest animal, que és el primer pas del procés d'adopció, a través d'un formulari que l'adoptant ha de completar.
+Si l'usuari no està autenticat, es redirigeix a la pàgina d'inici de sessió.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{animal_details_web.png}
+    \caption[Detall d'un animal en adopció al portal web]{Detall d'un animal en adopció al portal web. Font: Elaboració pròpia}
+    \label{fig:animal_detail_web}
+\end{figure}
+\paragraph{Procés d'adopció}
+Quan el procés d'adopció està iniciat, l'adoptant pot veure en quin estat es troba i la informació del pas actual.
+La següent figura mostra el primer pas, que correspon a haver completat el formulari d'adopció i estar a l'espera de la confirmació de la protectora.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{animal_adoption_process_web.png}
+    \caption[Primer pas del procés d'adopció al portal web]{Primer pas del procés d'adopció al portal web. Font: Elaboració pròpia}
+    \label{fig:animal_adoption_process_web}
+\end{figure}
 
+Finalment, a continuació s'exposa la vista del segon pas del procés, que correspon a l'entrevista amb una data programada per la protectora.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{animal_adoption_process_web_2.png}
+    \caption[Segon pas del procés d'adopció al portal web]{Segon pas del procés d'adopció al portal web. Font: Elaboració pròpia}
+    \label{fig:animal_adoption_process_web_2}
+\end{figure}
 \subsubsection{Navegació}
+A continuació es pot visualitzar el diagrama de navegació del client web. El diagrama està simplificat, ja que no es mostren els modals i altres components.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{diagrama_navegació_web.png}
+    \caption[Diagrama de navegació del client web]{Diagrama de navegació del client web. Font: Elaboració pròpia}
+    \label{fig:diagrama_navegacio_web}
+\end{figure}
 
 \subsubsection{Patrons arquitectònics}
-- Single Page Application (SPA)
-- Component-Based Architecture
-- Feature-Driven Architecture (Vertical)
+\paragraph{SPA (Single Page Application)}
+Aquest patró es basa a carregar tot el contingut de l'aplicació en una única pàgina web, sense la necessitat de recarregar la pàgina per als canvis de navegació. S'ha optat per aquesta opció per proporcionar més fluïdesa a l'usuari principal, ja que les pàgines no són molt complexes i no estan molt carregades de contingut.
+A més, encaixa amb el framework escollit i la plataforma per a realitzar el desplegament.
+\paragraph{Feature-Driven Architecture (Vertical)}
+Igual que al client mòbil, al client web també s'ha decidit organitzar el projecte seguint aquesta arquitectura orientada a funcionalitats. D'aquesta manera, es guanya modularitat i escalabilitat a futur, com ja s'ha explicat a la secció \ref{sec:patrons_arq_app}.
+
+A la figura següent es pot veure com s'aplica aquesta organització al client web.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=0.4\textheight, keepaspectratio]{web_feature_driven_arch.png}
+    \caption[Feature-Driven Architecture (Vertical) al client web]{Feature-Driven Architecture (Vertical) al client web. Font: Elaboració pròpia}
+    \label{fig:web_feature_driven_arch}
+\end{figure}
+\subsubsection{Patrons de disseny}
+\paragraph{Patró repositori}
+El patró repositori s'aplica exactament igual que al client mòbil, ja que la necessitat d'abstraure la lògica d'accés a dades de la resta del sistema és la mateixa. Per això, no s'inclou un diagrama específic, perquè el concepte i flux és el mateix. Es pot veure a la figura \ref{fig:diagrama_repository_app}.
+\paragraph{Patró facade}
+Igual que al client mòbil, el patró facade s'utilitza per amagar la complexitat de les operacions que interactuen amb l'API. De nou, s'implementa creant un client API que s'usa a tota l'aplicació web, i així es pot evitar repetir la mateixa lògica d'interacció amb l'API a cada funcionalitat.
+
+A la figura següent es pot veure aquest patró aplicat a la funcionalitat de veure les adopcions de l'usuari, tot i que es podria aplicar a qualsevol funcionalitat que interactuï amb l'API.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth, keepaspectratio]{diagrama_facade_web.png}
+    \caption[Patró facade al client web]{Patró facade aplicat al client web. Font: Elaboració pròpia}
+    \label{fig:diagrama_facade_web}
+\end{figure}
+
 \newpage
 
 \section{Implementació}\label{sec:implementacio}
@@ -2659,6 +2731,44 @@ Dins de les opcions de bases de dades relacionals, s'ha escollit PostgreSQL per 
 \subsubsection{Emmagatzematge d'arxius}
 En aquest servei, s'ha escollit \textbf{Cloudinary} a causa de la facilitat d'ús i la configuració ràpida que ofereix. En un principi, s'havia considerat únicament per guardar les imatges del sistema (tant dels animals com dels anuncis), però amb el requisit de poder generar i emmagatzemar els contractes d'adopció en format PDF, es va veure que també podia ser una solució eficient per a aquest tipus d'arxius, evitant haver de realitzar la inicialització i configuració d'un altre servei diferent per a aquest mateix propòsit.
 Tot i això, s'han considerat com a alternatives \textbf{Amazon S3} i \textbf{Firebase Storage}. Ambdues són solucions molt escalables i fiables, però pateixen de requerir una dedicació més elevada per començar a utilitzar-los. Per exemple, Amazon S3 requereix configurar un \textit{bucket}, establir polítiques d'accés i generar credencials, mentre que Firebase Storage necessita de configurar un projecte a Firebase, habilitar el servei d'emmagatzematge i també establir regles d'accés. Gràcies a la simplicitat de Cloudinary, es pot integrar el servei en el backend en molt poc temps, cosa que permet centrar-se en altres aspectes del projecte més crítics segons la planificació.
+
+\subsection{Exemple de funcionalitat: Adopció d'un animal a través del portal web}
+Aquest apartat descriu el flux tècnic des que un adoptant accedeix al portal web fins a la formalització de l'adopció, passant pel backend i l'aplicació mòbil com a gestors d'una protectora.
+
+\subsubsection{Accés al portal}
+Quan una persona vol adoptar, primer ha d'iniciar sessió, on introdueix nom i correu al portal web. El frontend envia una petició \texttt{POST /adoption-auth/request-access} amb aquests camps, validats per Pydantic. El servei \texttt{AdoptantAuthService} cerca l'adoptant per correu i, si no existeix, crea una nova entrada. Després genera un token segur (\texttt{secrets.token\_urlsafe}), el desa a \texttt{magic\_link\_token} amb una validesa de trenta dies i envia per correu un enllaç d'inici de sessió cap al portal. L'enviament es fa en segon pla mitjançant \texttt{BackgroundTasks}, per no bloquejar la resposta HTTP cap al client.
+
+\subsubsection{Verificació de la identitat}
+En obrir l'enllaç del correu, el portal extreu el token i crida \texttt{GET /adoption-auth/verify?token=...}. El backend comprova que el token existeixi i no hagi caducat, i retorna un JWT amb el correu de l'adoptant, el rol \texttt{adoptant} i el \texttt{adoptant\_id}. El portal emmagatzema aquest token i l'afegeix com a capçalera \texttt{Authorization} a les peticions següents. Gràcies a aquest sistema d'autenticació, no cal gestionar contrasenyes ni processos de recuperació, simplificant l'experiència d'usuari i reduint el temps necessari perquè un adoptant pugui començar el procés d'adopció.
+
+\subsubsection{Sol·licitud d'adopció}
+Un cop autenticat, l'adoptant selecciona un animal en adopció i envia el formulari mitjançant \texttt{POST /adoption/start/\{animal\_id\}}. El cos segueix l'esquema \texttt{AdoptionFormSubmit} (habitatge, jardí, altres animals, fills, experiència prèvia, hores sol, motivació, etc.).
+
+\texttt{AdoptionProcessService} comprova que l'animal existeixi, estigui en adopció i no tingui ja un procés actiu. A continuació crea un \texttt{AdoptionProcess} en estat \texttt{ACTIVE} i inicialitza les cinc etapes del flux: formulari, entrevista, visita, contracte i recollida. Cada etapa es modela amb \textit{Class Table Inheritance} a SQLAlchemy: una taula comuna (\texttt{adoption\_step}) i una taula específica per tipus (\texttt{adoption\_form}, \texttt{interview}, etc.). Totes les etapes es creen en estat \texttt{PENDING}, amb un camp \texttt{order} de 0 a 4 predefinit. Les dades del formulari es desen immediatament a l'etapa FORM, però aquesta no es marca com a completada fins a la revisió del gestor, ja que la protectora ha d'acceptar el contingut abans de continuar amb les següents etapes.
+
+\subsubsection{Notificacions automàtiques}
+Després de crear el procés, el backend programa dues tasques en segon pla: un correu de confirmació a l'adoptant i, si la protectora té correu configurat, una notificació a tal correu amb les dades de la sol·licitud. L'enviament passa pel servei de correu decorat amb monitorització (\texttt{LoggingEmailSenderDecorator}), que delega la lògica real a \texttt{fastapi-mail}.
+
+\subsubsection{Validació per part del gestor}
+Des de l'aplicació mòbil, el gestor obre el procés i, si accepta el formulari, crida \texttt{POST /adoption/\{process\_id\}/advance} amb autenticació de rol manager. L'endpoint comprova que el procés estigui \texttt{ACTIVE} i \texttt{AdoptionStepsService} completa el punt actual (que a aquest cas és el formulari) marcant-lo com a \texttt{COMPLETED}. El procés continua \texttt{ACTIVE} i passa a l'etapa d'entrevista.
+
+Les crides successives a \texttt{/advance} completen la resta de passes, on cada una té característiques pròpies:
+\begin{itemize}
+    \item L'entrevista i la visita exigeixen que hagi passat la data programada.
+    \item Al completar la visita, es genera el contracte en PDF i es puja a Cloudinary.
+    \item El contracte requereix la signatura de l'adoptant (portal) i del gestor (app).
+    \item La recollida registra la data real de lliurament.
+\end{itemize}
+Quan no queden passes pendents, el procés passa a \texttt{COMPLETED}, l'animal deixa d'estar en adopció i s'envia un correu final de confirmació a l'adoptant.
+
+A la figura següent es pot visualitzar un diagrama de seqüència simplificat d'aquest flux, on es mostren les interaccions entre el portal web, el backend i l'aplicació mòbil durant el procés d'adopció.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{diagrama_func_adoptar.png}
+    \caption[Diagrama de seqüència de l'adopció]{Diagrama de seqüència de l'adopció. Font: Elaboració pròpia}
+    \label{fig:diagrama_func_adoptar}
+\end{figure}
+
 \newpage
 \section{Control de qualitat}
 

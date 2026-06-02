@@ -2771,15 +2771,19 @@ A la figura següent es pot visualitzar un diagrama de seqüència simplificat d
 
 \newpage
 \section{Control de qualitat i validació}
-Per mantenir una bona qualitat del codi i asseegurar un funcionament correcte del sistema, s'han implementat diversos tipus de tests tant per al backend com per al frontend, així com a mecanismes d'integració i desplegament continus per verificar els canvis realitzats de manera automàtica.
+Per mantenir una bona qualitat del codi i assegurar un funcionament correcte del sistema, s'han implementat diversos tipus de tests tant per al backend com per al frontend, així com a mecanismes d'integració i desplegament continus per verificar els canvis realitzats de manera automàtica.
 
 \subsection{Tests del backend}
 Per realitzar proves al backend, l'eina principal ha estat \textbf{pytest}, que permet escriure, organitzar i executar tests de manera senzilla i eficient. Altres eines complementàries han estat \textbf{pytest-cov} per veure el \textit{coverage} dels tests, \textbf{TestClient} de FastAPI per simular peticions HTTP i una base de dades de proves amb SQLite.
-Els tests unitaris s'han organitzat en diferents mòduls segons la capa en la que es troben i la funcionalitat que cobreixen. La divisió es la mateixa que la del codi de producció: un mòdul per a les rutes, un altre pels serveis i un altre per als repositoris. Dins de cada mòdul, els tests es divideixen per funcionalitat, com ara autenticació, gestió d'animals, processos d'adopció, etc. Aquesta organització permet una millor mantenibilitat i facilita la localització de tests relacionats amb una funcionalitat concreta.
+Els tests unitaris s'han organitzat en diferents mòduls segons la capa en la qual es troben i la funcionalitat que cobreixen. La divisió és la mateixa que la del codi de producció: un mòdul per a les rutes, un altre pels serveis i un altre per als repositoris. Dins de cada mòdul, els tests es divideixen per funcionalitat, com ara autenticació, gestió d'animals, processos d'adopció, etc. Aquesta organització permet una millor mantenibilitat i facilita la localització de tests relacionats amb una funcionalitat concreta.
 
-A continuació es pot veure el resultat del test coverage.
-
-%TODO
+A continuació es pot veure el resultat del test coverage, on per ordre apareixen les linees cobertes, les no cobertes i la cobertura total, amb un \textbf{95\%} de total.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{total_test_coverage.png}
+    \caption[Coverage dels tests tests al backend]{Coverage dels tests al backend. Font: Elaboració pròpia}
+    \label{fig:total_test_coverage}
+\end{figure}
 
 Per als tests d'integració, s'han creat escenaris més complexos que exigeixen diverses parts del servidor treballant conjuntament. A continuació es llisten tres exemples d'escenaris d'integració que s'han implementat per verificar el funcionament correcte del sistema en escenaris realistes:
 \begin{itemize}
@@ -2788,22 +2792,26 @@ Per als tests d'integració, s'han creat escenaris més complexos que exigeixen 
     \item \textbf{Procés d'adopció des del portal fins a la consulta de la protectora:} es prova que un adoptant pot autenticar-se mitjançant un enllaç de login (rebut per correu), enviar el formulari d'adopció per a un animal disponible per adoptar i que tant l'adoptant com el gestor de la protectora poden consultar el nou procés actiu amb els seus passos del flux corresponents.
 \end{itemize}
 
-\subsection{Tests del frontend}
+\subsection{Tests de l'aplicació mòbil}
 Per realitzar els tests a l'aplicació mòbil s'ha utilitzat el framework propi de Flutter, que permet escriure tests unitari, de widget i d'integració. Els tests s'han organitzat en diferents carpetes segons el tipus de test i la funcionalitat que cobreixen, com ara autenticació, gestió d'animals, processos d'adopció, etc. Aquesta organització facilita la localització i mantenibilitat dels tests. 
 
-S'han provat diversos widgets verificant que es renderitzin correctament i actuin en base a les interacciones esperades, els models per la seva lògica i les transformacions de JSON a l'objecte de domini, els repositoris per les trucades API i també els proveïdors per verificar que els estats s'actualitzin correctament.
+S'han provat diversos widgets verificant que es renderitzin correctament i actuïn d'acord amb les interacciones esperades, els models per la seva lògica i les transformacions de JSON a l'objecte de domini, els repositoris per les trucades API i també els proveïdors per verificar que els estats s'actualitzin correctament.
 
+\subsection{Tests de la pàgina web}
+Degut a la petita mida del projecte de la pàgina web, no s'han implementat tests específics per a aquesta part. No obstant això, la lògica actual és gairebé mínima, i recau en gran part al backend, que si està cobert pels tests.
+
+Així i tot, s'han fet proves manuals de totes les funcionalitats a cada iteració del projecte, verificant que les interaccions amb el backend es realitzin correctament i que la informació es mostri de manera adequada a la interfície d'usuari.
 
 \subsection{Integració continua}
-Per poder mantenir un bon control de qualitat i assegurar que els canvis no afegeixen errors, s'ha configurat a través de \textbf{Github actions} un flux d'integració continua que s'executa cada vegada al realitzar una \textit{pull request} a la branca principal o pujar codi a qualsevol branca.
+Per poder mantenir un bon control de qualitat i assegurar que els canvis no afegeixen errors, s'ha configurat a través de \textbf{Github actions} un flux d'integració contínua que s'executa cada vegada al realitzar una \textit{pull request} a la branca principal o pujar codi a les branques \texttt{dev}, \texttt{main} i \texttt{test/*}.
 
 Els \textit{workflows} d'integració continua estan configurats principalment per configurar els tests del backend i del frontend. Només s'executa el workflow corresponent quan es detecten canvis en els fitxers relacionats amb cada part del projecte.
 
-A més dels tests, el workflow del backend també inclou una part per veure si la solució es pot desplegar correctament, el de l'aplicació mòbil si es genera correctament l'\texttt{.apk} i el del portal web si es compila sense errors, tot això per assegurar que els canvis realitzats no trenquen el procés de desplegament.
+A més dels tests, el workflow del backend també inclou una part per veure si la solució es pot desplegar correctament, el de l'aplicació mòbil si es genera correctament l'\texttt{.apk} i el del portal web si es pot compilar l'aplicació web sense errors, tot això per assegurar que els canvis realitzats no trenquen el procés de desplegament.
 
-El desplegament no es gestiona directament desde Github Actions, sinó que es delega a cada plataforma corresponent. Render i Netlify estan integrats directament amb el repositori de Github, i en detectar pujades a la branca principal (\texttt{main}), inicien automàticament el procés de desplegament. D'aquesta manera, es manté un procés de desplegament continu i automatitzat, on cada canvi que es realitza i es fusiona a la branca principal es desplega automàticament a producció després de passar els tests.
+El desplegament no es gestiona directament des de Github Actions, sinó que es delega a cada plataforma corresponent. Render i Netlify estan integrats directament amb el repositori de Github, i en detectar pujades a la branca principal (\texttt{main}), inicien automàticament el procés de desplegament. D'aquesta manera, es manté un procés de desplegament continu i automatitzat, on cada canvi que es realitza i es fusiona a la branca principal es desplega automàticament a producció després de passar els tests.
 
-A continuació es poden veure alguns dels deploys realitzats automàticament a Render i Netlify després d'introduir canvis a la branca principal.
+A continuació es poden veure alguns dels desplegaments realitzats automàticament a Render i Netlify després d'introduir canvis a la branca principal.
 
 \begin{figure}[H]
     \centering
@@ -2819,12 +2827,41 @@ A continuació es poden veure alguns dels deploys realitzats automàticament a R
     \label{fig:deploys_render_example}
 \end{figure}
 
+\subsection{Validació de requisits}
+Pels requisits funcionals s'ha dut a terme una validació a través dels tests implementats durant tot el desenvolupament i també a través de proves manuals, on s'ha comprovat que totes les històries d'usuari planificades es puguin realitzar correctament i que el sistema es comporti com s'esperava en cada cas.
+
+A continuació es mostra una taula amb la verificació dels requisits no funcionals, on es detalla el resultat de cada requisit i una justificació del mateix basada en les proves realitzades durant el projecte.
+
+\begin{table}[H]
+\centering
+\label{tab:verificacio_rnf}
+    \begin{small}
+    \renewcommand{\arraystretch}{1.1}
+        \begin{tabular}{|p{1.2cm}|p{2.2cm}|p{1.8cm}|p{8.9cm}|}
+        \hline
+        \rowcolor{oceanblue}\textcolor{white}{\textbf{ID}} & \textcolor{white}{\textbf{Nom}} & \textcolor{white}{\textbf{Resultat}} & \textcolor{white}{\textbf{Justificació}} \\ \hline
+        NFR1 & Usabilitat & Èxit & Durant les proves d'interacció, s'ha verificat que la interfície tant del portal com de l'aplicació mòbil és altament intuïtiva. Els fluxos principals s'han completat sense requerir formació tècnica prèvia ni assistència externa pel 100\% d'usuaris externs que han utilitzat l'aplicació. \\ \hline
+        NFR2 & Escalabilitat & Èxit & Mitjançant simulacions en l'entorn de desenvolupament, s'ha comprovat que l'arquitectura del sistema manté l'estabilitat i respon correctament davant d'increments en el volum de dades i peticions. \\ \hline
+        NFR3 & Privacitat & Èxit & El sistema incorpora de manera obligatòria l'acceptació de les polítiques de privacitat durant el registre. S'ha verificat la disponibilitat de l'opció per eliminar el compte de l'usuari, que és en tot moment. \\ \hline
+        NFR4 & Disponibilitat & Èxit & En entorn de desenvolupament, elsistema ha mostrat un comportament molt estable en les proves de sessions prolongades, sense caigudes ni errors crítics. En entorn de producció, no s'han detectat incidències. \\ \hline
+        NFR5 & Internacio\-nalització & Èxit & S'ha implementat el suport multillenguatge, donant l'opció a escollir entre català, anglès i castellà sense haver de reiniciar l'aplicació, tant al portal com a l'aplicació mòbil. \\ \hline
+        NFR6 & Seguretat & Èxit & S'ha comprovat el correcte bloqueig de rutes mitjançant el control d'accés basat en rols (RBAC). Els intents d'accés no autoritzats amb rols inferiors (com voluntari a rutes de gestor) retornen error. \\ \hline
+        \end{tabular}
+    \end{small}
+    \caption[Verificació dels requisits no funcionals]{Verificació dels requisits no funcionals}
+\end{table}
 \newpage
 
 \section{Desviacions}
 \newpage
 
 \section{Lleis i regulacions}
+El projecte està subjecte al Reglament General De Protecció de Dades (RGPD) europeu \cite{TODO_CITERPGD} i a la seva adaptació espanyola, la Llei Orgànica 3/2018, de Protecció de Dades Personals i garantia dels drets digitals (LOPDGDD) \cite{TODO_CITETHIS}, donat que l'aplicació tracta dades de caràcter personal de voluntaris, gestors i possibles adoptants, concretament nom, cognoms i adreça de correu electrònic.
+Per complir la normativa, els usuaris han de proporcionar el seu consentiment explícit en el moment de registrar-se al sistema, i les dades recollides s'utilitzen exclusivament per a les finalitats per a les quals han estat proporcionades. A més, el sistema permet als usuaris exercir els seus drets d'eliminació de les seves dades en qualsevol moment.
+
+Respecte als registres dels animals, no constitueixen dades personals en el sentit estricte, i per tant no queden directament afectades pel RGPD.
+
+%TODO explain more??
 \newpage
 
 \section{Informe de Sostenibilitat}

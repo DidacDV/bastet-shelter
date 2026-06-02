@@ -321,3 +321,79 @@ def test_update_shelter_signature(mock_mapper, service):
     service.update_shelter_signature(1)
     assert contract.signed_by_shelter is True
     service.db.commit.assert_called_once()
+
+def test_set_animal_pickup_actual_date_not_found(service):
+    """step_repo returns None -> NotFoundError"""
+    service.step_repo.get_by_id.return_value = None
+
+    with pytest.raises(NotFoundError):
+        service.set_animal_pickup_actual_date(1, 99, ScheduledDateUpdate(scheduled_at=datetime.now()))
+
+
+def test_set_animal_pickup_actual_date_not_animal_pickup(service):
+    """Step exists but is not an AnimalPickup instance -> BusinessLogicError"""
+    mock_step = MagicMock()
+
+    service.step_repo.get_by_id.return_value = mock_step
+
+    with patch("app.services.adoption_steps_service.isinstance", return_value=False):
+        with pytest.raises(BusinessLogicError) as exc:
+            service.set_animal_pickup_actual_date(1, 2, ScheduledDateUpdate(scheduled_at=datetime.now()))
+    assert "not an animal pickup" in str(exc.value).lower()
+
+
+def test_set_animal_pickup_actual_date_no_scheduled_date(service):
+    """Step is AnimalPickup and belongs to the right process but has no scheduled date -> BusinessLogicError"""
+    mock_step = MagicMock()
+    mock_step.adoption_process_id = 1
+    mock_step.scheduled_at = None
+
+    service.step_repo.get_by_id.return_value = mock_step
+
+    with patch("app.services.adoption_steps_service.isinstance", return_value=True):
+        with pytest.raises(BusinessLogicError) as exc:
+            service.set_animal_pickup_actual_date(1, 2, ScheduledDateUpdate(scheduled_at=datetime.now()))
+    assert "no scheduled date" in str(exc.value).lower()
+
+def test_update_adoptant_signature_process_not_found(service):
+    """process_repo returns None -> NotFoundError"""
+    service.process_repo.get_by_id.return_value = None
+
+    with pytest.raises(NotFoundError):
+        service.update_adoptant_signature(999, 10)
+
+def test_advance_contract_shelter_not_signed(service):
+    """signed_by_adoptant=True but signed_by_shelter=False -> BusinessLogicError"""
+    step = MagicMock(spec=Contract)
+    step.signed_by_adoptant = True
+    step.signed_by_shelter = False
+    request = AdvanceStepRequest(notes="Advance")
+
+    with pytest.raises(BusinessLogicError):
+        service._advance_contract(step, request)
+
+def test_advance_interview_past_date_success(service):
+    """scheduled_at in the past -> completes successfully"""
+    past_date = datetime.now() - timedelta(hours=1)
+    step = MagicMock(spec=Interview)
+    step.scheduled_at = past_date
+    request = AdvanceStepRequest(notes="Done")
+
+    service._advance_interview(step, request)
+
+    assert step.status == StepStatusEnum.COMPLETED
+    assert step.finish_date == date.today()
+    assert step.notes == "Done"
+
+def test_set_scheduled_date_current_step_type_mismatch(service):
+    """Current step is FORM but we request SHELTER_VISIT -> BusinessLogicError"""
+    current_step = MagicMock()
+    current_step.type = StepTypeEnum.FORM
+    service._get_current_step_or_raise = MagicMock(return_value=current_step)
+
+    pending_step = MagicMock()
+    pending_step.type = StepTypeEnum.SHELTER_VISIT
+    service.step_repo.get_steps_for_process.return_value = [pending_step]
+
+    with pytest.raises(BusinessLogicError):
+        service._set_scheduled_date(1, StepTypeEnum.SHELTER_VISIT, datetime.now())

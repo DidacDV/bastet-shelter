@@ -264,3 +264,88 @@ def test_generate_pdf_no_contract_step(service):
 
     with pytest.raises(NotFoundError, match="Contract step not found"):
         service.generate_pdf(300, shelter_id=1)
+
+
+# ---------------------------------------------------------------------------
+# Missing branches – added to improve coverage
+# ---------------------------------------------------------------------------
+
+def test_get_adoptant_not_found(service):
+    """adoptant_repo.get_by_id returns None → NotFoundError."""
+    service.adoptant_repo.get_by_id.return_value = None
+
+    with pytest.raises(NotFoundError, match="Adoptant not found"):
+        service.get_adoptant(999, shelter_id=1)
+
+
+def test_get_adoptant_no_process_in_shelter(service):
+    """adoptant exists but has_process_in_shelter is False → AuthorizationError."""
+    mock_adoptant = MagicMock()
+    mock_adoptant.id = 1
+    mock_adoptant.name = "Ann"
+    mock_adoptant.email = "ann@example.com"
+    service.adoptant_repo.get_by_id.return_value = mock_adoptant
+    service.adoptant_repo.has_process_in_shelter.return_value = False
+
+    with pytest.raises(AuthorizationError, match="Adoptant does not have an active adoption process"):
+        service.get_adoptant(1, shelter_id=1)
+
+
+@patch("app.services.adoption_process_service.send_email")
+def test_reject_adoption_process_not_active(mock_send_email, service):
+    """reject_adoption raises BusinessLogicError when process is not active."""
+    mock_p = _mock_process(status=AdoptionProcessStatusEnum.COMPLETED)
+    service.process_repo.get_by_id.return_value = mock_p
+
+    # _check_belongs_to_shelter passes; check_is_process_active must raise
+    service._check_belongs_to_shelter = MagicMock()
+
+    with pytest.raises(BusinessLogicError, match="Adoption process is not active"):
+        service.reject_adoption(300, shelter_id=1, reason="Not a good fit", background_tasks=MagicMock())
+
+
+@patch("app.services.adoption_process_service.send_email")
+def test_mark_process_completed_sends_email_to_adoptant(mock_send_email, service):
+    """mark_process_completed sends email to the adoptant's email address."""
+    mock_animal = _mock_animal(in_adoption=True)
+    mock_adoptant = _mock_adoptant(email="john@example.com")
+    mock_p = _mock_process(animal=mock_animal, adoptant=mock_adoptant)
+    service.process_repo.get_by_id.return_value = mock_p
+
+    service.mark_process_completed(300, background_tasks=MagicMock())
+
+    mock_send_email.assert_called_once()
+    call_kwargs = mock_send_email.call_args
+    recipients = call_kwargs.kwargs.get("recipients") or call_kwargs.args[1]
+    assert "john@example.com" in recipients
+
+
+def test_generate_pdf_process_not_found(service):
+    """generate_pdf raises NotFoundError when the process does not exist."""
+    service.process_repo.get_by_id.return_value = None
+
+    with pytest.raises(NotFoundError, match="Adoption process not found"):
+        service.generate_pdf(999, shelter_id=1)
+
+
+def test_generate_pdf_contract_step_not_pending(service):
+    """generate_pdf raises BusinessLogicError when contract step is not PENDING."""
+    mock_p = _mock_process()
+    mock_contract = _mock_contract_step(status=StepStatusEnum.COMPLETED)
+
+    service.process_repo.get_by_id.return_value = mock_p
+    service.step_repo.get_steps_for_process.return_value = [mock_contract]
+
+    with pytest.raises(BusinessLogicError, match="Contract step is not in a state that allows PDF generation"):
+        service.generate_pdf(300, shelter_id=1)
+
+
+def test_cancel_all_active_for_animal_empty_list(service):
+    """cancel_all_active_for_animal does nothing when there are no active processes."""
+    service.process_repo.get_all_active_processes_for_animal.return_value = []
+
+    # Should complete without raising and without touching step_repo or process_repo
+    service.cancel_all_active_for_animal(animal_id=100, background_tasks=MagicMock())
+
+    service.step_repo.mark_all_rejected.assert_not_called()
+    service.process_repo.mark_rejected.assert_not_called()

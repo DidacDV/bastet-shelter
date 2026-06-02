@@ -2770,25 +2770,55 @@ A la figura següent es pot visualitzar un diagrama de seqüència simplificat d
 \end{figure}
 
 \newpage
-\section{Control de qualitat}
+\section{Control de qualitat i validació}
+Per mantenir una bona qualitat del codi i asseegurar un funcionament correcte del sistema, s'han implementat diversos tipus de tests tant per al backend com per al frontend, així com a mecanismes d'integració i desplegament continus per verificar els canvis realitzats de manera automàtica.
 
 \subsection{Tests del backend}
+Per realitzar proves al backend, l'eina principal ha estat \textbf{pytest}, que permet escriure, organitzar i executar tests de manera senzilla i eficient. Altres eines complementàries han estat \textbf{pytest-cov} per veure el \textit{coverage} dels tests, \textbf{TestClient} de FastAPI per simular peticions HTTP i una base de dades de proves amb SQLite.
+Els tests unitaris s'han organitzat en diferents mòduls segons la capa en la que es troben i la funcionalitat que cobreixen. La divisió es la mateixa que la del codi de producció: un mòdul per a les rutes, un altre pels serveis i un altre per als repositoris. Dins de cada mòdul, els tests es divideixen per funcionalitat, com ara autenticació, gestió d'animals, processos d'adopció, etc. Aquesta organització permet una millor mantenibilitat i facilita la localització de tests relacionats amb una funcionalitat concreta.
 
-\subsubsection{Tests unitaris}
+A continuació es pot veure el resultat del test coverage.
 
-\subsubsection{Tests d'integració}
+%TODO
+
+Per als tests d'integració, s'han creat escenaris més complexos que exigeixen diverses parts del servidor treballant conjuntament. A continuació es llisten tres exemples d'escenaris d'integració que s'han implementat per verificar el funcionament correcte del sistema en escenaris realistes:
+\begin{itemize}
+    \item \textbf{Alta d'un gestor i configuració inicial de la protectora:} es verifica que un nou gestor pot registrar-se, crear una protectora amb el primer refugi, i que el sistema inicialitzi automàticament el conjunt de característiques de personalitat predeterminades per als animals.
+    \item \textbf{Registre d'un animal amb característiques i imatges:} es comprova el cicle complet d'alta d'un animal, incloent-hi l'assignació de característiques de personalitat, la pujada d'una imatge a l'emmagatzematge extern i la publicació de l'animal al portal d'adopció, verificant que no aparegui fins que s'activa explícitament.
+    \item \textbf{Procés d'adopció des del portal fins a la consulta de la protectora:} es prova que un adoptant pot autenticar-se mitjançant un enllaç de login (rebut per correu), enviar el formulari d'adopció per a un animal disponible per adoptar i que tant l'adoptant com el gestor de la protectora poden consultar el nou procés actiu amb els seus passos del flux corresponents.
+\end{itemize}
 
 \subsection{Tests del frontend}
+Per realitzar els tests a l'aplicació mòbil s'ha utilitzat el framework propi de Flutter, que permet escriure tests unitari, de widget i d'integració. Els tests s'han organitzat en diferents carpetes segons el tipus de test i la funcionalitat que cobreixen, com ara autenticació, gestió d'animals, processos d'adopció, etc. Aquesta organització facilita la localització i mantenibilitat dels tests. 
 
-\subsubsection{Tests de widgets}
+S'han provat diversos widgets verificant que es renderitzin correctament i actuin en base a les interacciones esperades, els models per la seva lògica i les transformacions de JSON a l'objecte de domini, els repositoris per les trucades API i també els proveïdors per verificar que els estats s'actualitzin correctament.
 
-\subsubsection{Tests unitaris}
 
-\subsection{Integració i desplegament continus}
+\subsection{Integració continua}
+Per poder mantenir un bon control de qualitat i assegurar que els canvis no afegeixen errors, s'ha configurat a través de \textbf{Github actions} un flux d'integració continua que s'executa cada vegada al realitzar una \textit{pull request} a la branca principal o pujar codi a qualsevol branca.
 
-\subsubsection{Pipeline de CI}
+Els \textit{workflows} d'integració continua estan configurats principalment per configurar els tests del backend i del frontend. Només s'executa el workflow corresponent quan es detecten canvis en els fitxers relacionats amb cada part del projecte.
 
-\subsubsection{Pipeline de CD}
+A més dels tests, el workflow del backend també inclou una part per veure si la solució es pot desplegar correctament, el de l'aplicació mòbil si es genera correctament l'\texttt{.apk} i el del portal web si es compila sense errors, tot això per assegurar que els canvis realitzats no trenquen el procés de desplegament.
+
+El desplegament no es gestiona directament desde Github Actions, sinó que es delega a cada plataforma corresponent. Render i Netlify estan integrats directament amb el repositori de Github, i en detectar pujades a la branca principal (\texttt{main}), inicien automàticament el procés de desplegament. D'aquesta manera, es manté un procés de desplegament continu i automatitzat, on cada canvi que es realitza i es fusiona a la branca principal es desplega automàticament a producció després de passar els tests.
+
+A continuació es poden veure alguns dels deploys realitzats automàticament a Render i Netlify després d'introduir canvis a la branca principal.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{exemple_deploys_netlify.png}
+    \caption[Deploys a Netlify]{Deploys a Netlify. Font: Elaboració pròpia}
+    \label{fig:exemple_deploys_netlify}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{deploys_render_example.png}
+    \caption[Deploys a Render]{Deploys a Render. Font: Elaboració pròpia}
+    \label{fig:deploys_render_example}
+\end{figure}
+
 \newpage
 
 \section{Desviacions}

@@ -22,6 +22,10 @@ export default function AdoptEntryPage() {
     animalRepository
       .getAnimalByLinkName(shelterName, animalName)
       .then((animal) => {
+        if (!animal) {
+          setError(true);
+          return;
+        }
         navigate(`/animals/${animal.id}?intent=adopt`, { replace: true });
       })
       .catch(() => setError(true));

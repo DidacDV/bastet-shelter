@@ -447,9 +447,10 @@ Les branques estan dividides de la següent manera:
 \begin{itemize}
     \item Feature/\#Numero\_Nom: Branques per realitzar les funcionalitats descrites en la planificació del projecte.
     \item Fix/\#Numero\_Nom: Per solucionar els errors que sorgeixin durant el desenvolupament.
-    \item Main: Branca principal, s'utilitza per allotjar les versions testejades i llestes per ser publicades. Cada versió publicada s'etiquetarà seguint el format modul/vX.X (per exemple, backend/v1.0, app/v1.1) per identificar les releases de cada mòdul de forma independent.
+    \item Main: Branca principal, s'utilitza per allotjar les versions testejades i llestes per ser publicades.
     \item Release/\#Numero\_Nom: Branca temporal creada a partir de Dev quan s'acaba un sprint, destinada a estabilitzar i testejar la versió abans de ser fusionada a Main.
     \item Dev: Branca de desenvolupament, integra totes les funcionalitats implementades.
+    \item noFeature: Branca temporal per a canvis que no estan associats a cap funcionalitat concreta.
 \end{itemize}
 
 \newpage
@@ -2856,14 +2857,19 @@ A continuació es mostra una taula amb la verificació dels requisits no funcion
 \newpage
 
 \section{Lleis i regulacions}
-El projecte està subjecte al Reglament General De Protecció de Dades (RGPD) europeu \cite{TODO_CITERPGD} i a la seva adaptació espanyola, la Llei Orgànica 3/2018, de Protecció de Dades Personals i garantia dels drets digitals (LOPDGDD) \cite{TODO_CITETHIS}, donat que l'aplicació tracta dades de caràcter personal de voluntaris, gestors i possibles adoptants, concretament nom, cognoms i adreça de correu electrònic.
+El projecte està subjecte al Reglament General De Protecció de Dades (RGPD) europeu i a la seva adaptació espanyola, la Llei Orgànica 3/2018, de Protecció de Dades Personals i garantia dels drets digitals (LOPDGDD) \cite{noauthor_normativa_nodate}, donat que l'aplicació tracta dades de caràcter personal de voluntaris, gestors i possibles adoptants, concretament nom, cognoms i adreça de correu electrònic.
+
 Per complir la normativa, els usuaris han de proporcionar el seu consentiment explícit en el moment de registrar-se al sistema, i les dades recollides s'utilitzen exclusivament per a les finalitats per a les quals han estat proporcionades. A més, el sistema permet als usuaris exercir els seus drets d'eliminació de les seves dades en qualsevol moment.
+
+Per complir la normativa, els usuaris han de proporcionar el seu consentiment explícit en el moment de registrar-se al sistema, mitjançant una casella de verificació que enllaça a la política de privacitat de l'aplicació. Les dades recollides s'utilitzen exclusivament per a les finalitats per a les quals han estat proporcionades: la gestió del dia a dia de la protectora i els processos d'adopció. A més, el sistema permet als usuaris exercir els seus drets d'eliminació de les seves dades en qualsevol moment a través de la pantalla de perfil de l'aplicació, que comporta l'eliminació completa del comptei de tota la informació associada al servidor del sistema.
+
+Pel que fa a la seguretat de les dades, les contrasenyes dels usuaris s'emmagatzemen sempre de forma encriptada i mai en text pla, i la comunicació entre els clients i el servidor es realitza a través de HTTPS, garantint la confidencialitat de les dades a l'hora de comunicar-se entre ells.
 
 Respecte als registres dels animals, no constitueixen dades personals en el sentit estricte, i per tant no queden directament afectades pel RGPD.
 
-%TODO explain more??
-\newpage
+Cal mencionar també que el projecte fa ús de serveis externs per a l'emmagatzematge d'imatges (Cloudinary) i l'enviament de correus electrònics. En ambdós casos, és tracta de proveïdors que compleixen amb la normativa europea de protecció de dades i disposen de les seves pròpies polítiques de privacitat, cosa que garanteix que el tractament de les dades que es puguin compartir amb aquests serveis es realitza de forma conforme al RGPD.
 
+\newpage
 \section{Informe de Sostenibilitat}
 
 \subsection{Autoevaluació}

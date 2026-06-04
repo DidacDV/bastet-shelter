@@ -2933,19 +2933,43 @@ Una altra part important és el portal web d'adopció, que permet a aquelles pro
 
 Amb una visió més acadèmica, el sistema ha aportat a l'autor coneixements i experiència al desenvolupament mòbil, concretament amb Flutter, i al desenvolupament backend amb FastAPI, tecnologies noves.
 \subsection{Competències tècniques treballades}
-\paragraph{CES1.3: Identificar, avaluar i gestionar els riscos potencials associats a la construcció de software que es poguessin presentar.}
+A continuació es llsiten les competències tècniques del projecte i en quin grau s'han desenvolupat.
+\paragraph{CES1.3: Identificar, avaluar i gestionar els riscos potencials associats a la construcció de software que es poguessin presentar. [Bastant]}
+Des de l'inici del projecte, s'han estudiat totes les possibilitats, sobretot amb efectes negatius, i obstacles que podien aparéixer durant el desenvolupament. Per a aquests, es va proposar un plà per mitigar al màxim el seu efecte. Es pot afirmar que aquest plà ha estat efectiu, ja que els problemes durant el treball han estat mínims i s'han sapigut resoldre eficientment.
+\paragraph{CES1.4: Desenvolupar, mantenir i avaluar serveis i aplicacions distribuïdes amb suport de xarxa. [En profunditat]}
+Bastet Shelter és un sistema distribuït format per components independents que es comuniquen mitjançant protocols de xarxa segurs. El backend, desenvolupat amb FastAPI i allotjat a Render, actua com a nucli central del sistema, portant a terme tota la lògica pesada. El portal web, desenvolupat amb React i desplegat a Netlify, consumeix el backend. L'aplicació mòbil, desenvolupada amb Flutter, s'executa als dispositius de la protectora i és l'eina principal per a la gestió diària, que també consumeix l'API del backend. Aquesta separació de components, complementada amb la persistència de dades i l'emmagatzematge multimèdia al núvol, permet mantenir, escalar i actualitzar cada part del sistema de forma independent. 
+\paragraph{CES1.5: Especificar, dissenyar, implementar i avaluar bases de dades. [Bastant]}
+S'ha especificat, dissenyat i implementat la base de dades del sistema a partir dels requisits proposats. Aquesta és una base de dades relacional amb PostgreSQL, dissenyada seguint un model que reflecteix les entitats i relacions del domini. S'ha utilitzat tant durant el desenvolupament com en producció, on està desplegada a Render i es gestiona a través de l'eina DBeaver. Les migracions s'han gestionat mitjançant Alembic, mantenint un historial de canvis controlat al llarg del desenvolupament que facilita la possible integració de nous integrants a l'equip de desenvolupament.
+\paragraph{CES1.7: Controlar la qualitat i dissenyar proves en la producció de software. [Bastant]}
+Al llarg del projecte s'han realitzat proves de diferents tipus a tots els mòduls del sistema. En primer lloc, s'han dut a terme proves manuals sobre les funcionalitats de cada mòdul, verificant tant els casos d'èxit com els casos d'error. Al backend, s'han implementat tests unitaris que cobreixen totes les capes del sistema, així com tests d'integració per a les històries d'usuari més complexes. Per a l'aplicació mòbil, s'han realitzat widget tests per verificar el renderitzat dels components i tests unitaris per a la lògica interna. Com a eines de suport, s'han utilitzat les que proporcionen els entorns de desenvolupament utilitzats (PyCharm, VS Code i Android Studio), a més de revisions de codi per part de l'autor abans de cada pujada a GitHub.
+\paragraph{CES1.8: Desenvolupar, mantenir i avaluar sistemes de control i de temps real. [Una mica]}
+En aquest projecte s'ha treballat de forma introductòria amb sistemes de control temporal a través de la implementació de tasques programades en segon pla, concretament al backend. Aquestes tasques s'executen periòdicament de forma automàtica, i permeten gestionar esdeveniments temporals crítics com ara l'actualització dels estats dels tractaments mèdics dels animals en funció de la seva periodicitat. La gestió d'aquestes tasques es realitza mitjançant APScheduler, integrat al servidor FastAPI.
+\paragraph{CES2.1: Definir i gestionar els requisits d'un sistema software. [En profunditat]}
+Aquesta competència es desenvolupa al llarg de tot el projecte, però destaca durant la fase d'incepció. En aquesta fase, es va dur a terme un estudi de l'estat de l'art del domini per identificar les necessitats reals de les protectores d'animals, a partir del qual es van definir els requisits funcionals i no funcionals del sistema seguint la plantilla Volere. Aquests requisits van servir de base per crear les històries d'usuari a Taiga, estructurades en èpiques i amb criteris d'acceptació, per tal de seguir una metodologia àgil. La metodologia proposada s'ha seguit de manera consistent al llarg del desenvolupament, i la planificació inicial s'ha respectat en gran mesura.
 
-\paragraph{CES1.4: Desenvolupar, mantenir i avaluar serveis i aplicacions distribuïdes amb suport de xarxa.}
-
-\paragraph{CES1.5: Especificar, dissenyar, implementar i avaluar bases de dades.}
-
-\paragraph{CES1.7: Controlar la qualitat i dissenyar proves en la producció de software.}
-
-\paragraph{CES1.8: Desenvolupar, mantenir i avaluar sistemes de control i de temps real.}
-
-\paragraph{CES2.1: Definir i gestionar els requisits d'un sistema software.}
-\subsection{Integració de coneixements}
 \subsection{Visió a futur}
+Tot i haver resultat en un projecte funcional que compleix tots els objectius proposats, existeix un marge de millora i ampliació que es planteja cara al futur.
+
+Una de les principals millores seria la integració amb Google Maps, a través d'una API per exemple, per gestionar totes les localitats de l'aplicació. Ara mateix s'utilitzen les províncies d'Espanya, pero al passar a Google Maps, es podria ser molt més específic mantenint la uniformitat a tot el sistema. Una funcionalitat que es veuria clarament millorada serien les visites al veterinari, ja que permetria a la protectora seleccionar una clínica directament del mapa.
+
+Una altra millora seria la gestió de les notificacions. Ara mateix, es realitza a través de correus electrònics amb el SMTP de Gmail. El cas ideal seria crear un servei de notificacions \textit{push} per poder enviar-les desde el servidor als clients mòbils independentment del seu estat. Això implica una altra integració amb un servei de tercers, però és un canvi important que milloraria la comunicació de l'aplicació amb els seus usuaris.
+
+Extret de converses amb protectores locals de Rubí, una nova funcionalitat que encaixa amb l'aplicació és la gestió de campanyes i events de les protectores. Poder configurar quan es realitzar una campanya i quins materials es necessiten, el pressupost que es té disponible, poder associar voluntaris, entre altres coses, comporta digitalitzar un altre aspecte de les protectores animals.
+
+Per últim, un altra gran canvi seria la incorporació de missatges dins de l'aplicació. Aquests simplificarien la comunicació entre gestors i voluntaris per a temes estrictament de la protectora, i també facilitaria tota la interacció per als anuncis de les diferents entitats al sistema.
+\subsection{Integració de coneixements}
+Durant tot el projecte, s'han tingut en compte diverses assignatures realitzades a la FIB que han permès millorar la qualitat del meu treball. Entre elles, les més destacables són:
+\begin{itemize}
+    \item \textbf{AS (Arquitectura del Software)} AS ha permès que tota la feina relacionada amb l'arquitectura del sistema que s'ha creat, fos més fàcil i familiar.
+    \item \textbf{ASW (Aplicacions i serveis web)} ASW ha facilitat la creació del portal web, sobretot a l'hora de desplegar-lo i les diverses plataformes per fer-ho.
+    \item \textbf{ER (Enginyeria de requisits)} ER m'ha aportat tots els coneixements necessaris per realitzar l'especificació del projecte.
+    \item \textbf{PRO1, PRO2, EDA (Programació 1, Programació 2, Estructures de dades i Algorismes)} Tot i que els coneixements no són directament aplicables, la manera de pensar i enfocar els diversos problemes de lògica durant el desenvolupament s'ha vist positivament influenciada per aquesta assignatura.
+    \item \textbf{IDI (Interacció i disseny d'interfícies)} IDI ha permès que el disseny dels dos clients del sistema estigues millor plantejat, tenint en compte l'experiència d'usuari en tot moment.
+    \item \textbf{BD i DBD(Bases de Dades i Disseny de Bases de Dades)} Les dues assignatures han permès facilitar el disseny i l'arquitectura de la base de dades del sistema. També han aportat coneixements per navegar entre la base de dades amb DBeaver.
+    \item \textbf{GPS (Gestió de Projectes)} Aquesta assignatura ha sigut important per tenir en compte les diferents opcions de metodologies disponibles i saber quina escollir per als requisits del projecte, a més de com fer un seguiment adequat.
+\end{itemize}
+
+També cal destacar l'aprenentatge autònom realitzat durant els estudis universitaris i els coneixements adquirits en l'àmbit professional, que han permès aplicar bones pràctiques de desenvolupament de software, com ara l'ús de patrons de disseny, la gestió del codi mitjançant control de versions o l'adopció de metodologies àgils, contribuint a una execució del projecte més ordenada i professional.
 \newpage
 \section{Annexos}
 

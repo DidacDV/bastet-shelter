@@ -90,7 +90,7 @@ class AnimalRepository(BaseRepository[Animal]):
             .all()
         )
 
-    def get_portal_short_info(self, db: Session, province_id: str):
+    def get_portal_short_info(self, db: Session, province_id: str, skip: int = 0, limit: int | None = None):
         has_active_adoption_process = (
             select(AdoptionProcess.id)
             .where(
@@ -118,5 +118,13 @@ class AnimalRepository(BaseRepository[Animal]):
         )
 
         query = query.filter(Refuge.province_id == province_id)
+        query = query.group_by(Animal.id, Refuge.name, Shelter.name)
 
-        return query.group_by(Animal.id, Refuge.name, Shelter.name).all()
+        total = query.count()
+
+        if skip:
+            query = query.offset(skip)
+        if limit is not None:
+            query = query.limit(limit)
+
+        return query.all(), total

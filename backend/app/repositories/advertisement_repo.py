@@ -19,8 +19,9 @@ class AdvertisementRepository(BaseRepository[Advertisement]):
         )
 
     def get_active_advertisements(
-        self, db: Session, province_id: Optional[str] = None, category: Optional[AdCategoryEnum] = None
-    ) -> list[type[Advertisement]]:
+        self, db: Session, province_id: Optional[str] = None, category: Optional[AdCategoryEnum] = None,
+        skip: int = 0, limit: Optional[int] = None
+    ) -> tuple[list, int]:
         query = db.query(Advertisement).filter(Advertisement.is_active == True)
 
         if province_id:
@@ -28,4 +29,13 @@ class AdvertisementRepository(BaseRepository[Advertisement]):
         if category:
             query = query.filter(Advertisement.category == category)
 
-        return query.order_by(Advertisement.published_on.desc()).all()
+        query = query.order_by(Advertisement.published_on.desc())
+
+        total = query.count()
+
+        if skip:
+            query = query.offset(skip)
+        if limit is not None:
+            query = query.limit(limit)
+
+        return query.all(), total

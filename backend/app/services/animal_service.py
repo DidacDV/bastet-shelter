@@ -244,8 +244,10 @@ class AnimalService:
         results = self.animal_repo.get_all_short_info(self.db, shelter_id)
         return self.create_short_info_list(results)
 
-    def get_portal_animals_short_info(self, province_id: str) -> list[AnimalPublicShortInfo]:
-        results = self.animal_repo.get_portal_short_info(self.db, province_id)
+    def get_portal_animals_short_info(
+        self, province_id: str, skip: int = 0, limit: int | None = None
+    ) -> tuple[list[AnimalPublicShortInfo], int]:
+        results, total = self.animal_repo.get_portal_short_info(self.db, province_id, skip, limit)
 
         short_info_list = []
         today = date.today()
@@ -267,7 +269,7 @@ class AnimalService:
                 )
             )
 
-        return short_info_list
+        return short_info_list, total
 
     def create_short_info_list(self, short_info) -> list[AnimalShortInfo]:
         short_info_list = []

@@ -98,7 +98,7 @@ def test_get_my_advertisements_success(client, mock_service):
 
 
 def test_get_advertisements_success(client, mock_service):
-    mock_service.get_advertisements.return_value = [_ad_summary_response()]
+    mock_service.get_advertisements.return_value = ([_ad_summary_response()], 1)
 
     response = client.get("/advertisements/")
 
@@ -108,7 +108,7 @@ def test_get_advertisements_success(client, mock_service):
 
 
 def test_get_advertisements_with_filters(client, mock_service):
-    mock_service.get_advertisements.return_value = [_ad_summary_response()]
+    mock_service.get_advertisements.return_value = ([_ad_summary_response()], 1)
 
     response = client.get("/advertisements/?province_name=Barcelona&category=FOOD")
 

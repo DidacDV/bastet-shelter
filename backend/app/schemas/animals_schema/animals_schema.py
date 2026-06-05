@@ -83,6 +83,7 @@ class AnimalPublicShortInfo(BaseModel):
 
 class AnimalPublicSummaryList(BaseModel):
     animals: list[AnimalPublicShortInfo]
+    total: int
 
 class AnimalUpdate(BaseModel):
     name: Optional[str] = None

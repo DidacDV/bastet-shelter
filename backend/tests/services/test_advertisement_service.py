@@ -82,17 +82,18 @@ def test_get_advertisements_filter_all(service):
     ad_other = MagicMock(spec=Advertisement)
     ad_other.shelter_id = 20
 
-    service.advertisement_repo.get_active_advertisements.return_value = [ad_self, ad_other]
+    service.advertisement_repo.get_active_advertisements.return_value = ([ad_self, ad_other], 2)
 
     with patch("app.schemas.advertisement_schema.AdvertisementSummary.model_validate") as mock_validate:
-        result = service.get_advertisements(province_name="BARCELONA", category=AdCategoryEnum.FOOD, shelter_id=10)
+        result, total = service.get_advertisements(province_name="BARCELONA", category=AdCategoryEnum.FOOD, shelter_id=10)
         mock_validate.assert_called_once_with(ad_other)
 
 
 def test_get_advertisements_province_not_found(service):
     service.geo_repo.get_province_by_name.return_value = None
-    result = service.get_advertisements(province_name="INVALID")
+    result, total = service.get_advertisements(province_name="INVALID")
     assert result == []
+    assert total == 0
 
 
 def test_get_advertisement_by_id_success(service):

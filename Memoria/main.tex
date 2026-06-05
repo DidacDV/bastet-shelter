@@ -2459,10 +2459,19 @@ def get_shifts(
     return {"shifts": service.get_shifts(refuge_id, day, week_start)}
 \end{lstlisting}
 \subsubsection{Disseny de la base de dades}
-Com que el model de la base de dades queda descrit a la figura  de la secció d'Especificació, en aquest apartat es 
-vol mostrar l'esquema final de la base de dades. Com a aclariment, s'ha optat per utilitzar una base de dades relacional amb el patró \textit{Class Table Inheritance} per a les herències.
+Com que el model de la base de dades queda descrit a la figura de la secció d'Especificació, en aquest apartat es vol mostrar l'esquema final de la base de dades. A partir del disseny conceptual s'han aplicat les regles estàndard per realitzar la transformació al model relacional, entre aquestes la creació de taules intermèdies per a relacions molts a molts, i les herències s'han implementat amb el patró \textit{Class Table Inheritance}, generant una taula per cada subclasse amb una clau forana que referència a la taula pare (\texttt{volunteer} o \texttt{adoption\_form}).
 
-Aquestes taules apliquen les restriccions de domini a través de tipus enumerats (\textit{ENUM}) i claus úniques. A continuació es llisten les taules del sistema, on se subratllen les claus externes i s'indiquen les seves relacions i restriccions textuals:
+Aquestes taules apliquen les restriccions de domini a través de tipus enumerats (\textit{ENUM}) i claus úniques. 
+
+A continuació es mostra el diagrama físic amb les claus foranes i es llisten les taules del sistema, on se subratllen les claus externes i s'indiquen les seves relacions i restriccions textuals:
+
+\begin{landscape}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[height=0.9\textheight,keepaspectratio]{db_fisic.drawio.png}
+        \caption{Diagrama físic de la base de dades}
+    \end{figure}
+\end{landscape}
 
 \begin{itemize}
     \item \textbf{provinces}(\underline{id}, name, community\_code, last\_updated), on \textit{name} és un valor únic.

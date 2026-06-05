@@ -2339,6 +2339,69 @@ A la següent figura es pot veure aquest procés aplicat al projecte.
     \caption[Processament en segon pla]{Processament en segon pla. Font: Elaboració pròpia}
     \label{fig:diagrama_tasques_segonpla}
 \end{figure}
+\paragraph{Seguretat i control d'accés}
+Per complir amb els requisits no funcionals de seguretat, en concret el NFR6, el backend implementa dos mecanismes complementaris a tot el sistema: autenticació mitjançant JWT i el control d'accés basat en rols.
+
+Per l'autenticació, totes les contrasenyes es protegeixen encriptant-les amb \textit{bcrypt}, que es tracta d'un algorisme de hash adaptatiu que incorpora \textit{salt} aleatori per a cada contrasenya, protegint així el sistema i als usuaris de qualsevol atac d'accés indegut. Els tokens JWT que es proporcionen per l'aplicació mòbil tenen caducitat d'un dia i estan signats des del backend amb l'algorisme HS256. En qualsevol cas, en trobar-se amb un token expirat, amb defectes o que no encaixa amb el registre del backend, es rebutja la petició de l'usuari.
+
+\newpage
+A continuació es pot veure un petit fragment de codi per les funcions d'encriptar i desencriptar
+\begin{lstlisting}[
+    style=pythonStyle,
+    caption={Injecció de dependències al backend},
+    label={lst:fastapi_endpoint},
+    captionpos=b
+]
+def hash_password(password: str) -> str:
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+def verify_password(plain: str, hashed: str) -> bool:
+    return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+\end{lstlisting}
+
+Per al control d'accés, s'aplica el patró RBAC a través de la injecció de dependències a cada endpoint. El token JWT inclou el rol de l'usuari (\texttt{VOLUNTEER}, \texttt{MANAGER}, \texttt{ADMIN} o \texttt{ADOPTANT}) i l'identificador de la protectora a la qual pertany. Funcions com \texttt{require\_shelter\_manager} o \texttt{require\_shelter\_volunteer} intercepten la petició abans d'arribar a la capa de servei i verifiquen tant el rol declarat al token com la protectora de l'usuari, evitant així accessos indeguts a recursos d'altres protectores o a funcionalitats restringides per rol.
+
+Al codi següent es pot veure un exemple d'un endpoint que requereix ser executat per un gestor d'una protectora, on l'identificador de la protectora obtingut del token s'utilitza directament com a paràmetre per a la crida al servei.
+\begin{lstlisting}[
+    style=pythonStyle,
+    caption={Injecció de dependències al backend},
+    label={lst:fastapi_endpoint},
+    captionpos=b
+]
+@router.post("/{process_id}/reject", status_code=status.HTTP_204_NO_CONTENT)
+def reject_adoption_process(
+        process_id: int,
+        background_tasks: BackgroundTasks,
+        request: RejectionRequest,
+        auth: AuthenticatedUser = Depends(require_manager),
+        process_service: AdoptionProcessService = Depends(get_process_service)
+):
+    process_service.reject_adoption(process_id, auth.shelter_id, request.reason, background_tasks)
+\end{lstlisting}
+\paragraph{Rendiment i escalabilitat}
+Per poder assolir un rendiment i escalabilitat adequats i complir el requisit no funcional NFR2, s'han utilitzat dues eines principals a la capa de dades. Primerament, per als llistats de dades que poden escalar ràpidament en cas de fer públic el sistema, com ara els animals del portal web o els anuncis entre protectores, tenen l'opció de ser paginats mitjançant els paràmetres \texttt{skip} i \texttt{limit}, cosa que permet mostrar des deel client només un subconjunt de les dades de les totals, reduint la càrrega del servidor i del mateix client.
+
+A continuació es pot veure un exemple de la paginació implementada a l'endpoint públic d'animals al portal web.
+\begin{lstlisting}[
+    style=pythonStyle,
+    caption={Injecció de dependències al backend},
+    label={lst:fastapi_endpoint},
+    captionpos=b
+]
+@router.get("/short_info_portal", response_model=AnimalPublicSummaryList)
+def get_short_infos_portal(
+    province_id: str,
+    skip: int = Query(default=0, ge=0, description="number of records to skip"),
+    limit: Optional[int] = Query(default=None, ge=1, description="max n records to return"),
+    service: AnimalService = Depends(get_animal_service)
+):
+    if not province_id:
+        return {"animals": [], "total": 0}
+    animals, total = service.get_portal_animals_short_info(province_id, skip, limit)
+    return {"animals": animals, "total": total}
+\end{lstlisting}
+
+D'altra banda, també s'han incorporat diferents índexs a les columnes que es consulten més sovint. Un clar exemple és l'índex a totes les ids que actuen com a claus primàries de les taules. Altres camps com \texttt{link\_name} a animal, per la cerca d'animals dins del portal web i el camp \texttt{email} per a la taula login, que és el que s'utilitza com a criteri per a cada autenticació. Gràcies a aquests índexs s'evita buscar de manera seqüencial a les taules més consultades del sistema.
 
 \subsubsection{Patrons de disseny}
 \paragraph{Patró repositori}
@@ -2461,7 +2524,7 @@ Aquestes taules apliquen les restriccions de domini a través de tipus enumerats
     \item \textbf{animal\_pickup}(\underline{id}, scheduled\_at, actual\_pickup\_at), on \textit{id} referència a \textbf{adoption\_step}, que és la classe pare.
 \end{itemize}
 
-
+\subsubsection{Seguretat al backend}
 
 \subsection{Portal web d'adopcions}
 \subsubsection{Vistes}
@@ -2544,6 +2607,43 @@ A la figura següent es pot veure aquest patró aplicat a la funcionalitat de ve
     \includegraphics[width=1\textwidth, keepaspectratio]{diagrama_facade_web.png}
     \caption[Patró facade al client web]{Patró facade aplicat al client web. Font: Elaboració pròpia}
     \label{fig:diagrama_facade_web}
+\end{figure}
+
+\subsection{Exemple de funcionalitat: Adopció d'un animal a través del portal web}
+Aquest apartat descriu el flux tècnic des que un adoptant accedeix al portal web fins a la formalització de l'adopció, passant pel backend i l'aplicació mòbil com a gestors d'una protectora.
+
+\subsubsection{Accés al portal}
+Quan una persona vol adoptar, primer ha d'iniciar sessió, on introdueix nom i correu al portal web. El frontend envia una petició \texttt{POST /adoption-auth/request-access} amb aquests camps, validats per Pydantic. El servei \texttt{AdoptantAuthService} cerca l'adoptant per correu i, si no existeix, crea una nova entrada. Després genera un token segur (\texttt{secrets.token\_urlsafe}), el desa a \texttt{magic\_link\_token} amb una validesa de trenta dies i envia per correu un enllaç d'inici de sessió cap al portal. L'enviament es fa en segon pla mitjançant \texttt{BackgroundTasks}, per no bloquejar la resposta HTTP cap al client.
+
+\subsubsection{Verificació de la identitat}
+En obrir l'enllaç del correu, el portal extreu el token i crida \texttt{GET /adoption-auth/verify?token=...}. El backend comprova que el token existeixi i no hagi caducat, i retorna un JWT amb el correu de l'adoptant, el rol \texttt{adoptant} i el \texttt{adoptant\_id}. El portal emmagatzema aquest token i l'afegeix com a capçalera \texttt{Authorization} a les peticions següents. Gràcies a aquest sistema d'autenticació, no cal gestionar contrasenyes ni processos de recuperació, simplificant l'experiència d'usuari i reduint el temps necessari perquè un adoptant pugui començar el procés d'adopció.
+
+\subsubsection{Sol·licitud d'adopció}
+Un cop autenticat, l'adoptant selecciona un animal en adopció i envia el formulari mitjançant \texttt{POST /adoption/start/\{animal\_id\}}. El cos segueix l'esquema \texttt{AdoptionFormSubmit} (habitatge, jardí, altres animals, fills, experiència prèvia, hores sol, motivació, etc.).
+
+\texttt{AdoptionProcessService} comprova que l'animal existeixi, estigui en adopció i no tingui ja un procés actiu. A continuació crea un \texttt{AdoptionProcess} en estat \texttt{ACTIVE} i inicialitza les cinc etapes del flux: formulari, entrevista, visita, contracte i recollida. Cada etapa es modela amb \textit{Class Table Inheritance} a SQLAlchemy: una taula comuna (\texttt{adoption\_step}) i una taula específica per tipus (\texttt{adoption\_form}, \texttt{interview}, etc.). Totes les etapes es creen en estat \texttt{PENDING}, amb un camp \texttt{order} de 0 a 4 predefinit. Les dades del formulari es desen immediatament a l'etapa FORM, però aquesta no es marca com a completada fins a la revisió del gestor, ja que la protectora ha d'acceptar el contingut abans de continuar amb les següents etapes.
+
+\subsubsection{Notificacions automàtiques}
+Després de crear el procés, el backend programa dues tasques en segon pla: un correu de confirmació a l'adoptant i, si la protectora té correu configurat, una notificació a tal correu amb les dades de la sol·licitud. L'enviament passa pel servei de correu decorat amb monitorització (\texttt{LoggingEmailSenderDecorator}), que delega la lògica real a \texttt{fastapi-mail}.
+
+\subsubsection{Validació per part del gestor}
+Des de l'aplicació mòbil, el gestor obre el procés i, si accepta el formulari, crida \texttt{POST /adoption/\{process\_id\}/advance} amb autenticació de rol manager. L'endpoint comprova que el procés estigui \texttt{ACTIVE} i \texttt{AdoptionStepsService} completa el punt actual (que a aquest cas és el formulari) marcant-lo com a \texttt{COMPLETED}. El procés continua \texttt{ACTIVE} i passa a l'etapa d'entrevista.
+
+Les crides successives a \texttt{/advance} completen la resta de passes, on cada una té característiques pròpies:
+\begin{itemize}
+    \item L'entrevista i la visita exigeixen que hagi passat la data programada.
+    \item Al completar la visita, es genera el contracte en PDF i es puja a Cloudinary.
+    \item El contracte requereix la signatura de l'adoptant (portal) i del gestor (app).
+    \item La recollida registra la data real de lliurament.
+\end{itemize}
+Quan no queden passes pendents, el procés passa a \texttt{COMPLETED}, l'animal deixa d'estar en adopció i s'envia un correu final de confirmació a l'adoptant.
+
+A la figura següent es pot visualitzar un diagrama de seqüència simplificat d'aquest flux, on es mostren les interaccions entre el portal web, el backend i l'aplicació mòbil durant el procés d'adopció.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{diagrama_func_adoptar.png}
+    \caption[Diagrama de seqüència de l'adopció]{Diagrama de seqüència de l'adopció. Font: Elaboració pròpia}
+    \label{fig:diagrama_func_adoptar}
 \end{figure}
 
 \newpage
@@ -2733,44 +2833,6 @@ Dins de les opcions de bases de dades relacionals, s'ha escollit PostgreSQL per 
 En aquest servei, s'ha escollit \textbf{Cloudinary} a causa de la facilitat d'ús i la configuració ràpida que ofereix. En un principi, s'havia considerat únicament per guardar les imatges del sistema (tant dels animals com dels anuncis), però amb el requisit de poder generar i emmagatzemar els contractes d'adopció en format PDF, es va veure que també podia ser una solució eficient per a aquest tipus d'arxius, evitant haver de realitzar la inicialització i configuració d'un altre servei diferent per a aquest mateix propòsit.
 Tot i això, s'han considerat com a alternatives \textbf{Amazon S3} i \textbf{Firebase Storage}. Ambdues són solucions molt escalables i fiables, però pateixen de requerir una dedicació més elevada per començar a utilitzar-los. Per exemple, Amazon S3 requereix configurar un \textit{bucket}, establir polítiques d'accés i generar credencials, mentre que Firebase Storage necessita de configurar un projecte a Firebase, habilitar el servei d'emmagatzematge i també establir regles d'accés. Gràcies a la simplicitat de Cloudinary, es pot integrar el servei en el backend en molt poc temps, cosa que permet centrar-se en altres aspectes del projecte més crítics segons la planificació.
 
-\subsection{Exemple de funcionalitat: Adopció d'un animal a través del portal web}
-Aquest apartat descriu el flux tècnic des que un adoptant accedeix al portal web fins a la formalització de l'adopció, passant pel backend i l'aplicació mòbil com a gestors d'una protectora.
-
-\subsubsection{Accés al portal}
-Quan una persona vol adoptar, primer ha d'iniciar sessió, on introdueix nom i correu al portal web. El frontend envia una petició \texttt{POST /adoption-auth/request-access} amb aquests camps, validats per Pydantic. El servei \texttt{AdoptantAuthService} cerca l'adoptant per correu i, si no existeix, crea una nova entrada. Després genera un token segur (\texttt{secrets.token\_urlsafe}), el desa a \texttt{magic\_link\_token} amb una validesa de trenta dies i envia per correu un enllaç d'inici de sessió cap al portal. L'enviament es fa en segon pla mitjançant \texttt{BackgroundTasks}, per no bloquejar la resposta HTTP cap al client.
-
-\subsubsection{Verificació de la identitat}
-En obrir l'enllaç del correu, el portal extreu el token i crida \texttt{GET /adoption-auth/verify?token=...}. El backend comprova que el token existeixi i no hagi caducat, i retorna un JWT amb el correu de l'adoptant, el rol \texttt{adoptant} i el \texttt{adoptant\_id}. El portal emmagatzema aquest token i l'afegeix com a capçalera \texttt{Authorization} a les peticions següents. Gràcies a aquest sistema d'autenticació, no cal gestionar contrasenyes ni processos de recuperació, simplificant l'experiència d'usuari i reduint el temps necessari perquè un adoptant pugui començar el procés d'adopció.
-
-\subsubsection{Sol·licitud d'adopció}
-Un cop autenticat, l'adoptant selecciona un animal en adopció i envia el formulari mitjançant \texttt{POST /adoption/start/\{animal\_id\}}. El cos segueix l'esquema \texttt{AdoptionFormSubmit} (habitatge, jardí, altres animals, fills, experiència prèvia, hores sol, motivació, etc.).
-
-\texttt{AdoptionProcessService} comprova que l'animal existeixi, estigui en adopció i no tingui ja un procés actiu. A continuació crea un \texttt{AdoptionProcess} en estat \texttt{ACTIVE} i inicialitza les cinc etapes del flux: formulari, entrevista, visita, contracte i recollida. Cada etapa es modela amb \textit{Class Table Inheritance} a SQLAlchemy: una taula comuna (\texttt{adoption\_step}) i una taula específica per tipus (\texttt{adoption\_form}, \texttt{interview}, etc.). Totes les etapes es creen en estat \texttt{PENDING}, amb un camp \texttt{order} de 0 a 4 predefinit. Les dades del formulari es desen immediatament a l'etapa FORM, però aquesta no es marca com a completada fins a la revisió del gestor, ja que la protectora ha d'acceptar el contingut abans de continuar amb les següents etapes.
-
-\subsubsection{Notificacions automàtiques}
-Després de crear el procés, el backend programa dues tasques en segon pla: un correu de confirmació a l'adoptant i, si la protectora té correu configurat, una notificació a tal correu amb les dades de la sol·licitud. L'enviament passa pel servei de correu decorat amb monitorització (\texttt{LoggingEmailSenderDecorator}), que delega la lògica real a \texttt{fastapi-mail}.
-
-\subsubsection{Validació per part del gestor}
-Des de l'aplicació mòbil, el gestor obre el procés i, si accepta el formulari, crida \texttt{POST /adoption/\{process\_id\}/advance} amb autenticació de rol manager. L'endpoint comprova que el procés estigui \texttt{ACTIVE} i \texttt{AdoptionStepsService} completa el punt actual (que a aquest cas és el formulari) marcant-lo com a \texttt{COMPLETED}. El procés continua \texttt{ACTIVE} i passa a l'etapa d'entrevista.
-
-Les crides successives a \texttt{/advance} completen la resta de passes, on cada una té característiques pròpies:
-\begin{itemize}
-    \item L'entrevista i la visita exigeixen que hagi passat la data programada.
-    \item Al completar la visita, es genera el contracte en PDF i es puja a Cloudinary.
-    \item El contracte requereix la signatura de l'adoptant (portal) i del gestor (app).
-    \item La recollida registra la data real de lliurament.
-\end{itemize}
-Quan no queden passes pendents, el procés passa a \texttt{COMPLETED}, l'animal deixa d'estar en adopció i s'envia un correu final de confirmació a l'adoptant.
-
-A la figura següent es pot visualitzar un diagrama de seqüència simplificat d'aquest flux, on es mostren les interaccions entre el portal web, el backend i l'aplicació mòbil durant el procés d'adopció.
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{diagrama_func_adoptar.png}
-    \caption[Diagrama de seqüència de l'adopció]{Diagrama de seqüència de l'adopció. Font: Elaboració pròpia}
-    \label{fig:diagrama_func_adoptar}
-\end{figure}
-
-\newpage
 \section{Control de qualitat i validació}
 Per mantenir una bona qualitat del codi i assegurar un funcionament correcte del sistema, s'han implementat diversos tipus de tests tant per al backend com per al frontend, així com a mecanismes d'integració i desplegament continus per verificar els canvis realitzats de manera automàtica.
 

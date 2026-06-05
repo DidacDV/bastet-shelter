@@ -1,6 +1,6 @@
 from typing import List, Optional
 from datetime import date
-from fastapi import APIRouter, Depends, UploadFile, File, BackgroundTasks
+from fastapi import APIRouter, Depends, UploadFile, File, BackgroundTasks, Query
 from sqlalchemy.orm import Session
 
 from app.core.dependencies.role_dependencies import get_db, get_current_user, require_manager
@@ -43,12 +43,14 @@ def get_short_infos(
 @router.get("/short_info_portal", response_model=AnimalPublicSummaryList)
 def get_short_infos_portal(
     province_id: str,
+    skip: int = Query(default=0, ge=0, description="number of records to skip"),
+    limit: Optional[int] = Query(default=None, ge=1, description="max n records to return"),
     service: AnimalService = Depends(get_animal_service)
 ):
     if not province_id:
-        return {"animals": []}
-    animals = service.get_portal_animals_short_info(province_id)
-    return {"animals": animals}
+        return {"animals": [], "total": 0}
+    animals, total = service.get_portal_animals_short_info(province_id, skip, limit)
+    return {"animals": animals, "total": total}
 
 """uses link names for both shelter and animal instead of regular ids so it can be integrated to external services of shelters"""
 @router.get("/public/by-link/{shelter_link_name}/{animal_link_name}", response_model=AnimalPublicDetail)

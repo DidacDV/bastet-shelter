@@ -314,15 +314,16 @@ def test_get_portal_animals_short_info(service):
     row.animal_type = MagicMock()
     row.animal_type.value = "dog"
 
-    service.animal_repo.get_portal_short_info.return_value = [row]
+    service.animal_repo.get_portal_short_info.return_value = ([row], 1)
 
-    result = service.get_portal_animals_short_info(province_id="08")
+    result, total = service.get_portal_animals_short_info(province_id="08")
 
     assert len(result) == 1
     assert result[0].name == "Leo"
     assert result[0].age == 2
     assert result[0].animal_type == "DOG"
-    service.animal_repo.get_portal_short_info.assert_called_once_with(service.db, "08")
+    assert total == 1
+    service.animal_repo.get_portal_short_info.assert_called_once_with(service.db, "08", 0, None)
 
 def test_create_short_info_list(service):
     today = date.today()

@@ -54,6 +54,7 @@ class TestAnimalRepository:
         )
         db.commit()
 
-        results = self.repo.get_portal_short_info(db, "08")
+        results, total = self.repo.get_portal_short_info(db, "08")
 
         assert [row.id for row in results] == [available_animal.id]
+        assert total == 1

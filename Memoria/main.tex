@@ -57,6 +57,31 @@
     sensitive=true
 }
 
+%YAML specific
+\newcommand\YAMLcolonstyle{\color{red}\mdseries}
+\newcommand\YAMLkeystyle{\color{blue}\bfseries}
+\newcommand\YAMLvaluestyle{\color{orange}\mdseries}
+
+\lstdefinelanguage{YAML}{
+  keywords={true, false, null, y, n, on, push, pull_request, jobs},
+  keywordstyle=\color{purple}\bfseries,
+  sensitive=false,
+  comment=[l]{\#},
+  commentstyle=\color{gray}\ttfamily,
+  morestring=[b]',
+  morestring=[b]",
+  stringstyle=\color{orange}\mdseries\ttfamily,
+}
+
+\lstdefinestyle{yamlStyle}{
+  language=YAML,
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{gray!10},
+  tabsize=2,
+  breaklines=true,
+  showstringspaces=false,
+  keepspaces=true
+}
 \onehalfspacing
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt}
@@ -118,7 +143,7 @@
     belowskip=4pt
 }
 
-\graphicspath{ {resources/} {resources/diagrams/} {resources/mobile_screens} {resources/web_screens} }
+\graphicspath{ {resources/} {resources/diagrams/} {resources/mobile_screens} {resources/web_screens} {resources/mockups} }
 
 %start section from 1
 \renewcommand{\thesection}{\arabic{section}}
@@ -223,6 +248,16 @@
 \renewcommand{\lstlistingname}{Bloc de codi}
 \renewcommand{\lstlistlistingname}{Índex de blocs de codi}
 
+\section*{Resum}
+A causa del gran nombre d'animals abandonats al carrer, existeixen les protectores, que tenen com a feina donar una llar temporal a aquests animals fins que trobin una família que els adopti. Aquest projecte neix amb l'objectiu de proporcionar als membres de les protectores i a les entitats en si una millor manera d'organitzar-se per dividir les tasques, emmagatzemar la informació dels animals, comunicar-se entre protectores i monitorar els processos d'adopció més fàcilment.
+Per assolir aquest propòsit, s'ha creat un sistema digital que inclou un client web, per als adoptants, un client mòbil, per a les protectores, i un servidor que ho unifica tot. El conjunt cobreix el cicle complet d'adopció, des de la publicació dels animals amb les seves necessitats fins a la resolució del procés.
+\section*{Abstract}
+Due to the large number of animals abandoned on the street, animal shelters exist, whose job it is to provide these animals with a temporary home until they find a family to adopt them. This project was created to provide shelter members and the organizations themselves with a better way to plan, divide tasks, store animal information, communicate between shelters, and more easily monitor adoption processes.
+To achieve this goal, a digital system has been created that includes a web client for adopters, a mobile client for shelters, and a server that unifies everything. The system covers the entire adoption cycle, from posting animals and their needs to the resolution of the process.
+\section*{Resumen}
+A causa del gran número de animales abandonados en la calle, existen las protectoras, que tienen como trabajo dar un hogar temporal en estos animales hasta que encuentren una familia que les adopte. Este proyecto nace con el objetivo de proporcionar a los miembros de las protectoras y a las entidades en si una mejor manera de organizarse para dividir las tareas, almacenar la información de los animales, comunicarse entre protectoras y monitorizar los procesos de adopción más fácilmente.
+Para lograr este propósito, se ha creado un sistema digital que incluye un cliente web, para los adoptadores, un cliente móvil, para las protectoras, y un servidor que lo unifica todo. El conjunto cubre el ciclo completo de adopción, desde la publicación de los animales con sus necesidades hasta la resolución del proceso.
+\newpage
 \captionsetup[figure]{font=it}
 \tableofcontents
 \newpage
@@ -2266,10 +2301,6 @@ void configureDependencies() {
   ...
 }
 \end{lstlisting}
-
-- Singleton
-- Facade (Amb ApiClient)
-- Factory (Models fromJson)
 \subsection{Backend}
 \subsubsection{Especificació de l'API}
 El servidor backend està dissenyat amb l'objectiu principal d'oferir una API REST clara i fàcil d'utilitzar, ja que s'ha de comunicar tant amb l'aplicació mòbil com amb el portal web. És per això que és necessari seguir els principis REST i mantenir una estructura coherent entre els diferents recursos.
@@ -2364,7 +2395,7 @@ Per al control d'accés, s'aplica el patró RBAC a través de la injecció de de
 Al codi següent es pot veure un exemple d'un endpoint que requereix ser executat per un gestor d'una protectora, on l'identificador de la protectora obtingut del token s'utilitza directament com a paràmetre per a la crida al servei.
 \begin{lstlisting}[
     style=pythonStyle,
-    caption={Injecció de dependències al backend},
+    caption={Encriptació i desencriptació al backend},
     label={lst:fastapi_endpoint},
     captionpos=b
 ]
@@ -2384,7 +2415,7 @@ Per poder assolir un rendiment i escalabilitat adequats i complir el requisit no
 A continuació es pot veure un exemple de la paginació implementada a l'endpoint públic d'animals al portal web.
 \begin{lstlisting}[
     style=pythonStyle,
-    caption={Injecció de dependències al backend},
+    caption={RBAC al backend},
     label={lst:fastapi_endpoint},
     captionpos=b
 ]
@@ -2441,7 +2472,7 @@ Tot i que al backend també s'utilitza aquest patró, es fa servir de manera dif
 Això té una gran relació amb el framework escollit per al backend, FastAPI, ja que proporciona una manera fàcil i senzilla d'injectar dependències a través d'un paràmetre a qualsevol funció. Això facilita, per exemple, la gestió de la sessió de la base de dades per a cada operació, que s'obre i es tanca per a cada petició de manera transparent, com es pot veure a l'exemple següent.
 \begin{lstlisting}[
     style=pythonStyle,
-    caption={Injecció de dependències al backend},
+    caption={Paginació al backend},
     label={lst:fastapi_endpoint},
     captionpos=b
 ]
@@ -2842,6 +2873,7 @@ Dins de les opcions de bases de dades relacionals, s'ha escollit PostgreSQL per 
 En aquest servei, s'ha escollit \textbf{Cloudinary} a causa de la facilitat d'ús i la configuració ràpida que ofereix. En un principi, s'havia considerat únicament per guardar les imatges del sistema (tant dels animals com dels anuncis), però amb el requisit de poder generar i emmagatzemar els contractes d'adopció en format PDF, es va veure que també podia ser una solució eficient per a aquest tipus d'arxius, evitant haver de realitzar la inicialització i configuració d'un altre servei diferent per a aquest mateix propòsit.
 Tot i això, s'han considerat com a alternatives \textbf{Amazon S3} i \textbf{Firebase Storage}. Ambdues són solucions molt escalables i fiables, però pateixen de requerir una dedicació més elevada per començar a utilitzar-los. Per exemple, Amazon S3 requereix configurar un \textit{bucket}, establir polítiques d'accés i generar credencials, mentre que Firebase Storage necessita de configurar un projecte a Firebase, habilitar el servei d'emmagatzematge i també establir regles d'accés. Gràcies a la simplicitat de Cloudinary, es pot integrar el servei en el backend en molt poc temps, cosa que permet centrar-se en altres aspectes del projecte més crítics segons la planificació.
 
+\newpage
 \section{Control de qualitat i validació}
 Per mantenir una bona qualitat del codi i assegurar un funcionament correcte del sistema, s'han implementat diversos tipus de tests tant per al backend com per al frontend, així com a mecanismes d'integració i desplegament continus per verificar els canvis realitzats de manera automàtica.
 
@@ -2870,7 +2902,7 @@ Per realitzar els tests a l'aplicació mòbil s'ha utilitzat el framework propi 
 S'han provat diversos widgets verificant que es renderitzin correctament i actuïn d'acord amb les interacciones esperades, els models per la seva lògica i les transformacions de JSON a l'objecte de domini, els repositoris per les trucades API i també els proveïdors per verificar que els estats s'actualitzin correctament.
 
 \subsection{Tests de la pàgina web}
-Degut a la petita mida del projecte de la pàgina web, no s'han implementat tests específics per a aquesta part. No obstant això, la lògica actual és gairebé mínima, i recau en gran part al backend, que si està cobert pels tests.
+Degut a la petita mida del projecte de la pàgina web, no s'han implementat tests automàtics específics per a aquesta part. No obstant això, el tercer escenari d'integració del backend (Procés d'adopció des del portal fins a la consulta de la protectora) cobreix explícitament el flux d'adopció complet a nivell d'API: des de l'autenticació de l'adoptant fins a l'enviament del formulari i la consulta del procés actiu per part del gestor de la protectora. Això garanteix que tota la lògica pesada que forma part de les interaccions principals del portal queda validada de manera automatitzada, independentment de la capa de presentació del client web.
 
 Així i tot, s'han fet proves manuals de totes les funcionalitats a cada iteració del projecte, verificant que les interaccions amb el backend es realitzin correctament i que la informació es mostri de manera adequada a la interfície d'usuari.
 
@@ -3003,6 +3035,13 @@ Es pot afirmar, doncs, que s'han complert els objectius proposats descrits a la 
 Una altra part important és el portal web d'adopció, que permet a aquelles protectores que no tenen pàgina web pròpia, tenir presència online i mostrar els animals disponibles per a l'adopció. A més, els gestors tenen la capacitat de portar al dia els processos d'adopció a través de l'aplicació. Per acabar, el sistema té incorporat un petit mòdul per als anuncis de la protectora. Tot i que és senzill, compleix l'objectiu de permetre a les protectores publicar anuncis de les seves necessitats materials, allò que no els calgui i altres informacions que vulguin compartir amb les altres entitats.
 
 Amb una visió més acadèmica, el sistema ha aportat a l'autor coneixements i experiència al desenvolupament mòbil, concretament amb Flutter, i al desenvolupament backend amb FastAPI, tecnologies noves.
+\subsection{Desviacions durant el projecte}
+Pel que fa als canvis respecte a la planificació inicial, s'han realitzat alguns canvis puntuals, tot i que no han fet variar el procés de desenvolupament.
+En primer lloc, la tasca EC1 (Marketplace de recursos) ha rebut menys dedicació de l'estimada, i s'han redistribuït les hores cap a PA2 (Fitxa detallada d'animal). Això es ja que no es va tenir en compte els subapartats que s'inclouen en fer els detalls de l'animal, i la simplicitat del marketplace resultant.
+En segon lloc, s'ha reduït les hores de la tasca GPA2 (Signatura digital del contracte d'adopció), per la decisió d'externalitzar el contacte entre la protectora i l'adoptant, la firma s'ha simplificat. Aquestes hores s'han mogut a altres tasques de GPA (Gestió del procés d'adopció) que han necessitat més temps.
+
+Sobre el cost, no s'ha vist afectat de cap manera per aquests petits canvis, perquè les hores assignades al desenvolupador es mantenen igual, i és l'únic afectat.
+
 \subsection{Competències tècniques treballades}
 A continuació es llisten les competències tècniques del projecte i en quin grau s'han desenvolupat.
 \paragraph{CES1.3: Identificar, avaluar i gestionar els riscos potencials associats a la construcció de software que es poguessin presentar. [Bastant]}
@@ -3043,6 +3082,217 @@ Durant tot el projecte, s'han tingut en compte diverses assignatures realitzades
 També cal destacar l'aprenentatge autònom realitzat durant els estudis universitaris i els coneixements adquirits en l'àmbit professional, que han permès aplicar bones pràctiques de desenvolupament de software, com ara l'ús de patrons de disseny, la gestió del codi mitjançant control de versions o l'adopció de metodologies àgils, contribuint a una execució del projecte més ordenada i professional.
 \newpage
 \section{Annexos}
+\subsection{Mockups del client mòbil}
+Per a realitzar un millor disseny final, es van realitzar mockups del client mòbil a través de Figma. Aquests tenien com a objectiu definir l'estructura i l'organització de les vistes.
+
+A continuació es mostren els mockups d'algunes de les pantalles.
+
+\twoFiguresLayout
+    {0.26}
+    {animals_mockup.png}
+    {Mockup de la pantalla d'animals}
+    {fig:animals_mockup}
+    {animal_details_mockup.png}
+    {Mockup de la pantalla de detalls d'un animal}
+    {fig:animal_details_mockup}
+    {Mockup d'animals}
+    {fig:animal_mockups}
+
+\twoFiguresLayout
+    {0.26}
+    {shifts_mockup.png}
+    {Mockup de la pantalla de torns}
+    {fig:shifts_mockup}
+    {shift_details_mockup.png}
+    {Mockup de la pantalla de detalls d'un torn}
+    {fig:shift_details_mockup}
+    {Mockup dels torns}
+    {fig:shift_mockups}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{adoption_mockup.png}
+    \caption[Mockup de la pantalla d'adopció]{Mockup de la pantalla d'adopció. Font: Elaboració pròpia}
+    \label{fig:adoption_mockup}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{community_mockup.png}
+    \caption[Mockup de la pantalla de comunitat]{Mockup de la pantalla de comunitat. Font: Elaboració pròpia}
+    \label{fig:community_mockup}
+\end{figure}
+\newpage
+\subsection{Github Workflows}
+\subsubsection{CI del backend}
+\begin{lstlisting}[
+    style=yamlStyle,
+    caption={CI del backend},
+    label={lst:backend_ci},
+    captionpos=b
+    ]
+name: Backend CI
+
+on:
+  push:
+    branches: [main, dev, test/*]
+    paths:
+      - 'backend/**'
+  pull_request:
+    paths:
+      - 'backend/**'
+
+concurrency:
+  group: backend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Run pytest
+        working-directory: backend
+        env:
+          DATABASE_URL: sqlite:///./test.db      
+          GEOAPI_KEY: ${{ secrets.GEOAPI_KEY }}
+          ADMIN_AUTH_SECRET: ${{ secrets.ADMIN_AUTH_SECRET }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+          ADOPTANT_SECRET: ${{ secrets.ADOPTANT_SECRET }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_PORT: ${{ secrets.MAIL_PORT }}
+          MAIL_SERVER: ${{ secrets.MAIL_SERVER }}
+        run: pytest tests/ -v --tb=short
+\end{lstlisting}
+
+\subsubsection{CI del client mòbil}
+\begin{lstlisting}[
+    style=yamlStyle,
+    caption={CI del client mòbil},
+    label={lst:mobile_ci},
+    captionpos=b
+    ]
+name: Mobile CI
+
+on:
+  push:
+    branches: [main, dev, test/*]
+    paths:
+      - "mobile/**"
+  pull_request:
+    paths:
+      - "mobile/**"
+  workflow_dispatch:
+
+concurrency:
+  group: mobile-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Analyze & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.41.2"
+          channel: "stable"
+          cache: true
+
+      - name: Get dependencies
+        working-directory: mobile
+        run: flutter pub get
+
+      - name: Analyze (lint)
+        working-directory: mobile
+        run: flutter analyze --fatal-infos
+
+      - name: Check formatting
+        working-directory: mobile
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Run tests
+        working-directory: mobile
+        run: flutter test
+
+      - name: Build APK (debug)
+        working-directory: mobile
+        run: flutter build apk --debug
+\end{lstlisting}
+
+\subsubsection{CI del client web}
+\begin{lstlisting}[
+    style=yamlStyle,
+    caption={CI del client web},
+    label={lst:web_ci},
+    captionpos=b
+    ]
+name: Web CI
+
+on:
+  push:
+    branches: [main, dev, test/*]
+    paths:
+      - 'web/**'
+  pull_request:
+    paths:
+      - 'web/**'
+
+concurrency:
+  group: web-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: Build
+        working-directory: web
+        run: npm run build
+\end{lstlisting}
 
 \printbibliography
 

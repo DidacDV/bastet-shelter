@@ -4,10 +4,11 @@ on:
   push:
     branches: [main, dev, test/*]
     paths:
-      - 'mobile/**'
+      - "mobile/**"
   pull_request:
     paths:
-      - 'mobile/**'
+      - "mobile/**"
+  workflow_dispatch:
 
 concurrency:
   group: mobile-ci-${{ github.ref }}
@@ -25,8 +26,8 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.41.2'
-          channel: 'stable'
+          flutter-version: "3.41.2"
+          channel: "stable"
           cache: true
 
       - name: Get dependencies
@@ -48,4 +49,3 @@ jobs:
       - name: Build APK (debug)
         working-directory: mobile
         run: flutter build apk --debug
-

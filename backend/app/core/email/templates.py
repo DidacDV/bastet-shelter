@@ -65,7 +65,7 @@ def magic_link_email(name: str, magic_link_url: str) -> str:
     """
 
 
-def adoption_request_received_email(adoptant_name: str, animal_name: str) -> str:
+def adoption_request_received_email(adoptant_name: str, animal_name: str, frontend_url: str) -> str:
     return f"""
     <!DOCTYPE html>
     <html>
@@ -93,8 +93,17 @@ def adoption_request_received_email(adoptant_name: str, animal_name: str) -> str
                     Thank you for submitting your adoption application for <strong>{animal_name}</strong>. We have received your request and our team will review it shortly.
                   </p>
 
-                  <p style="margin:0 0 16px; font-size:16px; line-height:1.5;">
-                    You can log in to the adoption portal at any time to track the progress of your application. We will keep you updated by email as your adoption process moves forward.
+                  <p style="margin:0 0 24px; font-size:16px; line-height:1.5;">
+                    You can visit Bastet Shelter at any time to track the progress of your application. We will keep you updated by email as your adoption process moves forward.
+                  </p>
+
+                  <p style="margin:0 0 30px;">
+                    <a href="{frontend_url}"
+                       style="display:inline-block; background-color:#3B3686; color:#ffffff;
+                              text-decoration:none; font-size:16px; font-weight:bold;
+                              padding:12px 24px; border-radius:6px;">
+                      Go to Bastet Shelter
+                    </a>
                   </p>
                 </td>
               </tr>
@@ -122,6 +131,7 @@ def adoption_request_shelter_email(
     adoptant_name: str,
     adoptant_email: str,
     animal_name: str,
+    frontend_url: str,
 ) -> str:
     return f"""
     <!DOCTYPE html>
@@ -155,8 +165,17 @@ def adoption_request_shelter_email(
                     <strong>Email:</strong> {adoptant_email}
                   </p>
 
-                  <p style="margin:0 0 16px; font-size:16px; line-height:1.5;">
-                    You can review the application and manage the adoption process from your shelter dashboard.
+                  <p style="margin:0 0 24px; font-size:16px; line-height:1.5;">
+                    You can review the application and manage the adoption process from the Bastet Shelter app.
+                  </p>
+
+                  <p style="margin:0 0 30px;">
+                    <a href="{frontend_url}"
+                       style="display:inline-block; background-color:#3B3686; color:#ffffff;
+                              text-decoration:none; font-size:16px; font-weight:bold;
+                              padding:12px 24px; border-radius:6px;">
+                      Go to Bastet Shelter
+                    </a>
                   </p>
                 </td>
               </tr>

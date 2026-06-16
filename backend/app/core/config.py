@@ -16,7 +16,12 @@ class Settings(BaseSettings):
     MAIL_FROM: str
     MAIL_PORT: int
     MAIL_SERVER: str
+    FRONTEND_URL: str = "http://localhost:5173"
 
     model_config = SettingsConfigDict(env_file=".env")
+
+    @property
+    def frontend_base_url(self) -> str:
+        return self.FRONTEND_URL.rstrip("/")
 
 settings = Settings()

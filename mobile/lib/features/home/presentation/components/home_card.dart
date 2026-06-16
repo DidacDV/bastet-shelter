@@ -7,6 +7,7 @@ class StatCard extends StatelessWidget {
   final Color bgColor;
   final Color fgColor;
   final VoidCallback onTap;
+  final bool displayIcon;
 
   const StatCard({
     super.key,
@@ -16,6 +17,7 @@ class StatCard extends StatelessWidget {
     required this.bgColor,
     required this.fgColor,
     required this.onTap,
+    this.displayIcon = false,
   });
 
   @override
@@ -58,13 +60,20 @@ class StatCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: fgColor.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(icon, size: 32, color: fgColor),
               ),
+
+              if (displayIcon) const SizedBox(width: 16),
+              if (displayIcon)
+                Container(
+                  padding: const EdgeInsets.all(2),
+                  child: Icon(Icons.arrow_forward, size: 32, color: fgColor),
+                ),
             ],
           ),
         ),

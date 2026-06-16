@@ -14,6 +14,9 @@ class GeoService:
         provinces = db.query(Province.name, Province.id).order_by(Province.name).all()
         return [{"name": p.name, "id": p.id} for p in provinces]
 
+    def ensure_aware(dt: datetime) -> datetime:
+        return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+
     @staticmethod
     async def fetch_and_update_provinces(db: Session, key: str):
         url = f"https://apiv1.geoapi.es/provincias?type=JSON&version=2025.07&key={key}"
@@ -48,8 +51,15 @@ class GeoService:
 
     @staticmethod
     async def run_periodic_update(db: Session):
-        if db.query(Province).count() == 0 or db.query(Province).first().last_updated < datetime.now() - timedelta(
-                days=365):
+        first_province = db.query(Province).first()
+        needs_update = (
+                db.query(Province).count() == 0
+                or first_province is None
+                or GeoService.ensure_aware(first_province.last_updated)
+                < datetime.now(timezone.utc) - timedelta(days=365)
+        )
+
+        if needs_update:
             api_key = getattr(settings, "GEOAPI_KEY", None)
             if api_key:
                 logger.info("Starting periodic provinces update...")

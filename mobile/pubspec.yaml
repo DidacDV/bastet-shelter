@@ -48,6 +48,7 @@ dependencies:
   carousel_slider: ^5.1.2
   url_launcher: ^6.3.2
   syncfusion_flutter_pdfviewer: ^33.2.4
+  flutter_launcher_icons: 0.14.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

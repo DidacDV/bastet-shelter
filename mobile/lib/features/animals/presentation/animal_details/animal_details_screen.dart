@@ -4,6 +4,7 @@ import 'package:bastetshelter/features/animals/presentation/animal_details/adopt
 import 'package:bastetshelter/features/animals/presentation/animal_details/basic_info/basic_info_tab.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/components/animal_details_header.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/medical_treatments/medical_info_tab.dart';
+import 'package:bastetshelter/features/animals/presentation/animal_details/tasks/animal_tasks_tab.dart';
 import 'package:bastetshelter/features/animals/presentation/animal_details/vet_visits/vet_info_tab.dart';
 import 'package:bastetshelter/features/common/components/layout/app_bar.dart';
 import 'package:bastetshelter/features/common/components/layout/app_tab_bar.dart';
@@ -37,6 +38,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
           showLogout: false,
         ),
         body: AppTabLayout(
+          showOnlySelectedLabel: true,
           header: SizedBox(
             height: MediaQuery.of(context).size.height * 0.30,
             child: AnimalDetailsHeader(
@@ -86,7 +88,7 @@ class AnimalDetailsScreen extends ConsumerWidget {
             BasicInfoTab(animalId: animalId, isManager: isManager),
             VetInfoTab(animalId: animalId, isManager: isManager),
             MedicalTreatmentsTab(animalId: animalId, isManager: isManager),
-            const Icon(Icons.directions_bike),
+            AnimalTasksTab(animalId: animalId),
             AdoptionTab(animalId: animalId, isManager: isManager),
           ],
         ),

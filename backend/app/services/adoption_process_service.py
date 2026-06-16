@@ -2,6 +2,7 @@ import io
 from datetime import date
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.email.email_sender import send_email
 from app.core.email.templates import (
     adoption_completed_email,
@@ -123,6 +124,7 @@ class AdoptionProcessService:
         html_body = adoption_request_received_email(
             adoptant_name=adoptant_name,
             animal_name=animal.name,
+            frontend_url=settings.frontend_base_url,
         )
         send_email(
             subject=f"We've received your adoption application for {animal.name}",
@@ -138,6 +140,7 @@ class AdoptionProcessService:
                 adoptant_name=adoptant_name,
                 adoptant_email=adoptant_email,
                 animal_name=animal.name,
+                frontend_url=settings.frontend_base_url,
             )
             send_email(
                 subject=f"New adoption application for {animal.name}",

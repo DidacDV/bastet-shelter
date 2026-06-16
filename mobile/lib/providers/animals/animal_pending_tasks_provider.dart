@@ -1,16 +1,23 @@
 import 'package:bastetshelter/core/utils/generic_api_call.dart';
 import 'package:bastetshelter/features/shifts/data/models/shift_task_model.dart';
 import 'package:bastetshelter/features/tasks/data/my_shift_tasks_group.dart';
+import 'package:bastetshelter/providers/animals/animal_provider.dart';
 import 'package:bastetshelter/providers/shifts/shift_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'my_tasks_provider.g.dart';
+part 'animal_pending_tasks_provider.g.dart';
 
 @riverpod
-class MyTasks extends _$MyTasks {
+class AnimalPendingTasks extends _$AnimalPendingTasks {
   @override
-  Future<List<MyShiftTasksGroup>> build() async {
-    return ref.read(shiftRepositoryProvider).getMyTasks();
+  Future<List<MyShiftTasksGroup>> build(int animalId) async {
+    ref.keepAlive();
+    return ref.read(animalRepositoryProvider).getPendingTasks(animalId);
+  }
+
+  Future<void> refresh() async {
+    ref.invalidateSelf();
+    await future;
   }
 
   Future<void> toggleCompletion(ShiftTask task) async {
@@ -25,43 +32,41 @@ class MyTasks extends _$MyTasks {
       invalidateRelatedShiftTaskProviders(
         ref,
         shiftId: task.shiftId,
-        animalId: task.animal?.id,
-        invalidateMyTasks: false,
+        animalId: animalId,
+        invalidateAnimalPendingTasks: false,
       );
-      invalidateAnimalTaskCaches(ref, animalId: task.animal?.id);
+      invalidateAnimalListCache(ref);
     });
   }
 
-  Future<void> unassignTask(
-    int shiftTaskId,
-    int shiftId, {
-    int? animalId,
-  }) async {
+  Future<void> unassignTask(int shiftTaskId, int shiftId) async {
     await genericApiCall(() async {
       await ref.read(shiftRepositoryProvider).unassignTask(shiftTaskId);
-
-      final current = state.value;
-      if (current != null) {
-        state = AsyncData(
-          current
-              .map(
-                (group) => MyShiftTasksGroup(
-                  shift: group.shift,
-                  tasks: group.tasks
-                      .where((task) => task.id != shiftTaskId)
-                      .toList(),
-                ),
-              )
-              .where((group) => group.tasks.isNotEmpty)
-              .toList(),
-        );
-      }
-
+      ref.invalidateSelf();
       invalidateRelatedShiftTaskProviders(
         ref,
         shiftId: shiftId,
         animalId: animalId,
-        invalidateMyTasks: false,
+        invalidateAnimalPendingTasks: false,
+      );
+    });
+  }
+
+  Future<void> assignTask(
+    int shiftTaskId,
+    int shiftId,
+    int participantId,
+  ) async {
+    await genericApiCall(() async {
+      await ref
+          .read(shiftRepositoryProvider)
+          .assignTask(shiftTaskId, participantId);
+      ref.invalidateSelf();
+      invalidateRelatedShiftTaskProviders(
+        ref,
+        shiftId: shiftId,
+        animalId: animalId,
+        invalidateAnimalPendingTasks: false,
       );
     });
   }

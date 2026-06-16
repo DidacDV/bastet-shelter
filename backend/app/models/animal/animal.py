@@ -37,6 +37,7 @@ class Animal(Base):
     breed: Mapped[str] = mapped_column(String, nullable=False)
     animal_type: Mapped[AnimalTypeEnum] = mapped_column(Enum(AnimalTypeEnum), nullable=False)
     in_adoption: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    link_name: Mapped[str] = mapped_column(String, nullable=False, index=True)
     refuge_id: Mapped[int] = mapped_column(ForeignKey("refuge.id"), nullable=False)
 
     refuge = relationship("Refuge", back_populates="animals")

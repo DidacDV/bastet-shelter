@@ -1,8 +1,10 @@
 import 'package:bastetshelter/core/constants.dart';
 import 'package:bastetshelter/core/localization/app_localizations.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_list/components/adoption_card.dart';
+import 'package:bastetshelter/features/adoption/presentation/adoption_list/components/adoption_filter_bar.dart';
 import 'package:bastetshelter/features/adoption/presentation/adoption_process/adoption_process_screen.dart';
 import 'package:bastetshelter/features/common/components/bastet_search_bar.dart'; // Import your search bar
+import 'package:bastetshelter/providers/adoption/adoption_filter_provider.dart';
 import 'package:bastetshelter/providers/adoption/adoption_list_provider.dart';
 import 'package:bastetshelter/providers/adoption/adoption_list_search_provider.dart';
 import 'package:bastetshelter/providers/auth/auth_provider.dart';
@@ -23,6 +25,8 @@ class AdoptionList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final listAsync = ref.watch(filteredAdoptionListProvider);
+    final hasActiveFilters = ref.watch(adoptionFilterProvider).hasActiveFilters;
+    final hasSearchQuery = ref.watch(adoptionSearchQueryProvider).isNotEmpty;
     final theme = Theme.of(context);
     final tt = theme.textTheme;
     final isManager = ref.watch(isManagerProvider);
@@ -45,6 +49,9 @@ class AdoptionList extends ConsumerWidget {
                   ref.read(adoptionSearchQueryProvider.notifier).updateQuery(q),
             ),
           ),
+          const SizedBox(height: 8),
+          const AdoptionFilterBar(),
+          const SizedBox(height: 8),
 
           Expanded(
             child: listAsync.when(
@@ -113,7 +120,9 @@ class AdoptionList extends ConsumerWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            context.l10n.t('adoption.emptySearchMessage'),
+                            hasActiveFilters || hasSearchQuery
+                                ? context.l10n.t('adoption.emptyFilterMessage')
+                                : context.l10n.t('adoption.emptyMessage'),
                             textAlign: TextAlign.center,
                             style: tt.bodyMedium?.copyWith(
                               color: AppColors.textSecondary,

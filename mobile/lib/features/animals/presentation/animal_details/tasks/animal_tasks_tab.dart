@@ -17,8 +17,12 @@ class AnimalTasksTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tasksAsync = ref.watch(animalPendingTasksProvider(animalId));
     final theme = Theme.of(context);
-    final todayLabel = DateFormat('EEEE, MMM d').format(DateTime.now());
+    final String currentLocale = Localizations.localeOf(context).toString();
 
+    final todayLabel = DateFormat(
+      'EEEE, d MMM',
+      currentLocale,
+    ).format(DateTime.now());
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

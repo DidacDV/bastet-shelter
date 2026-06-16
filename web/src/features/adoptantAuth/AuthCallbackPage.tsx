@@ -27,12 +27,14 @@ export default function AuthCallbackPage() {
         if (result) {
           login(result.access_token, result.adoptant_name);
 
-          //check redirect
-          const redirect = searchParams.get("redirect") || "/";
+          const storedRedirect = sessionStorage.getItem("auth_redirect");
+          const redirect =
+            storedRedirect || searchParams.get("redirect") || "/adoptions";
+          sessionStorage.removeItem("auth_redirect");
           navigate(redirect, { replace: true });
         }
       } catch (err) {
-        setError(t("auth.invalidMagicLink"));
+        setError(t("auth.invalidLoginLink"));
       }
     };
 

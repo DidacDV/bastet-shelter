@@ -23,6 +23,7 @@ class AdvertisementSummary(BaseModel):
 
 class AdvertisementSummaryList(BaseModel):
     advertisements: list[AdvertisementSummary]
+    total: int
 
 class AdvertisementDetail(AdvertisementSummary):
     description: str

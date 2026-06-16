@@ -6,6 +6,7 @@ import 'package:bastetshelter/features/common/components/confirmation_dialog.dar
 import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
 import 'package:bastetshelter/providers/animals/animal_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AdoptionTab extends ConsumerWidget {
@@ -140,11 +141,63 @@ class AdoptionTab extends ConsumerWidget {
                     ),
                   ],
                 ),
+                if (animal.adoptionUrl != null) ...[
+                  const SizedBox(height: 20),
+                  Text(
+                    context.l10n.t('animals.externalAdoptionLink'),
+                    style: tt.titleSmall,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    context.l10n.t(
+                      'animals.linkNameInUrl',
+                      params: {'linkName': animal.linkName},
+                    ),
+                    style: tt.bodySmall?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  if (_hasDuplicateStyleLinkName(animal.name, animal.linkName))
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        context.l10n.t('animals.linkNameDuplicateHint'),
+                        style: tt.bodySmall?.copyWith(
+                          color: AppColors.textSecondary,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      await Clipboard.setData(
+                        ClipboardData(text: animal.adoptionUrl!),
+                      );
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(context.l10n.t('shelter.linkCopied')),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.copy_rounded, size: 18),
+                    label: Text(context.l10n.t('animals.copyAdoptionLink')),
+                  ),
+                ],
               ],
             ],
           ),
         );
       },
     );
+  }
+
+  bool _hasDuplicateStyleLinkName(String displayName, String linkName) {
+    final normalized = displayName
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
+        .replaceAll(RegExp(r'^-+|-+$'), '');
+    return linkName != normalized;
   }
 }

@@ -21,18 +21,23 @@ class AdoptionProcessBody extends StatefulWidget {
 }
 
 class _AdoptionProcessBodyState extends State<AdoptionProcessBody> {
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = _firstPendingIndex;
+  }
+
   @override
   void didUpdateWidget(covariant AdoptionProcessBody oldWidget) {
     super.didUpdateWidget(oldWidget);
-    //change to the next (or whichever it is) step
     if (widget.steps != oldWidget.steps) {
       setState(() {
         _selectedIndex = _firstPendingIndex;
       });
     }
   }
-
-  late int _selectedIndex;
 
   List<AdoptionStepDetails> get _sorted =>
       [...widget.steps]..sort((a, b) => a.order.compareTo(b.order));
@@ -49,12 +54,6 @@ class _AdoptionProcessBodyState extends State<AdoptionProcessBody> {
     }
     if (index == _firstPendingIndex) return StepState.current;
     return StepState.pending;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedIndex = _firstPendingIndex;
   }
 
   @override
@@ -82,7 +81,10 @@ class _AdoptionProcessBodyState extends State<AdoptionProcessBody> {
             selectedIndex: _selectedIndex,
             activeColor: AppColors.secondary,
             inactiveColor: AppColors.divider,
-            onStepTapped: (i) => setState(() => _selectedIndex = i),
+            onStepTapped: (i) {
+              if (i == _selectedIndex) return;
+              setState(() => _selectedIndex = i);
+            },
           ),
         ),
 
@@ -91,6 +93,25 @@ class _AdoptionProcessBodyState extends State<AdoptionProcessBody> {
         Expanded(
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              final fadeTween = CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOut,
+              );
+
+              final offsetTween =
+                  Tween<Offset>(
+                    begin: const Offset(0, 0.03),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(parent: animation, curve: Curves.easeOut),
+                  );
+
+              return FadeTransition(
+                opacity: fadeTween,
+                child: SlideTransition(position: offsetTween, child: child),
+              );
+            },
             child: KeyedSubtree(
               key: ValueKey(_selectedIndex),
               child: SingleChildScrollView(

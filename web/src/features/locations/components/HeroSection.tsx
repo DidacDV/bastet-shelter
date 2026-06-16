@@ -22,12 +22,13 @@ export default function HeroSection() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "1fr auto 1fr",
+          gridTemplateColumns:
+            "minmax(100px, 180px) minmax(260px, 1fr) minmax(100px, 180px)",
           alignItems: "center",
           maxWidth: 1100,
           margin: "0 auto",
           padding: "0 24px",
-          gap: 146,
+          gap: "clamp(24px, 8vw, 96px)",
         }}
       >
         <div
@@ -43,6 +44,8 @@ export default function HeroSection() {
             alt=""
             style={{
               width: "clamp(100px, 14vw, 180px)",
+              maxWidth: "none",
+              flexShrink: 0,
               opacity: 0.92,
               transform: "rotate(-6deg) translateY(8px)",
             }}
@@ -52,6 +55,8 @@ export default function HeroSection() {
             alt=""
             style={{
               width: "clamp(80px, 11vw, 150px)",
+              maxWidth: "none",
+              flexShrink: 0,
               opacity: 0.78,
               transform: "rotate(4deg) translateX(-12px)",
             }}
@@ -63,7 +68,14 @@ export default function HeroSection() {
           gap="lg"
           style={{ textAlign: "center", minWidth: 0 }}
         >
-          <div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+              alignItems: "center",
+            }}
+          >
             <Title
               order={1}
               style={{
@@ -113,6 +125,8 @@ export default function HeroSection() {
             alt=""
             style={{
               width: "clamp(80px, 11vw, 150px)",
+              maxWidth: "none",
+              flexShrink: 0,
               opacity: 0.78,
               transform: "rotate(-4deg) translateX(12px)",
             }}
@@ -122,6 +136,8 @@ export default function HeroSection() {
             alt=""
             style={{
               width: "clamp(100px, 14vw, 180px)",
+              maxWidth: "none",
+              flexShrink: 0,
               opacity: 0.92,
               transform: "rotate(6deg) translateY(8px)",
             }}

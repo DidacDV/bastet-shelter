@@ -11,6 +11,13 @@ export default function LoginPage() {
   const { t } = useLocalization();
   const [searchParams] = useSearchParams();
   const reason = searchParams.get("reason");
+  const redirect = searchParams.get("redirect");
+
+  useEffect(() => {
+    if (redirect) {
+      sessionStorage.setItem("auth_redirect", redirect);
+    }
+  }, [redirect]);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -59,10 +66,10 @@ export default function LoginPage() {
                 {t("auth.checkEmail")}
               </Title>
               <Text className="text-text-secondary text-lg">
-                {t("auth.magicLinkSent", { email })}
+                {t("auth.loginLinkSent", { email })}
                 <br />
                 <br />
-                {t("auth.magicLinkInstructions")}
+                {t("auth.loginLinkInstructions")}
               </Text>
             </div>
           ) : (

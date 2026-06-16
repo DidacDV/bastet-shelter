@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     MAIL_PORT: int
     MAIL_SERVER: str
     FRONTEND_URL: str = "http://localhost:5173"
+    PORTAL_BASE_URL: str = "http://localhost:5173"
 
     model_config = SettingsConfigDict(env_file=".env")
 

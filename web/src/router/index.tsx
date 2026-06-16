@@ -6,6 +6,7 @@ import AdoptionPage from "../features/adoptions/AdoptionPage";
 import LocationPage from "../features/locations/LocationPage";
 import AuthCallbackPage from "../features/adoptantAuth/AuthCallbackPage";
 import AnimalDetailPage from "../features/animals/AnimalDetailsPage";
+import AdoptEntryPage from "../features/animals/AdoptEntryPage";
 import AdoptionDetailPage from "../features/adoptions/AdoptionDetailsPage";
 
 export default function Router() {
@@ -16,6 +17,10 @@ export default function Router() {
           <Route path="/" element={<LocationPage />} />
           <Route path="/animals" element={<AnimalsPage />} />
           <Route path="/animals/:id" element={<AnimalDetailPage />} />
+          <Route
+            path="/adopt/:shelterName/:animalName"
+            element={<AdoptEntryPage />}
+          />
           <Route path="/adoptions/:id" element={<AdoptionDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/adoptions" element={<AdoptionPage />} />

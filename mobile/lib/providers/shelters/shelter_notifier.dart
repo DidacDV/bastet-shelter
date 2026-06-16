@@ -82,7 +82,7 @@ class ShelterNotifier extends _$ShelterNotifier {
   Future<void> updateShelter({
     required String name,
     required String provinceId,
-    required String? email,
+    required String email,
   }) async {
     await genericApiCall(() async {
       final updated = await ref

@@ -52,7 +52,7 @@ final class AnimalPendingTasksProvider
 }
 
 String _$animalPendingTasksHash() =>
-    r'79f3ad94af445da03922926cb660d2b4be6394cc';
+    r'd06f29e6076fe68084dadeedf8e0effbb5634e77';
 
 final class AnimalPendingTasksFamily extends $Family
     with

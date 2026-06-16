@@ -3,6 +3,7 @@ from fastapi import UploadFile, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
+from app.core.utils import generate_unique_link_name
 from app.core.exceptions import NotFoundError, AuthorizationError, BusinessLogicError
 from app.models.animal.animal import Animal
 from app.models.task.task import TaskStatusEnum
@@ -41,12 +42,19 @@ class AnimalService:
         self.adoption_process_service = AdoptionProcessService(db)
         self.shift_task_repo = ShiftTaskRepository(db)
 
+    def _build_adoption_url(self, animal: Animal) -> str | None:
+        if not animal.in_adoption or not animal.refuge or not animal.refuge.shelter:
+            return None
+        base_url = settings.PORTAL_BASE_URL.rstrip("/")
+        return f"{base_url}/adopt/{animal.refuge.shelter.link_name}/{animal.link_name}"
+
     def _to_response(self, animal: Animal) -> AnimalResponse:
         process_ids = self.process_repo.get_process_ids_for_animal(self.db, animal.id)
 
         return AnimalResponse(
             id=animal.id,
             name=animal.name,
+            link_name=animal.link_name,
             birth_date=animal.birth_date,
             arrival_date=animal.arrival_date,
             description=animal.description,
@@ -57,6 +65,7 @@ class AnimalService:
             refuge_name=animal.refuge.name,
             traits=animal.traits,
             adoption_processes=process_ids,
+            adoption_url=self._build_adoption_url(animal),
             images=[
                 AnimalImageResponse(
                     id=img.id,
@@ -72,6 +81,8 @@ class AnimalService:
         return AnimalPublicDetail(
             id=animal.id,
             name=animal.name,
+            link_name=animal.link_name,
+            shelter_link_name=animal.refuge.shelter.link_name,
             shelter_name=animal.refuge.shelter.name,
             birth_date=animal.birth_date,
             arrival_date=animal.arrival_date,
@@ -122,6 +133,16 @@ class AnimalService:
                 shelter_id
             )
 
+        animal_link_name = generate_unique_link_name(
+            data.name,
+            lambda candidate: self.animal_repo.link_name_exists_in_shelter(
+                self.db,
+                shelter_id,
+                candidate,
+            ),
+        )
+        new_animal.link_name = animal_link_name
+
         created_animal = self.animal_repo.create(self.db, new_animal)
         return self._to_response(created_animal)
 
@@ -146,6 +167,20 @@ class AnimalService:
 
     def get_animal_public_detail(self, animal_id: int) -> AnimalPublicDetail:
         animal = self.animal_repo.get_by_id(self.db, animal_id)
+        if not animal:
+            raise NotFoundError("Animal not found")
+        return self._to_public_detail(animal)
+
+    def get_animal_public_detail_by_link_name(
+        self,
+        shelter_link_name: str,
+        animal_link_name: str,
+    ) -> AnimalPublicDetail:
+        animal = self.animal_repo.get_by_link_names(
+            self.db,
+            shelter_link_name,
+            animal_link_name,
+        )
         if not animal:
             raise NotFoundError("Animal not found")
         return self._to_public_detail(animal)
@@ -209,8 +244,10 @@ class AnimalService:
         results = self.animal_repo.get_all_short_info(self.db, shelter_id)
         return self.create_short_info_list(results)
 
-    def get_portal_animals_short_info(self, province_id: str) -> list[AnimalPublicShortInfo]:
-        results = self.animal_repo.get_portal_short_info(self.db, province_id)
+    def get_portal_animals_short_info(
+        self, province_id: str, skip: int = 0, limit: int | None = None
+    ) -> tuple[list[AnimalPublicShortInfo], int]:
+        results, total = self.animal_repo.get_portal_short_info(self.db, province_id, skip, limit)
 
         short_info_list = []
         today = date.today()
@@ -232,7 +269,7 @@ class AnimalService:
                 )
             )
 
-        return short_info_list
+        return short_info_list, total
 
     def create_short_info_list(self, short_info) -> list[AnimalShortInfo]:
         short_info_list = []

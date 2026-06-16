@@ -48,22 +48,21 @@ class _RefugeDropdownState extends State<RefugeDropdown> {
       return Text(name, style: Theme.of(context).textTheme.bodyMedium);
     }
 
-    return DropdownButtonFormField<int>(
-      initialValue: _selected,
-      decoration: InputDecoration(
-        labelText: widget.showLabel ? context.l10n.t('common.refuge') : null,
-        border: widget.showLabel ? null : InputBorder.none,
-        contentPadding: widget.showLabel
-            ? null
-            : const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+    return SizedBox(
+      width: double.infinity,
+      child: DropdownMenu<int>(
+        initialSelection: _selected,
+        label: widget.showLabel ? Text(context.l10n.t('common.refuge')) : null,
+        expandedInsets: EdgeInsets.zero,
+        menuHeight: 300,
+        dropdownMenuEntries: widget.items
+            .map((r) => DropdownMenuEntry(value: r.id, label: r.name))
+            .toList(),
+        onSelected: (value) {
+          setState(() => _selected = value);
+          widget.onChanged(value);
+        },
       ),
-      items: widget.items
-          .map((r) => DropdownMenuItem(value: r.id, child: Text(r.name)))
-          .toList(),
-      onChanged: (value) {
-        setState(() => _selected = value);
-        widget.onChanged(value);
-      },
     );
   }
 }

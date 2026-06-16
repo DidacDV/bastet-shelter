@@ -7,11 +7,13 @@ import {
   Select,
   Switch,
   Textarea,
+  TextInput,
   NumberInput,
   Button,
   Group,
   Divider,
   Box,
+  Input,
 } from "@mantine/core";
 import { IconHeart } from "@tabler/icons-react";
 import { AppColors } from "../../../theme/constants";
@@ -49,6 +51,15 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
+const INITIAL_FORM: AdoptionFormData = {
+  has_garden: false,
+  has_children: false,
+  has_other_pets: false,
+  previous_pet_experience: false,
+};
+
+type FieldErrors = Partial<Record<keyof AdoptionFormData, string>>;
+
 export default function AdoptionFormModal({
   opened,
   onClose,
@@ -56,21 +67,61 @@ export default function AdoptionFormModal({
   onSubmit,
 }: AdoptionFormModalProps) {
   const { t } = useLocalization();
-  const [form, setForm] = useState<AdoptionFormData>({});
+  const [form, setForm] = useState<AdoptionFormData>(INITIAL_FORM);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const requiredMessage = t("adoption.form.fieldRequired");
 
   const set = <K extends keyof AdoptionFormData>(
     key: K,
     value: AdoptionFormData[K],
-  ) => setForm((prev) => ({ ...prev, [key]: value }));
+  ) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+    setFieldErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  };
+
+  const validate = (): FieldErrors => {
+    const errors: FieldErrors = {};
+
+    if (!form.housing_type) {
+      errors.housing_type = requiredMessage;
+    }
+    if (form.hours_alone_per_day === undefined) {
+      errors.hours_alone_per_day = requiredMessage;
+    }
+    if (!form.reason_for_adoption?.trim()) {
+      errors.reason_for_adoption = requiredMessage;
+    }
+    if (form.has_children && !form.children_ages?.trim()) {
+      errors.children_ages = requiredMessage;
+    }
+    if (form.has_other_pets && !form.other_pets_description?.trim()) {
+      errors.other_pets_description = requiredMessage;
+    }
+
+    return errors;
+  };
 
   const handleSubmit = async () => {
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
     try {
       await onSubmit(form);
-      setForm({});
+      setForm(INITIAL_FORM);
+      setFieldErrors({});
       onClose();
     } catch {
       setError(t("common.tryAgainError"));
@@ -81,7 +132,8 @@ export default function AdoptionFormModal({
 
   const handleClose = () => {
     if (submitting) return;
-    setForm({});
+    setForm(INITIAL_FORM);
+    setFieldErrors({});
     setError(null);
     onClose();
   };
@@ -132,18 +184,19 @@ export default function AdoptionFormModal({
               { value: "other", label: t("adoption.form.housing.other") },
             ]}
             radius="md"
-            clearable
+            withAsterisk
+            error={fieldErrors.housing_type}
             styles={{ input: { borderColor: AppColors.outline } }}
           />
 
-          <Group gap="xl">
+          <Input.Wrapper label={t("adoption.form.hasGarden")} withAsterisk>
             <Switch
-              label={t("adoption.form.hasGarden")}
               checked={form.has_garden ?? false}
               onChange={(e) => set("has_garden", e.currentTarget.checked)}
               color="primary"
+              mt={4}
             />
-          </Group>
+          </Input.Wrapper>
         </Stack>
 
         <Divider color={AppColors.divider} />
@@ -151,12 +204,20 @@ export default function AdoptionFormModal({
         <Stack gap="md">
           <SectionLabel>{t("adoption.form.yourHousehold")}</SectionLabel>
 
-          <Switch
-            label={t("adoption.form.hasChildren")}
-            checked={form.has_children ?? false}
-            onChange={(e) => set("has_children", e.currentTarget.checked)}
-            color="primary"
-          />
+          <Input.Wrapper label={t("adoption.form.hasChildren")} withAsterisk>
+            <Switch
+              checked={form.has_children ?? false}
+              onChange={(e) => {
+                const checked = e.currentTarget.checked;
+                set("has_children", checked);
+                if (!checked) {
+                  set("children_ages", undefined);
+                }
+              }}
+              color="primary"
+              mt={4}
+            />
+          </Input.Wrapper>
 
           {form.has_children && (
             <Box
@@ -167,35 +228,40 @@ export default function AdoptionFormModal({
                 border: `1px solid ${AppColors.divider}`,
               }}
             >
-              <Text size="xs" c="dimmed" mb={8}>
-                {t("adoption.form.childrenAgesLabel")}
-              </Text>
-              <input
+              <TextInput
+                label={t("adoption.form.childrenAgesLabel")}
+                placeholder={t("adoption.form.childrenAgesHint")}
                 value={form.children_ages ?? ""}
                 onChange={(e) =>
-                  set("children_ages", e.target.value || undefined)
+                  set("children_ages", e.currentTarget.value || undefined)
                 }
-                placeholder={t("adoption.form.childrenAgesHint")}
-                style={{
-                  width: "100%",
-                  border: `1px solid ${AppColors.outline}`,
-                  borderRadius: 6,
-                  padding: "8px 10px",
-                  fontSize: 14,
-                  color: AppColors.textDark,
-                  background: AppColors.pureWhite,
-                  outline: "none",
+                withAsterisk
+                error={fieldErrors.children_ages}
+                radius="md"
+                styles={{
+                  input: {
+                    borderColor: AppColors.outline,
+                    background: AppColors.pureWhite,
+                  },
                 }}
               />
             </Box>
           )}
 
-          <Switch
-            label={t("adoption.form.hasOtherPets")}
-            checked={form.has_other_pets ?? false}
-            onChange={(e) => set("has_other_pets", e.currentTarget.checked)}
-            color="primary"
-          />
+          <Input.Wrapper label={t("adoption.form.hasOtherPets")} withAsterisk>
+            <Switch
+              checked={form.has_other_pets ?? false}
+              onChange={(e) => {
+                const checked = e.currentTarget.checked;
+                set("has_other_pets", checked);
+                if (!checked) {
+                  set("other_pets_description", undefined);
+                }
+              }}
+              color="primary"
+              mt={4}
+            />
+          </Input.Wrapper>
 
           {form.has_other_pets && (
             <Box
@@ -216,6 +282,8 @@ export default function AdoptionFormModal({
                     e.currentTarget.value || undefined,
                   )
                 }
+                withAsterisk
+                error={fieldErrors.other_pets_description}
                 radius="md"
                 autosize
                 minRows={2}
@@ -235,14 +303,16 @@ export default function AdoptionFormModal({
         <Stack gap="md">
           <SectionLabel>{t("adoption.form.experienceRoutine")}</SectionLabel>
 
-          <Switch
-            label={t("adoption.form.previousExperience")}
-            checked={form.previous_pet_experience ?? false}
-            onChange={(e) =>
-              set("previous_pet_experience", e.currentTarget.checked)
-            }
-            color="primary"
-          />
+          <Input.Wrapper label={t("adoption.form.previousExperience")} withAsterisk>
+            <Switch
+              checked={form.previous_pet_experience ?? false}
+              onChange={(e) =>
+                set("previous_pet_experience", e.currentTarget.checked)
+              }
+              color="primary"
+              mt={4}
+            />
+          </Input.Wrapper>
 
           <NumberInput
             label={t("adoption.form.hoursAlone")}
@@ -254,6 +324,8 @@ export default function AdoptionFormModal({
             min={0}
             max={24}
             radius="md"
+            withAsterisk
+            error={fieldErrors.hours_alone_per_day}
             styles={{ input: { borderColor: AppColors.outline } }}
           />
         </Stack>
@@ -270,6 +342,8 @@ export default function AdoptionFormModal({
           radius="md"
           autosize
           minRows={3}
+          withAsterisk
+          error={fieldErrors.reason_for_adoption}
           styles={{ input: { borderColor: AppColors.outline } }}
         />
 

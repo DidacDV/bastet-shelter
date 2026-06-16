@@ -26,6 +26,7 @@ class TestMedicineRepository:
 
         animal = Animal(
             name="Milo",
+            link_name="milo",
             birth_date=date(2026, 1, 1),
             description="Desc",
             breed="Mixed",

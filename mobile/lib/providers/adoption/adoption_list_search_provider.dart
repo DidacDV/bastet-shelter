@@ -1,4 +1,5 @@
 import 'package:bastetshelter/features/adoption/data/models/adoption_process/adoption_process_summary.dart';
+import 'package:bastetshelter/providers/adoption/adoption_filter_provider.dart';
 import 'package:bastetshelter/providers/adoption/adoption_list_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -16,12 +17,15 @@ class AdoptionSearchQuery extends _$AdoptionSearchQuery {
 AsyncValue<List<AdoptionProcessSummary>> filteredAdoptionList(Ref ref) {
   final listAsync = ref.watch(adoptionListProvider);
   final query = ref.watch(adoptionSearchQueryProvider).toLowerCase();
+  final filter = ref.watch(adoptionFilterProvider);
 
   return listAsync.whenData((list) {
-    if (query.isEmpty) return list;
+    var filtered = filter.apply(list);
+
+    if (query.isEmpty) return filtered;
 
     //filter by both the animal name AND the adoptant name
-    return list.where((process) {
+    return filtered.where((process) {
       final animalMatch = process.animalName.toLowerCase().contains(query);
       final adoptantMatch = process.adoptantName.toLowerCase().contains(query);
 

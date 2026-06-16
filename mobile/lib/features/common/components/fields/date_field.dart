@@ -26,9 +26,44 @@ class DateField extends StatelessWidget {
     final tt = Theme.of(context).textTheme;
     final hasValue = value != null;
 
+    if (label.isEmpty) {
+      return InkWell(
+        onTap: () => _pick(context),
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: AppColors.textSecondary.withValues(alpha: 0.4),
+            ),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                hasValue
+                    ? DateFormat('dd/MM/yyyy').format(value!)
+                    : (required
+                          ? context.l10n.t('common.selectDate')
+                          : context.l10n.t('common.optional')),
+                style: tt.bodyMedium?.copyWith(
+                  color: hasValue
+                      ? AppColors.textPrimary
+                      : AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Icon(Icons.calendar_today_outlined, size: 18),
+            ],
+          ),
+        ),
+      );
+    }
+
     return InkWell(
       onTap: () => _pick(context),
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(14),
       child: InputDecorator(
         isEmpty: !hasValue,
         decoration: InputDecoration(
@@ -37,18 +72,11 @@ class DateField extends StatelessWidget {
               ? context.l10n.t('common.selectDate')
               : context.l10n.t('common.optional'),
           suffixIcon: const Icon(Icons.calendar_today_outlined, size: 18),
-          isDense: true,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 2,
-            vertical: 16,
-          ),
         ),
-        child: hasValue
-            ? Text(
-                DateFormat('dd/MM/yyyy').format(value!),
-                style: tt.bodyMedium?.copyWith(color: AppColors.textPrimary),
-              )
-            : const SizedBox.shrink(),
+        child: Text(
+          hasValue ? DateFormat('dd/MM/yyyy').format(value!) : '',
+          style: tt.bodyMedium?.copyWith(color: AppColors.textPrimary),
+        ),
       ),
     );
   }

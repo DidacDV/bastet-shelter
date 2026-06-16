@@ -19,8 +19,9 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def _column_names(table: str) -> set[str]:
     connection = op.get_bind()
-    rows = connection.execute(sa.text(f"PRAGMA table_info({table})")).fetchall()
-    return {row[1] for row in rows}
+    inspector = sa.inspect(connection)
+    columns = inspector.get_columns(table)
+    return {col["name"] for col in columns}
 
 
 def upgrade() -> None:

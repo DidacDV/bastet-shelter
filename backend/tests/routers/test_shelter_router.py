@@ -14,11 +14,25 @@ def _register_and_login(client, email="user@example.com", name="John"):
 def _auth_headers(token):
     return {"Authorization": f"Bearer {token}"}
 
-def _create_shelter(client, token, name="Rodamons", province_id="08", refuge_name="refuge"):
+def _create_shelter(
+    client,
+    token,
+    name="Rodamons",
+    province_id="08",
+    refuge_name="refuge",
+    shelter_email=None,
+):
     """Helper that returns (new_token, volunteer_code, manager_code, shelter_id)"""
+    if shelter_email is None:
+        shelter_email = f"{name.lower().replace(' ', '_')}@example.com"
     res = client.post(
         "/shelters/",
-        json={"name": name, "province_id": province_id, "refuge_name": refuge_name},
+        json={
+            "name": name,
+            "province_id": province_id,
+            "refuge_name": refuge_name,
+            "shelter_email": shelter_email,
+        },
         headers=_auth_headers(token)
     )
     assert res.status_code == 201, res.json()
@@ -36,6 +50,35 @@ def test_create_shelter(client):
 def test_create_shelter_unauthenticated(client):
     res = client.post("/shelters/", json={"name": "Happy Paws", "province_id": "08"})
     assert res.status_code == 401
+
+
+def test_create_shelter_requires_email(client):
+    token = _register_and_login(client)
+    res = client.post(
+        "/shelters/",
+        json={"name": "Happy Paws", "province_id": "08", "refuge_name": "Main"},
+        headers=_auth_headers(token),
+    )
+    assert res.status_code == 422
+
+
+def test_create_shelter_duplicate_email(client):
+    owner_token = _register_and_login(client, email="owner@example.com", name="Owner")
+    _create_shelter(client, owner_token, shelter_email="contact@rodamons.com")
+
+    other_token = _register_and_login(client, email="other@example.com", name="Other")
+    res = client.post(
+        "/shelters/",
+        json={
+            "name": "Another Shelter",
+            "province_id": "08",
+            "refuge_name": "Refuge",
+            "shelter_email": "contact@rodamons.com",
+        },
+        headers=_auth_headers(other_token),
+    )
+    assert res.status_code == 400
+    assert res.json()["detail"] == "A shelter with this email already exists"
 
 def test_get_my_membership_no_shelter(client):
     token = _register_and_login(client)
@@ -148,6 +191,32 @@ def test_update_shelter_partial(client):
     data = res.json()
     assert data["name"] == "Updated Name"
     assert data["province"]["id"] == "08"
+
+
+def test_update_shelter_duplicate_email(client):
+    owner_token = _register_and_login(client, email="owner@example.com", name="Owner")
+    manager_token, _, _, _ = _create_shelter(
+        client,
+        owner_token,
+        name="Shelter A",
+        shelter_email="shelter_a@example.com",
+    )
+
+    other_token = _register_and_login(client, email="other@example.com", name="Other")
+    other_manager_token, _, _, _ = _create_shelter(
+        client,
+        other_token,
+        name="Shelter B",
+        shelter_email="shelter_b@example.com",
+    )
+
+    res = client.put(
+        "/shelters/",
+        json={"email": "shelter_a@example.com"},
+        headers=_auth_headers(other_manager_token),
+    )
+    assert res.status_code == 400
+    assert res.json()["detail"] == "A shelter with this email already exists"
 
 
 def test_update_shelter_unauthorized(client):

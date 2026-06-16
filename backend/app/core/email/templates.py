@@ -23,7 +23,7 @@ def magic_link_email(name: str, magic_link_url: str) -> str:
                   <p style="margin:0 0 16px; font-size:16px;">Hi {name},</p>
 
                   <p style="margin:0 0 24px; font-size:16px; line-height:1.5;">
-                    Here is your link to access the adoption portal. Just click the button below to log in.
+                    Here is your login link to access the adoption portal. Click the button below to log in.
                   </p>
 
                   <p style="margin:0 0 30px;">
@@ -47,7 +47,7 @@ def magic_link_email(name: str, magic_link_url: str) -> str:
               <tr>
                 <td style="padding-top:25px; border-top:2px solid #f0f0f5;">
                   <p style="margin:0 0 16px; font-size:13px; color:#777777; line-height:1.5;">
-                    This link is only valid for 30 days and can be used once. If you didn't ask for this email, you can safely ignore it.
+                    This login link is only valid for 30 days and can be used once. If you didn't ask for this email, you can safely ignore it.
                   </p>
                   <p style="margin:0; font-size:13px; color:#777777;">
                     Best,<br>

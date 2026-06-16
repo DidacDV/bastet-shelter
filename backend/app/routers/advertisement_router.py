@@ -30,16 +30,23 @@ def get_my_advertisements(
     auth: AuthenticatedUser = Depends(get_current_user),
     service: AdvertisementService = Depends(get_advertisement_service)
 ):
-    return {"advertisements":service.get_my_advertisements(auth.shelter_id)}
+    ads = service.get_my_advertisements(auth.shelter_id)
+    return {"advertisements": ads, "total": len(ads)}
 
 @router.get("/", response_model=AdvertisementSummaryList)
 def get_advertisements(
     province_name: Optional[str] = Query(None, description="Filter by province name"),
     category: Optional[AdCategoryEnum] = Query(None, description="Filter by Ad Category"),
+    skip: int = Query(default=0, ge=0, description="number of records to skip"),
+    limit: Optional[int] = Query(default=None, ge=1, description="max n records to return"),
     auth: AuthenticatedUser = Depends(get_current_user),
     service: AdvertisementService = Depends(get_advertisement_service)
 ):
-    return {"advertisements":service.get_advertisements(province_name=province_name, category=category, shelter_id=auth.shelter_id)}
+    ads, total = service.get_advertisements(
+        province_name=province_name, category=category, shelter_id=auth.shelter_id,
+        skip=skip, limit=limit
+    )
+    return {"advertisements": ads, "total": total}
 
 @router.get("/{ad_id}", response_model=AdvertisementDetail)
 def get_advertisement_detail(

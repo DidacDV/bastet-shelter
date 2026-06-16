@@ -43,13 +43,13 @@ class AdoptantAuthService:
         frontend_magic_link_url = f"{settings.frontend_base_url}/verify?token={raw_token}"
 
         send_email(
-            subject="Your access link to Bastet Shelter",
+            subject="Your login link for Bastet Shelter",
             recipients=[str(adoptant.email)],
             body=magic_link_email(name=str(adoptant.name), magic_link_url=frontend_magic_link_url),
             background_tasks=background_tasks,
         )
 
-        return {"message": "If the details are correct, a magic link has been sent to your email."}
+        return {"message": "If the details are correct, a login link has been sent to your email."}
 
     def verify_magic_link(self, token: str) -> AdoptantTokenResponse:
         magic_link = self.token_repo.get_by_token(self.db, token)

@@ -16,6 +16,7 @@ class TestAnimalRepository:
         refuge = Refuge(name="Main Refuge", province_id="08", shelter_id=shelter.id)
         available_animal = Animal(
             name="Milo",
+            link_name="milo",
             birth_date=date(2024, 1, 1),
             description="Desc",
             breed="Mixed",
@@ -25,6 +26,7 @@ class TestAnimalRepository:
         )
         reserved_animal = Animal(
             name="Luna",
+            link_name="luna",
             birth_date=date(2024, 2, 1),
             description="Desc",
             breed="Mixed",
@@ -52,6 +54,7 @@ class TestAnimalRepository:
         )
         db.commit()
 
-        results = self.repo.get_portal_short_info(db, "08")
+        results, total = self.repo.get_portal_short_info(db, "08")
 
         assert [row.id for row in results] == [available_animal.id]
+        assert total == 1

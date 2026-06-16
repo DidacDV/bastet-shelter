@@ -45,25 +45,26 @@ class AdvertisementService:
         return [AdvertisementSummary.model_validate(ad) for ad in ads]
 
     def get_advertisements(
-            self, province_name: Optional[str] = None, category: Optional[AdCategoryEnum] = None, shelter_id: Optional[int] = None
-    ) -> List[AdvertisementSummary]:
+            self, province_name: Optional[str] = None, category: Optional[AdCategoryEnum] = None,
+            shelter_id: Optional[int] = None, skip: int = 0, limit: Optional[int] = None
+    ) -> tuple[List[AdvertisementSummary], int]:
 
         province_id = None
 
         if province_name:
             province = self.geo_repo.get_province_by_name(self.db, province_name)
             if not province:
-                return []
+                return [], 0
             province_id = province.id
 
-        ads = self.advertisement_repo.get_active_advertisements(self.db, province_id, category)
+        ads, total = self.advertisement_repo.get_active_advertisements(
+            self.db, province_id, category, skip, limit
+        )
 
-        non_self_ads = []
-        for ad in ads:
-            if ad.shelter_id != shelter_id:
-                non_self_ads.append(ad)
+        non_self_ads = [ad for ad in ads if ad.shelter_id != shelter_id]
+        total_non_self = total
 
-        return [AdvertisementSummary.model_validate(ad) for ad in non_self_ads]
+        return [AdvertisementSummary.model_validate(ad) for ad in non_self_ads], total_non_self
 
     def get_advertisement_by_id(self, ad_id: int) -> AdvertisementDetail:
         ad = self.advertisement_repo.get_by_id(self.db, ad_id)

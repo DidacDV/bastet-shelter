@@ -6,6 +6,7 @@ import 'animal_image_model.dart';
 class AnimalDetails {
   final int id;
   final String name;
+  final String linkName;
   final DateTime birthDate;
   final DateTime? arrivalDate;
   final String description;
@@ -17,10 +18,12 @@ class AnimalDetails {
   final List<AnimalImage> images;
   final List<Trait> traits;
   final List<int>? adoptionProcessesIds;
+  final String? adoptionUrl;
 
   const AnimalDetails({
     required this.id,
     required this.name,
+    required this.linkName,
     required this.birthDate,
     this.arrivalDate,
     required this.description,
@@ -32,12 +35,14 @@ class AnimalDetails {
     required this.images,
     required this.traits,
     this.adoptionProcessesIds,
+    this.adoptionUrl,
   });
 
   factory AnimalDetails.fromJson(Map<String, dynamic> json) {
     return AnimalDetails(
       id: json['id'] as int,
       name: json['name'] as String,
+      linkName: json['link_name'] as String? ?? '',
       birthDate: DateTime.parse(json['birth_date'] as String),
       arrivalDate: json['arrival_date'] != null
           ? DateTime.parse(json['arrival_date'] as String)
@@ -61,6 +66,7 @@ class AnimalDetails {
                 .map((e) => e as int)
                 .toList()
           : null,
+      adoptionUrl: json['adoption_url'] as String?,
     );
   }
   String? get primaryImageUrl => images.isEmpty

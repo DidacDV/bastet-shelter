@@ -1,8 +1,13 @@
 from fastapi import BackgroundTasks
-from fastapi_mail import MessageType, MessageSchema
-from pydantic import NameEmail
+from fastapi_mail import MessageType
 
-from app.core.email.email_config import fast_mail
+from app.core.email.email_senders import (
+    EmailSender,
+    FastMailEmailSender,
+    LoggingEmailSenderDecorator,
+)
+
+_default_email_sender: EmailSender = LoggingEmailSenderDecorator(FastMailEmailSender())
 
 
 def send_email(
@@ -10,12 +15,12 @@ def send_email(
     recipients: list[str],
     body: str,
     background_tasks: BackgroundTasks,
-    subtype: MessageType = MessageType.html
+    subtype: MessageType = MessageType.html,
 ):
-    message = MessageSchema(
+    _default_email_sender.send(
         subject=subject,
         recipients=recipients,
         body=body,
-        subtype=subtype
+        background_tasks=background_tasks,
+        subtype=subtype,
     )
-    background_tasks.add_task(fast_mail.send_message, message)

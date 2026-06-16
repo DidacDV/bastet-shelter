@@ -3,6 +3,8 @@ import 'package:bastetshelter/features/adoption/data/models/adoption_process/ado
 import 'package:bastetshelter/features/adoption/data/models/adoption_requests/adoption_requests.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'package:bastetshelter/providers/animals/animal_details_provider.dart';
+
 import 'adoption_repository_provider.dart';
 import 'adoption_list_provider.dart';
 
@@ -36,9 +38,7 @@ class AdoptionDetail extends _$AdoptionDetail {
       await ref
           .read(adoptionRepositoryProvider)
           .rejectAdoptionProcess(processId, RejectionRequest(reason: reason));
-
-      ref.invalidateSelf();
-      ref.invalidate(adoptionDetailProvider(processId));
+      await _invalidateAndRefresh();
     });
   }
 
@@ -105,7 +105,11 @@ class AdoptionDetail extends _$AdoptionDetail {
   }
 
   Future<void> _invalidateAndRefresh() async {
+    final animalId = state.value?.animalId;
     ref.invalidate(adoptionListProvider);
+    if (animalId != null) {
+      ref.invalidate(animalDetailProvider(animalId));
+    }
     ref.invalidateSelf();
     await future;
   }

@@ -28,6 +28,8 @@ export interface AnimalImageResponse {
 }
 
 export interface AnimalPublicDetails extends AnimalPublicShortInfo {
+  link_name: string;
+  shelter_link_name: string;
   birth_date: string;
   arrival_date: string | null;
   description: string;
@@ -45,4 +47,9 @@ export const animalRepository = {
 
   getAnimalDetails: (animalId: number) =>
     apiClient.get<AnimalPublicDetails>(`/animals/public/${animalId}`),
+
+  getAnimalByLinkName: (shelterLinkName: string, animalLinkName: string) =>
+    apiClient.get<AnimalPublicDetails>(
+      `/animals/public/by-link/${shelterLinkName}/${animalLinkName}`,
+    ),
 };

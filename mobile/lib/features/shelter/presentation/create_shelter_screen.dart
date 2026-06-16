@@ -50,9 +50,7 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
         _nameController.text,
         _selectedLocationId!,
         _refugeNameController.text,
-        _emailController.text.trim().isEmpty
-            ? null
-            : _emailController.text.trim(),
+        _emailController.text.trim(),
       );
       if (mounted) Navigator.pushReplacementNamed(context, '/home');
     });
@@ -112,7 +110,7 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
                       const SizedBox(height: 20),
 
                       _FormLabel(
-                        label: context.l10n.t('shelter.emailOptional'),
+                        label: context.l10n.t('shelter.email'),
                         tt: tt,
                       ),
                       const SizedBox(height: 6),
@@ -120,7 +118,7 @@ class _CreateShelterScreenState extends ConsumerState<CreateShelterScreen> {
                         controller: _emailController,
                         label: context.l10n.t('shelter.emailExample'),
                         keyboardType: TextInputType.emailAddress,
-                        validator: (v) => Validators.validateEmailNoRequired(v),
+                        validator: Validators.validateEmail,
                       ),
 
                       const SizedBox(height: 20),

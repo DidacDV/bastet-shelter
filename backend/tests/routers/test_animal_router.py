@@ -11,6 +11,28 @@ mock_user.id = 1
 mock_auth = AuthenticatedUser(user=mock_user, role="MANAGER", shelter_id=1)
 
 
+def _animal_response(**overrides):
+    data = {
+        "id": 1,
+        "name": "Buddy",
+        "link_name": "buddy",
+        "birth_date": "2026-01-01",
+        "arrival_date": None,
+        "description": "Desc",
+        "breed": "Breed",
+        "animal_type": "DOG",
+        "in_adoption": False,
+        "refuge_id": 1,
+        "refuge_name": "Main Refuge",
+        "images": [],
+        "traits": [],
+        "adoption_processes": [],
+        "adoption_url": None,
+    }
+    data.update(overrides)
+    return data
+
+
 @pytest.fixture
 def mock_service():
     service = MagicMock()
@@ -27,15 +49,7 @@ def setup_overrides(mock_service):
 
 
 def test_register_animal_success(client, mock_service):
-    mock_service.register_animal.return_value = {
-        "id": 1, "name": "Buddy", "birth_date": "2026-01-01",
-        "arrival_date": None,
-        "description": "Desc", "breed": "Breed",
-        "animal_type": "DOG", "in_adoption": False, "refuge_id": 1,
-        "refuge_name": "Main Refuge",
-        "image_url": None,
-        "traits": []
-    }
+    mock_service.register_animal.return_value = _animal_response()
 
     response = client.post("/animals/", json={
         "name": "Buddy", "birth_date": "2026-01-01",
@@ -68,14 +82,7 @@ def test_register_animal_error(client, mock_service):
 
 
 def test_get_animals_success(client, mock_service):
-    mock_service.get_animals.return_value = [
-        {"id": 1, "name": "Buddy", "birth_date": "2026-01-01", "arrival_date": None,
-         "description": "Desc", "breed": "Breed",
-         "animal_type": "DOG", "in_adoption": False, "refuge_id": 1,
-         "refuge_name": "Main Refuge",
-         "image_url": None,
-         "traits": []}
-    ]
+    mock_service.get_animals.return_value = [_animal_response()]
 
     response = client.get("/animals/?refuge_id=1")
 
@@ -94,14 +101,7 @@ def test_get_animals_error(client, mock_service):
 
 
 def test_get_animal_detail_success(client, mock_service):
-    mock_service.get_animal_by_id.return_value = {
-        "id": 1, "name": "Buddy", "birth_date": "2026-01-01", "arrival_date": None,
-        "description": "Desc", "breed": "Breed",
-        "animal_type": "DOG", "in_adoption": False, "refuge_id": 1,
-        "refuge_name": "Main Refuge",
-        "image_url": None,
-        "traits": []
-    }
+    mock_service.get_animal_by_id.return_value = _animal_response()
 
     response = client.get("/animals/1")
 
@@ -169,14 +169,7 @@ def test_get_animal_pending_tasks_error(client, mock_service):
 
 
 def test_toggle_adoption_success(client, mock_service):
-    mock_service.set_in_adoption.return_value = {
-        "id": 1, "name": "Buddy", "birth_date": "2026-01-01", "arrival_date": None,
-        "description": "Desc", "breed": "Breed",
-        "animal_type": "DOG", "in_adoption": True, "refuge_id": 1,
-        "refuge_name": "Main Refuge",
-        "image_url": None,
-        "traits": []
-    }
+    mock_service.set_in_adoption.return_value = _animal_response(in_adoption=True)
 
     response = client.patch("/animals/1/adoption")
 

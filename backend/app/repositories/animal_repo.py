@@ -26,6 +26,36 @@ class AnimalRepository(BaseRepository[Animal]):
     def get_by_refuge(self, db: Session, refuge_id: int) -> list[Animal]:
         return db.query(Animal).filter(Animal.refuge_id == refuge_id).all()
 
+    def get_by_link_names(
+        self,
+        db: Session,
+        shelter_link_name: str,
+        animal_link_name: str,
+    ) -> Animal | None:
+        return (
+            db.query(Animal)
+            .join(Refuge, Animal.refuge_id == Refuge.id)
+            .join(Shelter, Refuge.shelter_id == Shelter.id)
+            .filter(Shelter.link_name == shelter_link_name, Animal.link_name == animal_link_name)
+            .first()
+        )
+
+    def link_name_exists_in_shelter(
+        self,
+        db: Session,
+        shelter_id: int,
+        link_name: str,
+        exclude_animal_id: int | None = None,
+    ) -> bool:
+        query = (
+            db.query(Animal.id)
+            .join(Refuge, Animal.refuge_id == Refuge.id)
+            .filter(Refuge.shelter_id == shelter_id, Animal.link_name == link_name)
+        )
+        if exclude_animal_id is not None:
+            query = query.filter(Animal.id != exclude_animal_id)
+        return query.first() is not None
+
     def update_adoption_status(self, db: Session, animal_id: int, in_adoption: bool) -> Animal | None:
         animal = self.get_by_id(db, animal_id)
         if animal:
@@ -60,7 +90,7 @@ class AnimalRepository(BaseRepository[Animal]):
             .all()
         )
 
-    def get_portal_short_info(self, db: Session, province_id: str):
+    def get_portal_short_info(self, db: Session, province_id: str, skip: int = 0, limit: int | None = None):
         has_active_adoption_process = (
             select(AdoptionProcess.id)
             .where(
@@ -88,5 +118,13 @@ class AnimalRepository(BaseRepository[Animal]):
         )
 
         query = query.filter(Refuge.province_id == province_id)
+        query = query.group_by(Animal.id, Refuge.name, Shelter.name)
 
-        return query.group_by(Animal.id, Refuge.name, Shelter.name).all()
+        total = query.count()
+
+        if skip:
+            query = query.offset(skip)
+        if limit is not None:
+            query = query.limit(limit)
+
+        return query.all(), total

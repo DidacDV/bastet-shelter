@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from app.schemas.refuge_schema import RefugeResponse
 
@@ -12,13 +12,13 @@ class ShelterCreate(BaseModel):
     name: str
     province_id: str
     refuge_name: str
-    shelter_email: str | None = None
+    shelter_email: EmailStr
 
 
 class ShelterUpdate(BaseModel):
     name: Optional[str] = None
     province_id: Optional[str] = None
-    email: Optional[str] = None
+    email: Optional[EmailStr] = None
 
 
 class ShelterResponse(BaseModel):
@@ -26,11 +26,20 @@ class ShelterResponse(BaseModel):
 
     id: int
     name: str
+    link_name: str
     shelter_email: str | None = Field(validation_alias="email", default=None)
     province: ProvinceResponse
     volunteer_code: str
     manager_code: str
     refuges: list[RefugeResponse]
+
+class ExternalIntegrationResponse(BaseModel):
+    portal_base_url: str
+    shelter_link_name: str
+    url_pattern: str
+    button_html_template: str
+    usage_hint: str
+    duplicate_name_hint: str
 
 class ShelterBasicInfoResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)

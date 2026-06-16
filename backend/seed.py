@@ -47,7 +47,14 @@ async def seed_data():
         db.add(manager)
         db.flush()
 
-        shelter = Shelter(name="Bastet's Hope",province_id="08", volunteer_code="VOL123", manager_code="MAN456")
+        shelter = Shelter(
+            name="Bastet's Hope",
+            province_id="08",
+            email="contact@bastetshope.com",
+            link_name="bastets-hope",
+            volunteer_code="VOL123",
+            manager_code="MAN456",
+        )
         db.add(shelter)
         db.flush()
 

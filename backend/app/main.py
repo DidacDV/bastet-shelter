@@ -130,6 +130,8 @@ admin.add_view(ShelterMemberAdmin)
 admin.add_view(AnimalAdmin)
 admin.add_view(ProvinceAdmin)
 admin.add_view(TraitAdmin)
-@app.get("/")
+
+
+@app.api_route("/", methods=["GET", "HEAD"])
 def root():
     return {"message": "bastet is running"}

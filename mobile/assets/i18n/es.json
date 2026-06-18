@@ -287,6 +287,7 @@
   "community.categoryEquipment": "Equipamiento",
   "community.categoryToys": "Juguetes",
   "community.categoryOther": "Otros",
+  "community.noEmailAppFound": "No se ha encontrado ninguna app para enviar correos. Por favor, contacta manualmente con la protectora.",
   "animals.notInAdoption": "No en adopción",
   "animals.inAdoption": "En adopción",
   "animals.lessThanOneYear": "< 1 año",

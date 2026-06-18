@@ -287,6 +287,7 @@
   "community.categoryEquipment": "Equipment",
   "community.categoryToys": "Toys",
   "community.categoryOther": "Other",
+  "community.noEmailAppFound": "No email app found. Please contact the shelter manually.",
   "animals.notInAdoption": "Not in adoption",
   "animals.inAdoption": "In adoption",
   "animals.lessThanOneYear": "< 1 year",

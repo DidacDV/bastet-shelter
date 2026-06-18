@@ -378,7 +378,21 @@ class _SheetContentState extends ConsumerState<_SheetContent> {
 
   Future<void> _launchEmail(String email) async {
     final uri = Uri(scheme: 'mailto', path: email);
-    if (await canLaunchUrl(uri)) await launchUrl(uri);
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      try {
+        await launchUrl(uri);
+      } catch (_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(context.l10n.t('community.noEmailAppFound')),
+            ),
+          );
+        }
+      }
+    }
   }
 }
 

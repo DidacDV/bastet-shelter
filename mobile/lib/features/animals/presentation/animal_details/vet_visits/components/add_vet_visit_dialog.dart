@@ -26,7 +26,7 @@ class _AddVetVisitBottomSheetState
   final _notesController = TextEditingController();
 
   DateTime _selectedDate = DateTime.now();
-  VetVisitType _selectedType = VetVisitType.generalCheckup;
+  VetVisitType _selectedType = VetVisitType.vaccine;
   bool _loading = false;
 
   @override

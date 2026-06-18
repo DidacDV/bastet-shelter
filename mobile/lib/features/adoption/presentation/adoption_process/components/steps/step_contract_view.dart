@@ -23,11 +23,11 @@ class ContractStepView extends ConsumerWidget {
     final downloadUrl = '${parts[0]}/upload/fl_attachment/${parts[1]}';
     final uri = Uri.parse(downloadUrl);
 
-    if (!await canLaunchUrl(uri)) {
-      debugPrint('Cannot launch URL: $uri');
-      return;
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      debugPrint('Cannot launch URL: $uri — $e');
     }
-    await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
   }
 
   void _viewPdf(BuildContext context, String url) {

@@ -118,6 +118,7 @@
   "adoption.step.contract": "Contract",
   "adoption.step.animalPickup": "Animal Pickup",
   "adoption.step.pickup": "Pickup",
+  "adoption.backToAnimalDetails": "Back to animal details",
   "adoption.form.adoptAnimal": "Adopt {animal}",
   "adoption.form.intro": "Tell us a bit about yourself and your home. All fields are required.",
   "adoption.form.fieldRequired": "This field is required",

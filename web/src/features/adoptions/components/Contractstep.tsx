@@ -35,7 +35,7 @@ function SignatureRow({
       <ThemeIcon
         size="sm"
         radius="xl"
-        color={signed ? "green" : "gray"}
+        color={signed ? "primary" : "gray"}
         variant="light"
       >
         {signed ? <IconCheck size={12} /> : <IconClock size={12} />}
@@ -46,7 +46,7 @@ function SignatureRow({
           span
           fw={600}
           style={{
-            color: signed ? "var(--mantine-color-green-7)" : AppColors.textDark,
+            color: signed ? AppColors.primary : AppColors.textDark,
           }}
         >
           {signed ? t("adoption.signed") : t("adoption.status.pending")}

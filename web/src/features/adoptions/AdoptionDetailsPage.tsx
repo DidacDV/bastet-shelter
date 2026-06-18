@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Stack, Title, Text, Loader, Alert } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { useParams, Link } from "react-router-dom";
+import { Stack, Title, Text, Loader, Alert, Button } from "@mantine/core";
+import { IconAlertCircle, IconChevronLeft } from "@tabler/icons-react";
 import { adoptionsRepository } from "./data/adoptionRepository";
 import type {
   AdoptionProcessAdoptantResponse,
@@ -70,6 +70,17 @@ export default function AdoptionDetailPage() {
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
       <Stack gap="xl">
+        <Button
+          component={Link}
+          to={`/animals/${process.animal_id}`}
+          variant="subtle"
+          color="primary"
+          leftSection={<IconChevronLeft size={16} />}
+          style={{ alignSelf: "flex-start", paddingLeft: 0 }}
+        >
+          {t("adoption.backToAnimalDetails")}
+        </Button>
+
         <Stack gap={4}>
           <Title order={2} style={{ color: AppColors.textDark }}>
             {process.animal_name}

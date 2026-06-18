@@ -118,6 +118,7 @@
   "adoption.step.contract": "Contracte",
   "adoption.step.animalPickup": "Recollida de l'animal",
   "adoption.step.pickup": "Recollida",
+  "adoption.backToAnimalDetails": "Torna als detalls de l'animal",
   "adoption.form.adoptAnimal": "Adopta {animal}",
   "adoption.form.intro": "Explica'ns una mica sobre tu i la teva llar. Tots els camps són obligatoris.",
   "adoption.form.fieldRequired": "Aquest camp és obligatori",

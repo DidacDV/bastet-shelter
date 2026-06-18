@@ -44,9 +44,18 @@ class ScheduledDateUpdate {
   const ScheduledDateUpdate({required this.scheduledAt});
 
   Map<String, dynamic> toJson() {
+    final utcDate = DateTime.utc(
+      scheduledAt.year,
+      scheduledAt.month,
+      scheduledAt.day,
+      scheduledAt.hour,
+      scheduledAt.minute,
+      scheduledAt.second,
+      scheduledAt.millisecond,
+      scheduledAt.microsecond,
+    );
     return {
-      'scheduled_at': scheduledAt
-          .toUtc()
+      'scheduled_at': utcDate
           .toIso8601String(), //needed for FASTAPI to accept it
     };
   }

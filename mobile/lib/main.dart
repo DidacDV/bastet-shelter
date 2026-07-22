@@ -37,6 +37,7 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp(
       onGenerateTitle: (context) => context.l10n.t('app.title'),
+      debugShowCheckedModeBanner: false,
       navigatorKey: NavigationService.instance.navigationKey,
       theme: AppTheme.light,
       locale: locale,

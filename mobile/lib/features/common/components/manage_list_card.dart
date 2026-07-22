@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class ManageListCard extends StatelessWidget {
   final String title;
+  final TextStyle? titleStyle;
   final Widget? titleTrailing;
   final Widget? subtitle;
   final IconData leadingIcon;
@@ -17,6 +18,7 @@ class ManageListCard extends StatelessWidget {
   const ManageListCard({
     super.key,
     required this.title,
+    this.titleStyle,
     this.titleTrailing,
     this.subtitle,
     required this.leadingIcon,
@@ -64,7 +66,7 @@ class ManageListCard extends StatelessWidget {
                         Flexible(
                           child: Text(
                             title,
-                            style: theme.textTheme.titleMedium,
+                            style: titleStyle ?? theme.textTheme.titleMedium,
                           ),
                         ),
                         if (titleTrailing != null) ...[

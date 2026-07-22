@@ -220,7 +220,7 @@ class _AddTreatmentBottomSheetState
                 children: [
                   Expanded(
                     child: DateField(
-                      label: context.l10n.t('medical.startDate'),
+                      label: '',
                       value: _startDate,
                       lastDate: DateTime.now().add(
                         const Duration(days: 365 * 5),

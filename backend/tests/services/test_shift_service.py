@@ -291,6 +291,43 @@ def test_unassign_task_success(service):
     service.shift_task_repo.unassign_participant.assert_called_once_with(service.db, 1)
 
 
+def test_copy_shifts_week_preserves_max_participants(service):
+    source_week = date(2023, 10, 9)
+    target_week = date(2023, 10, 16)
+
+    source_shift = _mock_shift()
+    source_shift.max_participants = 3
+    source_shift.shift_tasks = []
+
+    mock_refuge = MagicMock()
+    mock_refuge.shelter_id = 1
+    service.refuge_repo.get_by_id.return_value = mock_refuge
+    service.shift_repo.get_by_refuge_and_week.side_effect = [
+        [source_shift],
+        [],
+        [],
+    ]
+
+    captured_shifts = []
+
+    def capture_create(db, shift):
+        captured_shifts.append(shift)
+        shift.id = 99
+        return shift
+
+    service.shift_repo.create.side_effect = capture_create
+
+    service.copy_shifts_week(
+        refuge_id=1,
+        shelter_id=1,
+        source_week_start=source_week,
+        target_week_start=target_week,
+    )
+
+    assert len(captured_shifts) == 1
+    assert captured_shifts[0].max_participants == 3
+
+
 def test_uncomplete_task_success(service):
     mock_auth = MagicMock(shelter_id=1, is_manager=True)
 

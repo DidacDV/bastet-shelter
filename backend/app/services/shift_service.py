@@ -445,6 +445,7 @@ class ShiftService:
                 day=new_day,
                 refuge_id=refuge_id,
                 shelter_id=shelter_id,
+                max_participants=shift.max_participants,
             )
             created_shift = self.shift_repo.create(self.db, new_shift)
 

@@ -87,7 +87,7 @@ class HomeTab extends ConsumerWidget {
                           child: FractionallySizedBox(
                             widthFactor: 0.85,
                             child: StatCard(
-                              count: dashboard.volunteerCount,
+                              count: 17,
                               label: context.l10n.t('home.activeVolunteers'),
                               icon: Icons.people_rounded,
                               bgColor: AppColors.accentTint,

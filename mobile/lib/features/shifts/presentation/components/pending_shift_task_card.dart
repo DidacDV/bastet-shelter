@@ -37,8 +37,21 @@ class PendingShiftTaskCard extends StatelessWidget {
     final tt = Theme.of(context).textTheme;
     final isCompleted = shiftTask.status == ShiftTaskStatus.completed;
 
+    TextStyle? taskTextStyle(TextStyle? base, {Color? color}) {
+      final resolvedColor = color ?? AppColors.textSecondary;
+      if (!isCompleted) {
+        return base?.copyWith(color: resolvedColor);
+      }
+      return base?.copyWith(
+        color: resolvedColor,
+        decoration: TextDecoration.lineThrough,
+        decorationColor: resolvedColor,
+      );
+    }
+
     return ManageListCard(
       title: shiftTask.task.title,
+      titleStyle: taskTextStyle(tt.titleMedium),
       leadingIcon: isCompleted
           ? Icons.check_circle_rounded
           : Icons.radio_button_unchecked_rounded,
@@ -48,10 +61,7 @@ class PendingShiftTaskCard extends StatelessWidget {
         children: [
           Text(
             shiftTask.task.description,
-            style: tt.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
-              decoration: isCompleted ? TextDecoration.lineThrough : null,
-            ),
+            style: taskTextStyle(tt.bodySmall),
           ),
           if (showParticipantName && shiftTask.participant != null) ...[
             const SizedBox(height: 4),
@@ -62,9 +72,9 @@ class PendingShiftTaskCard extends StatelessWidget {
                     '{name}',
                     '${shiftTask.participant?.name} ${shiftTask.participant?.lastName1}',
                   ),
-              style: tt.bodySmall?.copyWith(
+              style: taskTextStyle(
+                tt.bodySmall?.copyWith(fontWeight: FontWeight.w600),
                 color: AppColors.primary,
-                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -74,9 +84,9 @@ class PendingShiftTaskCard extends StatelessWidget {
               context.l10n
                   .t('common.animalName')
                   .replaceAll('{animal}', shiftTask.animal?.name ?? ''),
-              style: tt.bodySmall?.copyWith(
+              style: taskTextStyle(
+                tt.bodySmall?.copyWith(fontWeight: FontWeight.w600),
                 color: AppColors.primary,
-                fontWeight: FontWeight.w600,
               ),
             ),
           ],

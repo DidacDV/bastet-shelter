@@ -88,6 +88,12 @@ void main() {
       );
 
       expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
+
+      final titleText = tester.widget<Text>(find.text('Done task'));
+      expect(titleText.style?.decoration, TextDecoration.lineThrough);
+
+      final descriptionText = tester.widget<Text>(find.text('Walk the dog'));
+      expect(descriptionText.style?.decoration, TextDecoration.lineThrough);
     });
 
     testWidgets('shows animal name when enabled', (tester) async {

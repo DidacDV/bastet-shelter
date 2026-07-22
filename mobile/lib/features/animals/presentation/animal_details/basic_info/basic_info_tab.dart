@@ -62,6 +62,7 @@ class BasicInfoTab extends ConsumerWidget {
             label: context.l10n.t('common.description'),
             value: animal.description,
             canEdit: isManager,
+            wrapText: true,
             onEdit: () => showEditBottomSheet(
               context: context,
               label: context.l10n.t('common.description'),

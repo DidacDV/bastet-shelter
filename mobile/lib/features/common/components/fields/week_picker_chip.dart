@@ -8,6 +8,7 @@ class WeekPickerChip extends StatelessWidget {
 
   final DateTime date;
   final ValueChanged<DateTime> onWeekSelected;
+  final ValueChanged<DateTime>? onDaySelected;
   final String label;
   final bool showArrows;
 
@@ -15,7 +16,8 @@ class WeekPickerChip extends StatelessWidget {
     super.key,
     required this.date,
     required this.onWeekSelected,
-    this.label = 'Week of',
+    this.onDaySelected,
+    this.label = 'Week s',
     this.showArrows = false,
   });
 
@@ -28,13 +30,24 @@ class WeekPickerChip extends StatelessWidget {
       helpText: context.l10n.t('common.selectAnyDayInWeek'),
     );
     if (picked != null) {
+      onDaySelected?.call(picked);
       onWeekSelected(mondayOf(picked));
     }
   }
 
-  void _previousWeek() =>
-      onWeekSelected(date.subtract(const Duration(days: 7)));
-  void _nextWeek() => onWeekSelected(date.add(const Duration(days: 7)));
+  void _previousWeek() {
+    final daysSinceMonday = date.weekday - DateTime.monday;
+    final newWeekStart = date.subtract(Duration(days: daysSinceMonday + 7));
+    onDaySelected?.call(newWeekStart);
+    onWeekSelected(newWeekStart);
+  }
+
+  void _nextWeek() {
+    final daysSinceMonday = date.weekday - DateTime.monday;
+    final newWeekStart = date.add(Duration(days: 7 - daysSinceMonday));
+    onDaySelected?.call(newWeekStart);
+    onWeekSelected(newWeekStart);
+  }
 
   @override
   Widget build(BuildContext context) {

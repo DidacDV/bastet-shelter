@@ -71,8 +71,8 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
         final activeRefugeName = shelter.refuges
             .firstWhere(
               (r) => r.id == activeRefugeId,
-              orElse: () => shelter.refuges.first,
-            )
+          orElse: () => shelter.refuges.first,
+        )
             .name;
 
         final dayViews = List.generate(7, (i) {
@@ -98,25 +98,26 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
 
           floatingActionButton: isManager
               ? FloatingActionButton(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.surface,
-                  onPressed: () {
-                    final activeDay = _weekStart.add(
-                      Duration(days: _currentTabIndex),
-                    );
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.surface,
+            onPressed: () {
+              final activeDay = _weekStart.add(
+                Duration(days: _currentTabIndex),
+              );
 
-                    showCreateShiftBottomSheet(
-                      context: context,
-                      refugeId: activeRefugeId,
-                      weekStart: _weekStart,
-                      initialDate: activeDay,
-                    );
-                  },
-                  child: const Icon(Icons.add_rounded),
-                )
+              showCreateShiftBottomSheet(
+                context: context,
+                refugeId: activeRefugeId,
+                weekStart: _weekStart,
+                initialDate: activeDay,
+              );
+            },
+            child: const Icon(Icons.add_rounded),
+          )
               : null,
 
           body: AppTabLayout(
+            key: ValueKey(_currentTabIndex),  //to force rerender on date change
             initialIndex: _currentTabIndex,
             onTabChanged: (index) {
               setState(() {
@@ -133,6 +134,12 @@ class _ShiftsScreenState extends ConsumerState<ShiftsScreen> {
                     showArrows: true,
                     onWeekSelected: (newDate) {
                       setState(() => _weekStart = newDate);
+                    },
+                    onDaySelected: (pickedDay) {
+                      setState(() {
+                        _weekStart = _mondayOf(pickedDay);
+                        _currentTabIndex = pickedDay.weekday - 1;
+                      });
                     },
                   ),
                   const SizedBox(width: 8),
@@ -210,10 +217,10 @@ class _DayShiftsTab extends ConsumerWidget {
         final dayShifts = allShifts
             .where(
               (s) =>
-                  s.day.year == day.year &&
-                  s.day.month == day.month &&
-                  s.day.day == day.day,
-            )
+          s.day.year == day.year &&
+              s.day.month == day.month &&
+              s.day.day == day.day,
+        )
             .toList();
 
         if (dayShifts.isEmpty) {

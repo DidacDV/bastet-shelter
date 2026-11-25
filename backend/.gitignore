@@ -6,3 +6,5 @@ __pycache__/
 venv/
 *.db
 /.coverage
+.idea/
+.pytest_cache/

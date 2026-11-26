@@ -1,10 +1,11 @@
 import asyncio
 from sqlite3 import Date
 
+from sqlalchemy import MetaData
 from sqlalchemy.orm import Session
 
 from app.core.security import hash_password
-from app.database import SessionLocal, engine, Base
+from app.database import SessionLocal, engine
 from app.models.login import Login
 from app.models.refuge import Refuge
 from app.models.shelter_member import ShelterMember
@@ -26,19 +27,27 @@ from app.services.geo_service import GeoService
 
 import app.models as models
 
+def clear_data():
+    """Empties every table but keeps the schema, which is owned by Alembic (run `alembic upgrade head` first)."""
+    existing = MetaData()
+    existing.reflect(bind=engine)
+    with engine.begin() as conn:
+        for table in reversed(existing.sorted_tables):
+            if table.name != "alembic_version":
+                conn.execute(table.delete())
+
 async def seed_data():
+    clear_data()
     db = SessionLocal()
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
 
     try:
         await GeoService.run_periodic_update(db)
         db.commit()
 
-        login_val = Login(id=1, email="d@gmail.com", password=hash_password("d"))
+        login_val = Login(email="d@gmail.com", password=hash_password("d"))
         db.add(login_val)
+        db.flush()
         manager = User(
-            id=1,
             name="Didac",
             last_name_1="Dalmases",
             active=True,
@@ -77,6 +86,7 @@ async def seed_data():
             animal_type=AnimalTypeEnum.DOG,
             breed="Golden Retriever",
             description="Very friendly",
+            link_name="buddy",
             refuge_id=rfg.id,
             in_adoption=True
         )
@@ -87,6 +97,7 @@ async def seed_data():
     except Exception as e:
         print(f"Error seeding: {e}")
         db.rollback()
+        raise
     finally:
         db.close()
 

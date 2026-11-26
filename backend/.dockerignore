@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.db
+.coverage
+.pytest_cache/
+.idea/
+.vscode/
+Dockerfile
+.dockerignore

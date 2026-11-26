@@ -14,7 +14,7 @@ from app.admin.admin_views import ShelterAdmin, RefugeAdmin, LoginAdmin, UserAdm
 from app.admin.admin_auth import authentication_backend
 from app.core.exceptions import NotFoundError, BusinessLogicError, AuthorizationError
 
-from app.database import Base, engine, SessionLocal
+from app.database import engine, SessionLocal
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.jobs.treatment_reset_job import reset_treatments
@@ -37,8 +37,6 @@ from app.routers.advertisement_router import router as advertisement_router
 
 from app.services.geo_service import GeoService
 import app.models as models
-
-Base.metadata.create_all(bind=engine)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

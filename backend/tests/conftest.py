@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -6,9 +8,11 @@ from sqlalchemy.orm import sessionmaker
 from app.main import app
 from app.database import Base, get_db
 
-TEST_DATABASE_URL = "sqlite:///./test.db"
+# Kept separate from DATABASE_URL on purpose: every test drops all tables.
+TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL", "sqlite:///./test.db")
 
-engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
+connect_args = {"check_same_thread": False} if TEST_DATABASE_URL.startswith("sqlite") else {}
+engine = create_engine(TEST_DATABASE_URL, connect_args=connect_args)
 TestingSessionLocal = sessionmaker(bind=engine)
 
 

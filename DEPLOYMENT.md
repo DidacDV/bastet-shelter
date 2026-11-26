@@ -1,6 +1,68 @@
 # Deployment Guide — Bastet Shelter
 
-This document covers how to deploy the backend to Render, link it to the PostgreSQL database, and build the Flutter APK for testing.
+This document covers how to run the backend locally with Docker, deploy it to Render, link it to the PostgreSQL database, and build the Flutter APK for testing.
+
+> Moving the Render deploy itself to the Docker image is a pending task, documented in [RENDER_DOCKER_DEPLOY.md](RENDER_DOCKER_DEPLOY.md).
+
+---
+
+## 0. Local Development with Docker
+
+Runs the backend against PostgreSQL 16, the same engine as production, so Postgres-only issues show up locally instead of after a release.
+
+### Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) running
+- `backend/.env` with your secrets. Start from the template:
+  ```bash
+  cp backend/.env.example backend/.env
+  ```
+  `DATABASE_URL` and `TEST_DATABASE_URL` in that file are ignored by Docker: `docker-compose.yml` points them at the `db` container.
+
+### Commands (from the repo root)
+
+| Task | Command |
+|---|---|
+| Start database + backend | `docker compose up -d --build` |
+| Seed demo data (login `d@gmail.com` / `d`) | `docker compose run --rm seed` |
+| Run the backend test suite against Postgres | `docker compose run --rm test` |
+| Follow backend logs | `docker compose logs -f backend` |
+| Open a SQL shell | `docker compose exec db psql -U bastet -d bastet` |
+| Stop (keeps data) | `docker compose down` |
+| Stop and wipe the database | `docker compose down -v` |
+
+The API is at `http://localhost:8000` (Swagger at `/docs`), and Postgres is exposed on `localhost:5432` (user/password/db `bastet`). If those ports are taken, set `BACKEND_PORT` or `DB_PORT` before `docker compose up`.
+
+On startup the container runs `scripts/render_start.sh`, the same script Render uses: it applies `alembic upgrade head` and then starts Uvicorn.
+
+The seed empties every table and inserts demo data, so it can be re-run at any time. Provinces are fetched from the geo API, so `GEOAPI_KEY` must be valid.
+
+### Without Docker
+
+Still possible with SQLite (`DATABASE_URL=sqlite:///./bastet.db` in `backend/.env`):
+
+```bash
+cd backend
+alembic upgrade head
+python seed.py
+uvicorn app.main:app --reload
+```
+
+---
+
+## Database Migrations
+
+The schema is owned by **Alembic only**. The app no longer calls `Base.metadata.create_all` on startup.
+
+- After changing a model, generate a migration:
+  ```bash
+  docker compose exec backend alembic revision --autogenerate -m "describe the change"
+  docker compose cp backend:/app/alembic/versions/<new_file>.py backend/alembic/versions/
+  ```
+  Review the generated file before committing.
+- Migrations are applied automatically on every deploy and container start (`alembic upgrade head` in `scripts/render_start.sh`).
+- CI runs `alembic check` against Postgres and fails if a model changed without a migration.
+- Tests build their own schema in a separate database (`TEST_DATABASE_URL`, SQLite by default) and drop every table after each test. Never point `TEST_DATABASE_URL` at a database you care about.
 
 ---
 
@@ -30,7 +92,7 @@ This document covers how to deploy the backend to Render, link it to the Postgre
    - **Root Directory**: `backend`
    - **Runtime**: Python
    - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - **Start Command**: `bash scripts/render_start.sh` (applies migrations, then starts Uvicorn)
    - **Branch**: your current release branch (e.g. `release-2`)
 4. Click **Create Web Service**
 
@@ -70,7 +132,7 @@ If you need to start from a clean database:
    CREATE SCHEMA public;
    \q
    ```
-3. Redeploy the backend — `create_all` will recreate all tables on startup
+3. Redeploy the backend — `alembic upgrade head` in the start script recreates all tables
 
 > The `DATABASE_URL` env var is linked automatically via `render.yaml` — you do not need to set it manually.
 
@@ -100,6 +162,9 @@ Go to Render → your web service → **Environment** tab and add:
 | `MAIL_PORT` | SMTP port (e.g. 587) |
 | `MAIL_SERVER` | SMTP server (e.g. smtp.gmail.com) |
 | `FRONTEND_URL` | Public URL of the adoptant web app (e.g. `https://your-site.netlify.app`). Used in email links. Defaults to `http://localhost:5173` locally. |
+| `PORTAL_BASE_URL` | Base URL of the adoption portal. Defaults to `http://localhost:5173`. |
+
+`backend/.env.example` lists every variable with placeholder values.
 
 > Never commit `.env` to the repository. Make sure it is in `.gitignore`.
 
@@ -186,6 +251,6 @@ adb install build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
 - [ ] Push to GitHub
 - [ ] Update Render web service branch to the new release branch
 - [ ] Add any new environment variables in Render dashboard
-- [ ] If DB schema changed: wipe the DB and let `create_all` rebuild it
+- [ ] If models changed: make sure an Alembic migration is included (CI's `alembic check` enforces this); it is applied automatically on deploy
 - [ ] Verify `/` and `/docs` are responding after deploy
 - [ ] Build new APK with `flutter build apk --split-per-abi`

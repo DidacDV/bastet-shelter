@@ -1,0 +1,55 @@
+name: bastet-shelter
+
+x-backend: &backend
+  build: ./backend
+  image: bastet-shelter-backend
+  env_file: ./backend/.env
+  environment:
+    DATABASE_URL: postgresql+psycopg2://bastet:bastet@db:5432/bastet
+    TEST_DATABASE_URL: postgresql+psycopg2://bastet:bastet@db:5432/bastet_test
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: bastet
+      POSTGRES_PASSWORD: bastet
+      POSTGRES_DB: bastet
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      # Init scripts only run when the volume is empty (first `up` or after `down -v`).
+      - ./backend/docker/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bastet -d bastet"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    <<: *backend
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  seed:
+    <<: *backend
+    profiles: ["tools"]
+    command: ["sh", "-c", "alembic upgrade head && python seed.py"]
+
+  test:
+    <<: *backend
+    profiles: ["tools"]
+    command: ["pytest", "tests/", "-v", "--tb=short"]
+
+volumes:
+  db-data:
